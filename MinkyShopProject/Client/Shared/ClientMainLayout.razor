@@ -1,0 +1,17 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime;
+
+<div id="page">
+    <HeaderComponent></HeaderComponent>
+    @Body
+    <FooterComponent></FooterComponent>
+</div>
+
+<div id="toTop"></div><!-- Back to top button -->
+
+@code{
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("main");
+    }
+}
