@@ -30,23 +30,31 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValueSql("(NEWID())");
 
                     b.Property<float>("GiaBan")
-                        .HasColumnType("real");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("real")
+                        .HasDefaultValue(0f);
 
                     b.Property<Guid>("IdSanPham")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayTao")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 2, 14, 0, 56, 3, 152, DateTimeKind.Local).AddTicks(7021));
 
                     b.Property<string>("Sku")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("VARCHAR(20)");
 
                     b.Property<int>("SoLuong")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("TrangThai")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -72,7 +80,9 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TrangThai")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -114,13 +124,17 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValueSql("(NEWID())");
 
                     b.Property<DateTime>("NgayTao")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2023, 2, 14, 0, 56, 3, 153, DateTimeKind.Local).AddTicks(1431));
 
                     b.Property<string>("Ten")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TrangThai")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("Id");
 
@@ -137,9 +151,10 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 12, 12, 12, 58, 44, DateTimeKind.Local).AddTicks(5447));
+                        .HasDefaultValue(new DateTime(2023, 2, 14, 0, 56, 3, 153, DateTimeKind.Local).AddTicks(2093));
 
                     b.Property<string>("Ten")
+                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
@@ -180,6 +195,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.HasOne("MinkyShopProject.Business.Entities.SanPham", "SanPham")
                         .WithMany("BienThes")
                         .HasForeignKey("IdSanPham")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SanPham");
@@ -190,11 +206,13 @@ namespace MinkyShopProject.Business.Migrations
                     b.HasOne("MinkyShopProject.Business.Entities.BienThe", "BienThe")
                         .WithMany("BienTheChiTiets")
                         .HasForeignKey("IdBienThe")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MinkyShopProject.Business.Entities.GiaTri", "GiaTri")
                         .WithMany("BienTheChiTiets")
                         .HasForeignKey("IdGiaTri")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MinkyShopProject.Business.Entities.ThuocTinhSanPham", "ThuocTinhSanPham")
@@ -225,11 +243,13 @@ namespace MinkyShopProject.Business.Migrations
                     b.HasOne("MinkyShopProject.Business.Entities.SanPham", "SanPham")
                         .WithMany("ThuocTinhSanPhams")
                         .HasForeignKey("IdSanPham")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MinkyShopProject.Business.Entities.ThuocTinh", "ThuocTinh")
                         .WithMany("ThuocTinhSanPhams")
                         .HasForeignKey("IdThuocTinh")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SanPham");

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using MinkyShopProject.Data.ViewModels;
+//using MinkyShopProject.Data.ViewModels;
 using System.Net.Http.Json;
 
 namespace MinkyShopProject.Admin.Pages
@@ -8,11 +8,11 @@ namespace MinkyShopProject.Admin.Pages
     {
         [Inject] HttpClient HttpClient { get; set; } = null!;
 
-        private IEnumerable<ThuocTinhViewModel> Model = null!;
+        //private IEnumerable<ThuocTinhViewModel> Model = null!;
 
-        protected async override Task OnInitializedAsync()
-        {
-            Model = await HttpClient.GetFromJsonAsync<IEnumerable<ThuocTinhViewModel>>("https://localhost:7053/api/ThuocTinh");
-        }
+        //protected async override Task OnInitializedAsync()
+        //{
+        //    Model = await HttpClient.GetFromJsonAsync<IEnumerable<ThuocTinhViewModel>>("https://localhost:7053/api/ThuocTinh");
+        //}
     }
 }

@@ -22,10 +22,22 @@ namespace MinkyShopProject.Api.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<SanPhamModel>>> GetSanPhams()
+        [HttpPost]
+        public async Task<ActionResult<object>> AddAsync(Guid idSanPham, SanPhamCreateModel[] obj)
         {
-            return Ok(await _repository.GetSanPhams());
+            return Ok(await _repository.AddAsync(idSanPham, obj));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<SanPhamModel[]>> GetAsync()
+        {
+            return Ok(await _repository.GetAsync());
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult<SanPhamModel[]>> DeleteAsync(Guid id)
+        {
+            return Ok(await _repository.DeleteAsync(id));
         }
     }
 }

@@ -13,17 +13,17 @@ namespace MinkyShopProject.Data.Enums
 
     public enum TrangThaiSanPham
     {
-
+        DangBan
     }
 
     public enum TrangThaiBienThe
     {
-
+        DangBan, DaBan
     }
 
     public enum TrangThaiBienTheChiTiet
     {
-
+        DangBan
     }
 
     public enum TrangThaiThuocTinh

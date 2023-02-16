@@ -1,9 +1,4 @@
 ﻿using MinkyShopProject.Data.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MinkyShopProject.Data.Models
 {
@@ -13,17 +8,22 @@ namespace MinkyShopProject.Data.Models
 
         public string Ten { get; set; } = null!;
 
-        public TrangThaiChung TrangThai { get; set; }
+        public string Sku { get; set; } = null!;
 
-        public DateTime NgayTao { get; set; }
+        public float GiaBan { get; set; }
+
+        public int SoLuong { get; set; }
+
+        public string ThuocTinh { get; set; } = null!;
     }
 
     public class SanPhamCreateModel
     {
-        public string Ten { get; set; } = null!;
+        public Guid IdThuocTinh { get; set; }
 
-        public TrangThaiChung TrangThai { get; set; }
+        public string TenThuocTinh { get; set; } = null!;
 
+        public GiaTriModel[] GiaTris { get; set; } = null!;
     }
 
     public class SanPhamUpdateModel
@@ -31,5 +31,38 @@ namespace MinkyShopProject.Data.Models
         public string Ten { get; set; } = null!;
 
         public TrangThaiChung TrangThai { get; set; }
+    }
+
+    // Thuộc Tính Sản Phẩm
+
+    public class ThuocTinhSanPhamCreateModel
+    {
+        public Guid Id { get; set; }
+
+        public Guid IdSanPham { get; set; }
+
+        public Guid IdThuocTinh { get; set; }
+    }
+
+    // Biến Thể
+
+    public class BienTheCreateModel
+    {
+        public Guid Id { get; set; }
+
+        public Guid IdSanPham { get; set; }
+
+        public string Sku { get; set; } = null!;
+    }
+
+    // Biến Thể Chi Tiêt
+
+    public class BienTheChiTietCreateModel
+    {
+        public Guid IdBienThe { get; set; }
+
+        public Guid IdGiaTri { get; set; }
+
+        public Guid IdThuocTinhSanPham { get; set; }
     }
 }

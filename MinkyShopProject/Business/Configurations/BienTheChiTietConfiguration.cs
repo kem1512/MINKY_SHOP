@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MinkyShopProject.Business.Entities;
+using MinkyShopProject.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +21,13 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
+            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiBienTheChiTiet.DangBan);
+
             builder.HasOne(c => c.ThuocTinhSanPham).WithMany(c => c.BienTheChiTiets).HasForeignKey(c => c.IdThuocTinhSanPham).OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder.HasOne(c => c.BienThe).WithMany(c => c.BienTheChiTiets).HasForeignKey(c => c.IdBienThe).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(c => c.BienThe).WithMany(c => c.BienTheChiTiets).HasForeignKey(c => c.IdBienThe).OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(c => c.GiaTri).WithMany(c => c.BienTheChiTiets).HasForeignKey(c => c.IdGiaTri).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(c => c.GiaTri).WithMany(c => c.BienTheChiTiets).HasForeignKey(c => c.IdGiaTri).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

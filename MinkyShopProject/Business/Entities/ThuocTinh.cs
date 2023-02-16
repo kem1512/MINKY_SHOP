@@ -11,7 +11,7 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public string? Ten { get; set; }
+        public string Ten { get; set; } = null!;
 
         public TrangThaiThuocTinh TrangThai { get; set; }
 

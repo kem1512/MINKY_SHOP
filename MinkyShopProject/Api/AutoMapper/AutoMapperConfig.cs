@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Data.Models;
-using MinkyShopProject.Data.ViewModels;
 
 namespace MinkyShopProject.Api.AutoMapper
 {
@@ -9,11 +8,17 @@ namespace MinkyShopProject.Api.AutoMapper
     {
         public AutoMapperConfig()
         {
-            CreateMap<SanPham, SanPhamModel>().ReverseMap();
-            CreateMap<ThuocTinh, ThuocTinhModel>().ReverseMap();
+            CreateMap<ThuocTinhCreateModel, ThuocTinh>().ForMember(c => c.GiaTris, c => c.Ignore()).ReverseMap();
+
             CreateMap<GiaTri, GiaTriModel>().ReverseMap();
-            CreateMap<ThuocTinhCreateModel, ThuocTinh>().ReverseMap();
-            CreateMap<GiaTriCreateModel, GiaTri>().ReverseMap();
+
+            CreateMap<BienTheCreateModel, BienThe>().ReverseMap();
+
+            CreateMap<BienTheChiTietCreateModel, BienTheChiTiet>().ReverseMap();
+
+            CreateMap<ThuocTinhSanPhamCreateModel, ThuocTinhSanPham>().ReverseMap();
+
+            CreateMap<BienTheChiTietCreateModel, BienTheChiTiet>().ReverseMap();
         }
     }
 }

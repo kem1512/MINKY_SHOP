@@ -5,7 +5,6 @@ using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
 using MinkyShopProject.Data.Models;
-using MinkyShopProject.Data.ViewModels;
 
 namespace MinkyShopProject.Api.Controllers
 {
@@ -21,19 +20,19 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPost("AddAsync")]
-        public async Task<IActionResult> AddAsync(ThuocTinhViewCreateModel obj)
+        public async Task<IActionResult> AddAsync(ThuocTinhCreateModel obj)
         {
             return Ok(await _repository.AddAsync(obj));
         }
 
         [HttpPost("AddRangeAsync")]
-        public async Task<IActionResult> AddRangeAsync(IEnumerable<ThuocTinhViewCreateModel> objs)
+        public async Task<IActionResult> AddRangeAsync(ThuocTinhCreateModel[] objs)
         {
             return Ok(await _repository.AddRangeAsync(objs));
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync(Guid id, ThuocTinhViewUpdateModel obj)
+        public async Task<IActionResult> UpdateAsync(Guid id, ThuocTinhUpdateModel obj)
         {
             return Ok(await _repository.UpdateAsync(id, obj));
         }

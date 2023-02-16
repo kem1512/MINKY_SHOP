@@ -1,15 +1,15 @@
-﻿using MinkyShopProject.Data;
-using MinkyShopProject.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MinkyShopProject.Data.Models;
 
 namespace MinkyShopProject.Business.Repositories.SanPham
 {
     public interface ISanPhamRepository
     {
-        public Task<IEnumerable<SanPhamModel>> GetSanPhams();
+        public Task<SanPhamModel[]> GetAsync();
+
+        public Task<object> AddAsync(Guid idSanPham, SanPhamCreateModel[] obj);
+
+        public Task<bool> UpdateAsync();
+
+        public Task<bool> DeleteAsync(Guid id);
     }
 }

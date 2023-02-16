@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MinkyShopProject.Business.Migrations
 {
-    public partial class test : Migration
+    public partial class ThuocTinhDong : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,8 +15,8 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TrangThai = table.Column<int>(type: "int", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 2, 14, 0, 56, 3, 153, DateTimeKind.Local).AddTicks(1431))
                 },
                 constraints: table =>
                 {
@@ -28,9 +28,9 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true),
+                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 2, 12, 12, 12, 58, 44, DateTimeKind.Local).AddTicks(5447))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 2, 14, 0, 56, 3, 153, DateTimeKind.Local).AddTicks(2093))
                 },
                 constraints: table =>
                 {
@@ -43,11 +43,11 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdSanPham = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SoLuong = table.Column<int>(type: "int", nullable: false),
-                    GiaBan = table.Column<float>(type: "real", nullable: false),
-                    Sku = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TrangThai = table.Column<int>(type: "int", nullable: false)
+                    SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    GiaBan = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
+                    Sku = table.Column<string>(type: "VARCHAR(20)", nullable: false),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 2, 14, 0, 56, 3, 152, DateTimeKind.Local).AddTicks(7021)),
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -56,7 +56,8 @@ namespace MinkyShopProject.Business.Migrations
                         name: "FK_BienThe_SanPham_IdSanPham",
                         column: x => x.IdSanPham,
                         principalTable: "SanPham",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,12 +94,14 @@ namespace MinkyShopProject.Business.Migrations
                         name: "FK_ThuocTinhSanPham_SanPham_IdSanPham",
                         column: x => x.IdSanPham,
                         principalTable: "SanPham",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ThuocTinhSanPham_ThuocTinh_IdThuocTinh",
                         column: x => x.IdThuocTinh,
                         principalTable: "ThuocTinh",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -109,7 +112,7 @@ namespace MinkyShopProject.Business.Migrations
                     IdThuocTinhSanPham = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdGiaTri = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TrangThai = table.Column<int>(type: "int", nullable: false)
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
@@ -118,12 +121,14 @@ namespace MinkyShopProject.Business.Migrations
                         name: "FK_BienTheChiTiet_BienThe_IdBienThe",
                         column: x => x.IdBienThe,
                         principalTable: "BienThe",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BienTheChiTiet_GiaTri_IdGiaTri",
                         column: x => x.IdGiaTri,
                         principalTable: "GiaTri",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_BienTheChiTiet_ThuocTinhSanPham_IdThuocTinhSanPham",
                         column: x => x.IdThuocTinhSanPham,

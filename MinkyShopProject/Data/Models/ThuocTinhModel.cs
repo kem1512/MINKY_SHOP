@@ -16,6 +16,15 @@ namespace MinkyShopProject.Data.Models
         public TrangThaiThuocTinh TrangThai { get; set; }
 
         public DateTime NgayTao { get; set; }
+
+        public GiaTriModel[] GiaTris { get; set; } = null!;
+    }
+
+    public class GiaTriModel
+    {
+        public Guid Id { get; set; }
+
+        public string Ten { get; set; } = null!;
     }
 
     public class ThuocTinhCreateModel
@@ -23,10 +32,13 @@ namespace MinkyShopProject.Data.Models
         public string Ten { get; set; } = null!;
 
         public TrangThaiThuocTinh TrangThai { get; set; }
+
+        public string[]? GiaTris { get; set; }
     }
 
     public class ThuocTinhUpdateModel
     {
+        // Nếu Truyền Thuộc Tính Thì Sẽ Update Thuộc Tính
         public string Ten { get; set; } = null!;
 
         public TrangThaiThuocTinh TrangThai { get; set; }
