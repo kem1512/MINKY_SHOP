@@ -17,7 +17,9 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public GiaTriModel[] GiaTris { get; set; } = null!;
+        public List<GiaTriModel> GiaTris { get; set; } = null!;
+
+        public List<GiaTriModel> GiaTriTemplates { get; set; } = new List<GiaTriModel>();
     }
 
     public class GiaTriModel

@@ -23,6 +23,10 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Sku).HasColumnType("VARCHAR(20)");
 
+            builder.HasIndex(c => c.Sku).IsUnique();
+
+            builder.Property(c => c.Anh).HasDefaultValue(String.Empty);
+
             builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
 
             builder.Property(c => c.SoLuong).HasDefaultValue(0);

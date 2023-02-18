@@ -19,6 +19,8 @@ namespace MinkyShopProject.Business.Entities
 
         public string Sku { get; set; } = null!;
 
+        public string Anh { get; set; } = null!;
+
         public DateTime NgayTao { get; set; }
 
         public TrangThaiBienThe TrangThai { get; set; }

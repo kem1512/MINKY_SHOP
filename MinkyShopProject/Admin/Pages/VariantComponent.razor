@@ -1,0 +1,226 @@
+﻿@page "/variant"
+@using MinkyShopProject.Data.Models
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0">Edit Profile</p>
+                        <button class="btn btn-primary btn-sm ms-auto" @onclick="AddAsync">Save</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6"@onfocusout="() => { showSanPham = false; }">
+                            <div class="form-group mb-0">
+                                <label for="example-text-input" class="form-control-label">Sản Phẩm</label>
+                                <div class="position-relative">
+                                    <input class="form-control" type="text" @bind="SanPham.Ten" @onfocus="() => { showSanPham = true; }">
+                                    <i @onclick="() => showAddSanPham = true" class="fa fa-plus position-absolute top-50 end-0 translate-middle-y text-danger" style="cursor: pointer" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#modal-form"></i>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap position-relative py-2">
+                                @if (showSanPham)
+                                {
+                                    <div class="list-group position-absolute w-100 top-0" style="z-index: 1">
+                                        @if (ModelSanPham != null)
+                                        {
+                                            @foreach (var x in ModelSanPham)
+                                            {
+                                                <button class="list-group-item list-group-item-action" aria-current="true" @onmousedown="() => { SanPham = x; }">
+                                                    @x.Ten
+                                                </button>
+                                            }
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-6" @onfocusout="() => { showThuocTinh = false; }">
+                            <div class="form-group mb-0">
+                                <label for="example-text-input" class="form-control-label">Thuộc Tính</label>
+                                <div class="position-relative">
+                                    <input class="form-control" type="text" @onfocus="() => { showThuocTinh = true; }">
+                                    <i @onclick="() => showAddSanPham = false" class="fa fa-plus position-absolute top-50 end-0 translate-middle-y text-danger" style="cursor: pointer" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#modal-form"></i>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-wrap position-relative py-2">
+                                @if (showThuocTinh)
+                                {
+                                    <div class="list-group position-absolute w-100 top-0" style="z-index: 1">
+                                        @if (Model != null)
+                                        {
+                                            @foreach (var x in Model)
+                                            {
+                                                <button class="list-group-item list-group-item-action" aria-current="true" @onmousedown="() => { ModelTemplate.Add(x); Model.Remove(x); showGiaTri.Add(false); }">
+                                                    @x.Ten
+                                                </button>
+                                            }
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        @if (ModelTemplate != null)
+                        {
+                            @foreach (var x in ModelTemplate.Select((Value, Index) => (Index, Value)))
+                            {
+                                <div class="col-md-6" @onfocusout="() => { showGiaTri[x.Index] = false; }">
+                                    <div class="form-group mb-0">
+                                        <label for="example-text-input" class="form-control-label">@x.Value.Ten</label>
+                                        <div class="position-relative">
+                                            <input class="form-control" type="text" @onfocus="() => { showGiaTri[x.Index] = true; }">
+                                            <i class="fa fa-times position-absolute top-50 end-0 translate-middle-y text-danger" style="cursor: pointer" aria-hidden="true" @onclick="() => { ModelTemplate.Remove(x.Value); Model?.Add(new ThuocTinhModel() { Id = x.Value.Id, Ten = x.Value.Ten }); }"></i>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-wrap position-relative py-2">
+                                        <div class="list-group position-absolute w-100 top-0" style="z-index: 1">
+                                            @if (showGiaTri[x.Index])
+                                            {
+                                                @foreach (var y in x.Value.GiaTris)
+                                                {
+                                                    <button class="list-group-item list-group-item-action" aria-current="true" @onmousedown="() => { x.Value.GiaTriTemplates?.Add(y); x.Value.GiaTris.Remove(y); }">
+                                                        @y.Ten
+                                                    </button>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-wrap position-relative py-2">
+                                        <div class="d-flex flex-wrap">
+                                            @if (x.Value.GiaTriTemplates != null)
+                                            {
+                                                @foreach (var y in x.Value.GiaTriTemplates)
+                                                {
+                                                    <span class="badge badge-primary me-2 mt-0" style="cursor: pointer" @onmousedown="() => {  x.Value.GiaTriTemplates.Remove(y); x.Value.GiaTris?.Add(y); }">@y.Ten</span>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-0">
+                    <div class="card card-plain">
+                        <div class="card-header pb-0 text-left d-flex justify-content-between">
+                            <h4 class="font-weight-bolder text-info text-gradient mb-0">Thêm @(showAddSanPham ? "Sản Phẩm" : "Thuộc Tính")</h4>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="" @onchange="() => showAddSanPham = !showAddSanPham">
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if(!showAddSanPham){
+                                <form>
+                                    <label>Tên Thuộc Tính</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" @oninput="((ui) => { ThuocTinh = ui.Value.ToString(); })">
+                                    </div>
+                                    <label>Giá Trị</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" @oninput="((ui) => { GiaTri = ui.Value.ToString(); })" @onkeyup='((ui) => { if(ui.Code == "Enter"){ GiaTris.Add(GiaTri); } })'>
+                                    </div>
+                                    <div class="d-flex flex-wrap position-relative py-2">
+                                        <div class="d-flex flex-wrap">
+                                            @foreach (var x in GiaTris)
+                                            {
+                                                <span class="badge badge-primary me-2 mt-0" style="cursor: pointer">@x</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0" @onclick="AddPropertyAsync">Xác Nhận</button>
+                                    </div>
+                                </form>
+                            }else{
+                                <form>
+                                    <label>Tên Sản Phẩm</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" @oninput="((ui) => { TenSanPham = ui.Value.ToString(); })">
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0" @onclick="AddProductAsync">Xác Nhận</button>
+                                    </div>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool showThuocTinh = false;
+
+    private bool showSanPham = false;
+
+    private bool showAddSanPham = true;
+
+    private List<bool> showGiaTri = new List<bool>();
+
+    private List<ThuocTinhModel> Model = new List<ThuocTinhModel>();
+
+    private List<ThuocTinhModel> ModelTemplate = new List<ThuocTinhModel>();
+
+    private List<SanPhamModel> ModelSanPham = new List<SanPhamModel>();
+
+    private SanPhamModel SanPham = new SanPhamModel()  { Id = Guid.NewGuid() };
+
+    private string ThuocTinh = "";
+
+    private string GiaTri = "";
+
+    private string TenSanPham = "";
+
+    private List<string> GiaTris = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (HttpClient httpClient = new HttpClient())
+        {
+            Model = await httpClient.GetFromJsonAsync<List<ThuocTinhModel>>("https://localhost:7053/api/ThuocTinh") ?? new List<ThuocTinhModel>();
+            ModelSanPham = await httpClient.GetFromJsonAsync<List<SanPhamModel>>("https://localhost:7053/api/SanPham/GetSanPhamAsync") ?? new List<SanPhamModel>();
+        }
+    }
+
+    public async Task AddAsync(){
+        using (HttpClient httpClient = new HttpClient())
+        {
+            var result = new List<SanPhamCreateModel>();
+            foreach (var item in ModelTemplate)
+            {
+                if(item.GiaTriTemplates.Count() > 0){
+                    result.Add(new SanPhamCreateModel() { TenThuocTinh = item.Ten, IdThuocTinh = item.Id, GiaTris = item.GiaTriTemplates.ToArray() });
+                }
+            }
+            await httpClient.PostAsJsonAsync<SanPhamCreateModel[]>($"https://localhost:7053/api/SanPham?idSanPham={SanPham.Id}&tenSanPham={SanPham.Ten}", result.ToArray());
+        }
+    }
+
+    public async Task AddPropertyAsync(){
+        using (HttpClient httpClient = new HttpClient())
+        {
+            await httpClient.PostAsJsonAsync<ThuocTinhCreateModel>("https://localhost:7053/api/ThuocTinh/AddAsync", new ThuocTinhCreateModel() { Ten = ThuocTinh, GiaTris = GiaTris.ToArray() });
+        }
+    }
+
+    public async Task AddProductAsync()
+    {
+        using (HttpClient httpClient = new HttpClient())
+        {
+            await httpClient.PostAsJsonAsync<ThuocTinhCreateModel>($"https://localhost:7053/api/SanPham/AddSanPhamAsync?name={TenSanPham}", new ThuocTinhCreateModel() { Ten = ThuocTinh, GiaTris = GiaTris.ToArray() });
+        }
+    }
+}

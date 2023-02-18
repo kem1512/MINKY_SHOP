@@ -4,12 +4,14 @@ namespace MinkyShopProject.Business.Repositories.SanPham
 {
     public interface ISanPhamRepository
     {
-        public Task<SanPhamModel[]> GetAsync();
+        public Task<List<BienTheModel>> GetAsync();
 
-        public Task<object> AddAsync(Guid idSanPham, SanPhamCreateModel[] obj);
+        public Task<List<SanPhamModel>> GetSanPhamAsync();
 
-        public Task<bool> UpdateAsync();
+        public Task<bool> AddAsync(Guid idSanPham, string tenSanPham, SanPhamCreateModel[] obj);
 
         public Task<bool> DeleteAsync(Guid id);
+
+        public Task<bool> AddSanPhamAsync(string name);
     }
 }

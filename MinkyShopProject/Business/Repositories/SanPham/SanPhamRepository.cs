@@ -34,7 +34,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             _mapper = mapper;
         }
 
-        public async Task<object> AddAsync(Guid idSanPham, SanPhamCreateModel[] obj)
+        public async Task<bool> AddAsync(Guid idSanPham, string tenSanPham, SanPhamCreateModel[] obj)
         {
             try
             {
@@ -44,19 +44,26 @@ namespace MinkyShopProject.Business.Repositories.SanPham
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
+                var sanPham = await _context.SanPham.FirstOrDefaultAsync(c => c.Id == idSanPham);
+
+                if(sanPham == null)
+                {
+                    _context.SanPham.Add(new Entities.SanPham() { Id = idSanPham, Ten = tenSanPham });
+                }
+
                 foreach (var x in obj)
                 {
                     var thuocTinhSanPhamExist = await _context.ThuocTinhSanPham.FirstOrDefaultAsync(c => c.IdSanPham == idSanPham && c.IdThuocTinh == x.IdThuocTinh);
 
                     // Thêm Thuộc Tính Cho Sản Phẩm
-                    if(thuocTinhSanPhamExist == null)
+                    if (thuocTinhSanPhamExist == null)
                     {
                         var thuocTinhSanPham = new ThuocTinhSanPhamCreateModel() { Id = idThuocTinhSanPham, IdSanPham = idSanPham, IdThuocTinh = x.IdThuocTinh };
                         await _context.ThuocTinhSanPham.AddAsync(_mapper.Map<ThuocTinhSanPhamCreateModel, ThuocTinhSanPham>(thuocTinhSanPham));
                     }
                     else
                     {
-                            idThuocTinhSanPham = thuocTinhSanPhamExist.Id;
+                        idThuocTinhSanPham = thuocTinhSanPhamExist.Id;
                     }
 
                     // Tạo Ra Các Biến Giá Trị Sku Cho Biến Thể
@@ -105,12 +112,26 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             }
         }
 
+        public async Task<bool> AddSanPhamAsync(string name)
+        {
+            try
+            {
+                await _context.SanPham.AddAsync(new Entities.SanPham() { Ten = name });
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<bool> DeleteAsync(Guid id)
         {
             try
             {
                 var bienThe = await _context.BienThe.FindAsync(id);
-                if(bienThe != null)
+                if (bienThe != null)
                 {
                     _context.BienThe.Remove(bienThe);
                     await _context.SaveChangesAsync();
@@ -123,9 +144,9 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             }
         }
 
-        public async Task<SanPhamModel[]> GetAsync()
+        public async Task<List<BienTheModel>> GetAsync()
         {
-            var result = from tt in _context.ThuocTinh
+            var bienThe = from tt in _context.ThuocTinh
                          join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
                          join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
                          join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
@@ -143,21 +164,22 @@ namespace MinkyShopProject.Business.Repositories.SanPham
                              bt.GiaBan,
                              bt.Sku,
                          } into btc
-                         select new SanPhamModel
+                         select new BienTheModel
                          {
-                            Id = btc.First().bt.Id,
-                            Ten = btc.First().sp.Ten,
-                            Sku = btc.First().bt.Sku,
-                            GiaBan = btc.First().bt.GiaBan,
-                            SoLuong = btc.First().bt.SoLuong,
-                            ThuocTinh = String.Join(",", btc.Select(c => c.gt.Ten))
+                             Id = btc.First().bt.Id,
+                             Ten = btc.First().sp.Ten,
+                             Sku = btc.First().bt.Sku,
+                             GiaBan = btc.First().bt.GiaBan,
+                             SoLuong = btc.First().bt.SoLuong,
+                             GiaTri = String.Join(", ", btc.Select(c => c.gt.Ten))
                          };
-            return await result.ToArrayAsync();
+
+            return await Task.FromResult(bienThe.ToList());
         }
 
-        public Task<bool> UpdateAsync()
+        public async Task<List<SanPhamModel>> GetSanPhamAsync()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(_mapper.Map<List<Entities.SanPham>, List<SanPhamModel>>(await _context.SanPham.ToListAsync()));
         }
     }
 }

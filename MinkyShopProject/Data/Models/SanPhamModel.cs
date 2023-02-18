@@ -8,13 +8,9 @@ namespace MinkyShopProject.Data.Models
 
         public string Ten { get; set; } = null!;
 
-        public string Sku { get; set; } = null!;
+        public TrangThaiSanPham TrangThai { get; set; }
 
-        public float GiaBan { get; set; }
-
-        public int SoLuong { get; set; }
-
-        public string ThuocTinh { get; set; } = null!;
+        public DateTime NgayTao { get; set; }
     }
 
     public class SanPhamCreateModel
@@ -24,13 +20,6 @@ namespace MinkyShopProject.Data.Models
         public string TenThuocTinh { get; set; } = null!;
 
         public GiaTriModel[] GiaTris { get; set; } = null!;
-    }
-
-    public class SanPhamUpdateModel
-    {
-        public string Ten { get; set; } = null!;
-
-        public TrangThaiChung TrangThai { get; set; }
     }
 
     // Thuộc Tính Sản Phẩm
@@ -45,6 +34,21 @@ namespace MinkyShopProject.Data.Models
     }
 
     // Biến Thể
+
+    public class BienTheModel
+    {
+        public Guid Id { get; set; }
+
+        public string Ten { get; set; } = null!;
+
+        public string Sku { get; set; } = null!;
+
+        public float GiaBan { get; set; }
+
+        public int SoLuong { get; set; }
+
+        public string GiaTri { get; set; } = null!;
+    }
 
     public class BienTheCreateModel
     {

@@ -161,7 +161,7 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
                              Ten = ttc.First().ThuocTinhs.Ten,
                              NgayTao = ttc.First().ThuocTinhs.NgayTao,
                              TrangThai = ttc.First().ThuocTinhs.TrangThai,
-                             GiaTris = _mapper.Map<GiaTri[], GiaTriModel[]>(ttc.ToArray())
+                             GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.ToList())
                          };
             return result;
         }
