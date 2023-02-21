@@ -1,0 +1,164 @@
+﻿@page "/property"
+@using MinkyShopProject.Data.Models
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0">Edit Profile</p>
+                        <button class="btn btn-primary btn-sm ms-auto" @onclick="AddAsync">Save</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Tên Thuộc Tính</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" @oninput='((ui) => { ThuocTinh = ui.Value?.ToString() ?? ""; })'>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                                <label>Giá Trị</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" @oninput='((ui) => { GiaTri = ui.Value?.ToString() ?? ""; })' @onkeyup='((ui) => { if(ui.Code == "Enter"){ GiaTris.Add(GiaTri); } })'>
+                                </div>
+                        </div>
+                        <div class="d-flex flex-wrap position-relative py-2">
+                            <div class="d-flex flex-wrap">
+                                @foreach (var x in GiaTris)
+                                {
+                                    <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => GiaTris.Remove(x)">@x</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thuộc Tính</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giá Trị</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày Tạo</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var x in Model.Select((Value, Index) => (Index, Value)))
+                                {
+                                    <tr>
+                                        <td>
+                                            <p class="text-xs font-weight-bold mb-0">@(x.Index + 1)</p>
+                                        </td>
+                                        <td class="w-25">
+                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
+                                        </td>
+                                        <td class="p-0 w-25">
+                                            <table class="table table-bordered m-0 border-bottom-0">
+                                                <tbody>
+                                                    @foreach (var y in x.Value.GiaTris)
+                                                    {
+                                                        <tr class="border-bottom-0">
+                                                            <td class="w-80">
+                                                                <span class="text-secondary text-xs font-weight-bolder">@y.Ten</span>
+                                                            </td>
+                                                            <td class="text-sm">
+                                                                <a href="javascript:;" @onclick="() => DeleteAsync(y.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                                    <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                        <td class="align-middle text-center text-sm">
+                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <span class="text-secondary text-xs font-weight-bold">Đang Bán</span>
+                                        </td>
+                                        <td class="text-sm">
+                                            <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                                <i class="fas fa-eye text-info" aria-hidden="true"></i>
+                                            </a>
+                                            <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
+                                                <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
+                                            </a>
+                                            <a href="javascript:;" @onclick="() => DeleteAsync(x.Value.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    List<bool> showGiaTri = new List<bool>();
+
+    string ThuocTinh = "";
+
+    string GiaTri = "";
+
+    string Url = "https://localhost:7053/api";
+
+    List<string> GiaTris = new List<string>();
+
+    List<ThuocTinhModel> Model = new List<ThuocTinhModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+    }
+
+    async Task DeleteAsync(Guid id){
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        var result = await HttpClient.DeleteAsync($"{Url}/ThuocTinh/DeleteAsync?id={id}");
+        
+        if(result.IsSuccessStatusCode){
+            Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+        }
+    }
+
+    async Task UpdateAsync(Guid id){
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        var result = await HttpClient.PutAsync($"{Url}/ThuocTinh/DeleteAsync?id={id}", null);
+
+        if(result.IsSuccessStatusCode){
+            Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+        }
+    }
+
+    async Task AddAsync()
+    {
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        var result = await HttpClient.PostAsJsonAsync<ThuocTinhCreateModel>($"{Url}/ThuocTinh/AddAsync", new ThuocTinhCreateModel() { Ten = ThuocTinh, GiaTris = GiaTris.ToArray() });
+        
+        if(result.IsSuccessStatusCode){
+            Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+            GiaTris = new List<string>();
+            ThuocTinh = "";
+        }
+    }
+}

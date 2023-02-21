@@ -1,5 +1,7 @@
 ﻿@page "/variant"
 @using MinkyShopProject.Data.Models
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -18,7 +20,6 @@
                                 <label for="example-text-input" class="form-control-label">Sản Phẩm</label>
                                 <div class="position-relative">
                                     <input class="form-control" type="text" @bind="SanPham.Ten" @onfocus="() => { showSanPham = true; }">
-                                    <i @onclick="() => showAddSanPham = true" class="fa fa-plus position-absolute top-50 end-0 translate-middle-y text-danger" style="cursor: pointer" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#modal-form"></i>
                                 </div>
                             </div>
                             <div class="d-flex flex-wrap position-relative py-2">
@@ -43,7 +44,6 @@
                                 <label for="example-text-input" class="form-control-label">Thuộc Tính</label>
                                 <div class="position-relative">
                                     <input class="form-control" type="text" @onfocus="() => { showThuocTinh = true; }">
-                                    <i @onclick="() => showAddSanPham = false" class="fa fa-plus position-absolute top-50 end-0 translate-middle-y text-danger" style="cursor: pointer" aria-hidden="true" data-bs-toggle="modal" data-bs-target="#modal-form"></i>
                                 </div>
                             </div>
                             <div class="d-flex flex-wrap position-relative py-2">
@@ -107,120 +107,55 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="modal-form" tabindex="-1" role="dialog" aria-labelledby="modal-form" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-md" role="document">
-            <div class="modal-content">
-                <div class="modal-body p-0">
-                    <div class="card card-plain">
-                        <div class="card-header pb-0 text-left d-flex justify-content-between">
-                            <h4 class="font-weight-bolder text-info text-gradient mb-0">Thêm @(showAddSanPham ? "Sản Phẩm" : "Thuộc Tính")</h4>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="" @onchange="() => showAddSanPham = !showAddSanPham">
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            @if(!showAddSanPham){
-                                <form>
-                                    <label>Tên Thuộc Tính</label>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" @oninput="((ui) => { ThuocTinh = ui.Value.ToString(); })">
-                                    </div>
-                                    <label>Giá Trị</label>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" @oninput="((ui) => { GiaTri = ui.Value.ToString(); })" @onkeyup='((ui) => { if(ui.Code == "Enter"){ GiaTris.Add(GiaTri); } })'>
-                                    </div>
-                                    <div class="d-flex flex-wrap position-relative py-2">
-                                        <div class="d-flex flex-wrap">
-                                            @foreach (var x in GiaTris)
-                                            {
-                                                <span class="badge badge-primary me-2 mt-0" style="cursor: pointer">@x</span>
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="button" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0" @onclick="AddPropertyAsync">Xác Nhận</button>
-                                    </div>
-                                </form>
-                            }else{
-                                <form>
-                                    <label>Tên Sản Phẩm</label>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" @oninput="((ui) => { TenSanPham = ui.Value.ToString(); })">
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="button" class="btn btn-round bg-gradient-info btn-lg w-100 mt-4 mb-0" @onclick="AddProductAsync">Xác Nhận</button>
-                                    </div>
-                                </form>
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 @code {
-    private bool showThuocTinh = false;
+    bool showThuocTinh = false;
 
-    private bool showSanPham = false;
+    bool showSanPham = false;
 
-    private bool showAddSanPham = true;
+    string Url = "https://localhost:7053/api";
 
-    private List<bool> showGiaTri = new List<bool>();
+    List<bool> showGiaTri = new List<bool>();
 
-    private List<ThuocTinhModel> Model = new List<ThuocTinhModel>();
+    List<ThuocTinhModel> Model = new List<ThuocTinhModel>();
 
-    private List<ThuocTinhModel> ModelTemplate = new List<ThuocTinhModel>();
+    List<ThuocTinhModel> ModelTemplate = new List<ThuocTinhModel>();
 
-    private List<SanPhamModel> ModelSanPham = new List<SanPhamModel>();
+    List<SanPhamModel> ModelSanPham = new List<SanPhamModel>();
 
-    private SanPhamModel SanPham = new SanPhamModel()  { Id = Guid.NewGuid() };
-
-    private string ThuocTinh = "";
-
-    private string GiaTri = "";
-
-    private string TenSanPham = "";
-
-    private List<string> GiaTris = new List<string>();
+    SanPhamModel SanPham = new SanPhamModel();
 
     protected override async Task OnInitializedAsync()
     {
-        using (HttpClient httpClient = new HttpClient())
-        {
-            Model = await httpClient.GetFromJsonAsync<List<ThuocTinhModel>>("https://localhost:7053/api/ThuocTinh") ?? new List<ThuocTinhModel>();
-            ModelSanPham = await httpClient.GetFromJsonAsync<List<SanPhamModel>>("https://localhost:7053/api/SanPham/GetSanPhamAsync") ?? new List<SanPhamModel>();
-        }
+        Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+        ModelSanPham = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>($"{Url}/SanPham") ?? new List<SanPhamModel>();
     }
 
     public async Task AddAsync(){
-        using (HttpClient httpClient = new HttpClient())
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        if (ModelTemplate.Count() > 0)
         {
+
             var result = new List<SanPhamCreateModel>();
+
             foreach (var item in ModelTemplate)
             {
-                if(item.GiaTriTemplates.Count() > 0){
+                if (item.GiaTriTemplates.Count() > 0)
+                {
                     result.Add(new SanPhamCreateModel() { TenThuocTinh = item.Ten, IdThuocTinh = item.Id, GiaTris = item.GiaTriTemplates.ToArray() });
                 }
             }
-            await httpClient.PostAsJsonAsync<SanPhamCreateModel[]>($"https://localhost:7053/api/SanPham?idSanPham={SanPham.Id}&tenSanPham={SanPham.Ten}", result.ToArray());
-        }
-    }
 
-    public async Task AddPropertyAsync(){
-        using (HttpClient httpClient = new HttpClient())
-        {
-            await httpClient.PostAsJsonAsync<ThuocTinhCreateModel>("https://localhost:7053/api/ThuocTinh/AddAsync", new ThuocTinhCreateModel() { Ten = ThuocTinh, GiaTris = GiaTris.ToArray() });
-        }
-    }
+            var result2 = await HttpClient.PostAsJsonAsync<SanPhamCreateModel[]>($"{Url}/BienThe?idSanPham={SanPham.Id}&tenSanPham={SanPham.Ten}", result.ToArray());
 
-    public async Task AddProductAsync()
-    {
-        using (HttpClient httpClient = new HttpClient())
-        {
-            await httpClient.PostAsJsonAsync<ThuocTinhCreateModel>($"https://localhost:7053/api/SanPham/AddSanPhamAsync?name={TenSanPham}", new ThuocTinhCreateModel() { Ten = ThuocTinh, GiaTris = GiaTris.ToArray() });
+            if (result2.IsSuccessStatusCode)
+            {
+                ModelTemplate = new List<ThuocTinhModel>();
+            }
         }
     }
 }

@@ -2494,7 +2494,7 @@ progress {
 }
 
 .form-control:disabled, .form-control[readonly] {
-    background-color: #e9ecef;
+    background-color: transparent;
     opacity: 1
 }
 
@@ -23500,7 +23500,7 @@ hr {
 }
 
 .table tbody tr:last-child td {
-    border-width: 0
+    border-width: 1
 }
 
 .table > :not(:last-child) > :last-child > * {

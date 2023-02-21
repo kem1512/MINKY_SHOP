@@ -14,7 +14,7 @@ namespace MinkyShopProject.Api.Controllers
     {
         private readonly IThuocTinhRepository _repository;
 
-        public ThuocTinhController(MinkyShopDbContext context, IThuocTinhRepository repository, IMapper mapper)
+        public ThuocTinhController(IThuocTinhRepository repository)
         {
             _repository = repository;
         }

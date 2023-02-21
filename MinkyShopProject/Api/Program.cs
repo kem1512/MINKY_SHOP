@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
+using MinkyShopProject.Business.Repositories.BienThe;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
 
@@ -19,6 +20,8 @@ builder.Services.AddDbContext<MinkyShopDbContext>(options => options.UseSqlServe
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 
 builder.Services.AddScoped<IThuocTinhRepository, ThuocTinhRepository>();
+
+builder.Services.AddScoped<IBienTheRepository, BienTheRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

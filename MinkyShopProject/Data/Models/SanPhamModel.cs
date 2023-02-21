@@ -45,6 +45,8 @@ namespace MinkyShopProject.Data.Models
 
         public float GiaBan { get; set; }
 
+        public string Anh { get; set; } = null!;
+
         public int SoLuong { get; set; }
 
         public string GiaTri { get; set; } = null!;
