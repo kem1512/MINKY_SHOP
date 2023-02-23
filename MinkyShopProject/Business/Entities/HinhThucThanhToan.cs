@@ -7,18 +7,20 @@ using System.Threading.Tasks;
 
 namespace MinkyShopProject.Business.Entities
 {
-    public class ThuocTinh
+    public class HinhThucThanhToan
     {
         public Guid Id { get; set; }
 
-        public string Ten { get; set; } = null!;
-
-        public TrangThaiThuocTinh TrangThai { get; set; }
+        public Guid IdHoaDon { get; set; }
 
         public DateTime NgayTao { get; set; }
 
-        public List<ThuocTinhSanPham> ThuocTinhSanPhams { get; set; } = null!;
+        public KieuThanhToan KieuThanhToan { get; set; }
 
-        public List<GiaTri> GiaTris { get; set; } = null!;
+        public float TongTienThanhToan { get; set; }
+
+        public string GhiChu { get; set; } = null!;
+
+        public HoaDon HoaDon { get; set; } = null!;
     }
 }

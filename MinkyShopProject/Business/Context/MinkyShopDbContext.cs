@@ -32,5 +32,25 @@ namespace MinkyShopProject.Business.Context
         public DbSet<GiaTri> GiaTri { get; set; } = null!;
 
         public DbSet<ThuocTinh> ThuocTinh { get; set; } = null!;
+
+        public DbSet<HoaDonChiTiet> HoaDonChiTiet { get; set; } = null!;
+
+        public DbSet<HinhThucThanhToan> HinhThucThanhToan { get; set; } = null!;
+
+        public DbSet<NhanVien> NhanVien { get; set; } = null!;
+
+        public DbSet<DanhGia> DanhGia { get; set; } = null!;
+
+        public DbSet<HoaDon> HoaDon { get; set; } = null!;
+
+        public DbSet<MoTa> MoTa { get; set; } = null!;
+
+        public DbSet<KhachHang> KhachHang { get; set; } = null!;
+
+        public DbSet<Voucher> Voucher { get; set; } = null!;
+
+        public DbSet<VoucherKhachHang> VoucherKhachHang { get; set; } = null!;
+
+        public DbSet<VoucherLog> VoucherLog { get; set; } = null!;
     }
 }

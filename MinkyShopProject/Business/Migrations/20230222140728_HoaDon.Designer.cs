@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinkyShopProject.Business.Context;
 
@@ -11,9 +12,10 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    partial class MinkyShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230222140728_HoaDon")]
+    partial class HoaDon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +46,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 509, DateTimeKind.Local).AddTicks(8362));
+                        .HasDefaultValue(new DateTime(2023, 2, 22, 21, 7, 27, 990, DateTimeKind.Local).AddTicks(8767));
 
                     b.Property<string>("Sku")
                         .IsRequired()
@@ -102,59 +104,6 @@ namespace MinkyShopProject.Business.Migrations
                     b.ToTable("BienTheChiTiet", (string)null);
                 });
 
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.DanhGia", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(NEWID())");
-
-                    b.Property<string>("Anh")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("IdBienThe")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("IdHoaDon")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("IdKhachHang")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<DateTime>("NgayDanhGia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 510, DateTimeKind.Local).AddTicks(1427));
-
-                    b.Property<string>("NoiDung")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SoDanhGia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("TrangThai")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdBienThe");
-
-                    b.HasIndex("IdHoaDon")
-                        .IsUnique();
-
-                    b.HasIndex("IdKhachHang");
-
-                    b.ToTable("DanhGia", (string)null);
-                });
-
             modelBuilder.Entity("MinkyShopProject.Business.Entities.GiaTri", b =>
                 {
                     b.Property<Guid>("Id")
@@ -200,7 +149,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 511, DateTimeKind.Local).AddTicks(1438));
+                        .HasDefaultValue(new DateTime(2023, 2, 22, 21, 7, 27, 991, DateTimeKind.Local).AddTicks(3810));
 
                     b.Property<float>("TongTienThanhToan")
                         .ValueGeneratedOnAdd()
@@ -253,7 +202,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 511, DateTimeKind.Local).AddTicks(7089));
+                        .HasDefaultValue(new DateTime(2023, 2, 22, 21, 7, 27, 991, DateTimeKind.Local).AddTicks(9696));
 
                     b.Property<DateTime>("NgayThanhToan")
                         .HasColumnType("datetime2");
@@ -332,82 +281,6 @@ namespace MinkyShopProject.Business.Migrations
                     b.ToTable("HoaDonChiTiet", (string)null);
                 });
 
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.KhachHang", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Anh")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DiaChi")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("GioiTinh")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("IdViDiem")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Ma")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("MatKhau")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("NgaySinh")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Sdt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SoLanMua")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Ten")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TrangThaiKhachHang")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("KhachHang");
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.MoTa", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(NEWID())");
-
-                    b.Property<string>("Anh")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("IdSanPham")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdSanPham")
-                        .IsUnique();
-
-                    b.ToTable("MoTa", (string)null);
-                });
-
             modelBuilder.Entity("MinkyShopProject.Business.Entities.NhanVien", b =>
                 {
                     b.Property<Guid>("Id")
@@ -479,7 +352,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 512, DateTimeKind.Local).AddTicks(3598));
+                        .HasDefaultValue(new DateTime(2023, 2, 22, 21, 7, 27, 992, DateTimeKind.Local).AddTicks(4576));
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -505,7 +378,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 512, DateTimeKind.Local).AddTicks(4323));
+                        .HasDefaultValue(new DateTime(2023, 2, 22, 21, 7, 27, 992, DateTimeKind.Local).AddTicks(5308));
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -544,157 +417,6 @@ namespace MinkyShopProject.Business.Migrations
                     b.ToTable("ThuocTinhSanPham", (string)null);
                 });
 
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.Voucher", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(NEWID())");
-
-                    b.Property<int>("HinhThucGiamGia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("LoaiGiamGia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.Property<string>("Ma")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("MoTa")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("NgayApDung")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 512, DateTimeKind.Local).AddTicks(9624));
-
-                    b.Property<DateTime>("NgayKetThuc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 512, DateTimeKind.Local).AddTicks(9743));
-
-                    b.Property<int>("SoLuong")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<float>("SoTienCan")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
-
-                    b.Property<float>("SoTienGiam")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
-
-                    b.Property<string>("Ten")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
-
-                    b.Property<int>("TrangThai")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Ma")
-                        .IsUnique();
-
-                    b.ToTable("Voucher", (string)null);
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.VoucherKhachHang", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(NEWID())");
-
-                    b.Property<Guid>("IdKhachHang")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<Guid>("IdVoucher")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<Guid>("KhachHangId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TrangThai")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<Guid>("VoucherId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KhachHangId");
-
-                    b.HasIndex("VoucherId");
-
-                    b.ToTable("VoucherKhachHang", (string)null);
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.VoucherLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(NEWID())");
-
-                    b.Property<Guid>("IdHoaDon")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<Guid>("IdVoucher")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValue(new Guid("00000000-0000-0000-0000-000000000000"));
-
-                    b.Property<DateTime>("NgayTao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 22, 23, 33, 5, 513, DateTimeKind.Local).AddTicks(1878));
-
-                    b.Property<float>("SoTienGiam")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
-
-                    b.Property<float>("TienSauKhiGiam")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
-
-                    b.Property<float>("TienTruocKhiGiam")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdHoaDon");
-
-                    b.HasIndex("IdVoucher");
-
-                    b.ToTable("VoucherLog", (string)null);
-                });
-
             modelBuilder.Entity("MinkyShopProject.Business.Entities.BienThe", b =>
                 {
                     b.HasOne("MinkyShopProject.Business.Entities.SanPham", "SanPham")
@@ -730,33 +452,6 @@ namespace MinkyShopProject.Business.Migrations
                     b.Navigation("GiaTri");
 
                     b.Navigation("ThuocTinhSanPham");
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.DanhGia", b =>
-                {
-                    b.HasOne("MinkyShopProject.Business.Entities.BienThe", "BienThe")
-                        .WithMany("DanhGias")
-                        .HasForeignKey("IdBienThe")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MinkyShopProject.Business.Entities.HoaDon", "HoaDon")
-                        .WithOne("DanhGia")
-                        .HasForeignKey("MinkyShopProject.Business.Entities.DanhGia", "IdHoaDon")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MinkyShopProject.Business.Entities.KhachHang", "KhachHang")
-                        .WithMany("DanhGias")
-                        .HasForeignKey("IdKhachHang")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BienThe");
-
-                    b.Navigation("HoaDon");
-
-                    b.Navigation("KhachHang");
                 });
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.GiaTri", b =>
@@ -811,17 +506,6 @@ namespace MinkyShopProject.Business.Migrations
                     b.Navigation("HoaDon");
                 });
 
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.MoTa", b =>
-                {
-                    b.HasOne("MinkyShopProject.Business.Entities.SanPham", "SanPham")
-                        .WithOne("MoTa")
-                        .HasForeignKey("MinkyShopProject.Business.Entities.MoTa", "IdSanPham")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SanPham");
-                });
-
             modelBuilder.Entity("MinkyShopProject.Business.Entities.ThuocTinhSanPham", b =>
                 {
                     b.HasOne("MinkyShopProject.Business.Entities.SanPham", "SanPham")
@@ -841,49 +525,9 @@ namespace MinkyShopProject.Business.Migrations
                     b.Navigation("ThuocTinh");
                 });
 
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.VoucherKhachHang", b =>
-                {
-                    b.HasOne("MinkyShopProject.Business.Entities.KhachHang", "KhachHang")
-                        .WithMany()
-                        .HasForeignKey("KhachHangId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MinkyShopProject.Business.Entities.Voucher", "Voucher")
-                        .WithMany("VoucherKhachHangs")
-                        .HasForeignKey("VoucherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("KhachHang");
-
-                    b.Navigation("Voucher");
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.VoucherLog", b =>
-                {
-                    b.HasOne("MinkyShopProject.Business.Entities.HoaDon", "HoaDon")
-                        .WithMany("VoucherLogs")
-                        .HasForeignKey("IdHoaDon")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MinkyShopProject.Business.Entities.Voucher", "Voucher")
-                        .WithMany("VoucherLogs")
-                        .HasForeignKey("IdVoucher")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("HoaDon");
-
-                    b.Navigation("Voucher");
-                });
-
             modelBuilder.Entity("MinkyShopProject.Business.Entities.BienThe", b =>
                 {
                     b.Navigation("BienTheChiTiets");
-
-                    b.Navigation("DanhGias");
 
                     b.Navigation("HoaDonChiTiets");
                 });
@@ -895,19 +539,9 @@ namespace MinkyShopProject.Business.Migrations
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.HoaDon", b =>
                 {
-                    b.Navigation("DanhGia")
-                        .IsRequired();
-
                     b.Navigation("HinhThucThanhToans");
 
                     b.Navigation("HoaDonChiTiets");
-
-                    b.Navigation("VoucherLogs");
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.KhachHang", b =>
-                {
-                    b.Navigation("DanhGias");
                 });
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.NhanVien", b =>
@@ -918,9 +552,6 @@ namespace MinkyShopProject.Business.Migrations
             modelBuilder.Entity("MinkyShopProject.Business.Entities.SanPham", b =>
                 {
                     b.Navigation("BienThes");
-
-                    b.Navigation("MoTa")
-                        .IsRequired();
 
                     b.Navigation("ThuocTinhSanPhams");
                 });
@@ -935,13 +566,6 @@ namespace MinkyShopProject.Business.Migrations
             modelBuilder.Entity("MinkyShopProject.Business.Entities.ThuocTinhSanPham", b =>
                 {
                     b.Navigation("BienTheChiTiets");
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.Voucher", b =>
-                {
-                    b.Navigation("VoucherKhachHangs");
-
-                    b.Navigation("VoucherLogs");
                 });
 #pragma warning restore 612, 618
         }

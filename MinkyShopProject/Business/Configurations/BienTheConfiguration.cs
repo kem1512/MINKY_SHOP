@@ -25,7 +25,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.HasIndex(c => c.Sku).IsUnique();
 
-            builder.Property(c => c.Anh).HasDefaultValue(String.Empty);
+            builder.Property(c => c.Anh).HasDefaultValue(null);
 
             builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
 

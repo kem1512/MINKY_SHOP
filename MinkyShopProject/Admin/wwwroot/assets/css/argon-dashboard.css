@@ -21648,7 +21648,7 @@ hr {
     overflow-y: auto;
     padding: 0;
     box-shadow: none;
-    z-index: 9999
+    z-index: 700
 }
 
     .navbar-vertical.navbar-expand-xs .navbar-collapse {

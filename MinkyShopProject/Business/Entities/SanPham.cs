@@ -17,8 +17,10 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public IEnumerable<BienThe> BienThes { get; set; } = null!;
+        public MoTa MoTa { get; set; } = null!;
 
-        public IEnumerable<ThuocTinhSanPham> ThuocTinhSanPhams { get; set; } = null!;
+        public List<BienThe> BienThes { get; set; } = null!;
+
+        public List<ThuocTinhSanPham> ThuocTinhSanPhams { get; set; } = null!;
     }
 }

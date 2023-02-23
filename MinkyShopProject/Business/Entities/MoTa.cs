@@ -6,18 +6,14 @@ using System.Threading.Tasks;
 
 namespace MinkyShopProject.Business.Entities
 {
-    public class ThuocTinhSanPham
+    public class MoTa
     {
         public Guid Id { get; set; }
 
-        public Guid IdThuocTinh { get; set; }
-
         public Guid IdSanPham { get; set; }
 
-        public SanPham? SanPham { get; set; }
+        public string Anh { get; set; } = null!;
 
-        public ThuocTinh? ThuocTinh { get; set; }
-
-        public List<BienTheChiTiet> BienTheChiTiets { get; set; } = null!;
+        public SanPham SanPham { get; set; } = null!;
     }
 }

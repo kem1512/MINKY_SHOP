@@ -27,6 +27,10 @@ namespace MinkyShopProject.Business.Entities
 
         public SanPham SanPham { get; set; } = null!;
 
-        public IEnumerable<BienTheChiTiet> BienTheChiTiets { get; set; } = null!;
+        public List<DanhGia> DanhGias { get; set; } = null!;
+
+        public List<BienTheChiTiet> BienTheChiTiets { get; set; } = null!;
+
+        public List<HoaDonChiTiet> HoaDonChiTiets { get; set; } = null!;
     }
 }
