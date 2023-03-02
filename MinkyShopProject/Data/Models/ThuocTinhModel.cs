@@ -33,8 +33,6 @@ namespace MinkyShopProject.Data.Models
     {
         public string Ten { get; set; } = null!;
 
-        public TrangThaiThuocTinh TrangThai { get; set; }
-
         public string[]? GiaTris { get; set; }
     }
 

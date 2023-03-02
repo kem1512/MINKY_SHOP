@@ -120,7 +120,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+        await Reload();
     }
 
     async Task DeleteAsync(Guid id){
@@ -129,9 +129,9 @@
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
         var result = await HttpClient.DeleteAsync($"{Url}/ThuocTinh/DeleteAsync?id={id}");
-        
+
         if(result.IsSuccessStatusCode){
-            Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+            await Reload();
         }
     }
 
@@ -143,7 +143,7 @@
         var result = await HttpClient.PutAsync($"{Url}/ThuocTinh/DeleteAsync?id={id}", null);
 
         if(result.IsSuccessStatusCode){
-            Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+            await Reload();
         }
     }
 
@@ -154,11 +154,16 @@
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
         var result = await HttpClient.PostAsJsonAsync<ThuocTinhCreateModel>($"{Url}/ThuocTinh/AddAsync", new ThuocTinhCreateModel() { Ten = ThuocTinh, GiaTris = GiaTris.ToArray() });
-        
+
         if(result.IsSuccessStatusCode){
-            Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
-            GiaTris = new List<string>();
-            ThuocTinh = "";
+            await Reload();
         }
+    }
+
+    async Task Reload()
+    {
+        Model = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+        GiaTris = new List<string>();
+        ThuocTinh = "";
     }
 }

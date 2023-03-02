@@ -6,24 +6,31 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid? IdTheLoai { get; set; }
-
         public string Ten { get; set; } = null!;
 
         public TrangThaiSanPham TrangThai { get; set; }
 
         public DateTime NgayTao { get; set; }
 
-        public List<SanPhamModel>? SanPhamModels { get; set; } = null!;
+        public List<SanPhamModel>? TheLoais { get; set; } = null!;
     }
 
     public class SanPhamCreateModel
     {
-        public Guid IdThuocTinh { get; set; }
+        public Guid Id { get; set; }
 
-        public string TenThuocTinh { get; set; } = null!;
+        public Guid? IdTheLoai { get; set; }
 
-        public GiaTriModel[] GiaTris { get; set; } = null!;
+        public string Ten { get; set; } = null!;
+
+        public List<SanPhamCreateModel>? TheLoais { get; set; } = null!;
+    }
+
+    public class SanPhamUpdateModel
+    {
+        public string Ten { get; set; } = null!;
+
+        public TrangThaiSanPham TrangThai { get; set; }
     }
 
     // Thuộc Tính Sản Phẩm
@@ -63,6 +70,15 @@ namespace MinkyShopProject.Data.Models
         public Guid IdSanPham { get; set; }
 
         public string Sku { get; set; } = null!;
+    }
+
+    public class BienTheUpdateModel
+    {
+        public float GiaBan { get; set; }
+
+        public string Anh { get; set; } = null!;
+
+        public int SoLuong { get; set; }
     }
 
     // Biến Thể Chi Tiêt

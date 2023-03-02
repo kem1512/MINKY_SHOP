@@ -26,14 +26,14 @@
                             <div class="col-6">
                                 <label>Thể Loại</label>
                                 <input type="text" class="form-control" @oninput='((ui) => { TheLoai = ui.Value?.ToString() ?? ""; })'
-                                @onkeyup='((ui) => { if(ui.Code == "Enter"){ SanPham.SanPhamModels?.Add(new SanPhamModel(){ Ten = TheLoai }); } })'>
+                                       @onkeyup='((ui) => { if(ui.Code == "Enter"){ SanPham.TheLoais?.Add(new SanPhamCreateModel(){ Ten = TheLoai }); } })'>
                             </div>
                             <div class="d-flex flex-wrap position-relative py-2">
                                 <div class="d-flex flex-wrap">
-                                    @if(SanPham.SanPhamModels?.Count() > 0){
-                                        @foreach (var x in SanPham.SanPhamModels)
+                                    @if(SanPham.TheLoais?.Count() > 0){
+                                        @foreach (var x in SanPham.TheLoais)
                                         {
-                                            <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => SanPham.SanPhamModels.Remove(x)">@x.Ten</span>
+                                            <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => SanPham.TheLoais.Remove(x)">@x.Ten</span>
                                         }
                                     }
                                 </div>
@@ -65,15 +65,15 @@
                                         <td class="p-0">
                                             <table class="table table-bordered m-0 border-bottom-0">
                                                 <tbody>
-                                                    @if(x.Value.SanPhamModels?.Count() > 0){
-                                                        @foreach (var y in x.Value.SanPhamModels)
+                                                    @if(x.Value.TheLoais?.Count() > 0){
+                                                        @foreach (var y in x.Value.TheLoais)
                                                         {
                                                             <tr class="border-bottom-0">
                                                                 <td class="w-80">
                                                                     <span class="text-secondary text-xs font-weight-bolder">@y.Ten</span>
                                                                 </td>
                                                                 <td class="text-sm">
-                                                                    <a href="javascript:;" @onclick="() => Delete(x.Index)">
+                                                                    <a href="javascript:;" @onclick="() => Delete(y.Id)">
                                                                         <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                                                                     </a>
                                                                 </td>
@@ -101,7 +101,7 @@
                                             <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
                                                 <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
                                             </a>
-                                            <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => Delete(x.Index)">
+                                            <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => Delete(x.Value.Id)">
                                                 <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                                             </a>
                                         </td>
@@ -119,7 +119,7 @@
 @code {
     List<SanPhamModel> Model = new List<SanPhamModel>();
 
-    SanPhamModel SanPham = new SanPhamModel() { SanPhamModels = new List<SanPhamModel>() };
+    SanPhamCreateModel SanPham = new SanPhamCreateModel() { TheLoais = new List<SanPhamCreateModel>() };
 
     string TheLoai = "";
 
@@ -127,19 +127,18 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Model = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>($"{Url}/SanPham") ?? new List<SanPhamModel>();
+        await Reload();
     }
 
-    async Task Delete(int index){
+    async Task Delete(Guid id){
         var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = await HttpClient.DeleteAsync($"{Url}/SanPham?id={Model[index].Id}");
+        var result = await HttpClient.DeleteAsync($"{Url}/SanPham?id={id}");
 
-        if (result.IsSuccessStatusCode)
-        {
-            Model.Remove(Model[index]);
+        if (result.IsSuccessStatusCode){
+            await Reload();
         }
     }
 
@@ -149,10 +148,15 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = await HttpClient.PostAsJsonAsync<SanPhamModel>($"{Url}/SanPham", SanPham);
+        var result = await HttpClient.PostAsJsonAsync<SanPhamCreateModel>($"{Url}/SanPham", SanPham);
 
         if(result.IsSuccessStatusCode){
-            Model.Add(SanPham);
+            await Reload();
         }
+    }
+
+    async Task Reload()
+    {
+        Model = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>($"{Url}/SanPham") ?? new List<SanPhamModel>();
     }
 }

@@ -20,9 +20,9 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<object>> AddAsync(Guid idSanPham, string tenSanPham, SanPhamCreateModel[] obj)
+        public async Task<ActionResult<object>> AddAsync(Guid idSanPham, ThuocTinhModel[] obj)
         {
-            return Ok(await _repository.AddAsync(idSanPham, tenSanPham, obj));
+            return Ok(await _repository.AddAsync(idSanPham, obj));
         }
 
 
@@ -33,7 +33,7 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPut()]
-        public async Task<ActionResult> UpdateBienTheAsync(Guid id, BienTheModel obj)
+        public async Task<ActionResult> UpdateBienTheAsync(Guid id, BienTheUpdateModel obj)
         {
             return Ok(await _repository.UpdateAsync(id, obj));
         }

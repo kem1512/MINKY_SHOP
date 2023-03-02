@@ -23,30 +23,24 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             _mapper = mapper;
         }
 
-        public async Task<bool> AddAsync(Guid idSanPham, string tenSanPham, SanPhamCreateModel[] obj)
+        public async Task<bool> AddAsync(Guid idSanPham, ThuocTinhModel[] obj)
         {
             try
             {
                 var skus = new List<string[]>();
+                
                 var idBienThe = Guid.NewGuid();
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
-                var sanPham = await _context.SanPham.FirstOrDefaultAsync(c => c.Id == idSanPham);
-
-                if (sanPham == null)
-                {
-                    _context.SanPham.Add(new Entities.SanPham() { Id = idSanPham, Ten = tenSanPham });
-                }
-
                 foreach (var x in obj)
                 {
-                    var thuocTinhSanPhamExist = await _context.ThuocTinhSanPham.FirstOrDefaultAsync(c => c.IdSanPham == idSanPham && c.IdThuocTinh == x.IdThuocTinh);
+                    var thuocTinhSanPhamExist = await _context.ThuocTinhSanPham.FirstOrDefaultAsync(c => c.IdSanPham == idSanPham && c.IdThuocTinh == x.Id);
 
                     // Thêm Thuộc Tính Cho Sản Phẩm
                     if (thuocTinhSanPhamExist == null)
                     {
-                        var thuocTinhSanPham = new ThuocTinhSanPhamCreateModel() { Id = idThuocTinhSanPham, IdSanPham = idSanPham, IdThuocTinh = x.IdThuocTinh };
+                        var thuocTinhSanPham = new ThuocTinhSanPhamCreateModel() { Id = idThuocTinhSanPham, IdSanPham = idSanPham, IdThuocTinh = x.Id };
                         await _context.ThuocTinhSanPham.AddAsync(_mapper.Map<ThuocTinhSanPhamCreateModel, ThuocTinhSanPham>(thuocTinhSanPham));
                     }
                     else
@@ -56,17 +50,18 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                     // Tạo Ra Các Biến Giá Trị Sku Cho Biến Thể
                     var sku = new List<string>();
+
                     foreach (var y in x.GiaTris)
                     {
                         // Nếu Tên Thuộc Tính Có 2 Kí Tự Trở Lên Thì Lấy 2 Ký Tự Không Thì Chỉ Lấy Kí Tự Đầu Tiên
-                        var thuocTinh = x.TenThuocTinh.Split(" ");
+                        var thuocTinh = x.Ten.Split(" ");
 
                         var tenThuocTinh = thuocTinh.Count() > 2 ? thuocTinh[0].Substring(0, 1) + thuocTinh[1].Substring(0, 1) : thuocTinh[0].Substring(0, 1);
 
                         // Lấy Kí Tự Đầu Tiên
                         var tenGiaTri = y.Ten.Substring(0, 1);
 
-                        sku.Add(tenThuocTinh + tenGiaTri + "/" + y.Id + "/" + x.IdThuocTinh + "/" + idThuocTinhSanPham);
+                        sku.Add(tenThuocTinh + tenGiaTri + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham);
                     }
                     skus.Add(sku.ToArray());
                     idThuocTinhSanPham = Guid.NewGuid();
@@ -120,7 +115,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
         public async Task<List<BienTheModel>> GetAsync()
         {
-            var bienThe = from tt in _context.ThuocTinh
+            var result = from tt in _context.ThuocTinh
                           join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
                           join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
                           join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
@@ -149,20 +144,17 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                               GiaTri = String.Join(" ", btc.Select(c => c.gt.Ten))
                           };
 
-            return await Task.FromResult(bienThe.ToList());
+            return await result.ToListAsync();
         }
 
-        public async Task<bool> UpdateAsync(Guid id, BienTheModel obj)
+        public async Task<bool> UpdateAsync(Guid id, BienTheUpdateModel obj)
         {
             try
             {
                 var bienThe = await _context.BienThe.FindAsync(id);
                 if (bienThe != null)
                 {
-                    bienThe.Anh = obj.Anh;
-                    bienThe.GiaBan = obj.GiaBan;
-                    bienThe.SoLuong = obj.SoLuong;
-                    _context.BienThe.Update(bienThe);
+                    _context.BienThe.Update(_mapper.Map<BienTheUpdateModel, Entities.BienThe>(obj));
                     await _context.SaveChangesAsync();
                 }
                 return true;

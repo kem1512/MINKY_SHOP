@@ -7,10 +7,10 @@ namespace MinkyShopProject.Business.Repositories.SanPham
     {
         public Task<List<SanPhamModel>> GetAsync();
 
-        public Task<bool> UpdateAsync(Guid id, string name, TrangThaiSanPham TrangThai);
+        public Task<bool> UpdateAsync(Guid id, SanPhamUpdateModel obj);
 
         public Task<bool> DeleteAsync(Guid id);
 
-        public Task<bool> AddAsync(SanPhamModel obj);
+        public Task<bool> AddAsync(SanPhamCreateModel obj);
     }
 }

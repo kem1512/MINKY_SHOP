@@ -152,8 +152,8 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
 
         public async Task<IEnumerable<ThuocTinhModel>> GetAsync()
         {
-            var result = from tt in await _context.ThuocTinh.ToListAsync()
-                         join gt in await _context.GiaTri.ToListAsync() on tt.Id equals gt.IdThuocTinh
+            var result = from tt in _context.ThuocTinh
+                         join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
                          group gt by gt.IdThuocTinh into ttc
                          select new ThuocTinhModel
                          {
@@ -163,7 +163,7 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
                              TrangThai = ttc.First().ThuocTinhs.TrangThai,
                              GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.ToList())
                          };
-            return result;
+            return await result.ToListAsync();
         }
 
         public async Task<bool> UpdateAsync(Guid id, ThuocTinhUpdateModel obj)

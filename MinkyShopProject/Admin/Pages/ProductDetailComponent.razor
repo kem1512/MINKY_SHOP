@@ -16,10 +16,11 @@
                 </div>
                 <div class="card-body">
                     <div>
-                        @if(Model == null || ModelImage == null){
+                        @if (ModelBienThe == null || ModelImage == null)
+                        {
                             <span>Loading...</span>
                         } else{
-                            @foreach (var x in Model.Select((Value, Index) => (Index, Value)))
+                            @foreach (var x in ModelBienThe.Select((Value, Index) => (Index, Value)))
                             {
                                 <div class="d-flex m-0">
                                     <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-@x.Index" aria-expanded="false" aria-controls="collapseExample">
@@ -59,12 +60,12 @@
                                                             </div>
                                                             <div class="col-12 col-sm-6 mb-3">
                                                                 <label>Số Lượng</label>
-                                                                <input class="form-control" type="number" value="@x.Value.SoLuong" @oninput='(ui) => { Model[x.Index].SoLuong = int.Parse(ui.Value?.ToString() ?? "0"); }'
+                                                                <input class="form-control" type="number" value="@x.Value.SoLuong" @oninput='(ui) => { ModelBienThe[x.Index].SoLuong = int.Parse(ui.Value?.ToString() ?? "0"); }'
                                                                onfocus="focused(this)" onfocusout="defocused(this)">
                                                             </div>
                                                             <div class="col-12 col-sm-6 mb-3">
                                                                 <label>Giá Tiền</label>
-                                                                <input class="form-control" type="text" value="@x.Value.GiaBan" @oninput='(ui) => { Model[x.Index].GiaBan = float.Parse(ui.Value?.ToString() ?? "0"); }'>
+                                                                <input class="form-control" type="text" value="@x.Value.GiaBan" @oninput='(ui) => { ModelBienThe[x.Index].GiaBan = float.Parse(ui.Value?.ToString() ?? "0"); }'>
                                                             </div>
                                                             <div class="col-12 col-sm-6 mb-3">
                                                                 <label>SKU</label>
@@ -113,15 +114,18 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" @onclick='async() => await JSRuntime.InvokeVoidAsync("uploadImages", loadedFiles) '>Close</button>
-                <InputFile OnChange="@LoadFiles" multiple />
+                <div class="w-100 d-flex justify-content-between">
+                    <InputFile class="form-control w-25" OnChange="@LoadFiles" multiple />
+                    <button type="button" class="btn btn-secondary m-0" @onclick='async() => await JSRuntime.InvokeVoidAsync("uploadImages", loadedFiles) '>Tải Ảnh Lên</button>
+                    <button type="button" class="btn btn-secondary m-0" data-bs-dismiss="modal">Đóng</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 @code{
-    List<BienTheModel> Model = new List<BienTheModel>();
+    List<BienTheModel> ModelBienThe = new List<BienTheModel>();
 
     List<string> ModelImage = new List<string>();
 
@@ -133,7 +137,7 @@
     {
         using (HttpClient httpClient = new HttpClient())
         {
-            Model = await httpClient.GetFromJsonAsync<List<BienTheModel>>($"{Url}/BienThe") ?? new List<BienTheModel>();
+            ModelBienThe = await httpClient.GetFromJsonAsync<List<BienTheModel>>($"{Url}/BienThe") ?? new List<BienTheModel>();
             ModelImage = await JSRuntime.InvokeAsync<List<string>>("storageImages");
         }
     }
@@ -144,8 +148,8 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        await HttpClient.DeleteAsync($"{Url}/SanPham?id={Model[index]}");
-        Model.RemoveAt(index);
+        await HttpClient.DeleteAsync($"{Url}/SanPham?id={ModelBienThe[index]}");
+        ModelBienThe.RemoveAt(index);
     }
 
     async Task UpdateAsync(int index)
@@ -154,10 +158,10 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = Model[index];
+        var result = ModelBienThe[index];
         result.Anh = Anh;
 
-        var result2 = await HttpClient.PutAsJsonAsync<BienTheModel>($"{Url}/BienThe?id={Model[index].Id}", result);
+        var result2 = await HttpClient.PutAsJsonAsync<BienTheModel>($"{Url}/BienThe?id={ModelBienThe[index].Id}", result);
 
         if(result2.IsSuccessStatusCode)
             await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);
