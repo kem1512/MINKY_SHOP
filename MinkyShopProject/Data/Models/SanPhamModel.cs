@@ -12,7 +12,7 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<SanPhamModel>? TheLoais { get; set; } = null!;
+        public List<SanPhamModel>? TheLoais { get; set; } = new List<SanPhamModel>() { };
     }
 
     public class SanPhamCreateModel
@@ -28,9 +28,13 @@ namespace MinkyShopProject.Data.Models
 
     public class SanPhamUpdateModel
     {
+        public Guid Id { get; set; }
+
         public string Ten { get; set; } = null!;
 
         public TrangThaiSanPham TrangThai { get; set; }
+
+        public List<SanPhamUpdateModel>? TheLoais { get; set; } = null!;
     }
 
     // Thuộc Tính Sản Phẩm

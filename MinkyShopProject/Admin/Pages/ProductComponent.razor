@@ -21,19 +21,22 @@
                         <div class="row mb-3">
                             <div class="col-6">
                                 <label>Tên Sản Phẩm</label>
-                                <input type="text" class="form-control" @oninput='((ui) => { SanPham.Ten = ui.Value?.ToString() ?? ""; })'>
+                                <input type="text" class="form-control" @bind="SanPham.Ten">
                             </div>
                             <div class="col-6">
                                 <label>Thể Loại</label>
                                 <input type="text" class="form-control" @oninput='((ui) => { TheLoai = ui.Value?.ToString() ?? ""; })'
-                                       @onkeyup='((ui) => { if(ui.Code == "Enter"){ SanPham.TheLoais?.Add(new SanPhamCreateModel(){ Ten = TheLoai }); } })'>
+                                       @onkeyup='((ui) => { if(ui.Code == "Enter"){ SanPham.TheLoais?.Add(new SanPhamModel(){ Ten = TheLoai }); } })'>
                             </div>
                             <div class="d-flex flex-wrap position-relative py-2">
                                 <div class="d-flex flex-wrap">
-                                    @if(SanPham.TheLoais?.Count() > 0){
+                                    @if(SanPham.TheLoais != null && SanPham.TheLoais?.Count() > 0){
                                         @foreach (var x in SanPham.TheLoais)
                                         {
-                                            <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => SanPham.TheLoais.Remove(x)">@x.Ten</span>
+                                            if(x != null)
+                                            {
+                                                <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => SanPham.TheLoais.Remove(x)">@x.Ten</span>
+                                            }
                                         }
                                     }
                                 </div>
@@ -65,19 +68,29 @@
                                         <td class="p-0">
                                             <table class="table table-bordered m-0 border-bottom-0">
                                                 <tbody>
-                                                    @if(x.Value.TheLoais?.Count() > 0){
+                                                    @if(x.Value.TheLoais != null && x.Value.TheLoais?.Count() > 0){
                                                         @foreach (var y in x.Value.TheLoais)
                                                         {
-                                                            <tr class="border-bottom-0">
-                                                                <td class="w-80">
-                                                                    <span class="text-secondary text-xs font-weight-bolder">@y.Ten</span>
-                                                                </td>
-                                                                <td class="text-sm">
-                                                                    <a href="javascript:;" @onclick="() => Delete(y.Id)">
-                                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
+                                                            if(y != null)
+                                                            {
+                                                                <tr class="border-bottom-0">
+                                                                    <td class="w-80">
+                                                                        <span class="text-secondary text-xs font-weight-bolder">@y?.Ten</span>
+                                                                    </td>
+                                                                    <td class="text-sm">
+                                                                        <a href="javascript:;" @onclick="() => Delete(y.Id)">
+                                                                            <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                            }else{
+                                                                <tr class="border-bottom-0">
+                                                                    <td class="w-80">
+                                                                        <span class="text-secondary text-xs font-weight-bolder">Không Có</span>
+                                                                    </td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            }
                                                         }
                                                     }
                                                 </tbody>
@@ -95,10 +108,10 @@
                                             </select>
                                         </td>
                                         <td class="text-sm">
-                                            <a href="/productdetail" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                            <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
                                                 <i class="fas fa-eye text-info" aria-hidden="true"></i>
                                             </a>
-                                            <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
+                                            <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => SanPham = x.Value">
                                                 <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
                                             </a>
                                             <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => Delete(x.Value.Id)">
@@ -119,7 +132,7 @@
 @code {
     List<SanPhamModel> Model = new List<SanPhamModel>();
 
-    SanPhamCreateModel SanPham = new SanPhamCreateModel() { TheLoais = new List<SanPhamCreateModel>() };
+    SanPhamModel SanPham = new SanPhamModel() { TheLoais = new List<SanPhamModel>() };
 
     string TheLoai = "";
 
@@ -148,7 +161,7 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = await HttpClient.PostAsJsonAsync<SanPhamCreateModel>($"{Url}/SanPham", SanPham);
+        var result = await HttpClient.PostAsJsonAsync<SanPhamModel>($"{Url}/SanPham", SanPham);
 
         if(result.IsSuccessStatusCode){
             await Reload();
