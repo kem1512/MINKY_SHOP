@@ -1,6 +1,6 @@
 ﻿// Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
+import { getStorage, ref, listAll, getDownloadURL, uploadBytes } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -24,7 +24,7 @@ const storage = getStorage();
 // Create a reference under which you want to list
 const listRef = ref(storage, 'images/');
 
-async function storageImage() {
+async function storageImages() {
     var res = await listAll(listRef)
     var itemRef = await res.items;
     var images = [];
@@ -34,4 +34,16 @@ async function storageImage() {
     return images;
 }
 
-window.images = storageImage;
+async function uploadImages(images) {
+    for (var image of images) {
+        //const storageRef = ref(storage, 'images/' + image.name);
+        //uploadBytes(storageRef, new File([image], { type: 'image/jpeg' })).then((snapshot) => {
+        //    console.log('Uploaded a blob or file!');
+        //});
+        console.log(image)
+        console.log(new File([image], { contentType: 'image/jpeg' }))
+    }
+}
+
+window.storageImages = storageImages;
+window.uploadImages = uploadImages;

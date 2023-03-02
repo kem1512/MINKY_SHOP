@@ -18,9 +18,26 @@
                 </div>
                 <div class="card-body">
                     <form>
-                        <label>Tên Sản Phẩm</label>
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" @oninput='((ui) => { TenSanPham = ui.Value?.ToString() ?? ""; })'>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label>Tên Sản Phẩm</label>
+                                <input type="text" class="form-control" @oninput='((ui) => { SanPham.Ten = ui.Value?.ToString() ?? ""; })'>
+                            </div>
+                            <div class="col-6">
+                                <label>Thể Loại</label>
+                                <input type="text" class="form-control" @oninput='((ui) => { TheLoai = ui.Value?.ToString() ?? ""; })'
+                                @onkeyup='((ui) => { if(ui.Code == "Enter"){ SanPham.SanPhamModels?.Add(new SanPhamModel(){ Ten = TheLoai }); } })'>
+                            </div>
+                            <div class="d-flex flex-wrap position-relative py-2">
+                                <div class="d-flex flex-wrap">
+                                    @if(SanPham.SanPhamModels?.Count() > 0){
+                                        @foreach (var x in SanPham.SanPhamModels)
+                                        {
+                                            <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => SanPham.SanPhamModels.Remove(x)">@x.Ten</span>
+                                        }
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </form>
                     <div class="table-responsive">
@@ -29,6 +46,7 @@
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sản Phẩm</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thể Loại</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày Tạo</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
                                     <th class="text-secondary opacity-7"></th>
@@ -43,6 +61,27 @@
                                         </td>
                                         <td>
                                             <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
+                                        </td>
+                                        <td class="p-0">
+                                            <table class="table table-bordered m-0 border-bottom-0">
+                                                <tbody>
+                                                    @if(x.Value.SanPhamModels?.Count() > 0){
+                                                        @foreach (var y in x.Value.SanPhamModels)
+                                                        {
+                                                            <tr class="border-bottom-0">
+                                                                <td class="w-80">
+                                                                    <span class="text-secondary text-xs font-weight-bolder">@y.Ten</span>
+                                                                </td>
+                                                                <td class="text-sm">
+                                                                    <a href="javascript:;" @onclick="() => Delete(x.Index)">
+                                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
                                         </td>
                                         <td class="align-middle text-center text-sm">
                                             <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
@@ -78,9 +117,11 @@
 </div>
 
 @code {
-    string TenSanPham = "";
-
     List<SanPhamModel> Model = new List<SanPhamModel>();
+
+    SanPhamModel SanPham = new SanPhamModel() { SanPhamModels = new List<SanPhamModel>() };
+
+    string TheLoai = "";
 
     string Url = "https://localhost:7053/api";
 
@@ -108,10 +149,10 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = await HttpClient.PostAsync($"{Url}/SanPham?name={TenSanPham}", null);
+        var result = await HttpClient.PostAsJsonAsync<SanPhamModel>($"{Url}/SanPham", SanPham);
 
         if(result.IsSuccessStatusCode){
-            Model.Add(new SanPhamModel() { Ten = TenSanPham }); TenSanPham = "";
+            Model.Add(SanPham);
         }
     }
 }

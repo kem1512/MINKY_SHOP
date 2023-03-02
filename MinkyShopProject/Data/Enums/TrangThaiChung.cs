@@ -13,6 +13,11 @@ namespace MinkyShopProject.Data.Enums
 
     }
 
+    public enum TrangThaiViDiem
+    {
+        HoatDong
+    }
+
     public enum TrangThaiDanhGia
     {
         HienThi
@@ -47,6 +52,11 @@ namespace MinkyShopProject.Data.Enums
     public enum TrangThaiBienThe
     {
         DangBan, DaBan
+    }
+
+    public enum TrangThaiGiaoCa
+    {
+        CaDauTien
     }
 
     public enum TrangThaiBienTheChiTiet

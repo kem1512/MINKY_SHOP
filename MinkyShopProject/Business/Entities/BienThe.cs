@@ -29,6 +29,8 @@ namespace MinkyShopProject.Business.Entities
 
         public List<DanhGia> DanhGias { get; set; } = null!;
 
+        public List<GioHangChiTiet> GioHangChiTiets { get; set; } = null!;
+
         public List<BienTheChiTiet> BienTheChiTiets { get; set; } = null!;
 
         public List<HoaDonChiTiet> HoaDonChiTiets { get; set; } = null!;

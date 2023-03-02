@@ -24,15 +24,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
 
-            builder.Property(c => c.IdNhanVien).HasDefaultValue(Guid.Empty);
-
-            builder.Property(c => c.IdKhachHang).HasDefaultValue(Guid.Empty);
-
             builder.Property(c => c.LoaiDonHang).HasDefaultValue(LoaiDonHang.Offline);
-
-            builder.Property(c => c.TenNguoiNhan).HasDefaultValue(null);
-
-            builder.Property(c => c.DiaChi).HasDefaultValue(null);
 
             builder.Property(c => c.Sdt).HasDefaultValue(0);
 

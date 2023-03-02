@@ -33,6 +33,8 @@ namespace MinkyShopProject.Business.Entities
 
         public TrangThaiNhanVien TrangThai { get; set; }
 
+        public List<GiaoCa> GiaoCas { get; set; } = null!;
+
         public List<HoaDon> HoaDons { get; set; } = null!;
     }
 }

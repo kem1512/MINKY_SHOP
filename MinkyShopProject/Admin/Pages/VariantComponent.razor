@@ -30,7 +30,7 @@
                                         {
                                             @foreach (var x in ModelSanPham)
                                             {
-                                                <button class="list-group-item list-group-item-action" aria-current="true" @onmousedown="() => { SanPham = x; }">
+                                                <button class="list-group-item list-group-item-action" aria-current="true" @onmousedown="() => { SanPham = x; TheLoai = x.SanPhamModels[0]; }">
                                                     @x.Ten
                                                 </button>
                                             }
@@ -39,6 +39,36 @@
                                 }
                             </div>
                         </div>
+                        @if (SanPham.SanPhamModels != null && SanPham.SanPhamModels.Count() > 0)
+                        {
+                            <div class="col-md-6" @onfocusout="() => { showTheLoai = false; }">
+                                <div class="form-group mb-0">
+                                    <label for="example-text-input" class="form-control-label">Thể Loại</label>
+                                    <div class="position-relative">
+                                        <input class="form-control" type="text" @bind="TheLoai.Ten" @onfocus="() => { showTheLoai = true; }">
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap position-relative py-2">
+                                    @if (showTheLoai)
+                                    {
+                                        <div class="list-group position-absolute w-100 top-0" style="z-index: 1">
+                                            @if (SanPham != null)
+                                            {
+                                                if (SanPham.SanPhamModels != null && SanPham.SanPhamModels.Count() > 0)
+                                                {
+                                                    foreach (var y in SanPham.SanPhamModels)
+                                                    {
+                                                        <button class="list-group-item list-group-item-action" aria-current="true" @onmousedown="() => { TheLoai = y; }">
+                                                            @y.Ten
+                                                        </button>
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
                         <div class="col-md-6" @onfocusout="() => { showThuocTinh = false; }">
                             <div class="form-group mb-0">
                                 <label for="example-text-input" class="form-control-label">Thuộc Tính</label>
@@ -112,6 +142,8 @@
 @code {
     bool showThuocTinh = false;
 
+    bool showTheLoai = false;
+
     bool showSanPham = false;
 
     string Url = "https://localhost:7053/api";
@@ -125,6 +157,8 @@
     List<SanPhamModel> ModelSanPham = new List<SanPhamModel>();
 
     SanPhamModel SanPham = new SanPhamModel();
+
+    SanPhamModel TheLoai = new SanPhamModel();
 
     protected override async Task OnInitializedAsync()
     {
@@ -150,7 +184,7 @@
                 }
             }
 
-            var result2 = await HttpClient.PostAsJsonAsync<SanPhamCreateModel[]>($"{Url}/BienThe?idSanPham={SanPham.Id}&tenSanPham={SanPham.Ten}", result.ToArray());
+            var result2 = await HttpClient.PostAsJsonAsync<SanPhamCreateModel[]>($"{Url}/BienThe?idSanPham={TheLoai.Id}&tenSanPham={TheLoai.Ten}", result.ToArray());
 
             if (result2.IsSuccessStatusCode)
             {

@@ -36,12 +36,27 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             _mapper = mapper;
         }
 
-        public async Task<bool> AddAsync(string name)
+        public async Task<bool> AddAsync(SanPhamModel obj)
         {
             try
             {
-                await _context.SanPham.AddAsync(new Entities.SanPham() { Ten = name });
-                await _context.SaveChangesAsync();
+                if(obj != null)
+                {
+                    obj.Id = Guid.NewGuid();
+                    if(!_context.SanPham.Any(c => c.Id == obj.Id))
+                    {
+                        await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
+                        if (obj.SanPhamModels?.Count() > 0)
+                        {
+                            foreach (var x in obj.SanPhamModels)
+                            {
+                                x.IdTheLoai = obj.Id;
+                                await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(x));
+                            }
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+                }
                 return true;
             }
             catch (Exception)
@@ -70,10 +85,21 @@ namespace MinkyShopProject.Business.Repositories.SanPham
 
         public async Task<List<SanPhamModel>> GetAsync()
         {
-            return await Task.FromResult(_mapper.Map<List<Entities.SanPham>, List<SanPhamModel>>(await _context.SanPham.ToListAsync()));
+            var result = (from sp in _context.SanPham
+                         join tl in _context.SanPham on sp.Id equals tl.IdTheLoai
+                         group new { sp, tl } by sp.Id into spc 
+                         select new SanPhamModel
+                         {
+                             Id = spc.First().sp.Id,
+                             Ten = spc.First().sp.Ten,
+                             NgayTao = spc.First().sp.NgayTao,
+                             TrangThai = spc.First().sp.TrangThai,
+                             SanPhamModels = _mapper.Map<List<Entities.SanPham>, List<SanPhamModel>>(spc.Select(c => c.tl).ToList())
+                         }).ToList();
+            return await Task.FromResult(result);
         }
 
-        public async Task<bool> UpdateAsync(Guid id, string name, TrangThaiSanPham trangThai)
+    public async Task<bool> UpdateAsync(Guid id, string name, TrangThaiSanPham trangThai)
         {
             try
             {

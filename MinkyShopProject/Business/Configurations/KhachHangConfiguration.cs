@@ -24,23 +24,25 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Ten).HasDefaultValue(null);
 
-            builder.Property(c => c.Anh).HasDefaultValue(null);
+            builder.Property(c => c.Anh).IsRequired(false);
 
-            builder.Property(c => c.GioiTinh).HasDefaultValue(null);
+            builder.Property(c => c.GioiTinh).HasDefaultValue(true);
 
-            builder.Property(c => c.NgaySinh).HasDefaultValue(null);
+            builder.Property(c => c.NgaySinh).HasDefaultValue(DateTime.Now);
 
-            builder.Property(c => c.DiaChi).HasDefaultValue(null);
+            builder.Property(c => c.DiaChi).IsRequired(false);
 
             builder.Property(c => c.Sdt).HasDefaultValue(0);
 
-            builder.Property(c => c.Email).HasDefaultValue(null);
+            builder.Property(c => c.Email).HasDefaultValue(string.Empty);
 
-            builder.Property(c => c.MatKhau).HasDefaultValue(null);
+            builder.Property(c => c.MatKhau).HasDefaultValue(string.Empty);
 
             builder.Property(c => c.SoLanMua).HasDefaultValue(0);
 
             builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiKhachHang.Online);
+
+            builder.HasOne(c => c.ViDiem).WithOne(c => c.KhachHang).HasForeignKey<KhachHang>(c => c.IdViDiem).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

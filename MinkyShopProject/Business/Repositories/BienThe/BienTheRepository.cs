@@ -145,7 +145,8 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                               Sku = btc.First().bt.Sku,
                               GiaBan = btc.First().bt.GiaBan,
                               SoLuong = btc.First().bt.SoLuong,
-                              GiaTri = String.Join(", ", btc.Select(c => c.gt.Ten))
+                              Anh = btc.First().bt.Anh,
+                              GiaTri = String.Join(" ", btc.Select(c => c.gt.Ten))
                           };
 
             return await Task.FromResult(bienThe.ToList());

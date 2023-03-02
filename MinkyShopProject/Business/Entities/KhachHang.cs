@@ -11,7 +11,7 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public Guid IdViDiem { get; set; }
+        public Guid? IdViDiem { get; set; }
 
         public string Ma { get; set; } = null!;
 
@@ -34,6 +34,12 @@ namespace MinkyShopProject.Business.Entities
         public int SoLanMua { get; set; }
 
         public TrangThaiKhachHang TrangThai { get; set; }
+
+        public GioHang GioHang { get; set; } = null!;
+
+        public ViDiem ViDiem { get; set; } = null!;
+
+        public List<HoaDon> HoaDons { get; set; } = null!;
 
         public List<DanhGia> DanhGias { get; set; } = null!;
     }

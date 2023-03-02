@@ -20,9 +20,9 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult<object>> AddAsync(string name)
+        public async Task<ActionResult<object>> AddAsync(SanPhamModel obj)
         {
-            return Ok(await _repository.AddAsync(name));
+            return Ok(await _repository.AddAsync(obj));
         }
 
         [HttpGet()]

@@ -21,19 +21,17 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.Property(c => c.IdKhachHang).HasDefaultValue(Guid.Empty);
-
-            builder.Property(c => c.SoDanhGia).HasDefaultValue(0);
+            builder.Property(c => c.SoDanhGia).HasDefaultValue(5);
 
             builder.Property(c => c.NgayDanhGia).HasDefaultValue(DateTime.Now);
 
-            builder.Property(c => c.Anh).HasDefaultValue(null);
+            builder.Property(c => c.Anh).IsRequired(false);
 
             builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiDanhGia.HienThi);
 
             builder.HasOne(c => c.BienThe).WithMany(c => c.DanhGias).HasForeignKey(c => c.IdBienThe).OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(c => c.KhachHang).WithMany(c => c.DanhGias).HasForeignKey(c => c.IdKhachHang).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(c => c.KhachHang).WithMany(c => c.DanhGias).HasForeignKey(c => c.IdKhachHang).OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(c => c.HoaDon).WithOne(c => c.DanhGia).HasForeignKey<DanhGia>(c => c.IdHoaDon);
         }

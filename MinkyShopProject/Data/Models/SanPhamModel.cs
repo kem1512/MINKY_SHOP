@@ -6,11 +6,15 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
+        public Guid? IdTheLoai { get; set; }
+
         public string Ten { get; set; } = null!;
 
         public TrangThaiSanPham TrangThai { get; set; }
 
         public DateTime NgayTao { get; set; }
+
+        public List<SanPhamModel>? SanPhamModels { get; set; } = null!;
     }
 
     public class SanPhamCreateModel

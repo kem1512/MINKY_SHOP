@@ -43,6 +43,8 @@ namespace MinkyShopProject.Business.Entities
 
         public DanhGia DanhGia { get; set; } = null!;
 
+        public KhachHang KhachHang { get; set; } = null!;
+
         public List<HoaDonChiTiet> HoaDonChiTiets { get; set; } = null!;
 
         public List<VoucherLog> VoucherLogs { get; set; } = null!;
