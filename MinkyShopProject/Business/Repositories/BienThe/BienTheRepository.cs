@@ -113,7 +113,41 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             }
         }
 
-        public async Task<List<BienTheModel>> GetAsync()
+		public async Task<List<BienTheModel>> FindAsync(Guid id)
+		{
+            var result = from tt in _context.ThuocTinh
+                         join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
+                         join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
+                         join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
+                         join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
+                         join bt in _context.BienThe on btct.IdBienThe equals bt.Id where sp.Id == id
+                         group new { gt, bt, sp } by new
+                         {
+                             ttsp.IdSanPham,
+                             sp.Id,
+                             sp.Ten,
+                             sp.TrangThai,
+                             sp.NgayTao,
+                             btct.IdBienThe,
+                             bt.SoLuong,
+                             bt.GiaBan,
+                             bt.Sku,
+                         } into btc
+                         select new BienTheModel
+                         {
+                             Id = btc.First().bt.Id,
+                             Ten = btc.First().sp.Ten,
+                             Sku = btc.First().bt.Sku,
+                             GiaBan = btc.First().bt.GiaBan,
+                             SoLuong = btc.First().bt.SoLuong,
+                             Anh = btc.First().bt.Anh,
+                             GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
+                         };
+
+            return await result.ToListAsync();
+		}
+
+		public async Task<List<BienTheModel>> GetAsync()
         {
             var result = from tt in _context.ThuocTinh
                           join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
@@ -141,7 +175,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                               GiaBan = btc.First().bt.GiaBan,
                               SoLuong = btc.First().bt.SoLuong,
                               Anh = btc.First().bt.Anh,
-                              GiaTri = String.Join(" ", btc.Select(c => c.gt.Ten))
+                              GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
                           };
 
             return await result.ToListAsync();
