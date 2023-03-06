@@ -31,10 +31,10 @@ namespace MinkyShopProject.Api.Controllers
             return Ok(await _repository.GetAsync());
         }
 
-        [HttpPut()]
-        public async Task<ActionResult> UpdateAsync(Guid id, string name, TrangThaiSanPham TrangThai)
+		[HttpPut()]
+        public async Task<ActionResult> UpdateAsync(Guid id, SanPhamModel obj)
         {
-            return Ok(await _repository.UpdateAsync(id, name, TrangThai));
+            return Ok(await _repository.UpdateAsync(id, obj));
         }
 
         [HttpDelete()]

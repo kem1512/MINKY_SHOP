@@ -17,11 +17,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MinkyShopDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
-
 builder.Services.AddScoped<IThuocTinhRepository, ThuocTinhRepository>();
 
 builder.Services.AddScoped<IBienTheRepository, BienTheRepository>();
+
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

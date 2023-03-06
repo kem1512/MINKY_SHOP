@@ -27,8 +27,4 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Shared\ImageComponent.razor" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\ImageComponent.razor" />
-  </ItemGroup>
 </Project>

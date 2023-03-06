@@ -8,23 +8,6 @@ using System.Xml.Linq;
 
 namespace MinkyShopProject.Business.Repositories.SanPham
 {
-    public static class Test
-    {
-        public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
-        {
-            IEnumerable<IEnumerable<T>> result = new[] { Enumerable.Empty<T>() };
-            foreach (var sequence in sequences)
-            {
-                var localSequence = sequence;
-                result = result.SelectMany(
-                  _ => localSequence,
-                  (seq, item) => seq.Concat(new[] { item })
-                );
-            }
-            return result;
-        }
-    }
-
     public class SanPhamRepository : ISanPhamRepository
     {
         private readonly MinkyShopDbContext _context;
@@ -42,18 +25,25 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             {
                 if(obj != null)
                 {
-                    obj.Id = Guid.NewGuid();
-                    if(!_context.SanPham.Any(c => c.Id == obj.Id))
+                    if (obj.Id != Guid.Empty)
                     {
-                        await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
-                        if (obj.SanPhamModels?.Count() > 0)
+                        if(obj.TheLoais != null)
                         {
-                            foreach (var x in obj.SanPhamModels)
+                            foreach (var x in obj.TheLoais)
                             {
-                                x.IdTheLoai = obj.Id;
-                                await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(x));
+                                if(!_context.SanPham.Any(c => c.Id == x.Id))
+                                {
+                                    x.IdTheLoai = obj.Id;
+                                    await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(x));
+                                }
                             }
+                            await _context.SaveChangesAsync();
                         }
+                    }
+                    else
+                    {
+                        obj.Id = Guid.NewGuid();
+                        await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
                         await _context.SaveChangesAsync();
                     }
                 }
@@ -85,31 +75,34 @@ namespace MinkyShopProject.Business.Repositories.SanPham
 
         public async Task<List<SanPhamModel>> GetAsync()
         {
-            var result = (from sp in _context.SanPham
-                         join tl in _context.SanPham on sp.Id equals tl.IdTheLoai
-                         group new { sp, tl } by sp.Id into spc 
+            var result = from sp in _context.SanPham
+                         join tl in _context.SanPham on sp.Id equals tl.IdTheLoai into spc
+                         from tl in spc.DefaultIfEmpty()
+                         where sp.IdTheLoai == null
+                         group new { sp, tl } by sp.Id into spc
                          select new SanPhamModel
                          {
                              Id = spc.First().sp.Id,
                              Ten = spc.First().sp.Ten,
                              NgayTao = spc.First().sp.NgayTao,
                              TrangThai = spc.First().sp.TrangThai,
-                             SanPhamModels = _mapper.Map<List<Entities.SanPham>, List<SanPhamModel>>(spc.Select(c => c.tl).ToList())
-                         }).ToList();
-            return await Task.FromResult(result);
+                             TheLoais = _mapper.Map<List<Entities.SanPham>, List<SanPhamModel>>(spc.Select(c => c.tl).ToList())
+                         };
+            return await result.ToListAsync();
         }
 
-    public async Task<bool> UpdateAsync(Guid id, string name, TrangThaiSanPham trangThai)
+    public async Task<bool> UpdateAsync(Guid id, SanPhamModel obj)
         {
             try
             {
-                var sanPham = await _context.SanPham.FindAsync(id);
-                if (sanPham != null)
+                if (obj != null)
                 {
-                    sanPham.Ten = name;
-                    sanPham.TrangThai = trangThai;
-                    _context.SanPham.Update(sanPham);
-                    await _context.SaveChangesAsync();
+                    if (obj.Id != Guid.Empty)
+                    {
+                        _context.SanPham.Update(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
+
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 return true;
             }

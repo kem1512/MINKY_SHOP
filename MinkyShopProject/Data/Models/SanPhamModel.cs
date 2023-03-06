@@ -14,27 +14,7 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<SanPhamModel>? SanPhamModels { get; set; } = null!;
-    }
-
-    public class SanPhamCreateModel
-    {
-        public Guid IdThuocTinh { get; set; }
-
-        public string TenThuocTinh { get; set; } = null!;
-
-        public GiaTriModel[] GiaTris { get; set; } = null!;
-    }
-
-    // Thuộc Tính Sản Phẩm
-
-    public class ThuocTinhSanPhamCreateModel
-    {
-        public Guid Id { get; set; }
-
-        public Guid IdSanPham { get; set; }
-
-        public Guid IdThuocTinh { get; set; }
+        public List<SanPhamModel>? TheLoais { get; set; } = new List<SanPhamModel>() { };
     }
 
     // Biến Thể
@@ -56,23 +36,17 @@ namespace MinkyShopProject.Data.Models
         public string GiaTri { get; set; } = null!;
     }
 
-    public class BienTheCreateModel
+    public class BienTheChiTietModel
     {
-        public Guid Id { get; set; }
+        public List<BienTheModel> BienTheModels { get; set; } = null!;
 
-        public Guid IdSanPham { get; set; }
-
-        public string Sku { get; set; } = null!;
+        public List<ThuocTinhModel> ThuocTinhModels { get; set; } = null!;
     }
 
-    // Biến Thể Chi Tiêt
-
-    public class BienTheChiTietCreateModel
+    public class BienTheCreateModel
     {
-        public Guid IdBienThe { get; set; }
+        public List<ThuocTinhModel> ThuocTinhs { get; set; } = null!;
 
-        public Guid IdGiaTri { get; set; }
-
-        public Guid IdThuocTinhSanPham { get; set; }
+        public SanPhamModel SanPham { get; set; } = null!;
     }
 }

@@ -35,14 +35,14 @@ async function storageImages() {
 }
 
 async function uploadImages(images) {
-    for (var image of images) {
-        //const storageRef = ref(storage, 'images/' + image.name);
-        //uploadBytes(storageRef, new File([image], { type: 'image/jpeg' })).then((snapshot) => {
-        //    console.log('Uploaded a blob or file!');
-        //});
-        console.log(image)
-        console.log(new File([image], { contentType: 'image/jpeg' }))
-    }
+    //for (var image of images) {
+    //    //const storageRef = ref(storage, 'images/' + image.name);
+    //    //uploadBytes(storageRef, new File([image], image.name, { type: image.contentType })).then((snapshot) => {
+    //    //    console.log('Uploaded a blob or file!');
+    //    //});
+    //    console.log(new File([image], image.name, { type: image.contentType }));
+    //}
+    console.log(images)
 }
 
 window.storageImages = storageImages;
