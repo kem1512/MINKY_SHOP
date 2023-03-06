@@ -9,14 +9,14 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 {
     public interface IBienTheRepository
     {
-        public Task<bool> AddAsync(Guid idSanPham, ThuocTinhModel[] obj);
+        public Task<bool> AddAsync(BienTheCreateModel obj);
 
         public Task<bool> DeleteAsync(Guid id);
 
-        public Task<bool> UpdateAsync(Guid id, BienTheUpdateModel obj);
+        public Task<bool> UpdateAsync(Guid id, BienTheModel obj);
 
         public Task<List<BienTheModel>> GetAsync();
 
-		public Task<List<BienTheModel>> FindAsync(Guid id);
+		public Task<BienTheChiTietModel> FindAsync(Guid id);
 	}
 }

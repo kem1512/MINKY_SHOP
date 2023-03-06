@@ -20,7 +20,7 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult<object>> AddAsync(SanPhamCreateModel obj)
+        public async Task<ActionResult<object>> AddAsync(SanPhamModel obj)
         {
             return Ok(await _repository.AddAsync(obj));
         }
@@ -32,7 +32,7 @@ namespace MinkyShopProject.Api.Controllers
         }
 
 		[HttpPut()]
-        public async Task<ActionResult> UpdateAsync(Guid id, SanPhamUpdateModel obj)
+        public async Task<ActionResult> UpdateAsync(Guid id, SanPhamModel obj)
         {
             return Ok(await _repository.UpdateAsync(id, obj));
         }

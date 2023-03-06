@@ -6,6 +6,8 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
+        public Guid? IdTheLoai { get; set; }
+
         public string Ten { get; set; } = null!;
 
         public TrangThaiSanPham TrangThai { get; set; }
@@ -13,39 +15,6 @@ namespace MinkyShopProject.Data.Models
         public DateTime NgayTao { get; set; }
 
         public List<SanPhamModel>? TheLoais { get; set; } = new List<SanPhamModel>() { };
-    }
-
-    public class SanPhamCreateModel
-    {
-        public Guid Id { get; set; }
-
-        public Guid? IdTheLoai { get; set; }
-
-        public string Ten { get; set; } = null!;
-
-        public List<SanPhamCreateModel>? TheLoais { get; set; } = null!;
-    }
-
-    public class SanPhamUpdateModel
-    {
-        public Guid Id { get; set; }
-
-        public string Ten { get; set; } = null!;
-
-        public TrangThaiSanPham TrangThai { get; set; }
-
-        public List<SanPhamUpdateModel>? TheLoais { get; set; } = null!;
-    }
-
-    // Thuộc Tính Sản Phẩm
-
-    public class ThuocTinhSanPhamCreateModel
-    {
-        public Guid Id { get; set; }
-
-        public Guid IdSanPham { get; set; }
-
-        public Guid IdThuocTinh { get; set; }
     }
 
     // Biến Thể
@@ -67,32 +36,17 @@ namespace MinkyShopProject.Data.Models
         public string GiaTri { get; set; } = null!;
     }
 
+    public class BienTheChiTietModel
+    {
+        public List<BienTheModel> BienTheModels { get; set; } = null!;
+
+        public List<ThuocTinhModel> ThuocTinhModels { get; set; } = null!;
+    }
+
     public class BienTheCreateModel
     {
-        public Guid Id { get; set; }
+        public List<ThuocTinhModel> ThuocTinhs { get; set; } = null!;
 
-        public Guid IdSanPham { get; set; }
-
-        public string Sku { get; set; } = null!;
-    }
-
-    public class BienTheUpdateModel
-    {
-        public float GiaBan { get; set; }
-
-        public string Anh { get; set; } = null!;
-
-        public int SoLuong { get; set; }
-    }
-
-    // Biến Thể Chi Tiêt
-
-    public class BienTheChiTietCreateModel
-    {
-        public Guid IdBienThe { get; set; }
-
-        public Guid IdGiaTri { get; set; }
-
-        public Guid IdThuocTinhSanPham { get; set; }
+        public SanPhamModel SanPham { get; set; } = null!;
     }
 }

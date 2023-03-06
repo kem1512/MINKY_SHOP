@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
-using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Data.Models;
 
 namespace MinkyShopProject.Api.Controllers
@@ -20,9 +19,9 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<object>> AddAsync(Guid idSanPham, ThuocTinhModel[] obj)
+        public async Task<ActionResult<object>> AddAsync(BienTheCreateModel obj)
         {
-            return Ok(await _repository.AddAsync(idSanPham, obj));
+            return Ok(await _repository.AddAsync(obj));
         }
 
 
@@ -38,11 +37,6 @@ namespace MinkyShopProject.Api.Controllers
 			return Ok(await _repository.FindAsync(id));
 		}
 
-		[HttpPut()]
-        public async Task<ActionResult> UpdateBienTheAsync(Guid id, BienTheUpdateModel obj)
-        {
-            return Ok(await _repository.UpdateAsync(id, obj));
-        }
 
         [HttpDelete]
         public async Task<ActionResult<SanPhamModel[]>> DeleteAsync(Guid id)

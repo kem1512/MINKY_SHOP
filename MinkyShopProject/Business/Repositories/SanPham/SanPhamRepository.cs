@@ -8,23 +8,6 @@ using System.Xml.Linq;
 
 namespace MinkyShopProject.Business.Repositories.SanPham
 {
-    public static class Test
-    {
-        public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
-        {
-            IEnumerable<IEnumerable<T>> result = new[] { Enumerable.Empty<T>() };
-            foreach (var sequence in sequences)
-            {
-                var localSequence = sequence;
-                result = result.SelectMany(
-                  _ => localSequence,
-                  (seq, item) => seq.Concat(new[] { item })
-                );
-            }
-            return result;
-        }
-    }
-
     public class SanPhamRepository : ISanPhamRepository
     {
         private readonly MinkyShopDbContext _context;
@@ -36,7 +19,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             _mapper = mapper;
         }
 
-        public async Task<bool> AddAsync(SanPhamCreateModel obj)
+        public async Task<bool> AddAsync(SanPhamModel obj)
         {
             try
             {
@@ -51,7 +34,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
                                 if(!_context.SanPham.Any(c => c.Id == x.Id))
                                 {
                                     x.IdTheLoai = obj.Id;
-                                    await _context.SanPham.AddAsync(_mapper.Map<SanPhamCreateModel, Entities.SanPham>(x));
+                                    await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(x));
                                 }
                             }
                             await _context.SaveChangesAsync();
@@ -60,7 +43,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
                     else
                     {
                         obj.Id = Guid.NewGuid();
-                        await _context.SanPham.AddAsync(_mapper.Map<SanPhamCreateModel, Entities.SanPham>(obj));
+                        await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
                         await _context.SaveChangesAsync();
                     }
                 }
@@ -108,7 +91,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             return await result.ToListAsync();
         }
 
-    public async Task<bool> UpdateAsync(Guid id, SanPhamUpdateModel obj)
+    public async Task<bool> UpdateAsync(Guid id, SanPhamModel obj)
         {
             try
             {
@@ -116,7 +99,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
                 {
                     if (obj.Id != Guid.Empty)
                     {
-                        _context.SanPham.Update(_mapper.Map<SanPhamUpdateModel, Entities.SanPham>(obj));
+                        _context.SanPham.Update(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
 
                         await _context.SaveChangesAsync();
                     }

@@ -12,7 +12,7 @@
             <div class="card">
                 <div class="card-header pb-0">
                     <div class="d-flex align-items-center">
-                        <p class="mb-0">Edit Profile</p>
+                        <p class="mb-0"></p>
                         <button class="btn btn-primary btn-sm ms-auto" @onclick="Add">Save</button>
                     </div>
                 </div>
@@ -20,11 +20,11 @@
                     <form>
                         <div class="row mb-3">
                             <div class="col-6">
-                                <label>Tên Sản Phẩm</label>
+                                <label>Nhóm Hàng Hóa</label>
                                 <input type="text" class="form-control" @bind="SanPham.Ten">
                             </div>
                             <div class="col-6">
-                                <label>Thể Loại</label>
+                                <label>Nhóm Cha</label>
                                 <input type="text" class="form-control" @oninput='((ui) => { TheLoai = ui.Value?.ToString() ?? ""; })'
                                        @onkeyup='((ui) => { if(ui.Code == "Enter"){ SanPham.TheLoais?.Add(new SanPhamModel(){ Ten = TheLoai }); } })'>
                             </div>
@@ -48,8 +48,8 @@
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Sản Phẩm</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thể Loại</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm Cha</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm Con</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày Tạo</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
                                     <th class="text-secondary opacity-7"></th>
