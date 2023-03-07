@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
+using MinkyShopProject.Data.Commons;
 using MinkyShopProject.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -44,19 +45,19 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             try
             {
                 var skus = new List<string[]>();
-                
+
                 var idBienThe = Guid.NewGuid();
 
                 var idSanPham = Guid.NewGuid();
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
-                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ten = obj.SanPham.Ten, IdTheLoai = obj.SanPham.IdTheLoai, NgayTao = obj.SanPham.NgayTao, TrangThai = obj.SanPham.TrangThai });
+                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Common.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten, NgayTao = obj.SanPham.NgayTao, TrangThai = obj.SanPham.TrangThai });
 
                 foreach (var x in obj.ThuocTinhs)
                 {
 
-                    if(x.Id == Guid.Empty)
+                    if (x.Id == Guid.Empty)
                     {
                         x.Id = Guid.NewGuid();
                         await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten });
@@ -80,7 +81,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                     foreach (var y in x.GiaTris)
                     {
-                        if(y.Id == Guid.Empty)
+                        if (y.Id == Guid.Empty)
                         {
                             y.Id = Guid.NewGuid();
                             await _context.GiaTri.AddAsync(new Entities.GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id });
@@ -104,7 +105,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                 foreach (var x in skus.CartesianProduct())
                 {
                     // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                    var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
+                    var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = obj.SanPham.Ten + " " + String.Join(" + ", obj.ThuocTinhs.SelectMany(c => c.GiaTris.Select(c => c.Ten))), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
                     await _context.BienThe.AddAsync(bienThe);
 
                     foreach (var y in x)
@@ -146,14 +147,73 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             }
         }
 
-		public async Task<BienTheChiTietModel> FindAsync(Guid id)
-		{
+        public async Task<BienTheChiTietModel> FindAsync(Guid id)
+        {
             var bienTheModels = from tt in _context.ThuocTinh
+                                join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
+                                join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
+                                join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
+                                join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
+                                join bt in _context.BienThe on btct.IdBienThe equals bt.Id
+                                where sp.Id == id
+                                group new { gt, bt, sp } by new
+                                {
+                                    ttsp.IdSanPham,
+                                    sp.Id,
+                                    sp.Ten,
+                                    sp.TrangThai,
+                                    sp.NgayTao,
+                                    btct.IdBienThe,
+                                    bt.SoLuong,
+                                    bt.GiaBan,
+                                    bt.Sku,
+                                } into btc
+                                select new BienTheModel
+                                {
+                                    Id = btc.First().bt.Id,
+                                    Ten = btc.First().bt.Ten,
+                                    Sku = btc.First().bt.Sku,
+                                    GiaBan = btc.First().bt.GiaBan,
+                                    SoLuong = btc.First().bt.SoLuong,
+                                    Anh = btc.First().bt.Anh,
+                                    GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
+                                };
+
+            var thuocTinhModels = from tt in _context.ThuocTinh
+                                  join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
+                                  join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
+                                  join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
+                                  join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
+                                  join bt in _context.BienThe on btct.IdBienThe equals bt.Id
+                                  where sp.Id == id
+                                  group new { tt, gt } by new
+                                  {
+                                      tt.Id,
+                                      tt.NgayTao,
+                                      tt.TrangThai,
+                                      tt.Ten,
+                                      gt.IdThuocTinh,
+                                  } into ttc
+                                  select new ThuocTinhModel
+                                  {
+                                      Id = ttc.First().tt.Id,
+                                      Ten = ttc.First().tt.Ten,
+                                      GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.Select(c => c.gt).Distinct().ToList())
+                                  };
+
+            var bienTheChiTietModel = new BienTheChiTietModel() { BienTheModels = bienTheModels.ToList(), ThuocTinhModels = thuocTinhModels.ToList() };
+
+            return await Task.FromResult(bienTheChiTietModel);
+        }
+
+        public async Task<List<BienTheModel>> GetAsync()
+        {
+            var result = from tt in _context.ThuocTinh
                          join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
                          join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
                          join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
                          join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
-                         join bt in _context.BienThe on btct.IdBienThe equals bt.Id where sp.Id == id
+                         join bt in _context.BienThe on btct.IdBienThe equals bt.Id
                          group new { gt, bt, sp } by new
                          {
                              ttsp.IdSanPham,
@@ -169,71 +229,14 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                          select new BienTheModel
                          {
                              Id = btc.First().bt.Id,
-                             Ten = btc.First().sp.Ten,
+                             Ten = btc.First().bt.Ten,
                              Sku = btc.First().bt.Sku,
                              GiaBan = btc.First().bt.GiaBan,
                              SoLuong = btc.First().bt.SoLuong,
                              Anh = btc.First().bt.Anh,
+                             IdSanPham = btc.First().sp.Id,
                              GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
                          };
-
-            var thuocTinhModels = from tt in _context.ThuocTinh
-                          join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
-                          join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
-                          join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
-                          join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
-                          join bt in _context.BienThe on btct.IdBienThe equals bt.Id
-                          where sp.Id == id
-                          group new { tt, gt } by new
-                          {
-                              tt.Id,
-                              tt.NgayTao,
-                              tt.TrangThai,
-                              tt.Ten,
-                              gt.IdThuocTinh,
-                          } into ttc
-                          select new ThuocTinhModel
-                          {
-                              Id = ttc.First().tt.Id,
-                              Ten = ttc.First().tt.Ten,
-                              GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.Select(c => c.gt).Distinct().ToList())
-                         };
-
-            var bienTheChiTietModel = new BienTheChiTietModel() { BienTheModels = bienTheModels.ToList(), ThuocTinhModels = thuocTinhModels.ToList() };
-
-            return await Task.FromResult(bienTheChiTietModel);
-		}
-
-		public async Task<List<BienTheModel>> GetAsync()
-        {
-            var result = from tt in _context.ThuocTinh
-                          join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
-                          join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
-                          join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
-                          join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
-                          join bt in _context.BienThe on btct.IdBienThe equals bt.Id
-                          group new { gt, bt, sp } by new
-                          {
-                              ttsp.IdSanPham,
-                              sp.Id,
-                              sp.Ten,
-                              sp.TrangThai,
-                              sp.NgayTao,
-                              btct.IdBienThe,
-                              bt.SoLuong,
-                              bt.GiaBan,
-                              bt.Sku,
-                          } into btc
-                          select new BienTheModel
-                          {
-                              Id = btc.First().bt.Id,
-                              Ten = btc.First().sp.Ten,
-                              Sku = btc.First().bt.Sku,
-                              GiaBan = btc.First().bt.GiaBan,
-                              SoLuong = btc.First().bt.SoLuong,
-                              Anh = btc.First().bt.Anh,
-                              GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
-                          };
 
             return await result.ToListAsync();
         }
@@ -242,7 +245,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
         {
             try
             {
-                var bienThe = await _context.BienThe.FindAsync(id);
+                var bienThe = await _context.BienThe.AsNoTracking().FirstOrDefaultAsync(c => c.Id == obj.Id);
                 if (bienThe != null)
                 {
                     _context.BienThe.Update(_mapper.Map<BienTheModel, Entities.BienThe>(obj));

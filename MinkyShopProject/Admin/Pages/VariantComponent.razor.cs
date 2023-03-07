@@ -5,6 +5,13 @@ using System.Net.Http.Json;
 
 namespace MinkyShopProject.Admin.Pages
 {
+    public class ThuocTinh
+    {
+        public bool Show { get; set; } = false;
+
+        public bool Disabled { get; set; } = false;
+    }
+
     public partial class VariantComponent
     {
         [Inject]
@@ -13,30 +20,30 @@ namespace MinkyShopProject.Admin.Pages
         [Inject]
         SweetAlertService Swal { get; set; } = null!;
 
-        List<bool> showThuocTinh = new List<bool>();
+        List<ThuocTinh> ThuocTinhs = new List<ThuocTinh>();
 
         string GiaTri = "";
 
         string LoaiHangHoa = "";
 
-        bool showTheLoai = false;
+        bool showNhomSanPham = false;
 
         string Url = "https://localhost:7053/api";
 
         List<bool> showGiaTri = new List<bool>();
 
-        List<ThuocTinhModel> ModelThuocTinh = new List<ThuocTinhModel>();
+        List<ThuocTinhModel> ThuocTinhModels = new List<ThuocTinhModel>();
 
-        List<ThuocTinhModel> ModelTemplate = new List<ThuocTinhModel>();
+        List<ThuocTinhModel> ThuocTinhModelsTemplate = new List<ThuocTinhModel>();
 
-        List<SanPhamModel> ModelSanPham = new List<SanPhamModel>();
+        List<NhomSanPhamModel> NhomSanPhamModels = new List<NhomSanPhamModel>();
 
         SanPhamModel SanPham = new SanPhamModel();
 
         protected override async Task OnInitializedAsync()
         {
-            ModelThuocTinh = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
-            ModelSanPham = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>($"{Url}/SanPham") ?? new List<SanPhamModel>();
+            ThuocTinhModels = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
+            NhomSanPhamModels = await HttpClient.GetFromJsonAsync<List<NhomSanPhamModel>>($"{Url}/NhomSanPham") ?? new List<NhomSanPhamModel>();
         }
 
         public async Task AddAsync()
@@ -45,24 +52,24 @@ namespace MinkyShopProject.Admin.Pages
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
-            if (ModelTemplate.Count() > 0)
+            if (ThuocTinhModelsTemplate != null && ThuocTinhModelsTemplate.Count() > 0)
             {
 
-                var result = new List<ThuocTinhModel>();
+                var thuocTinhs = new List<ThuocTinhModel>();
 
-                foreach (var x in ModelTemplate)
+                foreach (var x in ThuocTinhModelsTemplate)
                 {
                     if (x.GiaTriTemplates.Count() > 0)
                     {
-                        result.Add(new ThuocTinhModel() { Ten = x.Ten, Id = x.Id, GiaTris = x.GiaTriTemplates });
+                        thuocTinhs.Add(new ThuocTinhModel() { Ten = x.Ten, Id = x.Id, GiaTris = x.GiaTriTemplates });
                     }
                 }
 
-                var result2 = await HttpClient.PostAsJsonAsync<BienTheCreateModel>($"{Url}/BienThe", new BienTheCreateModel() { ThuocTinhs = result, SanPham = SanPham });
+                var result2 = await HttpClient.PostAsJsonAsync($"{Url}/BienThe", new BienTheCreateModel() { ThuocTinhs = thuocTinhs, SanPham = SanPham });
 
                 if (result2.IsSuccessStatusCode)
                 {
-                    ModelTemplate = new List<ThuocTinhModel>();
+                    ThuocTinhModelsTemplate = new List<ThuocTinhModel>();
                 }
             }
         }

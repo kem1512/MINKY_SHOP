@@ -10,36 +10,11 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header pb-0">
-                    <div class="d-flex align-items-center">
-                        <p class="mb-0"></p>
-                        <button class="btn btn-primary btn-sm ms-auto" @onclick="Add">Save</button>
-                    </div>
-                </div>
                 <div class="card-body">
                     <form>
                         <div class="row mb-3">
-                            <div class="col-6">
-                                <label>Nhóm Hàng Hóa</label>
-                                <input type="text" class="form-control" @bind="SanPham.Ten">
-                            </div>
-                            <div class="col-6">
-                                <label>Nhóm Cha</label>
-                                <input type="text" class="form-control" @oninput='((ui) => { TheLoai = ui.Value?.ToString() ?? ""; })'
-                                       @onkeyup='((ui) => { if(ui.Code == "Enter"){ SanPham.TheLoais?.Add(new SanPhamModel(){ Ten = TheLoai }); } })'>
-                            </div>
-                            <div class="d-flex flex-wrap position-relative py-2">
-                                <div class="d-flex flex-wrap">
-                                    @if(SanPham.TheLoais != null && SanPham.TheLoais?.Count() > 0){
-                                        @foreach (var x in SanPham.TheLoais)
-                                        {
-                                            if(x != null)
-                                            {
-                                                <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => SanPham.TheLoais.Remove(x)">@x.Ten</span>
-                                            }
-                                        }
-                                    }
-                                </div>
+                            <div class="col-12 text-end">
+                                <NavLink class="btn btn-primary btn-sm" href="/variant">Thêm Sản Phẩm</NavLink>
                             </div>
                         </div>
                     </form>
@@ -48,77 +23,57 @@
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm Cha</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm Con</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày Tạo</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
-                                    <th class="text-secondary opacity-7"></th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên Sản Phẩm</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số Lượng Biến Thể</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày Tạo</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var x in Model.Select((Value, Index) => (Index, Value)))
+                                @if (SanPhams == null)
                                 {
                                     <tr>
-                                        <td>
-                                            <p class="text-xs font-weight-bold mb-0">@(x.Index + 1)</p>
-                                        </td>
-                                        <td>
-                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
-                                        </td>
-                                        <td class="p-0">
-                                            <table class="table table-bordered m-0 border-bottom-0">
-                                                <tbody>
-                                                    @if(x.Value.TheLoais != null && x.Value.TheLoais?.Count() > 0){
-                                                        @foreach (var y in x.Value.TheLoais)
-                                                        {
-                                                            if(y != null)
-                                                            {
-                                                                <tr class="border-bottom-0">
-                                                                    <td class="w-80">
-                                                                        <span class="text-secondary text-xs font-weight-bolder">@y?.Ten</span>
-                                                                    </td>
-                                                                    <td class="text-sm">
-                                                                        <a href="javascript:;" @onclick="() => Delete(y.Id)">
-                                                                            <i class="fas fa-trash text-danger" aria-hidden="true"></i>
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
-                                                            }else{
-                                                                <tr class="border-bottom-0">
-                                                                    <td class="w-80">
-                                                                        <span class="text-secondary text-xs font-weight-bolder">Không Có</span>
-                                                                    </td>
-                                                                    <td></td>
-                                                                </tr>
-                                                            }
-                                                        }
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </td>
-                                        <td class="align-middle text-center text-sm">
-                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
-                                        </td>
-                                        <td class="align-middle text-center p-0" style="width: 16%">
-                                            <select class="form-select border-0 shadow-0">
-                                                @foreach (var y in Enum.GetValues(typeof(TrangThaiSanPham)))
-                                                {
-                                                    <option>@y</option>
-                                               }
-                                            </select>
-                                        </td>
-                                        <td class="text-sm">
-                                            <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
-                                                <i class="fas fa-eye text-info" aria-hidden="true"></i>
-                                            </a>
-                                            <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => SanPham = x.Value">
-                                                <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
-                                            </a>
-                                            <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => Delete(x.Value.Id)">
-                                                <i class="fas fa-trash text-danger" aria-hidden="true"></i>
-                                            </a>
+                                        <td colspan="6">
+                                            <div class="spinner-grow text-primary" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
                                         </td>
                                     </tr>
+                                }
+                                else
+                                {
+                                    foreach (var x in SanPhams.Select((Value, Index) => (Index, Value)))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <p class="text-xs font-weight-bold mb-0">@(x.Index + 1)</p>
+                                            </td>
+                                            <td>
+                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
+                                            </td>
+                                            <td>
+                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.SoLuongBienThe</span>
+                                            </td>
+                                            <td class="align-middle text-center text-sm">
+                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
+                                            </td>
+                                            <td class="align-middle text-center p-0" style="width: 16%">
+                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.TrangThai</span>
+                                            </td>
+                                            <td class="text-sm">
+                                                <NavLink href="@($"product/{x.Value.Id}")" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                                    <i class="fas fa-eye text-info" aria-hidden="true"></i>
+                                                </NavLink>
+                                                <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
+                                                    <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => Delete(x.Value.Id)">
+                                                    <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             </tbody>
                         </table>
@@ -130,9 +85,9 @@
 </div>
 
 @code {
-    List<SanPhamModel> Model = new List<SanPhamModel>();
+    List<SanPhamModel>? SanPhams;
 
-    SanPhamModel SanPham = new SanPhamModel() { TheLoais = new List<SanPhamModel>() };
+    SanPhamModel SanPham = new SanPhamModel();
 
     string TheLoai = "";
 
@@ -170,6 +125,6 @@
 
     async Task Reload()
     {
-        Model = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>($"{Url}/SanPham") ?? new List<SanPhamModel>();
+        SanPhams = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>($"{Url}/SanPham") ?? new List<SanPhamModel>();
     }
 }

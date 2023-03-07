@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
+using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
 
@@ -15,13 +16,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<MinkyShopDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<MinkyShopDbContext>(options => { options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")); });
 
 builder.Services.AddScoped<IThuocTinhRepository, ThuocTinhRepository>();
 
 builder.Services.AddScoped<IBienTheRepository, BienTheRepository>();
 
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+
+builder.Services.AddScoped<INhomSanPhamRepository, NhomSanPhamRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

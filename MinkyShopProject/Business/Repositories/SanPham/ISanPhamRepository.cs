@@ -12,5 +12,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
         public Task<bool> DeleteAsync(Guid id);
 
         public Task<bool> AddAsync(SanPhamModel obj);
+
+        public Task<SanPhamModel> FindAsync(Guid id);
     }
 }

@@ -31,11 +31,17 @@ namespace MinkyShopProject.Api.Controllers
             return Ok(await _repository.GetAsync());
         }
 
-		[HttpGet("{id}")]
-		public async Task<ActionResult<List<SanPhamModel>>> GetAsync(Guid id)
-		{
-			return Ok(await _repository.FindAsync(id));
-		}
+        [HttpGet("{id}")]
+        public async Task<ActionResult<List<SanPhamModel>>> GetAsync(Guid id)
+        {
+            return Ok(await _repository.FindAsync(id));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<SanPhamModel[]>> UpdateAsync(Guid id, BienTheModel obj)
+        {
+            return Ok(await _repository.UpdateAsync(id, obj));
+        }
 
 
         [HttpDelete]

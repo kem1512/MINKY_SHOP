@@ -3262,7 +3262,6 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
 }
 
 .btn-check:active + .btn, .btn-check:checked + .btn, .btn.active, .btn.show, .btn:active {
-    color: var(--bs-btn-active-color);
     background-color: var(--bs-btn-active-bg);
     border-color: var(--bs-btn-active-border-color)
 }
@@ -19919,8 +19918,8 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
 }
 
 .btn-light:not(:disabled):not(.disabled).active, .btn-light:not(:disabled):not(.disabled):active, .btn.bg-gradient-light:not(:disabled):not(.disabled).active, .btn.bg-gradient-light:not(:disabled):not(.disabled):active, .show > .btn-light.dropdown-toggle, .show > .btn.bg-gradient-light.dropdown-toggle {
-    color: color-yiq(#e9ecef);
-    background-color: #e9ecef
+    color: white;
+    background-color: #5e72e4
 }
 
 .btn-outline-light {

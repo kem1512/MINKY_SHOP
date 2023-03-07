@@ -81,7 +81,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        Models = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>("https://localhost:7053/api/BienThe/A3CDDC5F-5368-47BE-8C92-EACCD0CCC785") ?? new BienTheChiTietModel();
+        Models = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>("https://localhost:7053/api/BienThe/17617F17-BED7-4C23-ABF8-7E05DA6E3C0F") ?? new BienTheChiTietModel();
         GiaTris = new string[Models.ThuocTinhModels.Count()];
     }
 }

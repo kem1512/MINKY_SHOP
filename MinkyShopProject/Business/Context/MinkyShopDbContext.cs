@@ -23,6 +23,8 @@ namespace MinkyShopProject.Business.Context
 
         public DbSet<SanPham> SanPham { get; set; } = null!;
 
+        public DbSet<NhomSanPham> NhomSanPham { get; set; } = null!;
+
         public DbSet<BienThe> BienThe { get; set; } = null!;
 
         public DbSet<GioHang> GioHang { get; set; } = null!;

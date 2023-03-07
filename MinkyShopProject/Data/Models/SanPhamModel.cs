@@ -6,7 +6,11 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid? IdTheLoai { get; set; }
+        public string? Ma { get; set; } = null!;
+
+        public string? Anh { get; set; } = null!;
+
+        public Guid? IdNhomSanPham { get; set; }
 
         public string Ten { get; set; } = null!;
 
@@ -14,7 +18,7 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<SanPhamModel>? TheLoais { get; set; } = new List<SanPhamModel>() { };
+        public int SoLuongBienThe { get; set; }
     }
 
     // Biến Thể
@@ -22,6 +26,8 @@ namespace MinkyShopProject.Data.Models
     public class BienTheModel
     {
         public Guid Id { get; set; }
+
+        public Guid IdSanPham { get; set; }
 
         public string Ten { get; set; } = null!;
 

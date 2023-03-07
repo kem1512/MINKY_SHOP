@@ -11,9 +11,13 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public Guid? IdTheLoai { get; set; }
+        public Guid? IdNhomSanPham { get; set; }
 
         public string Ten { get; set; } = null!;
+
+        public string Ma { get; set; } = null!;
+
+        public string Anh { get; set; } = null!;
 
         public TrangThaiSanPham TrangThai { get; set; }
 
@@ -21,9 +25,7 @@ namespace MinkyShopProject.Business.Entities
 
         public MoTa MoTa { get; set; } = null!;
 
-        public List<SanPham> TheLoais { get; set; } = null!;
-
-        public SanPham SanPhamEntity { get; set; } = null!;
+        public NhomSanPham NhomSanPham { get; set; } = null!;
 
         public List<BienThe> BienThes { get; set; } = null!;
 
