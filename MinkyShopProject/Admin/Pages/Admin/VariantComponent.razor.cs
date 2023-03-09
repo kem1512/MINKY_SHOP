@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using MinkyShopProject.Data.Models;
 using System.Net.Http.Json;
 
-namespace MinkyShopProject.Admin.Pages
+namespace MinkyShopProject.Admin.Pages.Admin
 {
     public class ThuocTinh
     {

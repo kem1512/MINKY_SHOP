@@ -1,0 +1,147 @@
+﻿@page "/admin/product"
+@using MinkyShopProject.Data.Enums
+@using MinkyShopProject.Data.Models
+@using System.Reflection
+@using System.ComponentModel
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-12 text-end">
+                            <NavLink class="btn btn-primary btn-sm" href="admin/variant">Thêm Sản Phẩm</NavLink>
+                        </div>
+                    </div>
+                    @if (SanPhams == null)
+                    {
+
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered align-middle text-center">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ảnh</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên Sản Phẩm</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã Sản Phẩm</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Loại Hàng Hóa</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giá Bán</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (SanPhams == null)
+                                    {
+                                        <tr>
+                                            <td colspan="6">
+                                                <div class="spinner-grow text-primary" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var x in SanPhams.Select((Value, Index) => (Index, Value)))
+                                        {
+                                            <tr data-bs-toggle="collapse" data-bs-target="#collapseExample_@x.Index" aria-expanded="false" aria-controls="collapseExample">
+                                                <td>
+                                                    <img class="img-thumbnail" href="@x.Value.Anh" />
+                                                </td>
+                                                <td style="width: 20%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
+                                                </td>
+                                                <td style="width: 20%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Ma</span>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">Nhóm</span>
+                                                </td>
+                                                <td class="align-middle text-center p-0" style="width: 16%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Gia</span>
+                                                </td>
+                                                <td class="align-middle text-center p-0" style="width: 16%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.TrangThai</span>
+                                                </td>
+                                                <td class="text-sm">
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                                        <i class="fas fa-eye text-info" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="7" class="p-0">
+                                                    <div class="table-responsive">
+                                                        <table class="table collapse= m-0" id="collapseExample_@x.Index">
+                                                            <tbody>
+                                                                @if (x.Value.BienThes != null)
+                                                                {
+                                                                    @foreach (var y in x.Value.BienThes)
+                                                                    {
+                                                                        <tr>
+                                                                            <td class="w-10 align-middle">
+                                                                                <img src="@y.Anh" class="img-thumbnail"/>
+                                                                            </td>
+                                                                            <td class="text-secondary text-xs font-weight-bold align-middle">@y.Sku</td>
+                                                                            <td class="text-secondary text-xs font-weight-bold align-middle">@y.Ten</td>
+                                                                            <td class="text-secondary text-xs font-weight-bold align-middle">@y.GiaBan</td>
+                                                                        </tr>
+                                                                    }
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    List<SanPhamModel>? SanPhams;
+
+    string TheLoai = "";
+
+    string Url = "https://localhost:7053/api";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Reload();
+    }
+
+    async Task Delete(Guid id)
+    {
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        var result = await HttpClient.DeleteAsync($"{Url}/SanPham?id={id}");
+
+        if (result.IsSuccessStatusCode)
+        {
+            await Reload();
+        }
+    }
+
+    async Task Reload()
+    {
+        SanPhams = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>($"{Url}/SanPham") ?? new List<SanPhamModel>();
+    }
+}

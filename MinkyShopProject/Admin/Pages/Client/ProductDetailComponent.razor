@@ -1,4 +1,4 @@
-﻿@page "/shoponline"
+﻿@page "/product/{id:guid}"
 @inject HttpClient HttpClient;
 @using Data.Models;
 
@@ -21,17 +21,20 @@
                                 <div class="my-gallery d-flex mt-4 pt-2">
                                     @if (Models != null)
                                     {
-                                        foreach (var y in Models.BienTheModels)
+                                        foreach (var y in Models.BienTheModels.Select((Value, Index) => (Index, Value)))
                                         {
-                                            <figure class="ms-2 me-3">
-                                                <img class="w-100 min-height-100 max-height-100 border-radius-lg shadow p-2" src="@y.Anh">
-                                            </figure>
+                                            @if(y.Index < 3)
+                                            {
+                                                <figure class="ms-2 me-3">
+                                                    <img class="w-100 min-height-100 max-height-100 border-radius-lg shadow p-2" src="@y.Value.Anh">
+                                                </figure>
+                                            }
                                         }
                                     }
                                 </div>
                             </div>
                             <div class="col-lg-5 mx-auto">
-                                <h3 class="mt-lg-0 mt-4">@BienThe.Ten</h3>
+                                <h4 class="mt-lg-0 mt-4">@BienThe.Ten</h4>
                                 <div class="rating">
                                     <i class="fas fa-star" aria-hidden="true"></i>
                                     <i class="fas fa-star" aria-hidden="true"></i>
@@ -40,8 +43,8 @@
                                     <i class="fas fa-star-half-alt" aria-hidden="true"></i>
                                 </div>
                                 <br>
-                                <h6 class="mb-0 mt-3">Giá Tiền : @BienThe.GiaBan</h6>
-                                <div class="row mt-4">
+                                <h6 class="mb-0 mt-3">Giá Tiền : @(BienThe.GiaBan == 0 ? string.Format("{0:0,0}", Models?.BienTheModels.Min(c => c.GiaBan)) + " - " + string.Format("{0:0,0}", Models?.BienTheModels.Max(c => c.GiaBan)) : string.Format("{0:0,0}", BienThe.GiaBan))</h6>
+                                <div class="row mt-3">
                                     @if (Models?.ThuocTinhModels != null)
                                     {
                                         foreach (var x in Models.ThuocTinhModels.Select((Value, Index) => (Index, Value)))
@@ -51,7 +54,7 @@
                                                 <div class="d-flex flex-wrap">
                                                     @foreach (var y in x.Value.GiaTris)
                                                     {
-                                                        <button class="btn me-2" @onclick='() => { GiaTris[x.Index] = y.Ten; BienThe = Models.BienTheModels.FirstOrDefault(c => c.GiaTri == string.Join(" + ", GiaTris)) ?? new BienTheModel(); }'>@y.Ten</button>
+                                                        <button class="btn btn-light me-2 @(GiaTris[x.Index] == y.Ten ? "active" : "")" @onclick='() => { GiaTris[x.Index] = y.Ten; BienThe = Models.BienTheModels.FirstOrDefault(c => c.GiaTri == string.Join(" + ", GiaTris)) ?? new BienTheModel(); }'>@y.Ten</button>
                                                     }
                                                 </div>
                                             </div>
@@ -59,8 +62,18 @@
                                     }
                                 </div>
                                 <div class="row mt-4">
-                                    <div class="col-lg-5">
-                                        <button class="btn btn-primary mb-0 mt-lg-auto w-100" type="button" name="button">Add to cart</button>
+                                    <div class="col-lg-6">
+                                       <div class="d-flex">
+                                           <button class="btn btn-info m-0 me-1">-</button>
+                                            <input class="form-control" type="number" @bind="SoLuong">
+                                           <button class="btn btn-info m-0 ms-1">+</button>
+                                        </div>
+                                        <label>Kho : @(BienThe.SoLuong == 0 ? Models?.BienTheModels.Sum(c => c.SoLuong) : BienThe.SoLuong)</label>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div>
+                                            <button class="btn btn-primary mb-0 mt-lg-auto w-100" type="button" name="button">Add to cart</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -73,6 +86,11 @@
 </div>
 
 @code{
+    [Parameter]
+    public Guid Id { get; set; }
+
+    int SoLuong { get; set; }
+
     BienTheChiTietModel? Models;
 
     BienTheModel BienThe = new BienTheModel();
@@ -81,7 +99,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        Models = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>("https://localhost:7053/api/BienThe/17617F17-BED7-4C23-ABF8-7E05DA6E3C0F") ?? new BienTheChiTietModel();
+        Models = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>($"https://localhost:7053/api/BienThe/{Id}") ?? new BienTheChiTietModel();
         GiaTris = new string[Models.ThuocTinhModels.Count()];
     }
 }

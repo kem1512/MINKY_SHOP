@@ -18,6 +18,6 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<NhomSanPhamModel>? NhomSanPhamModels { get; set; } = null!;
+        public List<NhomSanPhamModel>? NhomSanPhams { get; set; } = null!;
     }
 }

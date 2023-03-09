@@ -10,6 +10,8 @@ namespace MinkyShopProject.Data.Models
 
         public string? Anh { get; set; } = null!;
 
+        public float Gia { get; set; }
+
         public Guid? IdNhomSanPham { get; set; }
 
         public string Ten { get; set; } = null!;
@@ -18,7 +20,7 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public int SoLuongBienThe { get; set; }
+        public List<BienTheModel>? BienThes { get; set; } = null!;
     }
 
     // Biến Thể
@@ -46,7 +48,9 @@ namespace MinkyShopProject.Data.Models
     {
         public List<BienTheModel> BienTheModels { get; set; } = null!;
 
-        public List<ThuocTinhModel> ThuocTinhModels { get; set; } = null!;
+        public List<ThuocTinhModel>? ThuocTinhModels { get; set; } = null!;
+
+        public SanPhamModel SanPham { get; set; } = null!;
     }
 
     public class BienTheCreateModel

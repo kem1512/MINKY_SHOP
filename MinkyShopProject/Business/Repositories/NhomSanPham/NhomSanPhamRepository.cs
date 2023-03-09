@@ -56,20 +56,7 @@ namespace MinkyShopProject.Business.Repositories.NhomSanPham
 
         public async Task<List<NhomSanPhamModel>> GetAsync()
         {
-            var result = from nsp in _context.NhomSanPham
-                         join nsp2 in _context.NhomSanPham on nsp.Id equals nsp2.IdParent into nspc
-                         from nsp2 in nspc.DefaultIfEmpty()
-                         where nsp.IdParent == null
-                         group new { nsp, nsp2 } by nsp.Id into nspc
-                         select new NhomSanPhamModel
-                         {
-                             Id = nspc.First().nsp.Id,
-                             Ten = nspc.First().nsp.Ten,
-                             NgayTao = nspc.First().nsp.NgayTao,
-                             TrangThai = nspc.First().nsp.TrangThai,
-                             NhomSanPhamModels = _mapper.Map<List<Entities.NhomSanPham>, List<NhomSanPhamModel>>(nspc.Select(c => c.nsp2).ToList())
-                         };
-            return await result.ToListAsync();
+            return _mapper.Map<List<Entities.NhomSanPham>, List<NhomSanPhamModel>>(await _context.NhomSanPham.ToListAsync());
         }
 
         public async Task<bool> UpdateAsync(Guid id, NhomSanPhamModel obj)

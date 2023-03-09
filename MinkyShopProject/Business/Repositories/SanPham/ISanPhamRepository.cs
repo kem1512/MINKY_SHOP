@@ -1,4 +1,5 @@
-﻿using MinkyShopProject.Data.Enums;
+﻿using MinkyShopProject.Business.Entities;
+using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
 
 namespace MinkyShopProject.Business.Repositories.SanPham

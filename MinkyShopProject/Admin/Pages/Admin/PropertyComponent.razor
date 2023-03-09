@@ -1,4 +1,4 @@
-﻿@page "/property"
+﻿@page "/admin/property"
 @using MinkyShopProject.Data.Models
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
@@ -87,7 +87,7 @@
                                                 </table>
                                             </td>
                                             <td class="align-middle text-center text-sm">
-                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
+                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao.ToShortDateString()</span>
                                             </td>
                                             <td class="align-middle text-center p-0" style="width: 16%">
                                                 <span class="text-secondary text-xs font-weight-bold">@x.Value.TrangThai</span>

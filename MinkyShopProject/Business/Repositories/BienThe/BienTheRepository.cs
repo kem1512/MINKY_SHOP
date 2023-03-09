@@ -27,6 +27,12 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             }
             return result;
         }
+
+        public static IEnumerable<IEnumerable<T>> Paginate<T>(this IEnumerable<IEnumerable<T>> pageSize)
+        {
+            IEnumerable<IEnumerable<T>> result = new[] { Enumerable.Empty<T>() };
+            return result;
+        }
     }
 
     public class BienTheRepository : IBienTheRepository
@@ -52,7 +58,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
-                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Common.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten, NgayTao = obj.SanPham.NgayTao, TrangThai = obj.SanPham.TrangThai });
+                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Common.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten });
 
                 foreach (var x in obj.ThuocTinhs)
                 {
@@ -95,7 +101,9 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                         // Lấy Kí Tự Đầu Tiên
                         var tenGiaTri = y.Ten.Substring(0, 1);
 
-                        sku.Add(tenThuocTinh + tenGiaTri + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham);
+                        var tenGiaTriHienThi = y.Ten;
+
+                        sku.Add(tenThuocTinh + tenGiaTri + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham + "/" + tenGiaTriHienThi);
                     }
                     skus.Add(sku.ToArray());
                     idThuocTinhSanPham = Guid.NewGuid();
@@ -105,7 +113,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                 foreach (var x in skus.CartesianProduct())
                 {
                     // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                    var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = obj.SanPham.Ten + " " + String.Join(" + ", obj.ThuocTinhs.SelectMany(c => c.GiaTris.Select(c => c.Ten))), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
+                    var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = obj.SanPham.Ten + " " + String.Join(" ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
                     await _context.BienThe.AddAsync(bienThe);
 
                     foreach (var y in x)
@@ -113,7 +121,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                         var sku = y.Split("/"); // sku[0] : sku_id, sku[1] : Id Giá Trị, sku[2] : Id Thuộc Tính, sku[3] : Id Thuộc Tính Sản Phẩm
 
                         // Tạo Ra Biến Thể Chi Tiết Của Từng Biến Thể
-                        var bienTheChiTiet = new Entities.BienTheChiTiet() { IdGiaTri = Guid.Parse(sku[1]), IdThuocTinhSanPham = Guid.Parse(sku[3]), IdBienThe = idBienThe };
+                        var bienTheChiTiet = new BienTheChiTiet() { IdGiaTri = Guid.Parse(sku[1]), IdThuocTinhSanPham = Guid.Parse(sku[3]), IdBienThe = idBienThe };
                         await _context.BienTheChiTiet.AddAsync(bienTheChiTiet);
                     }
 
@@ -176,6 +184,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                                     GiaBan = btc.First().bt.GiaBan,
                                     SoLuong = btc.First().bt.SoLuong,
                                     Anh = btc.First().bt.Anh,
+                                    IdSanPham = btc.First().bt.IdSanPham,
                                     GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
                                 };
 

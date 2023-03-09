@@ -23,7 +23,6 @@ namespace MinkyShopProject.Business.Repositories.SanPham
         {
             try
             {
-                obj.Id = Guid.NewGuid();
                 await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
                 await _context.SaveChangesAsync();
                 return true;
@@ -60,34 +59,22 @@ namespace MinkyShopProject.Business.Repositories.SanPham
 
         public async Task<List<SanPhamModel>> GetAsync()
         {
-            var result = from tt in _context.ThuocTinh
-                         join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
-                         join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
-                         join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
-                         join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
-                         join bt in _context.BienThe on btct.IdBienThe equals bt.Id
-                         group new { gt, bt, sp } by new
-                         {
-                             ttsp.IdSanPham,
-                             sp.Id,
-                             sp.Ten,
-                             sp.TrangThai,
-                             sp.NgayTao,
-                             btct.IdBienThe,
-                             bt.SoLuong,
-                             bt.GiaBan,
-                             bt.Sku,
-                         } into btc
-                         select new SanPhamModel
-                         {
-                             Id = btc.First().sp.Id,
-                             Ten = btc.First().sp.Ten,
-                             NgayTao = btc.First().sp.NgayTao,
-                             TrangThai = btc.First().sp.TrangThai,
-                             SoLuongBienThe = btc.Count()
-                         };
-
-            return await result.Distinct().ToListAsync();
+            var bienThes = from sp in _context.SanPham
+                           join bt in _context.BienThe on sp.Id equals bt.IdSanPham
+                           group new { sp, bt } by sp.Id into spc
+                           select new SanPhamModel()
+                           {
+                               Anh = spc.First().sp.Anh,
+                               Id = spc.First().sp.Id,
+                               IdNhomSanPham = spc.First().sp.IdNhomSanPham,
+                               Ma = spc.First().sp.Ma,
+                               NgayTao = spc.First().sp.NgayTao,
+                               Ten = spc.First().sp.Ten,
+                               TrangThai = spc.First().sp.TrangThai,
+                               Gia = 0,
+                               BienThes = _mapper.Map<List<Entities.BienThe>, List<BienTheModel>>(spc.Select(c => c.bt).ToList())
+                           };
+            return await bienThes.ToListAsync();
         }
 
         public async Task<bool> UpdateAsync(Guid id, SanPhamModel obj)
