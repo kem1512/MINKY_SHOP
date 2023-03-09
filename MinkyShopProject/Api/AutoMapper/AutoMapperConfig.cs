@@ -15,8 +15,8 @@ namespace MinkyShopProject.Api.AutoMapper
             CreateMap<BienTheCreateModel, BienThe>().ReverseMap();
 
             CreateMap<SanPham, SanPhamModel>().ReverseMap();
-
-            CreateMap<NhanVien, NhanVienModel.NhanVienCreateModel>().ReverseMap();
+            CreateMap<ViDiem, ViDiemModel>().ReverseMap();
+            CreateMap<KhachHang, KhachHangModel>().ReverseMap();
         }
     }
 }

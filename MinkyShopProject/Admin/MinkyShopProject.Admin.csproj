@@ -22,10 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <UpToDateCheckInput Remove="Shared\ImageComponent.razor" />
+    <_ContentIncludedByDefault Remove="Shared\ImageComponent.razor" />
   </ItemGroup>
 
   <ItemGroup>
-    <_ContentIncludedByDefault Remove="Shared\ImageComponent.razor" />
+    <ProjectReference Include="..\Data\MinkyShopProject.Data.csproj" />
   </ItemGroup>
 </Project>

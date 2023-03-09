@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
 using MinkyShopProject.Business.Repositories.NhanVien;
+using MinkyShopProject.Business.Repositories.KhachHang;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
+using MinkyShopProject.Business.Repositories.ViDiem;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,10 @@ builder.Services.AddScoped<IBienTheRepository, BienTheRepository>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
+
+builder.Services.AddScoped<IViDiemRepository, ViDiemRepository>();
+
+builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
