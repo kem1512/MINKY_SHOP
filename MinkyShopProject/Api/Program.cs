@@ -3,6 +3,7 @@ using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
+using MinkyShopProject.Business.Repositories.ViDiem;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,7 @@ builder.Services.AddScoped<IThuocTinhRepository, ThuocTinhRepository>();
 builder.Services.AddScoped<IBienTheRepository, BienTheRepository>();
 
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+builder.Services.AddScoped<IViDiemRepository, ViDiemRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
