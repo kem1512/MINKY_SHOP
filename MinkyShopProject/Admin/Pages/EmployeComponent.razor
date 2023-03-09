@@ -1,0 +1,48 @@
+﻿@page "/employee"
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center">
+                        <p class="mb-0"></p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div>
+                         <select @onchange="FilterStatus">
+                             <option value="0">Trạng thái: Hoạt động</option>
+                             <option value="1">Trạng thái: Đã nghỉ</option>
+                         </select>
+                         <input @onchange="Search"/>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ảnh</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã nhân viên</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên nhân viên</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng thái</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Vai trò</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach(var nhanvien in Response.Data){
+                                    <tr>
+                                        <td class="align-middle text-center text-sm">@(nhanvien.Anh)</td>
+                                        <td class="align-middle text-center text-sm">@(nhanvien.Ma)</td>
+                                        <td class="align-middle text-center text-sm">@(nhanvien.Ten)</td>
+                                        <td class="align-middle text-center text-sm">@(nhanvien.TrangThai == 0 ? "Hoạt động" : "Đã nghỉ")</td>
+                                        <td class="align-middle text-center text-sm">@(nhanvien.VaiTro == 0 ? "Quản lí" : "Nhân viên")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

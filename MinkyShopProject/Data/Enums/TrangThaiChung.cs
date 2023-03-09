@@ -76,7 +76,7 @@ namespace MinkyShopProject.Data.Enums
 
     public enum VaiTro
     {
-        Admin
+        Admin,NhanVien
     }
 
     public enum TrangThaiHoaDon
@@ -86,7 +86,7 @@ namespace MinkyShopProject.Data.Enums
 
     public enum TrangThaiNhanVien
     {
-        DangLam
+        DangLam, DaNghi
     }
 
     public enum LoaiDonHang

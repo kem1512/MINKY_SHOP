@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Business\MinkyShopProject.Business.csproj" />
     <ProjectReference Include="..\Data\MinkyShopProject.Data.csproj" />
   </ItemGroup>
 

@@ -43,7 +43,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 330, DateTimeKind.Local).AddTicks(1221));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 334, DateTimeKind.Local).AddTicks(1927));
 
                     b.Property<string>("Sku")
                         .IsRequired()
@@ -123,7 +123,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayDanhGia")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 330, DateTimeKind.Local).AddTicks(4792));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 334, DateTimeKind.Local).AddTicks(6361));
 
                     b.Property<string>("NoiDung")
                         .IsRequired()
@@ -175,17 +175,17 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("ThoiGianGiaoCa")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 331, DateTimeKind.Local).AddTicks(3416));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 335, DateTimeKind.Local).AddTicks(7364));
 
                     b.Property<DateTime>("ThoiGianNhanCa")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 331, DateTimeKind.Local).AddTicks(3284));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 335, DateTimeKind.Local).AddTicks(7178));
 
                     b.Property<DateTime>("ThoiGianReset")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 331, DateTimeKind.Local).AddTicks(4422));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 335, DateTimeKind.Local).AddTicks(8789));
 
                     b.Property<float>("TienBanDau")
                         .ValueGeneratedOnAdd()
@@ -271,7 +271,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 332, DateTimeKind.Local).AddTicks(6030));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 337, DateTimeKind.Local).AddTicks(2681));
 
                     b.HasKey("Id");
 
@@ -334,7 +334,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 332, DateTimeKind.Local).AddTicks(8472));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 337, DateTimeKind.Local).AddTicks(5812));
 
                     b.Property<float>("TongTienThanhToan")
                         .ValueGeneratedOnAdd()
@@ -386,7 +386,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 333, DateTimeKind.Local).AddTicks(4368));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 338, DateTimeKind.Local).AddTicks(3706));
 
                     b.Property<DateTime>("NgayThanhToan")
                         .HasColumnType("datetime2");
@@ -481,10 +481,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("GioiTinh")
                         .ValueGeneratedOnAdd()
@@ -499,21 +496,13 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MatKhau")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NgaySinh")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 333, DateTimeKind.Local).AddTicks(8497));
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Sdt")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("0");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SoLanMua")
                         .ValueGeneratedOnAdd()
@@ -637,7 +626,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 334, DateTimeKind.Local).AddTicks(5734));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 339, DateTimeKind.Local).AddTicks(8421));
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -665,7 +654,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 334, DateTimeKind.Local).AddTicks(8286));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 340, DateTimeKind.Local).AddTicks(1809));
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -755,12 +744,12 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayApDung")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 335, DateTimeKind.Local).AddTicks(3919));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 340, DateTimeKind.Local).AddTicks(9196));
 
                     b.Property<DateTime>("NgayKetThuc")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 335, DateTimeKind.Local).AddTicks(4034));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 340, DateTimeKind.Local).AddTicks(9366));
 
                     b.Property<int>("SoLuong")
                         .ValueGeneratedOnAdd()
@@ -852,7 +841,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 2, 28, 16, 22, 18, 335, DateTimeKind.Local).AddTicks(6266));
+                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 341, DateTimeKind.Local).AddTicks(2768));
 
                     b.Property<float>("SoTienGiam")
                         .ValueGeneratedOnAdd()
