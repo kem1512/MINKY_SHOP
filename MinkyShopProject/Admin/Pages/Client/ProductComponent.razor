@@ -31,7 +31,7 @@
                         }
                         else
                         {
-                            foreach (var x in SanPhams)
+                            foreach (var x in SanPhams.Data.Content)
                             {
                                 <div class="col-md-3 mt-4">
                                     <div class="card card-blog card-plain">
@@ -43,7 +43,7 @@
                                         <div class="card-body px-1 mt-2">
                                             <div class="d-flex justify-content-between">
                                                 <p class="text-gradient text-primary m-0">@x.Ten</p>
-                                                <p class="m-0 text-bold">@( x.Gia > 0 ? "Từ " + string.Format("{0:0,0}", x.Gia) : "Free")</p>
+                                                <p class="m-0 text-bold">@if (x.BienThes != null && x.BienThes.Any()) { string.Format("{0:0,0}", @x.BienThes?.Min(c => c.GiaBan)); }</p>
                                             </div>
                                         </div>
                                     </div>
@@ -58,10 +58,10 @@
 </div>
 
 @code{
-    List<SanPhamModel>? SanPhams;
+    ResponsePagination<SanPhamModel>? SanPhams;
 
     protected override async Task OnInitializedAsync()
     {
-        SanPhams = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>("https://localhost:7053/api/SanPham");
+        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>("https://localhost:7053/api/SanPham");
     }
 }

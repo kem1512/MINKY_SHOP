@@ -5,6 +5,7 @@ using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.SanPham;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
 
@@ -21,29 +22,28 @@ namespace MinkyShopProject.Api.Controllers
             _repository = repository;
         }
 
-
         [HttpGet()]
-        public async Task<ActionResult<List<NhomSanPham>>> GetAsync()
+        public async Task<ActionResult<Response>> GetAsync([FromQuery] NhomSanPhamQueryModel obj)
         {
-            return Ok(await _repository.GetAsync());
+            return Helper.TransformData(await _repository.GetAsync(obj));
         }
 
         [HttpPost()]
-        public async Task<ActionResult<bool>> AddAsync(NhomSanPhamModel obj)
+        public async Task<ActionResult> AddAsync([FromBody] NhomSanPhamModel obj)
         {
-            return Ok(await _repository.AddAsync(obj));
+            return Helper.TransformData(await _repository.AddAsync(obj));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> UpdateAsync(Guid id, NhomSanPhamModel obj)
+        public async Task<ActionResult<bool>> UpdateAsync(Guid id, [FromBody] NhomSanPhamModel obj)
         {
-            return Ok(await _repository.UpdateAsync(id, obj));
+            return Helper.TransformData(await _repository.UpdateAsync(id, obj));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteAsync(Guid id)
         {
-            return Ok(await _repository.DeleteAsync(id));
+            return Helper.TransformData(await _repository.DeleteAsync(id));
         }
     }
 }

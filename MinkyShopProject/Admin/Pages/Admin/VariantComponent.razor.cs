@@ -1,5 +1,6 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using System.Net.Http.Json;
 
@@ -32,18 +33,18 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         List<bool> showGiaTri = new List<bool>();
 
-        List<ThuocTinhModel> ThuocTinhModels = new List<ThuocTinhModel>();
+        ResponsePagination<ThuocTinhModel>? ThuocTinhModels;
 
         List<ThuocTinhModel> ThuocTinhModelsTemplate = new List<ThuocTinhModel>();
 
-        List<NhomSanPhamModel> NhomSanPhamModels = new List<NhomSanPhamModel>();
+        ResponsePagination<NhomSanPhamModel>? NhomSanPhamModels;
 
         SanPhamModel SanPham = new SanPhamModel();
 
         protected override async Task OnInitializedAsync()
         {
-            ThuocTinhModels = await HttpClient.GetFromJsonAsync<List<ThuocTinhModel>>($"{Url}/ThuocTinh") ?? new List<ThuocTinhModel>();
-            NhomSanPhamModels = await HttpClient.GetFromJsonAsync<List<NhomSanPhamModel>>($"{Url}/NhomSanPham") ?? new List<NhomSanPhamModel>();
+            ThuocTinhModels = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>($"{Url}/ThuocTinh");
+            NhomSanPhamModels = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
         }
 
         public async Task AddAsync()

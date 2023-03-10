@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
-using MinkyShopProject.Business.Entities;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Serilog;
+using System.Net;
 
 namespace MinkyShopProject.Business.Repositories.ThuocTinh
 {
@@ -22,178 +19,117 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
             _mapper = mapper;
         }
 
-        public async Task<bool> AddAsync(ThuocTinhCreateModel obj)
+        public async Task<Response> AddAsync(ThuocTinhModel obj)
         {
             try
             {
-                if (obj == null || obj.GiaTris == null) return false;
+                if (obj == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
 
-                //  Tạo Id Mới Trước Khi Thêm
-                Guid id = Guid.NewGuid();
-
-                // Map 2 Object Lại Với Nhau
-                var thuocTinh = _mapper.Map<ThuocTinhCreateModel, Entities.ThuocTinh>(obj);
-
-                // Gán Lại Id Cho Thuộc Tính
-                thuocTinh.Id = id;
+                var thuocTinh = _mapper.Map<ThuocTinhModel, Entities.ThuocTinh>(obj);
 
                 await _context.ThuocTinh.AddAsync(thuocTinh);
 
-                foreach (var x in obj.GiaTris)
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
                 {
-                    await _context.GiaTri.AddAsync(new GiaTri() { IdThuocTinh = id, Ten = x });
+                    var data = _mapper.Map<Entities.ThuocTinh, ThuocTinhModel>(thuocTinh);
+                    return new ResponseObject<ThuocTinhModel>(data, "Thêm thành công");
                 }
 
-                await _context.SaveChangesAsync();
-
-                return true;
+                return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                Log.Error(e, string.Empty);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
             }
         }
 
-        public async Task<bool> AddRangeAsync(ThuocTinhCreateModel[] obj)
+        public async Task<Response> DeleteAsync(Guid id)
         {
             try
             {
-                if(obj == null || obj.Length == 0) return false;
+                var thuocTinh = await _context.ThuocTinh.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
-                foreach (var x in obj)
-                {
-                    if (x == null || x.GiaTris == null) return false;
+                var giaTri = await _context.GiaTri.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
-                    //  Tạo Id Mới Trước Khi Thêm
-                    Guid id = Guid.NewGuid();
+                if (thuocTinh == null && giaTri == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                    // Map 2 Object Lại Với Nhau
-                    var thuocTinh = _mapper.Map<ThuocTinhCreateModel, Entities.ThuocTinh>(x);
-
-                    // Gán Lại Id Cho Thuộc Tính
-                    thuocTinh.Id = id;
-
-                    await _context.ThuocTinh.AddAsync(thuocTinh);
-
-                    foreach (var y in x.GiaTris)
-                    {
-                        await _context.GiaTri.AddAsync(new GiaTri() { IdThuocTinh = id, Ten = y });
-                    }
-                }
-
-                await _context.SaveChangesAsync();
-
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            try
-            {
-                var thuocTinh = await _context.ThuocTinh.FindAsync(id);
-                var giaTri = await _context.GiaTri.FindAsync(id);
-
-                if(thuocTinh != null)
+                if (thuocTinh != null)
                 {
                     _context.ThuocTinh.Remove(thuocTinh);
                 }
-
-                if(giaTri != null)
+                else
                 {
-                    _context.GiaTri.Remove(giaTri);
-                }
-
-                await _context.SaveChangesAsync();
-
-                return true;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-        public async Task<bool> DeleteRangeAsync(Guid[] ids)
-        {
-            try
-            {
-                if (ids == null || ids.Count() <= 0) return false;
-
-                foreach (var x in ids)
-                {
-                    var thuocTinh = await _context.ThuocTinh.FindAsync(x);
-                    var giaTri = await _context.GiaTri.FindAsync(x);
-
-                    if (thuocTinh != null)
-                    {
-                        _context.ThuocTinh.Remove(thuocTinh);
-                    }
-
                     if (giaTri != null)
                     {
                         _context.GiaTri.Remove(giaTri);
                     }
                 }
 
-                await _context.SaveChangesAsync();
-                return true;
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
+                {
+                    return new ResponseError(HttpStatusCode.OK, "Xóa thành công");
+                }
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Xóa Thất Bại");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                Log.Error(e, string.Empty);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
             }
         }
 
-        public async Task<IEnumerable<ThuocTinhModel>> GetAsync()
-        {
-            var result = from tt in _context.ThuocTinh
-                         join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
-                         group gt by gt.IdThuocTinh into ttc
-                         select new ThuocTinhModel
-                         {
-                             Id = ttc.First().ThuocTinhs.Id,
-                             Ten = ttc.First().ThuocTinhs.Ten,
-                             NgayTao = ttc.First().ThuocTinhs.NgayTao,
-                             TrangThai = ttc.First().ThuocTinhs.TrangThai,
-                             GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.ToList())
-                         };
-            return await result.ToListAsync();
-        }
-
-        public async Task<bool> UpdateAsync(Guid id, ThuocTinhUpdateModel obj)
+        public async Task<Response> GetAsync(ThuocTinhQueryModel obj)
         {
             try
             {
-                // Tìm Thuộc Tính Theo Id
+                return new ResponsePagination<ThuocTinhModel>(_mapper.Map<Pagination<Entities.ThuocTinh>, Pagination<ThuocTinhModel>>(await _context.ThuocTinh.Include(c => c.GiaTris).AsQueryable().GetPageAsync(obj)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(System.Net.HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
+
+        public async Task<Response> UpdateAsync(Guid id, ThuocTinhModel obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Lỗi rồi");
+
                 var thuocTinh = _context.ThuocTinh.AsNoTracking().FirstOrDefault(c => c.Id == id);
 
-                // Tìm Giá Trị Theo Id
-                var giaTri = _context.GiaTri.AsNoTracking().FirstOrDefault(c => c.Id == id);
+                if (thuocTinh == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                if(thuocTinh != null)
+                thuocTinh.Ten = obj.Ten;
+
+                thuocTinh.TrangThai = obj.TrangThai;
+
+                if (obj.GiaTris != null)
                 {
-                    thuocTinh.Ten = obj.Ten;
-                    thuocTinh.TrangThai = obj.TrangThai;
-                    _context.ThuocTinh.Update(thuocTinh);
-                }
-                else
-                {
-                    if (giaTri != null)
-                    {
-                        giaTri.Ten = obj.Ten;
-                        _context.GiaTri.Update(giaTri);
-                    }
+                    thuocTinh.GiaTris = _mapper.Map<List<GiaTriModel>, List<Entities.GiaTri>>(obj.GiaTris);
                 }
 
-                await _context.SaveChangesAsync();
+                _context.ThuocTinh.Update(_mapper.Map<ThuocTinhModel, Entities.ThuocTinh>(obj));
 
-                return true;
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
+                {
+                    var data = _mapper.Map<Entities.ThuocTinh, ThuocTinhModel>(thuocTinh);
+                    return new ResponseObject<ThuocTinhModel>(data, "Cập nhật thành công");
+                }
+                return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
             }
             catch (Exception)
             {

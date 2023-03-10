@@ -1,4 +1,5 @@
-﻿using MinkyShopProject.Data.Enums;
+﻿using MinkyShopProject.Common;
+using MinkyShopProject.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<GiaTriModel> GiaTris { get; set; } = null!;
+        public List<GiaTriModel> GiaTris { get; set; } = new List<GiaTriModel>();
 
         public List<GiaTriModel> GiaTriTemplates { get; set; } = new List<GiaTriModel>();
     }
@@ -26,23 +27,12 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
+        public Guid IdThuocTinh { get; set; }
+
         public string Ten { get; set; } = null!;
     }
 
-    public class ThuocTinhCreateModel
+    public class ThuocTinhQueryModel : PaginationRequest
     {
-        public string Ten { get; set; } = null!;
-
-        public TrangThaiThuocTinh TrangThai { get; set; }
-
-        public string[]? GiaTris { get; set; }
-    }
-
-    public class ThuocTinhUpdateModel
-    {
-        // Nếu Truyền Thuộc Tính Thì Sẽ Update Thuộc Tính
-        public string Ten { get; set; } = null!;
-
-        public TrangThaiThuocTinh TrangThai { get; set; }
     }
 }

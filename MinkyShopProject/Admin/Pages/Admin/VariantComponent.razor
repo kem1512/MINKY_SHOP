@@ -32,11 +32,14 @@
                                     <div class="list-group position-absolute w-100 top-0 list" style="z-index: 1">
                                         @if (showNhomSanPham)
                                         {
-                                            foreach (var x in NhomSanPhamModels)
+                                            if(NhomSanPhamModels?.Data.Content != null)
                                             {
-                                                <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.IdNhomSanPham = x.Id; LoaiHangHoa = x.Ten;  }">
-                                                    @x.Ten
-                                                </button>
+                                                foreach (var x in NhomSanPhamModels.Data.Content.Where(c => c.IdParent != null))
+                                                {
+                                                    <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.IdNhomSanPham = x.Id; LoaiHangHoa = x.Ten;  }">
+                                                        @x.Ten
+                                                    </button>
+                                                }
                                             }
                                         }
                                     </div>
@@ -61,12 +64,12 @@
                                                 @if (ThuocTinhs[x.Index].Show)
                                                 {
                                                     <div class="list-group position-absolute w-100 top-0" style="z-index: 1">
-                                                        @if (ThuocTinhModels != null)
+                                                        @if (ThuocTinhModels?.Data.Content != null)
                                                         {
-                                                            @foreach (var y in ThuocTinhModels)
+                                                            @foreach (var y in ThuocTinhModels.Data.Content)
                                                             {
                                                                 <button class="list-group-item list-group-item-action text-sm"
-                                                    @onmousedown="() => { ThuocTinhModelsTemplate[x.Index] = y; ThuocTinhModels.Remove(y); if(y.Id != Guid.Empty){ ThuocTinhs[x.Index].Disabled = true; }; }">
+                                                    @onmousedown="() => { ThuocTinhModelsTemplate[x.Index] = y; ThuocTinhModels.Data.Content.Remove(y); if(y.Id != Guid.Empty){ ThuocTinhs[x.Index].Disabled = true; }; }">
                                                                     @y.Ten
                                                                 </button>
                                                             }
@@ -120,7 +123,7 @@
                                                 <button class="btn btn-danger"
                                                 @onclick="() => { ThuocTinhs.RemoveAt(ThuocTinhs.Count - 1); ThuocTinhModelsTemplate.Remove(x.Value);
                                                     if(x.Value.Id != Guid.Empty){
-                                                        ThuocTinhModels?.Add(x.Value); }
+                                                        ThuocTinhModels?.Data.Content.Add(x.Value); }
                                                     }">
                                                     <i class="fa fa-trash" style="cursor: pointer"></i>
                                                 </button>

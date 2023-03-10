@@ -12,7 +12,7 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    [Migration("20230306170843_MinkyShop")]
+    [Migration("20230309160400_MinkyShop")]
     partial class MinkyShop
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 183, DateTimeKind.Local).AddTicks(9189));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 898, DateTimeKind.Local).AddTicks(1788));
 
                     b.Property<string>("Sku")
                         .IsRequired()
@@ -132,7 +132,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayDanhGia")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 184, DateTimeKind.Local).AddTicks(1682));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 898, DateTimeKind.Local).AddTicks(4267));
 
                     b.Property<string>("NoiDung")
                         .IsRequired()
@@ -184,17 +184,17 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("ThoiGianGiaoCa")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 184, DateTimeKind.Local).AddTicks(7804));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(342));
 
                     b.Property<DateTime>("ThoiGianNhanCa")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 184, DateTimeKind.Local).AddTicks(7703));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(237));
 
                     b.Property<DateTime>("ThoiGianReset")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 184, DateTimeKind.Local).AddTicks(8494));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(1138));
 
                     b.Property<float>("TienBanDau")
                         .ValueGeneratedOnAdd()
@@ -257,6 +257,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Ten")
+                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
@@ -280,7 +281,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 185, DateTimeKind.Local).AddTicks(6269));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(9103));
 
                     b.HasKey("Id");
 
@@ -343,7 +344,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 185, DateTimeKind.Local).AddTicks(8083));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 900, DateTimeKind.Local).AddTicks(896));
 
                     b.Property<float>("TongTienThanhToan")
                         .ValueGeneratedOnAdd()
@@ -395,7 +396,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 186, DateTimeKind.Local).AddTicks(2617));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 900, DateTimeKind.Local).AddTicks(5270));
 
                     b.Property<DateTime>("NgayThanhToan")
                         .HasColumnType("datetime2");
@@ -635,7 +636,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 187, DateTimeKind.Local).AddTicks(977));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 901, DateTimeKind.Local).AddTicks(9795));
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -671,14 +672,12 @@ namespace MinkyShopProject.Business.Migrations
 
                     b.Property<string>("Ma")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(450)")
-                        .HasDefaultValueSql("133225961231873155");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 187, DateTimeKind.Local).AddTicks(3364));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 902, DateTimeKind.Local).AddTicks(3257));
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -709,7 +708,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 187, DateTimeKind.Local).AddTicks(5563));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 902, DateTimeKind.Local).AddTicks(7324));
 
                     b.Property<string>("Ten")
                         .IsRequired()
@@ -799,12 +798,12 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayApDung")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 187, DateTimeKind.Local).AddTicks(9917));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 903, DateTimeKind.Local).AddTicks(4594));
 
                     b.Property<DateTime>("NgayKetThuc")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 188, DateTimeKind.Local).AddTicks(18));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 903, DateTimeKind.Local).AddTicks(4801));
 
                     b.Property<int>("SoLuong")
                         .ValueGeneratedOnAdd()
@@ -896,7 +895,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("NgayTao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 0, 8, 43, 188, DateTimeKind.Local).AddTicks(1748));
+                        .HasDefaultValue(new DateTime(2023, 3, 9, 23, 3, 59, 903, DateTimeKind.Local).AddTicks(8334));
 
                     b.Property<float>("SoTienGiam")
                         .ValueGeneratedOnAdd()
@@ -998,13 +997,13 @@ namespace MinkyShopProject.Business.Migrations
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.GiaTri", b =>
                 {
-                    b.HasOne("MinkyShopProject.Business.Entities.ThuocTinh", "ThuocTinhs")
+                    b.HasOne("MinkyShopProject.Business.Entities.ThuocTinh", "ThuocTinh")
                         .WithMany("GiaTris")
                         .HasForeignKey("IdThuocTinh")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ThuocTinhs");
+                    b.Navigation("ThuocTinh");
                 });
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.GioHang", b =>

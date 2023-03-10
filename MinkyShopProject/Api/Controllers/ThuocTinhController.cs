@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 
 namespace MinkyShopProject.Api.Controllers
@@ -18,40 +19,28 @@ namespace MinkyShopProject.Api.Controllers
             _repository = repository;
         }
 
-        [HttpPost("AddAsync")]
-        public async Task<IActionResult> AddAsync(ThuocTinhCreateModel obj)
+        [HttpPost()]
+        public async Task<IActionResult> AddAsync([FromBody] ThuocTinhModel obj)
         {
-            return Ok(await _repository.AddAsync(obj));
-        }
-
-        [HttpPost("AddRangeAsync")]
-        public async Task<IActionResult> AddRangeAsync(ThuocTinhCreateModel[] objs)
-        {
-            return Ok(await _repository.AddRangeAsync(objs));
+            return Helper.TransformData(await _repository.AddAsync(obj));
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync(Guid id, ThuocTinhUpdateModel obj)
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] ThuocTinhModel obj)
         {
-            return Ok(await _repository.UpdateAsync(id, obj));
+            return Helper.TransformData(await _repository.UpdateAsync(id, obj));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery] ThuocTinhQueryModel obj)
         {
-            return Ok(await _repository.GetAsync());
+            return Helper.TransformData(await _repository.GetAsync(obj));
         }
 
-        [HttpDelete("DeleteAsync")]
+        [HttpDelete()]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
-            return Ok(await _repository.DeleteAsync(id));
-        }
-
-        [HttpDelete("DeleteRangeAsync")]
-        public async Task<IActionResult> DeleteRangeAsync(Guid[] ids)
-        {
-            return Ok(await _repository.DeleteRangeAsync(ids));
+            return Helper.TransformData(await _repository.DeleteAsync(id));
         }
     }
 }

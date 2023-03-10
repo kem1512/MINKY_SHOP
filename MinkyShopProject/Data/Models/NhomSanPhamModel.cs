@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinkyShopProject.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,13 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<NhomSanPhamModel>? NhomSanPhams { get; set; } = null!;
+        public List<NhomSanPhamModel> NhomSanPhams { get; set; } = new List<NhomSanPhamModel>();
+
+        public NhomSanPhamModel? NhomSanPhamEntity { get; set; } = null!;
+    }
+
+    public class NhomSanPhamQueryModel : PaginationRequest
+    {
+
     }
 }

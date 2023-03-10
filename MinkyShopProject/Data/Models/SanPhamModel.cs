@@ -1,4 +1,5 @@
-﻿using MinkyShopProject.Data.Enums;
+﻿using MinkyShopProject.Common;
+using MinkyShopProject.Data.Enums;
 
 namespace MinkyShopProject.Data.Models
 {
@@ -6,21 +7,26 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public string? Ma { get; set; } = null!;
-
-        public string? Anh { get; set; } = null!;
-
-        public float Gia { get; set; }
-
         public Guid? IdNhomSanPham { get; set; }
 
         public string Ten { get; set; } = null!;
 
-        public TrangThaiSanPham TrangThai { get; set; }
+        public string? Ma { get; set; } = null!;
+
+        public string? Anh { get; set; } = null!;
 
         public DateTime NgayTao { get; set; }
 
+        public TrangThaiSanPham TrangThai { get; set; }
+
+        public NhomSanPhamModel? NhomSanPham { get; set; } = null!;
+
         public List<BienTheModel>? BienThes { get; set; } = null!;
+    }
+
+    public class SanPhamQueryModel : PaginationRequest
+    {
+
     }
 
     // Biến Thể
@@ -29,19 +35,23 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdSanPham { get; set; }
-
         public string Ten { get; set; } = null!;
 
-        public string Sku { get; set; } = null!;
-
-        public float GiaBan { get; set; }
-
-        public string Anh { get; set; } = null!;
+        public Guid IdSanPham { get; set; }
 
         public int SoLuong { get; set; }
 
-        public string GiaTri { get; set; } = null!;
+        public float GiaBan { get; set; }
+
+        public string Sku { get; set; } = null!;
+
+        public string Anh { get; set; } = null!;
+
+        public DateTime NgayTao { get; set; }
+
+        public string? GiaTri { get; set; } = null!;
+
+        public string? NhomSanPham { get; set; } = null!;
     }
 
     public class BienTheChiTietModel

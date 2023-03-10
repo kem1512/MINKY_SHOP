@@ -1,4 +1,4 @@
-﻿@page "/admin/property"
+﻿@page "/admin/group"
 @using MinkyShopProject.Data.Models
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
@@ -13,30 +13,31 @@
                             <button class="btn btn-primary btn-sm ms-auto" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                         </div>
                         <div class="col-6">
-                            <label>Tên Thuộc Tính</label>
+                            <label>Nhóm Cha</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" @bind="ThuocTinh.Ten">
+                                <input type="text" class="form-control" @bind="NhomSanPham.Ten">
                             </div>
                         </div>
                         <div class="col-6">
-                            <label>Giá Trị</label>
+                            <label>Nhóm Con</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" @oninput='(ui) => TenGiaTri = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ ThuocTinh.GiaTris.Add(new GiaTriModel(){ Ten = TenGiaTri }); } })'>
+                                <input type="text" class="form-control" @oninput='(ui) => TenNhomSanPham = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ NhomSanPham.NhomSanPhams.Add(new NhomSanPhamModel(){ Ten = TenNhomSanPham }); } })'>
                             </div>
                             <div class="d-flex flex-wrap position-relative py-2">
                                 <div class="d-flex flex-wrap">
-                                    @if(ThuocTinh.GiaTris != null)
+                                    @if(NhomSanPham.NhomSanPhams != null)
                                     {
-                                        if(ThuocTinh.Id == Guid.Empty){
-                                            foreach (var x in ThuocTinh.GiaTris)
+                                        if (NhomSanPham.Id == Guid.Empty)
+                                        {
+                                            foreach (var x in NhomSanPham.NhomSanPhams)
                                             {
-                                                <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => ThuocTinh.GiaTris.Remove(x)">@x.Ten</span>
+                                                <span class="badge badge-primary me-2 mb-2 mt-0" style="cursor: pointer" @onmousedown="() => NhomSanPham.NhomSanPhams.Remove(x)">@x.Ten</span>
                                             }
                                         }else
                                         {
-                                            foreach (var x in ThuocTinh.GiaTris)
+                                            foreach (var x in NhomSanPham.NhomSanPhams)
                                             {
-                                                <input class="form-control w-25 me-2" @ondblclick="() => ThuocTinh.GiaTris.Remove(x)" @bind="x.Ten">
+                                                <input class="form-control w-25 me-2" @ondblclick="() => NhomSanPham.NhomSanPhams.Remove(x)" @bind="x.Ten">
                                             }
                                         }
                                     }
@@ -57,7 +58,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if(ThuocTinhs == null)
+                                @if (NhomSanPhams == null)
                                 {
                                     <tr>
                                         <td colspan="6">
@@ -69,7 +70,7 @@
                                 }
                                 else
                                 {
-                                    @foreach (var x in ThuocTinhs.Data.Content.Select((Value, Index) => (Index, Value)))
+                                    @foreach (var x in NhomSanPhams.Data.Content.Select((Value, Index) => (Index, Value)).Where(c => c.Value.IdParent == null))
                                     {
                                         <tr>
                                             <td>
@@ -81,9 +82,9 @@
                                             <td class="p-0 w-25">
                                                 <table class="table table-bordered m-0 border-bottom-0">
                                                     <tbody>
-                                                        @if(x.Value.GiaTris != null)
+                                                        @if(x.Value.NhomSanPhams != null)
                                                         {
-                                                            @foreach (var y in x.Value.GiaTris)
+                                                            @foreach (var y in x.Value.NhomSanPhams)
                                                             {
                                                                 <tr class="border-bottom-0">
                                                                     <td class="w-80">
@@ -110,7 +111,7 @@
                                                 <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
                                                     <i class="fas fa-eye text-info" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => ThuocTinh = x.Value">
+                                                <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => NhomSanPham = x.Value">
                                                     <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
                                                 </a>
                                                 <a href="javascript:;" @onclick="() => DeleteAsync(x.Value.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
@@ -132,11 +133,11 @@
 @code {
     string Url = "https://localhost:7053/api";
 
-    string TenGiaTri = "";
+    string TenNhomSanPham = "";
 
-    ThuocTinhModel ThuocTinh = new ThuocTinhModel();
+    NhomSanPhamModel NhomSanPham = new NhomSanPhamModel();
 
-    ResponsePagination<ThuocTinhModel>? ThuocTinhs;
+    ResponsePagination<NhomSanPhamModel>? NhomSanPhams;
 
     protected override async Task OnInitializedAsync()
     {
@@ -149,7 +150,7 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = await HttpClient.DeleteAsync($"{Url}/ThuocTinh/?id={id}");
+        var result = await HttpClient.DeleteAsync($"{Url}/NhomSanPhamm/{id}");
 
         if (result.IsSuccessStatusCode)
         {
@@ -163,7 +164,7 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = ThuocTinh.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<ThuocTinhModel>($"{Url}/ThuocTinh", ThuocTinh) : await HttpClient.PutAsJsonAsync<ThuocTinhModel>($"{Url}/ThuocTinh?id={ThuocTinh.Id}", ThuocTinh);
+        var result = NhomSanPham.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<NhomSanPhamModel>($"{Url}/NhomSanPham", NhomSanPham) : await HttpClient.PutAsJsonAsync<NhomSanPhamModel>($"{Url}/NhomSanPham/{NhomSanPham.Id}", NhomSanPham);
 
         if (result.IsSuccessStatusCode)
         {
@@ -173,8 +174,8 @@
 
     async Task Reload()
     {
-        ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>($"{Url}/ThuocTinh");
-        ThuocTinh = new ThuocTinhModel();
-        TenGiaTri = "";
+        NhomSanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
+        NhomSanPham = new NhomSanPhamModel();
+        TenNhomSanPham = "";
     }
 }

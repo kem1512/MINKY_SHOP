@@ -27,11 +27,11 @@
                                                 <div class="row">
                                                     <div class="col-6 mb-3">
                                                         <label>Tên Sản Phẩm</label>
-                                                        <input class="form-control" type="text" @bind="@SanPham.Ten">
+                                                        <input class="form-control" type="text" @bind="@SanPham.Data.Ten">
                                                     </div>
                                                     <div class="col-6 mb-3">
                                                         <label>Mã Sản Phẩm</label>
-                                                        <input class="form-control" type="text" value="@SanPham.Ma">
+                                                        <input class="form-control" type="text" value="@SanPham.Data.Ma">
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group mb-3">
@@ -44,11 +44,14 @@
                                                                 <div class="list-group position-absolute w-100 top-0 list" style="z-index: 1">
                                                                     @if (showNhomSanPham)
                                                                     {
-                                                                        foreach (var x in NhomSanPhamModels)
+                                                                        if(NhomSanPhamModels?.Data.Content != null)
                                                                         {
-                                                                            <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.IdNhomSanPham = x.Id; NhomSanPham = x.Ten;  }">
-                                                                                @x.Ten
-                                                                            </button>
+                                                                            foreach (var x in NhomSanPhamModels.Data.Content)
+                                                                            {
+                                                                                <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.Data.IdNhomSanPham = x.Id; NhomSanPham = x.Ten;  }">
+                                                                                    @x.Ten
+                                                                                </button>
+                                                                            }
                                                                         }
                                                                     }
                                                                 </div>
@@ -68,7 +71,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <img class="w-100 border-radius-lg shadow-lg mt-3 p-4" src="@SanPham.Anh" @onclick="() => Anh = true"
+                                                <img class="w-100 border-radius-lg shadow-lg mt-3 p-4" src="@SanPham.Data.Anh" @onclick="() => Anh = true"
                                                      alt="product_image" data-bs-toggle="modal" data-bs-target="#modal-image">
                                             </div>
                                         </div>
@@ -152,7 +155,7 @@
                         @foreach (var x in ModelImage.Select((Value, Index) => (Index, Value)))
                         {
                             <div class="col-2 border">
-                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(!Anh) { BienThe.Anh = ModelImage[x.Index]; }else { SanPham.Anh = ModelImage[x.Index]; } Anh = false; }" data-bs-dismiss="modal" />
+                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(!Anh) { BienThe.Anh = ModelImage[x.Index]; }else { SanPham.Data.Anh = ModelImage[x.Index]; } Anh = false; }" data-bs-dismiss="modal" />
                             </div>
                         }
                     }
@@ -180,11 +183,11 @@
 
     BienTheChiTietModel? BienTheChiTiet;
 
-    List<NhomSanPhamModel> NhomSanPhamModels = new List<NhomSanPhamModel>();
+    ResponsePagination<NhomSanPhamModel>? NhomSanPhamModels;
 
     BienTheModel BienThe = new BienTheModel();
 
-    SanPhamModel SanPham = new SanPhamModel();
+    ResponseObject<SanPhamModel>? SanPham;
 
     string NhomSanPham = "";
 
@@ -197,21 +200,9 @@
     protected override async Task OnInitializedAsync()
     {
         BienTheChiTiet = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>($"{Url}/BienThe/{IdSanPham}") ?? new BienTheChiTietModel();
-        SanPham = await HttpClient.GetFromJsonAsync<SanPhamModel>($"{Url}/SanPham/{IdSanPham}") ?? new SanPhamModel();
-        NhomSanPhamModels = await HttpClient.GetFromJsonAsync<List<NhomSanPhamModel>>($"{Url}/NhomSanPham") ?? new List<NhomSanPhamModel>();
-        NhomSanPham = NhomSanPhamModels.FirstOrDefault(c => c.Id == SanPham.IdNhomSanPham)?.Ten ?? "";
+        SanPham = await HttpClient.GetFromJsonAsync<ResponseObject<SanPhamModel>>($"{Url}/SanPham/{IdSanPham}");
+        NhomSanPhamModels = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
         ModelImage = await JSRuntime.InvokeAsync<List<string>>("storageImages");
-    }
-
-    protected async override Task OnParametersSetAsync()
-    {
-        if (IdBienThe != Guid.Empty)
-        {
-            if (BienTheChiTiet != null)
-            {
-                BienThe = BienTheChiTiet.BienTheModels.FirstOrDefault(c => c.Id == IdBienThe);
-            }
-        }
     }
 
     async Task DeleteAsync()
@@ -231,7 +222,7 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result2 = await HttpClient.PutAsJsonAsync<SanPhamModel>($"{Url}/SanPham/{SanPham.Id}", SanPham);
+        var result2 = await HttpClient.PutAsJsonAsync<SanPhamModel>($"{Url}/SanPham/{SanPham.Data.Id}", SanPham.Data);
 
         if (result2.IsSuccessStatusCode)
             await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);

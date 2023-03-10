@@ -2,10 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,57 +25,113 @@ namespace MinkyShopProject.Business.Repositories.NhomSanPham
             _mapper = mapper;
         }
 
-        public async Task<bool> AddAsync(NhomSanPhamModel obj)
+        public async Task<Response> AddAsync(NhomSanPhamModel obj)
         {
             try
             {
-                await _context.NhomSanPham.AddAsync(_mapper.Map<NhomSanPhamModel, Entities.NhomSanPham>(obj));
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+                if (obj == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
 
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            try
-            {
-                var nhomSanPham = await _context.NhomSanPham.FindAsync(id);
-                if (nhomSanPham != null)
+                var nhomSanPham = _mapper.Map<NhomSanPhamModel, Entities.NhomSanPham>(obj);
+
+                await _context.NhomSanPham.AddAsync(nhomSanPham);
+
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
                 {
-                    _context.NhomSanPham.Remove(nhomSanPham);
-                    await _context.SaveChangesAsync();
+                    var data = _mapper.Map<Entities.NhomSanPham, NhomSanPhamModel>(nhomSanPham);
+                    return new ResponseObject<NhomSanPhamModel>(data, "Thêm thành công");
                 }
-                return true;
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                Log.Error(e, string.Empty);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
             }
         }
 
-        public async Task<List<NhomSanPhamModel>> GetAsync()
-        {
-            return _mapper.Map<List<Entities.NhomSanPham>, List<NhomSanPhamModel>>(await _context.NhomSanPham.ToListAsync());
-        }
-
-        public async Task<bool> UpdateAsync(Guid id, NhomSanPhamModel obj)
+        public async Task<Response> DeleteAsync(Guid id)
         {
             try
             {
-                var nhomSanPham = await _context.NhomSanPham.FindAsync(id);
-                if (nhomSanPham != null)
+                var nhomSanPham = await _context.NhomSanPham.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+
+                if (nhomSanPham == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
+
+                if (nhomSanPham.NhomSanPhams.Any())
                 {
-                    nhomSanPham.Ten = obj.Ten;
-                    nhomSanPham.TrangThai = obj.TrangThai;
-                    nhomSanPham.IdParent = obj.IdParent;
-                    _context.NhomSanPham.Update(nhomSanPham);
-                    await _context.SaveChangesAsync();
+                    _context.NhomSanPham.RemoveRange(nhomSanPham.NhomSanPhams);
                 }
-                return true;
+
+                _context.NhomSanPham.Remove(nhomSanPham);
+
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
+                {
+                    return new ResponseError(HttpStatusCode.OK, "Xóa thành công");
+                }
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Xóa Thất Bại");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, string.Empty);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
+            }
+        }
+
+        public async Task<Response> GetAsync(NhomSanPhamQueryModel obj)
+        {
+            try
+            {
+                return new ResponsePagination<NhomSanPhamModel>(_mapper.Map<Pagination<Entities.NhomSanPham>, Pagination<NhomSanPhamModel>>(await _context.NhomSanPham.Include(c => c.NhomSanPhamEntity).AsQueryable().GetPageAsync(obj)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
+
+        public async Task<Response> UpdateAsync(Guid id, NhomSanPhamModel obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Giá trị trả về không hợp lệ");
+
+                var nhomSanPham = _context.NhomSanPham.AsNoTracking().FirstOrDefault(c => c.Id == id);
+
+                if (nhomSanPham == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
+
+                nhomSanPham.Ten = obj.Ten;
+
+                nhomSanPham.TrangThai = obj.TrangThai;
+
+                nhomSanPham.IdParent = obj.IdParent;
+
+                if (obj.NhomSanPhams != null && obj.NhomSanPhams.Count() > 0)
+                {
+                    nhomSanPham.NhomSanPhams = _mapper.Map<List<NhomSanPhamModel>, List<Entities.NhomSanPham>>(obj.NhomSanPhams);
+                }
+
+                _context.NhomSanPham.Update(_mapper.Map<NhomSanPhamModel, Entities.NhomSanPham>(obj));
+
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
+                {
+                    var data = _mapper.Map<Entities.NhomSanPham, NhomSanPhamModel>(nhomSanPham);
+                    return new ResponseObject<NhomSanPhamModel>(data, "Cập nhật thành công");
+                }
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
             }
             catch (Exception)
             {

@@ -27,12 +27,6 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             }
             return result;
         }
-
-        public static IEnumerable<IEnumerable<T>> Paginate<T>(this IEnumerable<IEnumerable<T>> pageSize)
-        {
-            IEnumerable<IEnumerable<T>> result = new[] { Enumerable.Empty<T>() };
-            return result;
-        }
     }
 
     public class BienTheRepository : IBienTheRepository
@@ -58,7 +52,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
-                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Common.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten });
+                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Data.Commons.Common.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten });
 
                 foreach (var x in obj.ThuocTinhs)
                 {
@@ -185,7 +179,8 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                                     SoLuong = btc.First().bt.SoLuong,
                                     Anh = btc.First().bt.Anh,
                                     IdSanPham = btc.First().bt.IdSanPham,
-                                    GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
+                                    GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten)),
+                                    NhomSanPham = _context.NhomSanPham.Include(c => c.NhomSanPhams).FirstOrDefault(c => c.Id == btc.FirstOrDefault().sp.IdNhomSanPham).Ten + " / " + _context.NhomSanPham.Include(c => c.NhomSanPhamEntity).FirstOrDefault(c => c.Id == btc.FirstOrDefault().sp.IdNhomSanPham).NhomSanPhamEntity.Ten
                                 };
 
             var thuocTinhModels = from tt in _context.ThuocTinh
@@ -210,7 +205,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                                       GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.Select(c => c.gt).Distinct().ToList())
                                   };
 
-            var bienTheChiTietModel = new BienTheChiTietModel() { BienTheModels = bienTheModels.ToList(), ThuocTinhModels = thuocTinhModels.ToList() };
+            var bienTheChiTietModel = new BienTheChiTietModel() { BienTheModels = bienTheModels.ToList(), ThuocTinhModels = thuocTinhModels.ToList(), SanPham = _mapper.Map<Entities.SanPham, SanPhamModel>(_context.SanPham.First()) };
 
             return await Task.FromResult(bienTheChiTietModel);
         }

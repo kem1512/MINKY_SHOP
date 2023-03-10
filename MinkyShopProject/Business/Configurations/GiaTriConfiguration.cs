@@ -22,7 +22,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Ten).HasMaxLength(30).HasDefaultValue(null);
 
-            builder.HasOne(c => c.ThuocTinhs).WithMany(c => c.GiaTris).HasForeignKey(c => c.IdThuocTinh).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(c => c.ThuocTinh).WithMany(c => c.GiaTris).HasForeignKey(c => c.IdThuocTinh).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

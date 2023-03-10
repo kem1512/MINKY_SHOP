@@ -13,5 +13,20 @@ namespace MinkyShopProject.Data.Models
         public Guid IdKhachHang { get; set; }
 
         public DateTime NgayTao { get; set; }
+
+        public List<GioHangChiTietModel>? GioHangChiTiets { get; set; } = null!;
+    }
+
+    public class GioHangChiTietModel
+    {
+        public Guid Id { get; set; }
+
+        public Guid IdBienThe { get; set; }
+
+        public Guid IdGioHang { get; set; }
+
+        public int SoLuong { get; set; }
+
+        public float DonGia { get; set; }
     }
 }

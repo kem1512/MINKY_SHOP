@@ -227,6 +227,7 @@ namespace MinkyShopProject.Common
         public static async Task<Pagination<T>> GetPageAsync<T>(this IQueryable<T> dbSet, PaginationRequest query)
             where T : class
         {
+            var result = dbSet.Count();
             query.Page = query.Page ?? 1;
             if (query.Sort != null && query.Size.HasValue)
             {

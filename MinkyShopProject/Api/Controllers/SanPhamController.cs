@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.SanPham;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
 
@@ -19,34 +20,28 @@ namespace MinkyShopProject.Api.Controllers
             _repository = repository;
         }
 
-        [HttpPost()]
-        public async Task<ActionResult<object>> AddAsync(SanPhamModel obj)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Response>> FindAsync(Guid id)
         {
-            return Ok(await _repository.AddAsync(obj));
+            return Helper.TransformData(await _repository.FindAsync(id));
         }
 
         [HttpGet()]
-        public async Task<ActionResult<SanPhamModel[]>> GetAsync()
+        public async Task<ActionResult> GetAsync([FromQuery] SanPhamQueryModel obj)
         {
-            return Ok(await _repository.GetAsync());
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SanPhamModel[]>> FindAsync(Guid id)
-        {
-            return Ok(await _repository.FindAsync(id));
+            return Helper.TransformData(await _repository.GetAsync(obj));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAsync(Guid id, SanPhamModel obj)
+        public async Task<ActionResult<Response>> UpdateAsync(Guid id, [FromBody] SanPhamModel obj)
         {
-            return Ok(await _repository.UpdateAsync(id, obj));
+            return Helper.TransformData(await _repository.UpdateAsync(id, obj));
         }
 
         [HttpDelete()]
-        public async Task<ActionResult<SanPhamModel[]>> DeleteSanPhamAsync(Guid id)
+        public async Task<ActionResult<Response>> DeleteSanPhamAsync(Guid id)
         {
-            return Ok(await _repository.DeleteAsync(id));
+            return Helper.TransformData(await _repository.DeleteAsync(id));
         }
     }
 }

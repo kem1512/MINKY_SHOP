@@ -18,7 +18,6 @@ namespace MinkyShopProject.Business.Repositories.KhachHang
         {
             _Context = context ?? throw new ArgumentNullException(nameof(context));
             _Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            ;
         }
         public async Task<Response> CreateKhachHang(KhachHangThemVaSuaModel model)
         {
@@ -101,9 +100,8 @@ namespace MinkyShopProject.Business.Repositories.KhachHang
             {
 
                 var result = _Context.KhachHang.GetPage(filter);
-                var khachHangDto =
-                    JsonConvert.DeserializeObject<Pagination<KhachHangModel>>(JsonConvert.SerializeObject(result));
-                return new ResponsePagination<KhachHangModel>(khachHangDto);
+                var data = _Mapper.Map<Pagination<Entities.KhachHang>, Pagination<KhachHangModel>>(result);
+                return new ResponsePagination<KhachHangModel>(data);
 
             }
             catch (Exception e)
