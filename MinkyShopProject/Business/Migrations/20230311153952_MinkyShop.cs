@@ -38,8 +38,8 @@ namespace MinkyShopProject.Business.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdParent = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Ten = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrangThai = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 901, DateTimeKind.Local).AddTicks(9795))
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(70))
                 },
                 constraints: table =>
                 {
@@ -58,7 +58,7 @@ namespace MinkyShopProject.Business.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 902, DateTimeKind.Local).AddTicks(7324))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(3804))
                 },
                 constraints: table =>
                 {
@@ -87,12 +87,12 @@ namespace MinkyShopProject.Business.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    LoaiGiamGia = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    LoaiGiamGia = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     HinhThucGiamGia = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     SoTienCan = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     SoTienGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    NgayApDung = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 903, DateTimeKind.Local).AddTicks(4594)),
-                    NgayKetThuc = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 903, DateTimeKind.Local).AddTicks(4801)),
+                    NgayApDung = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(8059)),
+                    NgayKetThuc = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(8159)),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
@@ -108,8 +108,8 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ThoiGianNhanCa = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(237)),
-                    ThoiGianGiaoCa = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(342)),
+                    ThoiGianNhanCa = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(7950)),
+                    ThoiGianGiaoCa = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(8057)),
                     IdNhanVienTrongCa = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdNhanVienCaTiepTheo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TienBanDau = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
@@ -119,7 +119,7 @@ namespace MinkyShopProject.Business.Migrations
                     TienPhatSinh = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     GhiChuPhatSinh = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TongTienMatCaTruoc = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    ThoiGianReset = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(1138)),
+                    ThoiGianReset = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(8726)),
                     TongTienMatRut = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
@@ -144,7 +144,7 @@ namespace MinkyShopProject.Business.Migrations
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png"),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 902, DateTimeKind.Local).AddTicks(3257))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(2031))
                 },
                 constraints: table =>
                 {
@@ -216,7 +216,7 @@ namespace MinkyShopProject.Business.Migrations
                     GiaBan = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     Sku = table.Column<string>(type: "VARCHAR(20)", nullable: false),
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png"),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 898, DateTimeKind.Local).AddTicks(1788)),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 987, DateTimeKind.Local).AddTicks(9508)),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
@@ -280,7 +280,7 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 899, DateTimeKind.Local).AddTicks(9103))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 989, DateTimeKind.Local).AddTicks(5739))
                 },
                 constraints: table =>
                 {
@@ -301,11 +301,11 @@ namespace MinkyShopProject.Business.Migrations
                     IdNhanVien = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 900, DateTimeKind.Local).AddTicks(5270)),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 990, DateTimeKind.Local).AddTicks(1274)),
                     NgayThanhToan = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NgayGiaoHang = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NgayNhan = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LoaiDonHang = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    LoaiDonHang = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     TenNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Sdt = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "0"),
@@ -427,7 +427,7 @@ namespace MinkyShopProject.Business.Migrations
                     IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoDanhGia = table.Column<int>(type: "int", nullable: false, defaultValue: 5),
-                    NgayDanhGia = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 898, DateTimeKind.Local).AddTicks(4267)),
+                    NgayDanhGia = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(2385)),
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NoiDung = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
@@ -460,7 +460,7 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 900, DateTimeKind.Local).AddTicks(896)),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 989, DateTimeKind.Local).AddTicks(7286)),
                     KieuThanhToan = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     TongTienThanhToan = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -514,7 +514,7 @@ namespace MinkyShopProject.Business.Migrations
                     TienTruocKhiGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TienSauKhiGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     SoTienGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 9, 23, 3, 59, 903, DateTimeKind.Local).AddTicks(8334))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(9770))
                 },
                 constraints: table =>
                 {

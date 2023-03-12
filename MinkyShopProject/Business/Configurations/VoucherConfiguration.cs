@@ -25,9 +25,9 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Ten).HasMaxLength(30).HasDefaultValue(null);
 
-            builder.Property(c => c.LoaiGiamGia).HasDefaultValue(LoaiGiamGia.HoaDon);
+            builder.Property(c => c.LoaiGiamGia).HasDefaultValue(0);
 
-            builder.Property(c => c.HinhThucGiamGia).HasDefaultValue(HinhThucGiamGia.PhanTram);
+            builder.Property(c => c.HinhThucGiamGia).HasDefaultValue(0);
 
             builder.Property(c => c.SoTienCan).HasDefaultValue(0);
 
@@ -41,7 +41,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.MoTa).HasDefaultValue(null);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiVoucher.DangHoatDong);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
         }
     }
 }

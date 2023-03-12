@@ -4133,6 +4133,7 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
     .nav-tabs .nav-link {
         margin-bottom: calc(var(--bs-nav-tabs-border-width) * -1);
         background: none;
+        color: white;
         border: var(--bs-nav-tabs-border-width) solid transparent;
         border-top-left-radius: var(--bs-nav-tabs-border-radius);
         border-top-right-radius: var(--bs-nav-tabs-border-radius)
@@ -5119,7 +5120,7 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
 
 .active > .page-link, .page-link.active {
     z-index: 3;
-    color: var(--bs-pagination-active-color);
+    color: var(--bs-pagination-active-color) !important;
     background-color: var(--bs-pagination-active-bg);
     border-color: var(--bs-pagination-active-border-color)
 }
@@ -20774,6 +20775,14 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
     font-weight: 700;
     margin-bottom: .5rem;
     color: #344767;
+    margin-left: .25rem
+}
+
+.validation-message {
+    font-size: .75rem;
+    font-weight: 700;
+    margin-bottom: .5rem;
+    color: red;
     margin-left: .25rem
 }
 

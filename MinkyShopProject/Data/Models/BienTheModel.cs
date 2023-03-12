@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinkyShopProject.Business.Entities
+namespace MinkyShopProject.Data.Models
 {
-    public class BienThe
+    public class BienTheModel
     {
         public Guid Id { get; set; }
 
@@ -26,15 +26,19 @@ namespace MinkyShopProject.Business.Entities
         public DateTime NgayTao { get; set; }
 
         public int TrangThai { get; set; }
+    }
 
-        public SanPham SanPham { get; set; } = null!;
+    public class BienTheChiTietModel
+    {
+        public List<ThuocTinhModel>? ThuocTinhs { get; set; } = new List<ThuocTinhModel>();
 
-        public List<DanhGia> DanhGias { get; set; } = null!;
+        public SanPhamModel SanPham { get; set; } = new SanPhamModel();
+    }
 
-        public List<GioHangChiTiet> GioHangChiTiets { get; set; } = null!;
+    public class BienTheCreateModel
+    {
+        public List<ThuocTinhModel> ThuocTinhs { get; set; } = null!;
 
-        public List<BienTheChiTiet> BienTheChiTiets { get; set; } = null!;
-
-        public List<HoaDonChiTiet> HoaDonChiTiets { get; set; } = null!;
+        public SanPhamModel SanPham { get; set; } = null!;
     }
 }

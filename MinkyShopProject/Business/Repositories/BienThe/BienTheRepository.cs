@@ -2,33 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
-using MinkyShopProject.Data.Commons;
 using MinkyShopProject.Data.Models;
-using System;
-using System.Collections.Generic;
+using MinkyShopProject.Common;
+using System.Net;
+using Serilog;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MinkyShopProject.Business.Repositories.BienThe
 {
-    public static class Test
-    {
-        public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
-        {
-            IEnumerable<IEnumerable<T>> result = new[] { Enumerable.Empty<T>() };
-            foreach (var sequence in sequences)
-            {
-                var localSequence = sequence;
-                result = result.SelectMany(
-                  _ => localSequence,
-                  (seq, item) => seq.Concat(new[] { item })
-                );
-            }
-            return result;
-        }
-    }
-
     public class BienTheRepository : IBienTheRepository
     {
         private readonly MinkyShopDbContext _context;
@@ -40,7 +21,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             _mapper = mapper;
         }
 
-        public async Task<bool> AddAsync(BienTheCreateModel obj)
+        public async Task<Response> AddAsync(BienTheCreateModel obj)
         {
             try
             {
@@ -52,7 +33,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
-                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Data.Commons.Common.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten });
+                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Helper.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten });
 
                 foreach (var x in obj.ThuocTinhs)
                 {
@@ -84,20 +65,20 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                         if (y.Id == Guid.Empty)
                         {
                             y.Id = Guid.NewGuid();
-                            await _context.GiaTri.AddAsync(new Entities.GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id });
+                            await _context.GiaTri.AddAsync(new GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id });
                         }
 
                         // Nếu Tên Thuộc Tính Có 2 Kí Tự Trở Lên Thì Lấy 2 Ký Tự Không Thì Chỉ Lấy Kí Tự Đầu Tiên
                         var thuocTinh = x.Ten.Split(" ");
 
-                        var tenThuocTinh = thuocTinh.Count() > 2 ? thuocTinh[0].Substring(0, 1) + thuocTinh[1].Substring(0, 1) : thuocTinh[0].Substring(0, 1);
+                        var tenThuocTinh = thuocTinh.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
 
                         // Lấy Kí Tự Đầu Tiên
-                        var tenGiaTri = y.Ten.Substring(0, 1);
+                        var giaTri = y.Ten.Split(" ");
 
-                        var tenGiaTriHienThi = y.Ten;
+                        var tenGiaTri = giaTri.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
 
-                        sku.Add(tenThuocTinh + tenGiaTri + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham + "/" + tenGiaTriHienThi);
+                        sku.Add(string.Join("", tenThuocTinh) + string.Join("", tenGiaTri) + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham + "/" + y.Ten);
                     }
                     skus.Add(sku.ToArray());
                     idThuocTinhSanPham = Guid.NewGuid();
@@ -107,7 +88,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                 foreach (var x in skus.CartesianProduct())
                 {
                     // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                    var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = obj.SanPham.Ten + " " + String.Join(" ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
+                    var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = String.Join(" + ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
                     await _context.BienThe.AddAsync(bienThe);
 
                     foreach (var y in x)
@@ -122,140 +103,113 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                     idBienThe = Guid.NewGuid();
                 }
 
-                await _context.SaveChangesAsync();
-                return true;
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
+                {
+                    var data = _mapper.Map<BienTheCreateModel, BienTheModel>(obj);
+                    return new ResponseObject<BienTheModel>(data, "Thêm thành công");
+                }
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                Log.Error(e, string.Empty);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
             }
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<Response> DeleteAsync(Guid id)
         {
             try
             {
-                var bienThe = await _context.BienThe.FindAsync(id);
-                if (bienThe != null)
+                var bienThe = await _context.BienThe.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+
+                if (bienThe == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
+
+                _context.BienThe.Remove(bienThe);
+
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
                 {
-                    _context.BienThe.Remove(bienThe);
-                    await _context.SaveChangesAsync();
+                    return new ResponseError(HttpStatusCode.OK, "Xóa thành công");
                 }
-                return true;
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Xóa Thất Bại");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                Log.Error(e, string.Empty);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
             }
         }
 
-        public async Task<BienTheChiTietModel> FindAsync(Guid id)
+        public async Task<Response> FindAsync(Guid id)
         {
-            var bienTheModels = from tt in _context.ThuocTinh
-                                join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
-                                join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
-                                join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
-                                join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
-                                join bt in _context.BienThe on btct.IdBienThe equals bt.Id
-                                where sp.Id == id
-                                group new { gt, bt, sp } by new
-                                {
-                                    ttsp.IdSanPham,
-                                    sp.Id,
-                                    sp.Ten,
-                                    sp.TrangThai,
-                                    sp.NgayTao,
-                                    btct.IdBienThe,
-                                    bt.SoLuong,
-                                    bt.GiaBan,
-                                    bt.Sku,
-                                } into btc
-                                select new BienTheModel
-                                {
-                                    Id = btc.First().bt.Id,
-                                    Ten = btc.First().bt.Ten,
-                                    Sku = btc.First().bt.Sku,
-                                    GiaBan = btc.First().bt.GiaBan,
-                                    SoLuong = btc.First().bt.SoLuong,
-                                    Anh = btc.First().bt.Anh,
-                                    IdSanPham = btc.First().bt.IdSanPham,
-                                    GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten)),
-                                    NhomSanPham = _context.NhomSanPham.Include(c => c.NhomSanPhams).FirstOrDefault(c => c.Id == btc.FirstOrDefault().sp.IdNhomSanPham).Ten + " / " + _context.NhomSanPham.Include(c => c.NhomSanPhamEntity).FirstOrDefault(c => c.Id == btc.FirstOrDefault().sp.IdNhomSanPham).NhomSanPhamEntity.Ten
-                                };
+            #region ThuocTinhs
+            var thuocTinhs = from tt in _context.ThuocTinh
+                             join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
+                             join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
+                             join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
+                             join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
+                             join bt in _context.BienThe on btct.IdBienThe equals bt.Id
+                             where sp.Id == id
+                             group new { tt, gt } by new
+                             {
+                                 tt.Id,
+                                 tt.NgayTao,
+                                 tt.TrangThai,
+                                 tt.Ten,
+                                 gt.IdThuocTinh,
+                             } into ttc
+                             select new ThuocTinhModel
+                             {
+                                 Id = ttc.First().tt.Id,
+                                 Ten = ttc.First().tt.Ten,
+                                 GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.Select(c => c.gt).Distinct().ToList())
+                             };
+            #endregion
 
-            var thuocTinhModels = from tt in _context.ThuocTinh
-                                  join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
-                                  join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
-                                  join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
-                                  join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
-                                  join bt in _context.BienThe on btct.IdBienThe equals bt.Id
-                                  where sp.Id == id
-                                  group new { tt, gt } by new
-                                  {
-                                      tt.Id,
-                                      tt.NgayTao,
-                                      tt.TrangThai,
-                                      tt.Ten,
-                                      gt.IdThuocTinh,
-                                  } into ttc
-                                  select new ThuocTinhModel
-                                  {
-                                      Id = ttc.First().tt.Id,
-                                      Ten = ttc.First().tt.Ten,
-                                      GiaTris = _mapper.Map<List<GiaTri>, List<GiaTriModel>>(ttc.Select(c => c.gt).Distinct().ToList())
-                                  };
+            var sanPham = await _context.SanPham.AsNoTracking().Include(c => c.BienThes).ThenInclude(c => c.BienTheChiTiets).AsNoTracking().Include(c => c.NhomSanPham).ThenInclude(c => c.NhomSanPhamEntity).AsNoTracking().FirstAsync(c => c.Id == id);
 
-            var bienTheChiTietModel = new BienTheChiTietModel() { BienTheModels = bienTheModels.ToList(), ThuocTinhModels = thuocTinhModels.ToList(), SanPham = _mapper.Map<Entities.SanPham, SanPhamModel>(_context.SanPham.First()) };
+            var bienTheChiTietModel = new BienTheChiTietModel() { ThuocTinhs = thuocTinhs.ToList(), SanPham = _mapper.Map<Entities.SanPham, SanPhamModel>(sanPham) };
 
-            return await Task.FromResult(bienTheChiTietModel);
+            return new ResponseObject<BienTheChiTietModel>(bienTheChiTietModel);
         }
 
-        public async Task<List<BienTheModel>> GetAsync()
-        {
-            var result = from tt in _context.ThuocTinh
-                         join gt in _context.GiaTri on tt.Id equals gt.IdThuocTinh
-                         join ttsp in _context.ThuocTinhSanPham on tt.Id equals ttsp.IdThuocTinh
-                         join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
-                         join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
-                         join bt in _context.BienThe on btct.IdBienThe equals bt.Id
-                         group new { gt, bt, sp } by new
-                         {
-                             ttsp.IdSanPham,
-                             sp.Id,
-                             sp.Ten,
-                             sp.TrangThai,
-                             sp.NgayTao,
-                             btct.IdBienThe,
-                             bt.SoLuong,
-                             bt.GiaBan,
-                             bt.Sku,
-                         } into btc
-                         select new BienTheModel
-                         {
-                             Id = btc.First().bt.Id,
-                             Ten = btc.First().bt.Ten,
-                             Sku = btc.First().bt.Sku,
-                             GiaBan = btc.First().bt.GiaBan,
-                             SoLuong = btc.First().bt.SoLuong,
-                             Anh = btc.First().bt.Anh,
-                             IdSanPham = btc.First().sp.Id,
-                             GiaTri = String.Join(" + ", btc.Select(c => c.gt.Ten))
-                         };
-
-            return await result.ToListAsync();
-        }
-
-        public async Task<bool> UpdateAsync(Guid id, BienTheModel obj)
+        public async Task<Response> UpdateAsync(Guid id, BienTheModel obj)
         {
             try
             {
-                var bienThe = await _context.BienThe.AsNoTracking().FirstOrDefaultAsync(c => c.Id == obj.Id);
-                if (bienThe != null)
+                if (obj == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Lỗi rồi");
+
+                var bienThe = _context.BienThe.AsNoTracking().FirstOrDefault(c => c.Id == id);
+
+                if (bienThe == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
+
+                bienThe.Ten = obj.Ten;
+
+                bienThe.TrangThai = obj.TrangThai;
+
+                bienThe.Anh = obj.Anh;
+
+                bienThe.GiaBan = obj.GiaBan;
+
+                _context.BienThe.Update(_mapper.Map<BienTheModel, Entities.BienThe>(obj));
+
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
                 {
-                    _context.BienThe.Update(_mapper.Map<BienTheModel, Entities.BienThe>(obj));
-                    await _context.SaveChangesAsync();
+                    var data = _mapper.Map<Entities.BienThe, BienTheModel>(bienThe);
+                    return new ResponseObject<BienTheModel>(data, "Cập nhật thành công");
                 }
-                return true;
+                return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
             }
             catch (Exception)
             {

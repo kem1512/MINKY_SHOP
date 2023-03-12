@@ -25,7 +25,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.IdVoucher).HasDefaultValue(Guid.Empty);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiVoucherKhachHang.ChuaSuDung);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
         }
     }
 }

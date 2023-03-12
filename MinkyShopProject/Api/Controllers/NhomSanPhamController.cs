@@ -23,7 +23,7 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpGet()]
-        public async Task<ActionResult<Response>> GetAsync([FromQuery] NhomSanPhamQueryModel obj)
+        public async Task<ActionResult> GetAsync([FromQuery] NhomSanPhamQueryModel obj)
         {
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
@@ -35,13 +35,13 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> UpdateAsync(Guid id, [FromBody] NhomSanPhamModel obj)
+        public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] NhomSanPhamModel obj)
         {
             return Helper.TransformData(await _repository.UpdateAsync(id, obj));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteAsync(Guid id)
+        public async Task<ActionResult> DeleteAsync(Guid id)
         {
             return Helper.TransformData(await _repository.DeleteAsync(id));
         }

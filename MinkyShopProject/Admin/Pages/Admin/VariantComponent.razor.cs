@@ -1,5 +1,6 @@
 ﻿using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using System.Net.Http.Json;
@@ -66,9 +67,9 @@ namespace MinkyShopProject.Admin.Pages.Admin
                     }
                 }
 
-                var result2 = await HttpClient.PostAsJsonAsync($"{Url}/BienThe", new BienTheCreateModel() { ThuocTinhs = thuocTinhs, SanPham = SanPham });
+                var result = await HttpClient.PostAsJsonAsync($"{Url}/BienThe", new BienTheCreateModel() { ThuocTinhs = thuocTinhs, SanPham = SanPham });
 
-                if (result2.IsSuccessStatusCode)
+                if (result.IsSuccessStatusCode)
                 {
                     ThuocTinhModelsTemplate = new List<ThuocTinhModel>();
                 }

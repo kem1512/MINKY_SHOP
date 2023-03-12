@@ -25,7 +25,7 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayNhan { get; set; }
 
-        public LoaiDonHang LoaiDonHang { get; set; }
+        public int LoaiDonHang { get; set; }
 
         public string TenNguoiNhan { get; set; } = null!;
 

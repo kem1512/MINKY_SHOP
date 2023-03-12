@@ -45,5 +45,11 @@ async function uploadImages(images) {
     console.log(images)
 }
 
+function choiceLoad(obj) {
+    const element = document.querySelector('.js-choice');
+    if (element) new Choices(element, JSON.parse(obj.replace(/'/g, '"')));
+}
+
 window.storageImages = storageImages;
 window.uploadImages = uploadImages;
+window.choiceLoad = choiceLoad;

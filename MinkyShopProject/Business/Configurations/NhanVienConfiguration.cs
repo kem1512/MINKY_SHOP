@@ -38,9 +38,9 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.MatKhau).HasDefaultValue(null);
 
-            builder.Property(c => c.VaiTro).HasDefaultValue(VaiTro.Admin);
+            builder.Property(c => c.VaiTro).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiNhanVien.DangLam);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
         }
     }
 }

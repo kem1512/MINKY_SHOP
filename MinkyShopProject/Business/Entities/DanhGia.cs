@@ -25,7 +25,7 @@ namespace MinkyShopProject.Business.Entities
 
         public string NoiDung { get; set; } = null!;
 
-        public TrangThaiDanhGia TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public BienThe BienThe { get; set; } = null!;
 

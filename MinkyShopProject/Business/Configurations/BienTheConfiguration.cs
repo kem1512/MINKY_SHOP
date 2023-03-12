@@ -33,7 +33,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.GiaBan).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiBienThe.DangBan);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
             builder.HasOne(c => c.SanPham).WithMany(c => c.BienThes).HasForeignKey(c => c.IdSanPham).OnDelete(DeleteBehavior.Cascade);
         }

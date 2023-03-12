@@ -27,7 +27,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Anh).IsRequired(false);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiDanhGia.HienThi);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
             builder.HasOne(c => c.BienThe).WithMany(c => c.DanhGias).HasForeignKey(c => c.IdBienThe).OnDelete(DeleteBehavior.Cascade);
 

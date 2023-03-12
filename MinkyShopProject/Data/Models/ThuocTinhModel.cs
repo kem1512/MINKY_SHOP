@@ -2,6 +2,7 @@
 using MinkyShopProject.Data.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace MinkyShopProject.Data.Models
 
         public string Ten { get; set; } = null!;
 
-        public TrangThaiThuocTinh TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public DateTime NgayTao { get; set; }
 
@@ -30,6 +31,8 @@ namespace MinkyShopProject.Data.Models
         public Guid IdThuocTinh { get; set; }
 
         public string Ten { get; set; } = null!;
+
+        public ThuocTinhModel? ThuocTinh { get; set; }
     }
 
     public class ThuocTinhQueryModel : PaginationRequest

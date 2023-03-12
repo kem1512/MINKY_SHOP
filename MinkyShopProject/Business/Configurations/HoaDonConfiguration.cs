@@ -24,7 +24,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
 
-            builder.Property(c => c.LoaiDonHang).HasDefaultValue(LoaiDonHang.Offline);
+            builder.Property(c => c.LoaiDonHang).HasDefaultValue(0);
 
             builder.Property(c => c.Sdt).HasDefaultValue(0);
 
@@ -32,7 +32,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.TongTien).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiHoaDon.ChuaHoanThanh);
+            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiHoaDon.Online);
 
             builder.HasOne(c => c.NhanVien).WithMany(c => c.HoaDons).HasForeignKey(c => c.IdNhanVien).OnDelete(DeleteBehavior.Cascade);
         }

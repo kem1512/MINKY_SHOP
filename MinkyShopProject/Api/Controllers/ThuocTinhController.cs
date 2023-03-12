@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
@@ -34,6 +35,7 @@ namespace MinkyShopProject.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery] ThuocTinhQueryModel obj)
         {
+            obj.Url = $"{Request.Scheme}://{Request.Host.Value}/";
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
 

@@ -29,9 +29,9 @@ namespace MinkyShopProject.Business.Entities
 
         public string MatKhau { get; set; } = null!;
 
-        public VaiTro VaiTro { get; set; }
+        public int VaiTro { get; set; }
 
-        public TrangThaiNhanVien TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public List<GiaoCa> GiaoCas { get; set; } = null!;
 

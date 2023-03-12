@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace MinkyShopProject.Common
 {
@@ -10,6 +11,8 @@ namespace MinkyShopProject.Common
         [Range(1, int.MaxValue)] public int? Page { get; set; } = 1;
 
         [Range(1, int.MaxValue)] public int? Size { get; set; } = 20;
+
+        public string? Url { get; set; }
 
         // public string Filter { get; set; } = "{}";
         // public string FullTextSearch { get; set; }

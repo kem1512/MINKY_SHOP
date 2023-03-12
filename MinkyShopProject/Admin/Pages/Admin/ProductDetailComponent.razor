@@ -1,16 +1,12 @@
 ﻿@page "/admin/product/{idsanpham:guid}"
 @page "/admin/product/{idsanpham:guid}/{idbienthe:guid}"
-@using MinkyShopProject.Data.Models
-@inject SweetAlertService Swal;
-@inject HttpClient HttpClient;
-@inject IJSRuntime JSRuntime;
 
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    @if (BienTheChiTiet == null)
+                    @if (SanPham == null)
                     {
                         <div class="spinner-grow text-primary" role="status">
                             <span class="sr-only">Loading...</span>
@@ -25,9 +21,9 @@
                                         <div class="row">
                                             <div class="col-8">
                                                 <div class="row">
-                                                    <div class="col-6 mb-3">
+                                                    <div class="col-6 mb-3">san
                                                         <label>Tên Sản Phẩm</label>
-                                                        <input class="form-control" type="text" @bind="@SanPham.Data.Ten">
+                                                        <input class="form-control" type="text" @bind="SanPham.Data.Ten">
                                                     </div>
                                                     <div class="col-6 mb-3">
                                                         <label>Mã Sản Phẩm</label>
@@ -37,14 +33,14 @@
                                                         <div class="form-group mb-3">
                                                             <label for="example-text-input" class="form-control-label">Nhóm Sản Phẩm</label>
                                                             <div class="position-relative">
-                                                                <input class="form-control" type="text" @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false" @bind="NhomSanPham">
+                                                                <input class="form-control" type="text" @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false" @bind="SanPham.Data.NhomSanPham.Ten">
                                                                 <i class="fa fa-times position-absolute top-50 end-0 translate-middle-y" style="cursor: pointer"></i>
                                                             </div>
                                                             <div class="d-flex flex-wrap position-relative pb-2">
                                                                 <div class="list-group position-absolute w-100 top-0 list" style="z-index: 1">
                                                                     @if (showNhomSanPham)
                                                                     {
-                                                                        if(NhomSanPhamModels?.Data.Content != null)
+                                                                        if (NhomSanPhamModels?.Data.Content != null)
                                                                         {
                                                                             foreach (var x in NhomSanPhamModels.Data.Content)
                                                                             {
@@ -79,7 +75,7 @@
                                 </div>
                             </div>
                         </div>
-                        if (BienTheChiTiet.BienTheModels != null)
+                        if (SanPham.Data.BienThes != null)
                         {
                             <div class="row pt-4">
                                 <div class="col-lg-4">
@@ -88,9 +84,9 @@
                                             <div class="row">
                                                 <div class="col-12 p-0">
                                                     <div class="d-flex flex-column">
-                                                        @foreach (var x in BienTheChiTiet.BienTheModels)
+                                                        @foreach (var x in SanPham.Data.BienThes)
                                                         {
-                                                            <NavLink href="@($"admin/product/{IdSanPham}/{x.Id}")" class="btn btn-light shadow-none my-2" @onmousedown="() => BienThe = x">@x.GiaTri</NavLink>
+                                                            <NavLink href="@($"admin/product/{IdSanPham}/{x.Id}")" class="btn btn-light shadow-none my-2" @onmousedown="() => BienThe = x">@x.Ten</NavLink>
                                                         }
                                                     </div>
                                                 </div>
@@ -113,15 +109,15 @@
                                                 <div class="row">
                                                     <div class="col-12 col-sm-6">
                                                         <label>Tên Biến Thể</label>
-                                                        <input class="form-control" type="text" @bind="@BienThe.Ten">
+                                                        <input class="form-control" type="text" value="@(SanPham.Data.Ten + " " + BienThe.Ten)">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Số Lượng</label>
-                                                        <input class="form-control" type="number" @bind="@BienThe.SoLuong" onfocus="focused(this)" onfocusout="defocused(this)">
+                                                        <input class="form-control" type="number" @bind="BienThe.SoLuong" onfocus="focused(this)" onfocusout="defocused(this)">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Giá Tiền</label>
-                                                        <input class="form-control" type="text" @bind="@BienThe.GiaBan">
+                                                        <input class="form-control" type="text" @bind="BienThe.GiaBan">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>SKU</label>
@@ -150,12 +146,16 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div class="row p-0">
-                    @if (ModelImage != null)
+                    @if (ModelImage == null)
                     {
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    }else{
                         @foreach (var x in ModelImage.Select((Value, Index) => (Index, Value)))
                         {
                             <div class="col-2 border">
-                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(!Anh) { BienThe.Anh = ModelImage[x.Index]; }else { SanPham.Data.Anh = ModelImage[x.Index]; } Anh = false; }" data-bs-dismiss="modal" />
+                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(!Anh) { BienThe.Anh = ModelImage[x.Index]; } else { if(SanPham != null) SanPham.Data.Anh = ModelImage[x.Index]; } Anh = false; }" data-bs-dismiss="modal" />
                             </div>
                         }
                     }
@@ -164,93 +164,10 @@
             <div class="modal-footer">
                 <div class="w-100 d-flex justify-content-between">
                     <InputFile class="form-control w-25" OnChange="@LoadFiles" multiple />
-@*                    <button type="button" class="btn btn-secondary m-0" @onclick='async() => await JSRuntime.InvokeVoidAsync("uploadImages", loadedFiles) '>Tải Ảnh Lên</button>*@
+                    @*                    <button type="button" class="btn btn-secondary m-0" @onclick='async() => await JSRuntime.InvokeVoidAsync("uploadImages", loadedFiles) '>Tải Ảnh Lên</button>*@
                     <button type="button" class="btn btn-secondary m-0" data-bs-dismiss="modal" @onmousedown="() => Anh = false">Đóng</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-@code {
-    [Parameter]
-    public Guid IdBienThe { get; set; }
-
-    [Parameter]
-    public Guid IdSanPham { get; set; }
-
-    bool Anh = false;
-
-    BienTheChiTietModel? BienTheChiTiet;
-
-    ResponsePagination<NhomSanPhamModel>? NhomSanPhamModels;
-
-    BienTheModel BienThe = new BienTheModel();
-
-    ResponseObject<SanPhamModel>? SanPham;
-
-    string NhomSanPham = "";
-
-    List<string> ModelImage = new List<string>();
-
-    bool showNhomSanPham = false;
-
-    string Url = "https://localhost:7053/api";
-
-    protected override async Task OnInitializedAsync()
-    {
-        BienTheChiTiet = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>($"{Url}/BienThe/{IdSanPham}") ?? new BienTheChiTietModel();
-        SanPham = await HttpClient.GetFromJsonAsync<ResponseObject<SanPhamModel>>($"{Url}/SanPham/{IdSanPham}");
-        NhomSanPhamModels = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
-        ModelImage = await JSRuntime.InvokeAsync<List<string>>("storageImages");
-    }
-
-    async Task DeleteAsync()
-    {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
-
-        if (string.IsNullOrEmpty(confirm.Value)) return;
-
-        var result = await HttpClient.DeleteAsync($"{Url}/BienThe?id={BienThe.Id}");
-        if (result.IsSuccessStatusCode)
-            BienTheChiTiet?.BienTheModels.Remove(BienThe);
-    }
-
-    async Task UpdateSanPhamAsync()
-    {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
-
-        if (string.IsNullOrEmpty(confirm.Value)) return;
-
-        var result2 = await HttpClient.PutAsJsonAsync<SanPhamModel>($"{Url}/SanPham/{SanPham.Data.Id}", SanPham.Data);
-
-        if (result2.IsSuccessStatusCode)
-            await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);
-    }
-
-    async Task UpdateAsync()
-    {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
-
-        if (string.IsNullOrEmpty(confirm.Value)) return;
-
-        BienThe.IdSanPham = IdSanPham;
-
-        var result2 = await HttpClient.PutAsJsonAsync<BienTheModel>($"{Url}/BienThe/{BienThe.Id}", BienThe);
-
-        if (result2.IsSuccessStatusCode)
-            await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);
-    }
-
-    private List<IBrowserFile> loadedFiles = new();
-
-    private void LoadFiles(InputFileChangeEventArgs e)
-    {
-        loadedFiles.Clear();
-
-        foreach (var file in e.GetMultipleFiles())
-        {
-            loadedFiles.Add(e.File);
-        }
-    }
-}

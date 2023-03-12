@@ -15,9 +15,9 @@ namespace MinkyShopProject.Business.Entities
 
         public string Ten { get; set; } = null!;
 
-        public LoaiGiamGia LoaiGiamGia { get; set; }
+        public int LoaiGiamGia { get; set; }
 
-        public HinhThucGiamGia HinhThucGiamGia { get; set; }
+        public int HinhThucGiamGia { get; set; }
 
         public float SoTienCan { get; set; }
 
@@ -31,7 +31,7 @@ namespace MinkyShopProject.Business.Entities
 
         public string MoTa { get; set; } = null!;
 
-        public TrangThaiVoucher TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public List<VoucherKhachHang> VoucherKhachHangs { get; set; } = null!;
 

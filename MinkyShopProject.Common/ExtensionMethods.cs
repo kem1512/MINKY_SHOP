@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
@@ -227,7 +229,6 @@ namespace MinkyShopProject.Common
         public static async Task<Pagination<T>> GetPageAsync<T>(this IQueryable<T> dbSet, PaginationRequest query)
             where T : class
         {
-            var result = dbSet.Count();
             query.Page = query.Page ?? 1;
             if (query.Sort != null && query.Size.HasValue)
             {
@@ -247,7 +248,12 @@ namespace MinkyShopProject.Common
                     NumberOfElements = items.Count,
                     Size = query.Size.Value,
                     TotalPages = totalsPages,
-                    TotalElements = totals
+                    TotalElements = totals,
+                    Url = query.Url,
+                    First = $"{query.Url}?page=1/size={query.Size.Value}",
+                    Last = $"{query.Url}?page={totalsPages}/size={query.Size.Value}",
+                    Next = query.Page.Value < totalsPages ? $"{query.Url}?page={query.Page.Value + 1}/size={query.Size.Value}" : null,
+                    Prev = query.Page.Value > 1 ? $"{query.Url}?page={query.Page.Value - 1}/size={query.Size.Value}" : null
                 };
             }
 

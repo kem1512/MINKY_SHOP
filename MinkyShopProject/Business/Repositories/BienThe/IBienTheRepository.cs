@@ -1,4 +1,5 @@
-﻿using MinkyShopProject.Data.Models;
+﻿using MinkyShopProject.Common;
+using MinkyShopProject.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,12 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 {
     public interface IBienTheRepository
     {
-        public Task<bool> AddAsync(BienTheCreateModel obj);
+        public Task<Response> AddAsync(BienTheCreateModel obj);
 
-        public Task<bool> DeleteAsync(Guid id);
+        public Task<Response> DeleteAsync(Guid id);
 
-        public Task<bool> UpdateAsync(Guid id, BienTheModel obj);
+        public Task<Response> UpdateAsync(Guid id, BienTheModel obj);
 
-        public Task<List<BienTheModel>> GetAsync();
-
-		public Task<BienTheChiTietModel> FindAsync(Guid id);
-	}
+        public Task<Response> FindAsync(Guid id);
+    }
 }

@@ -1,4 +1,4 @@
-﻿@page "/product"
+﻿@*@page "/product"
 @inject IJSRuntime JSRuntime
 @using Data.Models;
 @inject HttpClient HttpClient
@@ -268,4 +268,4 @@
     {
         SanPhams = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>("https://localhost:7053/api/SanPham");
     }
-}
+}*@

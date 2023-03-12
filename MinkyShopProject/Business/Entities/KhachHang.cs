@@ -33,7 +33,7 @@ namespace MinkyShopProject.Business.Entities
 
         public int SoLanMua { get; set; }
 
-        public TrangThaiKhachHang TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public GioHang GioHang { get; set; } = null!;
 

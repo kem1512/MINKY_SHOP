@@ -13,7 +13,7 @@ namespace MinkyShopProject.Business.Entities
 
         public string Ten { get; set; } = null!;
 
-        public TrangThaiThuocTinh TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public DateTime NgayTao { get; set; }
 

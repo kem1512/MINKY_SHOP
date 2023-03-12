@@ -15,7 +15,7 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public KieuThanhToan KieuThanhToan { get; set; }
+        public int KieuThanhToan { get; set; }
 
         public float TongTienThanhToan { get; set; }
 

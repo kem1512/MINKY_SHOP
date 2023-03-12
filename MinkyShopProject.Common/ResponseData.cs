@@ -127,6 +127,16 @@ namespace MinkyShopProject.Common
             Content = new List<T>();
         }
 
+        public string? Url { get; set; }
+
+        public string? Next { get; set; }
+
+        public string? Prev { get; set; }
+
+        public string? First { get; set; }
+
+        public string? Last { get; set; }
+
         /// <summary>
         ///Current page position
         /// </summary>

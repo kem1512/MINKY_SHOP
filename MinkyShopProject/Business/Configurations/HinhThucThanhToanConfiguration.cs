@@ -23,7 +23,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
 
-            builder.Property(c => c.KieuThanhToan).HasDefaultValue(KieuThanhToan.Online);
+            builder.Property(c => c.KieuThanhToan).HasDefaultValue(0);
 
             builder.Property(c => c.TongTienThanhToan).HasDefaultValue(0);
 

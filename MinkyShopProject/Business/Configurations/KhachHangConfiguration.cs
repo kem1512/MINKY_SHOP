@@ -40,7 +40,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.SoLanMua).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiKhachHang.Online);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
             builder.HasOne(c => c.ViDiem).WithOne(c => c.KhachHang).HasForeignKey<KhachHang>(c => c.IdViDiem).OnDelete(DeleteBehavior.Cascade);
         }

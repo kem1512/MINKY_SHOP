@@ -1,0 +1,36 @@
+﻿@typeparam T;
+@inject NavigationManager NavigationManager;
+
+<div class="d-flex justify-content-center">
+    <ul class="pagination pagination-primary">
+        @if (Model?.Data.Prev != null)
+        {
+            <li class="page-item">
+                <NavLink class="page-link" href="@($"{NavigationManager.BaseUri}{Url}/page/{Model.Data.Page - 1}")">&lt</NavLink>
+            </li>
+        }
+        @if(Model != null)
+        {
+            @foreach (var i in Enumerable.Range(1, Model.Data.TotalPages))
+            {
+                <li class="page-item">
+                    <NavLink class="page-link" href="@($"{NavigationManager.BaseUri}{Url}/page/{i}")">@i</NavLink>
+                    </li>
+            }
+        }
+        @if (Model?.Data.Next != null)
+        {
+            <li class="page-item">
+                <NavLink class="page-link" href="@($"{NavigationManager.BaseUri}{Url}/page/{Model.Data.Page + 1}")">></NavLink>
+            </li>
+        }
+    </ul>
+</div>
+
+@code{
+    [Parameter]
+    public ResponsePagination<T>? Model { get; set; }
+
+    [Parameter]
+    public string? Url { get; set; }
+}
