@@ -32303,3 +32303,30 @@ ul li.editMode input[type=text] {
             transition-delay: 0s;
             transform: scale(1)
         }
+
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+.product-sale:hover {
+    border: 1px solid black;
+    cursor: pointer;
+}

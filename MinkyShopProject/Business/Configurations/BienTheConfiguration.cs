@@ -27,8 +27,6 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Anh).HasDefaultValue("https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png");
 
-            builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
-
             builder.Property(c => c.SoLuong).HasDefaultValue(0);
 
             builder.Property(c => c.GiaBan).HasDefaultValue(0);

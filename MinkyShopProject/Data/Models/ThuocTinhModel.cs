@@ -13,7 +13,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
         public int TrangThai { get; set; }
 
@@ -30,9 +30,9 @@ namespace MinkyShopProject.Data.Models
 
         public Guid IdThuocTinh { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
-        public ThuocTinhModel? ThuocTinh { get; set; }
+        public ThuocTinhModel ThuocTinh { get; set; } = new ThuocTinhModel();
     }
 
     public class ThuocTinhQueryModel : PaginationRequest

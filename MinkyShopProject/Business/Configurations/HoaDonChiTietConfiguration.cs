@@ -20,10 +20,6 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.Property(c => c.IdBienThe).HasDefaultValue(Guid.Empty);
-
-            builder.Property(c => c.IdHoaDon).HasDefaultValue(Guid.Empty);
-
             builder.Property(c => c.SoLuong).HasDefaultValue(0);
 
             builder.Property(c => c.DonGia).HasDefaultValue(0);

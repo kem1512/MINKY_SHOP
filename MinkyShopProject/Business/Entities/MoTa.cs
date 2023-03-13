@@ -12,8 +12,8 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid IdSanPham { get; set; }
 
-        public string Anh { get; set; } = null!;
+        public string? Anh { get; set; }
 
-        public SanPham SanPham { get; set; } = null!;
+        public SanPham? SanPham { get; set; }
     }
 }

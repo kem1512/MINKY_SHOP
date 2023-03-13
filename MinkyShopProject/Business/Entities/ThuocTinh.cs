@@ -11,14 +11,14 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
         public int TrangThai { get; set; }
 
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
-        public List<ThuocTinhSanPham> ThuocTinhSanPhams { get; set; } = null!;
+        public List<ThuocTinhSanPham>? ThuocTinhSanPhams { get; set; }
 
-        public List<GiaTri> GiaTris { get; set; } = null!;
+        public List<GiaTri>? GiaTris { get; set; }
     }
 }

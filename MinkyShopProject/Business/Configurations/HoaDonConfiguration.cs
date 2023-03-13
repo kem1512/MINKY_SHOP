@@ -22,11 +22,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.HasIndex(c => c.Ma).IsUnique();
 
-            builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
-
             builder.Property(c => c.LoaiDonHang).HasDefaultValue(0);
-
-            builder.Property(c => c.Sdt).HasDefaultValue(0);
 
             builder.Property(c => c.TienShip).HasDefaultValue(0);
 

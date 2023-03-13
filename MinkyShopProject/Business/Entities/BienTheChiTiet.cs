@@ -19,10 +19,10 @@ namespace MinkyShopProject.Business.Entities
 
         public int TrangThai { get; set; }
 
-        public ThuocTinhSanPham ThuocTinhSanPham { get; set; } = null!;
+        public ThuocTinhSanPham? ThuocTinhSanPham { get; set; }
 
-        public BienThe BienThe { get; set; } = null!;
+        public BienThe? BienThe { get; set; }
 
-        public GiaTri GiaTri { get; set; } = null!;
+        public GiaTri? GiaTri { get; set; }
     }
 }

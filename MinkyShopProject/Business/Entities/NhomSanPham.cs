@@ -12,16 +12,16 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid? IdParent { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
         public int TrangThai { get; set; }
 
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
-        public List<NhomSanPham> NhomSanPhams { get; set; } = null!;
+        public List<NhomSanPham>? NhomSanPhams { get; set; }
 
-        public NhomSanPham NhomSanPhamEntity { get; set; } = null!;
+        public NhomSanPham? NhomSanPhamEntity { get; set; }
 
-        public List<SanPham> SanPhams { get; set; } = null!;
+        public List<SanPham>? SanPhams { get; set; }
     }
 }

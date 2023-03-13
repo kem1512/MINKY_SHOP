@@ -13,34 +13,36 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid? IdViDiem { get; set; }
 
-        public string Ma { get; set; } = null!;
+        public string? Ma { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
-        public string Anh { get; set; } = null!;
+        public string? Anh { get; set; }
 
         public bool GioiTinh { get; set; }
 
         public DateTime NgaySinh { get; set; }
 
-        public string DiaChi { get; set; } = null!;
+        public string? DiaChi { get; set; }
 
-        public string Sdt { get; set; } = null!;
+        public string? Sdt { get; set; }
 
-        public string Email { get; set; } = null!;
+        public string? Email { get; set; }
 
-        public string MatKhau { get; set; } = null!;
+        public string? MatKhau { get; set; }
 
         public int SoLanMua { get; set; }
 
         public int TrangThai { get; set; }
 
-        public GioHang GioHang { get; set; } = null!;
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
-        public ViDiem ViDiem { get; set; } = null!;
+        public GioHang? GioHang { get; set; }
 
-        public List<HoaDon> HoaDons { get; set; } = null!;
+        public ViDiem? ViDiem { get; set; }
 
-        public List<DanhGia> DanhGias { get; set; } = null!;
+        public List<HoaDon>? HoaDons { get; set; }
+
+        public List<DanhGia>? DanhGias { get; set; }
     }
 }

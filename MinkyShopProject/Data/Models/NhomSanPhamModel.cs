@@ -21,7 +21,7 @@ namespace MinkyShopProject.Data.Models
 
         public List<NhomSanPhamModel> NhomSanPhams { get; set; } = new List<NhomSanPhamModel>();
 
-        public NhomSanPhamModel? NhomSanPhamEntity { get; set; } = null!;
+        public NhomSanPhamModel NhomSanPhamEntity { get; set; } = new NhomSanPhamModel();
     }
 
     public class NhomSanPhamQueryModel : PaginationRequest

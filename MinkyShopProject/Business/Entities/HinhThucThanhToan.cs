@@ -13,14 +13,14 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid IdHoaDon { get; set; }
 
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
         public int KieuThanhToan { get; set; }
 
         public float TongTienThanhToan { get; set; }
 
-        public string GhiChu { get; set; } = null!;
+        public string? GhiChu { get; set; }
 
-        public HoaDon HoaDon { get; set; } = null!;
+        public HoaDon? HoaDon { get; set; }
     }
 }
