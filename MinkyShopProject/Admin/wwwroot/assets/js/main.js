@@ -45,11 +45,25 @@ async function uploadImages(images) {
     console.log(images)
 }
 
-function choiceLoad(obj) {
-    const element = document.querySelector('.js-choice');
-    if (element) new Choices(element, JSON.parse(obj.replace(/'/g, '"')));
+function choiceLoad(obj, index) {
+    var element = '.js-choice-' + index;
+    if (element) new Choices(document.querySelector(element), JSON.parse(obj.replace(/'/g, '"')));
+}
+
+function overflow() {
+    var left = document.getElementById("left-overflow");
+    var right = document.getElementById("right-overflow");
+    var element = document.getElementById("myTab");
+    if (element.offsetHeight < element.scrollHeight || element.offsetWidth < element.scrollWidth) {
+        left.classList.remove("d-none");
+        right.classList.remove("d-none");
+    } else {
+        left.classList.add("d-none");
+        right.classList.add("d-none");
+    }
 }
 
 window.storageImages = storageImages;
 window.uploadImages = uploadImages;
 window.choiceLoad = choiceLoad;
+window.overflow = overflow;

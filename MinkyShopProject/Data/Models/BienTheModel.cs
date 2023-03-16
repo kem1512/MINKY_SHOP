@@ -30,15 +30,15 @@ namespace MinkyShopProject.Data.Models
 
     public class BienTheChiTietModel
     {
-        public List<ThuocTinhModel> ThuocTinhs { get; set; } = new List<ThuocTinhModel>();
+        public List<ThuocTinhModel>? ThuocTinhs { get; set; }
 
-        public SanPhamModel SanPham { get; set; } = new SanPhamModel();
+        public SanPhamModel? SanPham { get; set; }
     }
 
     public class BienTheCreateModel
     {
-        public List<ThuocTinhModel> ThuocTinhs { get; set; } = new List<ThuocTinhModel>();
+        public List<ThuocTinhModel>? ThuocTinhs { get; set; }
 
-        public SanPhamModel SanPham { get; set; } = new SanPhamModel();
+        public SanPhamModel? SanPham { get; set; }
     }
 }

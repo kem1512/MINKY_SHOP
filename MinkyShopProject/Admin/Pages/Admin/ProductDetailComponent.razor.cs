@@ -27,9 +27,9 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         bool Anh = false;
 
-        ResponsePagination<NhomSanPhamModel>? NhomSanPhamModels;
+        bool showAll = false;
 
-        BienTheModel BienThe = new BienTheModel();
+        ResponsePagination<NhomSanPhamModel>? NhomSanPhamModels;
 
         ResponseObject<SanPhamModel>? SanPham;
 
@@ -45,23 +45,19 @@ namespace MinkyShopProject.Admin.Pages.Admin
         {
             SanPham = await HttpClient.GetFromJsonAsync<ResponseObject<SanPhamModel>>($"{Url}/SanPham/{IdSanPham}");
             NhomSanPhamModels = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
-        }
-
-        protected async override void OnAfterRender(bool firstRender)
-        {
             ModelImage = await JSRuntime.InvokeAsync<List<string>>("storageImages");
         }
 
-        async Task DeleteAsync()
+        async Task DeleteAsync(Guid id)
         {
             var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
-            var result = await HttpClient.DeleteAsync($"{Url}/BienThe?id={BienThe.Id}");
+            var result = await HttpClient.DeleteAsync($"{Url}/BienThe?id={id}");
 
             if (result.IsSuccessStatusCode)
-                SanPham?.Data.BienThes?.Remove(BienThe);
+                SanPham = await HttpClient.GetFromJsonAsync<ResponseObject<SanPhamModel>>($"{Url}/SanPham/{IdSanPham}");
         }
 
         async Task UpdateSanPhamAsync()
@@ -70,21 +66,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
-            var result = await HttpClient.PutAsJsonAsync<SanPhamModel?>($"{Url}/SanPham/{SanPham?.Data.Id}", SanPham?.Data);
-
-            if (result.IsSuccessStatusCode)
-                await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);
-        }
-
-        async Task UpdateAsync()
-        {
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
-
-            if (string.IsNullOrEmpty(confirm.Value)) return;
-
-            BienThe.IdSanPham = IdSanPham;
-
-            var result = await HttpClient.PutAsJsonAsync<BienTheModel>($"{Url}/BienThe/{BienThe.Id}", BienThe);
+            var result = await HttpClient.PutAsJsonAsync($"{Url}/SanPham/{SanPham?.Data.Id}", SanPham?.Data);
 
             if (result.IsSuccessStatusCode)
                 await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);

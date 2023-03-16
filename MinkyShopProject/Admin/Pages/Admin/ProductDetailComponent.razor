@@ -23,7 +23,7 @@
                                                 <div class="row">
                                                     <div class="col-6 mb-3">san
                                                         <label>Tên Sản Phẩm</label>
-                                                        <input class="form-control" type="text" @bind="SanPham.Data.Ten">
+                                                        <input class="form-control" type="text" @bind="@SanPham.Data.Ten">
                                                     </div>
                                                     <div class="col-6 mb-3">
                                                         <label>Mã Sản Phẩm</label>
@@ -33,7 +33,7 @@
                                                         <div class="form-group mb-3">
                                                             <label for="example-text-input" class="form-control-label">Nhóm Sản Phẩm</label>
                                                             <div class="position-relative">
-                                                                <input class="form-control" type="text" @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false" @bind="SanPham.Data.NhomSanPham.Ten">
+                                                                <input class="form-control" type="text" value="@SanPham.Data.NhomSanPham?.Ten" @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false" >
                                                                 <i class="fa fa-times position-absolute top-50 end-0 translate-middle-y" style="cursor: pointer"></i>
                                                             </div>
                                                             <div class="d-flex flex-wrap position-relative pb-2">
@@ -61,8 +61,14 @@
                                                             <label class="form-check-label" for="flexSwitchCheckDefault">Trạng Thái</label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-3">
                                                         <button class="btn btn-primary btn-sm" @onclick="UpdateSanPhamAsync">Sửa</button>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="" @onchange="() => showAll = !showAll">
+                                                            <label class="form-check-label" for="flexSwitchCheckDefault">Hiển Thị Tất Cả Biến Thể</label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -78,7 +84,7 @@
                         if (SanPham.Data.BienThes != null)
                         {
                             <div class="row pt-4">
-                                <div class="col-lg-4">
+                                <div class="col-lg-4 @(showAll ? "d-none" : "d-block")">
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="row">
@@ -86,7 +92,7 @@
                                                     <div class="d-flex flex-column">
                                                         @foreach (var x in SanPham.Data.BienThes)
                                                         {
-                                                            <NavLink href="@($"admin/product/{IdSanPham}/{x.Id}")" class="btn btn-light shadow-none my-2" @onmousedown="() => BienThe = x">@x.Ten</NavLink>
+                                                            <NavLink href="@($"admin/product/{IdSanPham}/{x.Id}")" class="btn btn-light shadow-none my-2">@x.Ten</NavLink>
                                                         }
                                                     </div>
                                                 </div>
@@ -94,37 +100,36 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if (BienThe.Id != Guid.Empty)
+                                @foreach (var x in SanPham.Data.BienThes)
                                 {
-                                    <div class="col-lg-8 mt-lg-0 mt-4">
+                                    <div class="mt-lg-0 my-4 @(showAll ? "d-block col-lg-6" : IdBienThe == x.Id ? "d-block col-lg-8" : "d-none")">
                                         <div class="card">
                                             <div class="card-header d-flex justify-content-between pe-4 pt-3 pb-0">
                                                 <div></div>
                                                 <div>
-                                                    <button class="btn btn-danger btn-sm m-0" @onclick="DeleteAsync">Xóa</button>
-                                                    <button class="btn btn-primary btn-sm m-0" @onclick="UpdateAsync">Sửa</button>
+                                                    <button class="btn btn-danger btn-sm m-0" @onclick="() => DeleteAsync(x.Id)">Xóa</button>
                                                 </div>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-12 col-sm-6">
                                                         <label>Tên Biến Thể</label>
-                                                        <input class="form-control" type="text" value="@(SanPham.Data.Ten + " " + BienThe.Ten)">
+                                                        <input class="form-control" type="text" value="@(SanPham.Data.Ten + " " + x.Ten)">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Số Lượng</label>
-                                                        <input class="form-control" type="number" @bind="BienThe.SoLuong" onfocus="focused(this)" onfocusout="defocused(this)">
+                                                        <input class="form-control" type="number" @bind="x.SoLuong" onfocus="focused(this)" onfocusout="defocused(this)">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Giá Tiền</label>
-                                                        <input class="form-control" type="text" @bind="BienThe.GiaBan">
+                                                        <input class="form-control" type="text" @bind="x.GiaBan">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>SKU</label>
-                                                        <input class="form-control" type="text" value="@BienThe.Sku">
+                                                        <input class="form-control" type="text" value="@x.Sku">
                                                     </div>
                                                     <div class="col-6 col-sm-6 mb-3">
-                                                        <img class="w-100 border-radius-lg shadow-lg mt-3 p-4" src="@BienThe.Anh"
+                                                        <img class="w-100 border-radius-lg shadow-lg mt-3 p-4" src="@x.Anh"
                                                              alt="product_image" data-bs-toggle="modal" data-bs-target="#modal-image">
                                                     </div>
                                                 </div>
@@ -155,7 +160,7 @@
                         @foreach (var x in ModelImage.Select((Value, Index) => (Index, Value)))
                         {
                             <div class="col-2 border">
-                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(!Anh) { BienThe.Anh = ModelImage[x.Index]; } else { if(SanPham != null) SanPham.Data.Anh = ModelImage[x.Index]; } Anh = false; }" data-bs-dismiss="modal" />
+                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(!Anh) { var result = SanPham?.Data.BienThes?.FirstOrDefault(c => c.Id == IdBienThe); if(result != null) result.Anh = ModelImage[x.Index]; } else { if(SanPham != null) SanPham.Data.Anh = ModelImage[x.Index]; } Anh = false; }" data-bs-dismiss="modal" />
                             </div>
                         }
                     }

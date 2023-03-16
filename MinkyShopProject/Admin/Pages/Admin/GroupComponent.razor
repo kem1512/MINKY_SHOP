@@ -21,7 +21,7 @@
                         <div class="col-6">
                             <label>Nhóm Con</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" @oninput='(ui) => TenNhomSanPham = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ NhomSanPham.NhomSanPhams.Add(new NhomSanPhamModel(){ Ten = TenNhomSanPham }); } })'>
+                                <input type="text" class="form-control" @oninput='(ui) => TenNhomSanPham = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ NhomSanPham.NhomSanPhams?.Add(new NhomSanPhamModel(){ Ten = TenNhomSanPham }); } })'>
                             </div>
                             <div class="d-flex flex-wrap position-relative py-2">
                                 <div class="d-flex flex-wrap">
@@ -70,54 +70,61 @@
                                 }
                                 else
                                 {
-                                    @foreach (var x in NhomSanPhams.Data.Content.Select((Value, Index) => (Index, Value)).Where(c => c.Value.IdParent == null))
+                                    if(NhomSanPhams.Data.Content.Count() > 0)
                                     {
-                                        <tr>
-                                            <td>
-                                                <p class="text-xs font-weight-bold mb-0">@(x.Index + 1)</p>
-                                            </td>
-                                            <td style="width: 20%">
-                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
-                                            </td>
-                                            <td class="p-0 w-25">
-                                                <table class="table table-bordered m-0 border-bottom-0">
-                                                    <tbody>
-                                                        @if(x.Value.NhomSanPhams != null)
-                                                        {
-                                                            @foreach (var y in x.Value.NhomSanPhams)
+                                        @foreach (var x in NhomSanPhams.Data.Content.Select((Value, Index) => (Index, Value)).Where(c => c.Value.IdParent == null))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <p class="text-xs font-weight-bold mb-0">@(x.Index + 1)</p>
+                                                </td>
+                                                <td style="width: 20%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
+                                                </td>
+                                                <td class="p-0 w-25">
+                                                    <table class="table table-bordered m-0 border-bottom-0">
+                                                        <tbody>
+                                                            @if (x.Value.NhomSanPhams != null)
                                                             {
-                                                                <tr class="border-bottom-0">
-                                                                    <td class="w-80">
-                                                                        <span class="text-secondary text-xs font-weight-bolder">@y.Ten</span>
-                                                                    </td>
-                                                                    <td class="text-sm">
-                                                                        <a href="javascript:;" @onclick="() => DeleteAsync(y.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
-                                                                            <i class="fas fa-trash text-danger" aria-hidden="true"></i>
-                                                                        </a>
-                                                                    </td>
-                                                                </tr>
+                                                                @foreach (var y in x.Value.NhomSanPhams)
+                                                                {
+                                                                    <tr class="border-bottom-0">
+                                                                        <td class="w-80">
+                                                                            <span class="text-secondary text-xs font-weight-bolder">@y.Ten</span>
+                                                                        </td>
+                                                                        <td class="text-sm">
+                                                                            <a href="javascript:;" @onclick="() => DeleteAsync(y.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                                                <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                }
                                                             }
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                            <td class="align-middle text-center text-sm">
-                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao.ToShortDateString()</span>
-                                            </td>
-                                            <td class="align-middle text-center p-0" style="width: 16%">
-                                                <span class="text-secondary text-xs font-weight-bold">@x.Value.TrangThai</span>
-                                            </td>
-                                            <td class="text-sm">
-                                                <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
-                                                    <i class="fas fa-eye text-info" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => NhomSanPham = x.Value">
-                                                    <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="javascript:;" @onclick="() => DeleteAsync(x.Value.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
-                                                    <i class="fas fa-trash text-danger" aria-hidden="true"></i>
-                                                </a>
-                                            </td>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao.ToShortDateString()</span>
+                                                </td>
+                                                <td class="align-middle text-center p-0" style="width: 16%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.TrangThai</span>
+                                                </td>
+                                                <td class="text-sm">
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                                        <i class="fas fa-eye text-info" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => NhomSanPham = x.Value">
+                                                        <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="javascript:;" @onclick="() => DeleteAsync(x.Value.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }else{
+                                        <tr>
+                                            <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
                                         </tr>
                                     }
                                 }

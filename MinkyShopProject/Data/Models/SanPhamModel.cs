@@ -19,9 +19,9 @@ namespace MinkyShopProject.Data.Models
 
         public int TrangThai { get; set; }
 
-        public NhomSanPhamModel NhomSanPham { get; set; } = new NhomSanPhamModel();
+        public NhomSanPhamModel? NhomSanPham { get; set; }
 
-        public List<BienTheModel> BienThes { get; set; } = new List<BienTheModel>();
+        public List<BienTheModel>? BienThes { get; set; }
     }
 
     public class SanPhamQueryModel : PaginationRequest

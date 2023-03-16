@@ -3,24 +3,30 @@
 
 <div class="container-fluid bg-primary">
     <div class="row">
-        <div class="col-5">
-            <div class="form-group mb-0">
+        <div class="col-5 d-flex align-items-center">
+            <div class="form-group mb-0 w-100">
                 <div class="input-group input-group-alternative">
                     <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
-                    <input class="form-control h-25" placeholder="Tìm Sản Phẩm" type="text">
+                    <input class="form-control h-25" placeholder="Tìm Sản Phẩm" type="text" value="@index">
                 </div>
             </div>
         </div>
         <div class="col-5 d-flex">
+            <button class="btn text-light text-bold shadow-none m-0 d-none" id="left-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(-200, 0)'>&lt;</button>
             <ul class="nav nav-tabs border-0 flex-nowrap" style="overflow: hidden; direction: rtl" id="myTab">
-                @for (int i = HoaDons.Count(); i > 0; i--)
+                @if(HoaDons != null)
                 {
-                    <li class="nav-item" style="font-size: .875rem">
-                        <button class="nav-link text-bold" style="white-space: nowrap" data-bs-toggle="tab" data-bs-target="#hoa-don-@i" type="button">Hóa Đơn @i</button>
-                    </li>
+                    @for (int i = HoaDons.Count(); i > 0; i--)
+                    {
+                        var localIndex = i - 1;
+                        <li class="nav-item" style="font-size: .875rem">
+                            <button @onclick="() => index = localIndex" class="nav-link text-bold" style="white-space: nowrap" @oncontextmenu="async(ui) => { if(ui.Button == 2){ await RemoveOrder(i); } }" data-bs-toggle="tab" data-bs-target="#hoa-don-@i" type="button">Hóa Đơn @i</button>
+                        </li>
+                    }
                 }
             </ul>
-            <button class="btn btn-info m-0" type="button" @onclick='() => HoaDons.Add("HoaDon")'>+</button>
+            <button class="btn text-light text-bold shadow-none m-0 d-none" id="right-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(200, 0)'>></button>
+            <button class="btn btn-info m-0" type="button" @onclick='() => AddOrder()'>+</button>
         </div>
     </div>
 </div>
@@ -29,17 +35,28 @@
         <div class="col-6">
             <div class="card" style="height: 500px; overflow-y: scroll">
                 <div class="card-body">
-                    @for (int i = HoaDons.Count(); i > 0; i--)
+                    @if(HoaDons != null)
                     {
-                        <div class="tab-content mt-2">
-                            <div class="tab-pane fade show" id="hoa-don-@i" tabindex="0">
-                                <div class="card mb-2">
-                                    <div class="card-body">
-                                        Hóa Đơn @i
-                                    </div>
+                        @for (int i = HoaDons.Count(); i > 0; i--)
+                        {
+                            var localIndex = i - 1;
+                            <div class="tab-content mt-2">
+                                <div class="tab-pane fade show" id="hoa-don-@i" tabindex="0">
+                                    @foreach (var x in HoaDons[i - 1].HoaDonChiTiets.Select((Value, Index) => (Index, Value)))
+                                    {
+                                        <div class="card mb-2" @onclick="() => RemoveItem(localIndex, x.Index)">
+                                            <div class="card-body d-flex justify-content-between align-items-center">
+                                                <img class="w-10" src="@x.Value.BienThe?.Anh"/>
+                                                <span class="text-sm">@x.Value.BienThe?.Ten</span>
+                                                <span class="text-sm">@x.Value.SoLuong</span>
+                                                <span class="text-sm">@x.Value.BienThe?.GiaBan</span>
+                                                <span class="text-sm">@(x.Value.BienThe?.GiaBan * x.Value.SoLuong)</span>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
-                        </div>
+                        }
                     }
                 </div>
             </div>
@@ -48,29 +65,32 @@
             <div class="card" style="height: 500px">
                 <div class="card-body">
                     <div class="row justify-content-center">
-                        @for (int i = 0; i <= 3; i++)
+                        @if(SanPhams != null)
                         {
-                            <div class="col-5">
-                                <div class="card card-plain product-sale p-2">
-                                    <div class="row">
-                                        <div class="col-lg-5">
-                                            <div class="position-relative">
-                                                <div class="d-inline-block p-2">
-                                                    <img class="img-fluid" src="https://firebasestorage.googleapis.com/v0/b/minkyshop-bed92.appspot.com/o/images%2F51CpbaSkC0S._AC_UF1000%2C1000_QL80_.jpg?alt=media&token=2c56cc85-a2a7-4b64-90d6-f46be6e8edf2">
+                            @foreach(var x in SanPhams.Data.Content)
+                            {
+                                <div class="col-5">
+                                    <div class="card card-plain product-sale p-2" @onmousedown="() => { Id = x.Id; }" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                                        <div class="row">
+                                            <div class="col-lg-5">
+                                                <div class="position-relative">
+                                                    <div class="d-inline-block p-2">
+                                                        <img class="img-fluid" src="@x.Anh">
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-7 ps-0 pe-0 my-auto">
-                                            <div class="card-body p-1 text-left">
-                                                <div class="p-md-0 pt-3">
-                                                    <h6 class="font-weight-bolder mb-0 text-sm">Joshua Jackson</h6>
-                                                    <p class="text-uppercase text-sm font-weight-bold text-sm">100.000</p>
+                                            <div class="col-lg-7 ps-0 pe-0 my-auto">
+                                                <div class="card-body p-1 text-left">
+                                                    <div class="p-md-0 pt-3">
+                                                        <h6 class="font-weight-bolder mb-0 text-sm">@x.Ten</h6>
+                                                        <p class="text-uppercase text-sm font-weight-bold text-sm">@string.Format("{0:0,0}", x.BienThes?.Min(c => c.GiaBan))</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            }
                         }
                     </div>
                 </div>
@@ -78,7 +98,8 @@
         </div>
     </div>
 </div>
-
-@code{
-    List<string> HoaDons = new List<string>() { "Hóa Đơn 1" };
-}
+<div class="offcanvas offcanvas-end" style="width: 1000px" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-body">
+        <MinkyShopProject.Admin.Pages.Client.ProductDetailComponent Sale="this" @ref="_component" Id="Id"></MinkyShopProject.Admin.Pages.Client.ProductDetailComponent>
+    </div>
+</div>

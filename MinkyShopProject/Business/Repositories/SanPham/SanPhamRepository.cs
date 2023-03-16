@@ -95,6 +95,11 @@ namespace MinkyShopProject.Business.Repositories.SanPham
 
                 sanPham.IdNhomSanPham = obj.IdNhomSanPham;
 
+                if (obj.BienThes != null)
+                {
+                    sanPham.BienThes = _mapper.Map<List<BienTheModel>, List<Entities.BienThe>>(obj.BienThes);
+                }
+
                 _context.SanPham.Update(sanPham);
 
                 var status = await _context.SaveChangesAsync();

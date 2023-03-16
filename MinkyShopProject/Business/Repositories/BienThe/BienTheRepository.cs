@@ -33,82 +33,90 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
-                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Helper.RandomString(5), IdNhomSanPham = obj.SanPham.IdNhomSanPham, Ten = obj.SanPham.Ten });
+                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Helper.RandomString(5), IdNhomSanPham = obj.SanPham?.IdNhomSanPham, Ten = obj.SanPham?.Ten });
 
-                foreach (var x in obj.ThuocTinhs)
+                if (obj.ThuocTinhs != null)
                 {
-
-                    if (x.Id == Guid.Empty)
+                    foreach (var x in obj.ThuocTinhs)
                     {
-                        x.Id = Guid.NewGuid();
-                        await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten });
-                    }
 
-                    var thuocTinhSanPhamExist = await _context.ThuocTinhSanPham.FirstOrDefaultAsync(c => c.IdSanPham == idSanPham && c.IdThuocTinh == x.Id);
-
-                    // Thêm Thuộc Tính Cho Sản Phẩm
-                    if (thuocTinhSanPhamExist == null)
-                    {
-                        var thuocTinhSanPham = new ThuocTinhSanPham() { Id = idThuocTinhSanPham, IdSanPham = idSanPham, IdThuocTinh = x.Id };
-                        await _context.ThuocTinhSanPham.AddAsync(thuocTinhSanPham);
-                    }
-                    else
-                    {
-                        idThuocTinhSanPham = thuocTinhSanPhamExist.Id;
-                    }
-
-                    // Tạo Ra Các Biến Giá Trị Sku Cho Biến Thể
-                    var sku = new List<string>();
-
-                    foreach (var y in x.GiaTris)
-                    {
-                        if (y.Id == Guid.Empty)
+                        if (x.Id == Guid.Empty)
                         {
-                            y.Id = Guid.NewGuid();
-                            await _context.GiaTri.AddAsync(new GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id });
+                            x.Id = Guid.NewGuid();
+                            await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten });
                         }
 
-                        // Nếu Tên Thuộc Tính Có 2 Kí Tự Trở Lên Thì Lấy 2 Ký Tự Không Thì Chỉ Lấy Kí Tự Đầu Tiên
-                        var thuocTinh = x.Ten.Split(" ");
+                        var thuocTinhSanPhamExist = await _context.ThuocTinhSanPham.FirstOrDefaultAsync(c => c.IdSanPham == idSanPham && c.IdThuocTinh == x.Id);
 
-                        var tenThuocTinh = thuocTinh.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
+                        // Thêm Thuộc Tính Cho Sản Phẩm
+                        if (thuocTinhSanPhamExist == null)
+                        {
+                            var thuocTinhSanPham = new ThuocTinhSanPham() { Id = idThuocTinhSanPham, IdSanPham = idSanPham, IdThuocTinh = x.Id };
+                            await _context.ThuocTinhSanPham.AddAsync(thuocTinhSanPham);
+                        }
+                        else
+                        {
+                            idThuocTinhSanPham = thuocTinhSanPhamExist.Id;
+                        }
 
-                        // Lấy Kí Tự Đầu Tiên
-                        var giaTri = y.Ten.Split(" ");
+                        // Tạo Ra Các Biến Giá Trị Sku Cho Biến Thể
+                        var sku = new List<string>();
 
-                        var tenGiaTri = giaTri.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
+                        if (x.GiaTris != null)
+                        {
+                            foreach (var y in x.GiaTris)
+                            {
+                                if (y.Id == Guid.Empty)
+                                {
+                                    y.Id = Guid.NewGuid();
+                                    await _context.GiaTri.AddAsync(new GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id });
+                                }
 
-                        sku.Add(string.Join("", tenThuocTinh) + string.Join("", tenGiaTri) + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham + "/" + y.Ten);
+                                // Nếu Tên Thuộc Tính Có 2 Kí Tự Trở Lên Thì Lấy 2 Ký Tự Không Thì Chỉ Lấy Kí Tự Đầu Tiên
+                                var thuocTinh = x.Ten?.Split(" ");
+
+                                var tenThuocTinh = thuocTinh?.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
+
+                                // Lấy Kí Tự Đầu Tiên
+                                var giaTri = y.Ten?.Split(" ");
+
+                                var tenGiaTri = giaTri?.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
+
+                                if (tenThuocTinh != null && tenGiaTri != null)
+                                    sku.Add(string.Join("", tenThuocTinh) + string.Join("", tenGiaTri) + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham + "/" + y.Ten);
+                            }
+                        }
+
+                        skus.Add(sku.ToArray());
+                        idThuocTinhSanPham = Guid.NewGuid();
                     }
-                    skus.Add(sku.ToArray());
-                    idThuocTinhSanPham = Guid.NewGuid();
-                }
 
-                // Tổ Hợp Các Trường Hợp Từ Các Giá Trị
-                foreach (var x in skus.CartesianProduct())
-                {
-                    // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                    var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = String.Join(" + ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
-                    await _context.BienThe.AddAsync(bienThe);
-
-                    foreach (var y in x)
+                    // Tổ Hợp Các Trường Hợp Từ Các Giá Trị
+                    foreach (var x in skus.CartesianProduct())
                     {
-                        var sku = y.Split("/"); // sku[0] : sku_id, sku[1] : Id Giá Trị, sku[2] : Id Thuộc Tính, sku[3] : Id Thuộc Tính Sản Phẩm
+                        // Mỗi Giá Trị X Sẽ Là Một Biến Thể
+                        var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = String.Join(" + ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
+                        await _context.BienThe.AddAsync(bienThe);
 
-                        // Tạo Ra Biến Thể Chi Tiết Của Từng Biến Thể
-                        var bienTheChiTiet = new BienTheChiTiet() { IdGiaTri = Guid.Parse(sku[1]), IdThuocTinhSanPham = Guid.Parse(sku[3]), IdBienThe = idBienThe };
-                        await _context.BienTheChiTiet.AddAsync(bienTheChiTiet);
+                        foreach (var y in x)
+                        {
+                            var sku = y.Split("/"); // sku[0] : sku_id, sku[1] : Id Giá Trị, sku[2] : Id Thuộc Tính, sku[3] : Id Thuộc Tính Sản Phẩm
+
+                            // Tạo Ra Biến Thể Chi Tiết Của Từng Biến Thể
+                            var bienTheChiTiet = new BienTheChiTiet() { IdGiaTri = Guid.Parse(sku[1]), IdThuocTinhSanPham = Guid.Parse(sku[3]), IdBienThe = idBienThe };
+                            await _context.BienTheChiTiet.AddAsync(bienTheChiTiet);
+                        }
+
+                        idBienThe = Guid.NewGuid();
                     }
 
-                    idBienThe = Guid.NewGuid();
-                }
+                    var status = await _context.SaveChangesAsync();
 
-                var status = await _context.SaveChangesAsync();
-
-                if (status > 0)
-                {
-                    var data = _mapper.Map<BienTheCreateModel, BienTheModel>(obj);
-                    return new ResponseObject<BienTheModel>(data, "Thêm thành công");
+                    if (status > 0)
+                    {
+                        var data = _mapper.Map<BienTheCreateModel, BienTheModel>(obj);
+                        return new ResponseObject<BienTheModel>(data, "Thêm thành công");
+                    }
                 }
 
                 return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");

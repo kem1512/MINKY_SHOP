@@ -19,9 +19,9 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<NhomSanPhamModel> NhomSanPhams { get; set; } = new List<NhomSanPhamModel>();
+        public List<NhomSanPhamModel>? NhomSanPhams { get; set; } = new List<NhomSanPhamModel>();
 
-        public NhomSanPhamModel NhomSanPhamEntity { get; set; } = new NhomSanPhamModel();
+        public NhomSanPhamModel? NhomSanPhamEntity { get; set; }
     }
 
     public class NhomSanPhamQueryModel : PaginationRequest

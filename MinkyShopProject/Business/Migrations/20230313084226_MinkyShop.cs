@@ -14,15 +14,15 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GioiTinh = table.Column<bool>(type: "bit", nullable: false),
                     NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Sdt = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "0"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     VaiTro = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
@@ -37,9 +37,9 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdParent = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(70))
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -56,9 +56,9 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(3804))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,16 +85,16 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LoaiGiamGia = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     HinhThucGiamGia = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     SoTienCan = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     SoTienGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    NgayApDung = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(8059)),
-                    NgayKetThuc = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(8159)),
+                    NgayApDung = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgayKetThuc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
@@ -108,8 +108,8 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ThoiGianNhanCa = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(7950)),
-                    ThoiGianGiaoCa = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(8057)),
+                    ThoiGianNhanCa = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ThoiGianGiaoCa = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdNhanVienTrongCa = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdNhanVienCaTiepTheo = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TienBanDau = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
@@ -117,9 +117,9 @@ namespace MinkyShopProject.Business.Migrations
                     TongTienMat = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TongTienKhac = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TienPhatSinh = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    GhiChuPhatSinh = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GhiChuPhatSinh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TongTienMatCaTruoc = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    ThoiGianReset = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(8726)),
+                    ThoiGianReset = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TongTienMatRut = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
@@ -140,11 +140,11 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdNhomSanPham = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png"),
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: true, defaultValue: "https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png"),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(2031))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -163,7 +163,7 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdThuocTinh = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -182,17 +182,18 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdViDiem = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    GioiTinh = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    GioiTinh = table.Column<bool>(type: "bit", nullable: false),
                     NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SoLanMua = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -210,13 +211,13 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IdSanPham = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     GiaBan = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    Sku = table.Column<string>(type: "VARCHAR(20)", nullable: false),
-                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png"),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 987, DateTimeKind.Local).AddTicks(9508)),
+                    Sku = table.Column<string>(type: "VARCHAR(20)", nullable: true),
+                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: true, defaultValue: "https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png"),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
@@ -236,7 +237,7 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdSanPham = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -280,7 +281,7 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 989, DateTimeKind.Local).AddTicks(5739))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -301,18 +302,18 @@ namespace MinkyShopProject.Business.Migrations
                     IdNhanVien = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 990, DateTimeKind.Local).AddTicks(1274)),
-                    NgayThanhToan = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NgayGiaoHang = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NgayNhan = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgayThanhToan = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NgayGiaoHang = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NgayNhan = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LoaiDonHang = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    TenNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Sdt = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "0"),
+                    TenNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TienShip = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TongTien = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    KhachHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    KhachHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -321,8 +322,7 @@ namespace MinkyShopProject.Business.Migrations
                         name: "FK_HoaDon_KhachHang_KhachHangId",
                         column: x => x.KhachHangId,
                         principalTable: "KhachHang",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_HoaDon_NhanVien_IdNhanVien",
                         column: x => x.IdNhanVien,
@@ -336,11 +336,11 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    IdVoucher = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    IdVoucher = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    VoucherId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    KhachHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    VoucherId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    KhachHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -349,14 +349,12 @@ namespace MinkyShopProject.Business.Migrations
                         name: "FK_VoucherKhachHang_KhachHang_KhachHangId",
                         column: x => x.KhachHangId,
                         principalTable: "KhachHang",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_VoucherKhachHang_Voucher_VoucherId",
                         column: x => x.VoucherId,
                         principalTable: "Voucher",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -427,9 +425,9 @@ namespace MinkyShopProject.Business.Migrations
                     IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoDanhGia = table.Column<int>(type: "int", nullable: false, defaultValue: 5),
-                    NgayDanhGia = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 988, DateTimeKind.Local).AddTicks(2385)),
+                    NgayDanhGia = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NoiDung = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NoiDung = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
@@ -460,7 +458,7 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 989, DateTimeKind.Local).AddTicks(7286)),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     KieuThanhToan = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     TongTienThanhToan = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -481,11 +479,11 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     DonGia = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -500,8 +498,7 @@ namespace MinkyShopProject.Business.Migrations
                         name: "FK_HoaDonChiTiet_HoaDon_HoaDonId",
                         column: x => x.HoaDonId,
                         principalTable: "HoaDon",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -509,12 +506,12 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
-                    IdVoucher = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValue: new Guid("00000000-0000-0000-0000-000000000000")),
+                    IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdVoucher = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TienTruocKhiGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TienSauKhiGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     SoTienGiam = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValue: new DateTime(2023, 3, 11, 22, 39, 51, 991, DateTimeKind.Local).AddTicks(9770))
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -542,7 +539,8 @@ namespace MinkyShopProject.Business.Migrations
                 name: "IX_BienThe_Sku",
                 table: "BienThe",
                 column: "Sku",
-                unique: true);
+                unique: true,
+                filter: "[Sku] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BienTheChiTiet_IdBienThe",
@@ -649,7 +647,8 @@ namespace MinkyShopProject.Business.Migrations
                 name: "IX_KhachHang_Ma",
                 table: "KhachHang",
                 column: "Ma",
-                unique: true);
+                unique: true,
+                filter: "[Ma] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MoTa_IdSanPham",
@@ -661,7 +660,8 @@ namespace MinkyShopProject.Business.Migrations
                 name: "IX_NhanVien_Ma",
                 table: "NhanVien",
                 column: "Ma",
-                unique: true);
+                unique: true,
+                filter: "[Ma] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NhomSanPham_IdParent",
@@ -677,7 +677,8 @@ namespace MinkyShopProject.Business.Migrations
                 name: "IX_SanPham_Ma",
                 table: "SanPham",
                 column: "Ma",
-                unique: true);
+                unique: true,
+                filter: "[Ma] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ThuocTinhSanPham_IdSanPham",
@@ -693,7 +694,8 @@ namespace MinkyShopProject.Business.Migrations
                 name: "IX_Voucher_Ma",
                 table: "Voucher",
                 column: "Ma",
-                unique: true);
+                unique: true,
+                filter: "[Ma] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VoucherKhachHang_KhachHangId",

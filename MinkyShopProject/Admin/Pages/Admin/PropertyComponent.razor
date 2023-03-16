@@ -14,13 +14,13 @@
                         <div class="col-12">
                             <div class="d-flex justify-content-between">
                                 <div class="w-50">
-                                    <select class="js-choice" @onchange='(ui) => Value = ui.Value?.ToString() ?? ""'>
+                                    <select class="js-choice-0" @onchange='(ui) => Value = ui.Value?.ToString() ?? ""'>
                                         <option value="1">Việt Nam</option>
                                         <option value="2">Campuchia</option>
                                         <option value="3">Campuchia 1</option>
                                     </select>
                                 </div>
-                                <button class="btn btn-primary btn-sm ms-auto">Lưu Thông Tin</button>
+                                <button class="btn btn-primary btn-sm ms-auto" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                             </div>
                         </div>
                         <div class="col-6">
@@ -136,7 +136,7 @@
                                     else
                                     {
                                         <tr>
-                                            <td colspan="6" class="text-secondary text-xs font-weight-bold">Không Có Dữ Liệu</td>
+                                            <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
                                         </tr>
                                     }
                                 }
@@ -185,7 +185,7 @@
 
     async Task AddOrUpdateAsync()
     {
-        if (ThuocTinh.GiaTris.Count() <= 0)
+        if (ThuocTinh.GiaTris?.Count() <= 0)
         {
             await Swal.FireAsync("Thông Báo", "Phải Có Ít Nhất Một Giá Trị", SweetAlertIcon.Error);
         }
@@ -208,7 +208,7 @@
     {
         if (Page == 0) Page = 1;
         ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>($"{Url}/ThuocTinh?Page={Page}&Size=2");
-        await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}");
+        await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", 0);
         ThuocTinh = new ThuocTinhModel();
         TenGiaTri = "";
     }

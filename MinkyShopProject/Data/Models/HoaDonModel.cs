@@ -40,7 +40,7 @@ namespace MinkyShopProject.Data.Models
 
         public TrangThaiHoaDon TrangThai { get; set; }
 
-        public List<HoaDonChiTietModel> HoaDonChiTiets { get; set; } = null!;
+        public List<HoaDonChiTietModel> HoaDonChiTiets { get; set; } = new List<HoaDonChiTietModel>();
     }
 
     public class HoaDonChiTietModel
@@ -54,6 +54,8 @@ namespace MinkyShopProject.Data.Models
         public int SoLuong { get; set; }
 
         public float DonGia { get; set; }
+
+        public BienTheModel? BienThe { get; set; }
     }
 
     public class HoaDonQueryModel : PaginationRequest

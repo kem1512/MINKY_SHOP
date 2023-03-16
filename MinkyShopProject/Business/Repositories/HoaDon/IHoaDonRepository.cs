@@ -10,7 +10,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
 {
     public interface IHoaDonRepository
     {
-        public Task<Response> GetAsync(HoaDonModel obj);
+        public Task<Response> GetAsync(HoaDonQueryModel obj);
 
         public Task<Response> AddAsync(HoaDonModel obj);
 

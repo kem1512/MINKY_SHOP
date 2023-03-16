@@ -79,7 +79,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
             }
         }
 
-        public async Task<Response> GetAsync(HoaDonModel obj)
+        public async Task<Response> GetAsync(HoaDonQueryModel obj)
         {
             try
             {
@@ -112,19 +112,14 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
 
                 hoaDon.NgayThanhToan = obj.NgayThanhToan;
 
-                if (obj.NhomSanPhams != null && obj.NhomSanPhams.Count() > 0)
-                {
-                    nhomSanPham.NhomSanPhams = _mapper.Map<List<NhomSanPhamModel>, List<Entities.NhomSanPham>>(obj.NhomSanPhams);
-                }
-
-                _context.NhomSanPham.Update(_mapper.Map<NhomSanPhamModel, Entities.NhomSanPham>(obj));
+                _context.HoaDon.Update(_mapper.Map<HoaDonModel, Entities.HoaDon>(obj));
 
                 var status = await _context.SaveChangesAsync();
 
                 if (status > 0)
                 {
-                    var data = _mapper.Map<Entities.NhomSanPham, NhomSanPhamModel>(nhomSanPham);
-                    return new ResponseObject<NhomSanPhamModel>(data, "Cập nhật thành công");
+                    var data = _mapper.Map<Entities.HoaDon, HoaDonModel>(hoaDon);
+                    return new ResponseObject<HoaDonModel>(data, "Cập nhật thành công");
                 }
 
                 return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");

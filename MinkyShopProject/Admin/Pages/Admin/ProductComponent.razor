@@ -18,41 +18,44 @@
                             <NavLink class="btn btn-primary btn-sm" href="admin/variant">Thêm Sản Phẩm</NavLink>
                         </div>
                     </div>
-                    @if (SanPhams == null)
-                    {
-
-                    }
-                    else
-                    {
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead class="thead-light">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giá</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số Lượng</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (SanPhams == null)
+                                {
                                     <tr>
-                                        <th style="width: 32.2946%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 text-center">Tên</th>
-                                        <th style="width: 12.6416%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm</th>
-                                        <th style="width: 9.77337%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giá</th>
-                                        <th style="width: 12.7479%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã</th>
-                                        <th style="width: 13.5977%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số Lượng</th>
-                                        <th style="width: 14.7663%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
-                                        <th style="width: 13.9164%;" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
+                                        <td colspan="6">
+                                            <div class="spinner-grow text-primary" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @if (SanPhams.Data.Content != null)
+                                }
+                                else
+                                {
+                                    @if (SanPhams.Data.Content.Count() > 0)
                                     {
                                         foreach (var x in SanPhams.Data.Content)
                                         {
                                             <tr>
-                                                <td>
+                                                <td class="w-25">
                                                     <div class="d-flex">
-                                                        <div class="form-check my-auto">
-                                                            <input class="form-check-input" type="checkbox" id="customCheck10">
-                                                        </div>
                                                         <img class="ms-3" style="width: 15%" src="@x.Anh">
                                                         <input class="text-secondary ms-3 my-auto text-xs font-weight-bolder form-control border-0 py-0" disabled value="@x.Ten" />
                                                     </div>
                                                 </td>
-                                                <td class="text-secondary text-xs font-weight-bold align-middle">Furniture</td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@(x.NhomSanPham?.Ten ?? "Không Có")</td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@x.BienThes?.Min(c => c.GiaBan)</td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@x.Ma</td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@string.Format("{0:0,0}", x.BienThes?.Sum(c => c.GiaBan))</td>
@@ -70,11 +73,17 @@
                                             </tr>
                                         }
                                     }
-                                </tbody>
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
 
-                            </table>
-                        </div>
-                    }
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
