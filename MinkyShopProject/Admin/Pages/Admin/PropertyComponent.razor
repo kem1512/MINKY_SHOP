@@ -11,17 +11,41 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between">
-                                <div class="w-50">
-                                    <select class="js-choice-0" @onchange='(ui) => Value = ui.Value?.ToString() ?? ""'>
-                                        <option value="1">Việt Nam</option>
-                                        <option value="2">Campuchia</option>
-                                        <option value="3">Campuchia 1</option>
-                                    </select>
+                        <div class="col-12 d-flex justify-content-between">
+                            <div class="me-3">
+                                <button class="btn m-0" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    <i class="ni ni-align-center"></i>
+                                </button>
+                                <div class="dropdown-menu w-50">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <select class="js-choice" @onchange='async (ui) =>{ Filter.TrangThai = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
+                                                        <option>Tất Cả</option>
+                                                        <option value="1">Đang Bán</option>
+                                                        <option value="0">Ngừng Bán</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-6">
+                                                    <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'>
+                                                        <option value="2">2 kết quả</option>
+                                                        @for (int i = 1; i < 5; i++)
+                                                        {
+                                                            var index = i * 5;
+                                                            <option value="@index">@index kết quả</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <button class="btn btn-primary btn-sm ms-auto" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                             </div>
+                            <div class="w-25">
+                                <input class="form-control" placeholder="Nhập tên thuộc tính" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
+                            </div>
+                            <button class="btn btn-primary btn-sm ms-auto" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                         </div>
                         <div class="col-6">
                             <label>Tên Thuộc Tính</label>
@@ -31,7 +55,7 @@
                             <div class="d-flex justify-content-between">
                                 <label>Giá Trị</label>
                             </div>
-                            <input type="text" class="form-control" @oninput='(ui) => TenGiaTri = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ ThuocTinh.GiaTris.Add(new GiaTriModel(){ Ten = TenGiaTri }); } })'>
+                            <input type="text" class="form-control" @oninput='(ui) => TenGiaTri = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ ThuocTinh.GiaTris?.Add(new GiaTriModel(){ Ten = TenGiaTri }); } })'>
                         </div>
                         <div class="d-flex flex-wrap position-relative py-2">
                             <div class="d-flex flex-wrap">
@@ -48,7 +72,7 @@
                                     {
                                         foreach (var x in ThuocTinh.GiaTris)
                                         {
-                                            <input class="form-control me-2 mb-2" style="width: 15%" @ondblclick="() => ThuocTinh.GiaTris.Remove(x)" @bind="x.Ten">
+                                            <input class="form-control me-2 mb-2" style="width: 30%" @ondblclick="() => ThuocTinh.GiaTris.Remove(x)" @bind="x.Ten">
                                         }
                                     }
                                 }
@@ -68,7 +92,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (ThuocTinhs == null)
+                                @if (ThuocTinhs == null || !ThuocTinhs.Data.Content.Any())
                                 {
                                     <tr>
                                         <td colspan="6">
@@ -117,7 +141,9 @@
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao.ToShortDateString()</span>
                                                 </td>
                                                 <td class="align-middle text-center p-0" style="width: 16%">
-                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.TrangThai</span>
+                                                    <div class="form-check form-switch justify-content-center">
+                                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(x.Value.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : new Dictionary<string, object>())' @onchange="async() => { ThuocTinh = x.Value; await UpdateStatus(); }">
+                                                    </div>
                                                 </td>
                                                 <td class="text-sm">
                                                     <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
@@ -154,11 +180,11 @@
     [Parameter]
     public int Page { get; set; }
 
-    string Url = "https://localhost:7053/api";
+    Uri Url = new Uri("https://localhost:7053/api/thuoctinh");
 
     string TenGiaTri = "";
 
-    string Value = "";
+    ThuocTinhQueryModel Filter = new ThuocTinhQueryModel() { Size = 2 };
 
     ThuocTinhModel ThuocTinh = new ThuocTinhModel();
 
@@ -169,17 +195,40 @@
         await Reload();
     }
 
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice");
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice-size");
+        }
+    }
+
+    async Task UpdateStatus()
+    {
+        ThuocTinh.TrangThai = ThuocTinh.TrangThai == 1 ? 0 : 1;
+
+        var result = ThuocTinh.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<ThuocTinhModel>(Url, ThuocTinh) : await HttpClient.PutAsJsonAsync<ThuocTinhModel>(Url.AddQuery("id", ThuocTinh.Id.ToString()), ThuocTinh);
+
+        if (result.IsSuccessStatusCode)
+        {
+            await Reload();
+            await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
+        }
+    }
+
     async Task DeleteAsync(Guid id)
     {
         var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = await HttpClient.DeleteAsync($"{Url}/ThuocTinh/?id={id}");
+        var result = await HttpClient.DeleteAsync(Url.AddQuery("id", id.ToString()));
 
         if (result.IsSuccessStatusCode)
         {
             await Reload();
+            await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
         }
     }
 
@@ -195,11 +244,12 @@
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
-            var result = ThuocTinh.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<ThuocTinhModel>($"{Url}/ThuocTinh", ThuocTinh) : await HttpClient.PutAsJsonAsync<ThuocTinhModel>($"{Url}/ThuocTinh?id={ThuocTinh.Id}", ThuocTinh);
+            var result = ThuocTinh.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<ThuocTinhModel>(Url, ThuocTinh) : await HttpClient.PutAsJsonAsync<ThuocTinhModel>(Url.AddQuery("id", ThuocTinh.Id.ToString()), ThuocTinh);
 
             if (result.IsSuccessStatusCode)
             {
                 await Reload();
+                await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
             }
         }
     }
@@ -207,8 +257,7 @@
     async Task Reload()
     {
         if (Page == 0) Page = 1;
-        ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>($"{Url}/ThuocTinh?Page={Page}&Size=2");
-        await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", 0);
+        ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? ""));
         ThuocTinh = new ThuocTinhModel();
         TenGiaTri = "";
     }

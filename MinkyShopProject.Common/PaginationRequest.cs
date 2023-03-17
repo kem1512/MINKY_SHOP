@@ -12,8 +12,6 @@ namespace MinkyShopProject.Common
 
         [Range(1, int.MaxValue)] public int? Size { get; set; } = 20;
 
-        public string? Url { get; set; }
-
         // public string Filter { get; set; } = "{}";
         // public string FullTextSearch { get; set; }
     }

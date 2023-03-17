@@ -31,12 +31,13 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         List<HoaDonModel>? HoaDons = new List<HoaDonModel>();
 
-        int index = 0;
+        public int index = 0;
 
         string Url = "https://localhost:7053/api";
 
         protected async override Task OnInitializedAsync()
         {
+            if (HoaDons == null && HoaDons?.Count == 0 && !HoaDons.Any()) { await AddOrder(); }
             HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
             SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"{Url}/SanPham");
         }
@@ -56,6 +57,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     }
                 }
                 HoaDons?[index].HoaDonChiTiets.Add(new HoaDonChiTietModel() { BienThe = obj, SoLuong = soLuong });
+                HoaDons[index].TongTien = HoaDons?[index].HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) ?? 0;
                 await Session.SetItemAsync("cart", HoaDons);
                 HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
             }

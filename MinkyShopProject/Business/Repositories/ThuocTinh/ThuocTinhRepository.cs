@@ -90,7 +90,7 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
         {
             try
             {
-                return new ResponsePagination<ThuocTinhModel>(_mapper.Map<Pagination<Entities.ThuocTinh>, Pagination<ThuocTinhModel>>(await _context.ThuocTinh.Include(c => c.GiaTris).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<ThuocTinhModel>(_mapper.Map<Pagination<Entities.ThuocTinh>, Pagination<ThuocTinhModel>>(await _context.ThuocTinh.Include(c => c.GiaTris).Where(c => c.Ten.Contains(obj.Ten ?? "")).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThai < 2 && obj.TrangThai == null)).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {

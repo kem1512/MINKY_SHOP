@@ -19,7 +19,7 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<GiaTriModel>? GiaTris { get; set; }
+        public List<GiaTriModel>? GiaTris { get; set; } = new List<GiaTriModel>();
 
         public List<GiaTriModel>? GiaTriTemplates { get; set; } = new List<GiaTriModel>();
     }
@@ -37,5 +37,8 @@ namespace MinkyShopProject.Data.Models
 
     public class ThuocTinhQueryModel : PaginationRequest
     {
+        public string? Ten { get; set; }
+
+        public int? TrangThai { get; set; }
     }
 }

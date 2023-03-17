@@ -32,5 +32,10 @@ namespace MinkyShopProject.Common
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        public static string FormatMoney(float? money)
+        {
+            return string.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:c}", money);
+        }
     }
 }

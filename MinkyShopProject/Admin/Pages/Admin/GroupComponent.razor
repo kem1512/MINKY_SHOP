@@ -1,7 +1,9 @@
 ﻿@page "/admin/group"
+@page "/admin/group/page/{page:int}"
 @using MinkyShopProject.Data.Models
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
+@inject IJSRuntime JSRuntime
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -9,7 +11,40 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 text-end">
+                        <div class="col-12 d-flex justify-content-between">
+                            <div class="me-3">
+                                <button class="btn m-0" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    <i class="ni ni-align-center"></i>
+                                </button>
+                                <div class="dropdown-menu w-50">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <select class="js-choice" @onchange='async (ui) =>{ Filter.TrangThai = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
+                                                        <option>Tất Cả</option>
+                                                        <option value="1">Đang Bán</option>
+                                                        <option value="0">Ngừng Bán</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-6">
+                                                    <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'>
+                                                        <option value="2">2 kết quả</option>
+                                                        @for (int i = 1; i < 5; i++)
+                                                        {
+                                                            var index = i * 5;
+                                                            <option value="@index">@index kết quả</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-25">
+                                <input class="form-control" placeholder="Nhập tên nhóm sản phẩm" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
+                            </div>
                             <button class="btn btn-primary btn-sm ms-auto" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                         </div>
                         <div class="col-6">
@@ -37,7 +72,7 @@
                                         {
                                             foreach (var x in NhomSanPham.NhomSanPhams)
                                             {
-                                                <input class="form-control w-25 me-2" @ondblclick="() => NhomSanPham.NhomSanPhams.Remove(x)" @bind="x.Ten">
+                                                <input class="form-control w-25 me-2" style="width: 30%" @ondblclick="() => NhomSanPham.NhomSanPhams.Remove(x)" @bind="x.Ten">
                                             }
                                         }
                                     }
@@ -107,7 +142,9 @@
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao.ToShortDateString()</span>
                                                 </td>
                                                 <td class="align-middle text-center p-0" style="width: 16%">
-                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.TrangThai</span>
+                                                    <div class="form-check form-switch justify-content-center">
+                                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(x.Value.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : new Dictionary<string, object>())' @onclick="async() => { NhomSanPham = x.Value; await UpdateStatus(); }">
+                                                    </div>
                                                 </td>
                                                 <td class="text-sm">
                                                     <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
@@ -131,6 +168,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <MinkyShopProject.Admin.Shared.PaginationComponent Model="NhomSanPhams" Url="admin/group"></MinkyShopProject.Admin.Shared.PaginationComponent>
                 </div>
             </div>
         </div>
@@ -138,17 +176,31 @@
 </div>
 
 @code {
-    string Url = "https://localhost:7053/api";
+    [Parameter]
+    public int Page { get; set; }
+
+    Uri Url = new Uri("https://localhost:7053/api/nhomsanpham");
 
     string TenNhomSanPham = "";
 
     NhomSanPhamModel NhomSanPham = new NhomSanPhamModel();
 
+    NhomSanPhamQueryModel Filter = new NhomSanPhamQueryModel() { Size = 2 };
+
     ResponsePagination<NhomSanPhamModel>? NhomSanPhams;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await Reload();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice");
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice-size");
+        }
     }
 
     async Task DeleteAsync(Guid id)
@@ -157,11 +209,25 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = await HttpClient.DeleteAsync($"{Url}/NhomSanPhamm/{id}");
+        var result = await HttpClient.DeleteAsync(Url.AddQuery("id", id.ToString()));
 
         if (result.IsSuccessStatusCode)
         {
             await Reload();
+            await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
+        }
+    }
+
+    async Task UpdateStatus()
+    {
+        NhomSanPham.TrangThai = NhomSanPham.TrangThai == 1 ? 0 : 1;
+
+        var result = NhomSanPham.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<NhomSanPhamModel>(Url, NhomSanPham) : await HttpClient.PutAsJsonAsync<NhomSanPhamModel>(Url.AddQuery("id", NhomSanPham.Id.ToString()), NhomSanPham);
+
+        if (result.IsSuccessStatusCode)
+        {
+            await Reload();
+            await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
         }
     }
 
@@ -171,17 +237,19 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var result = NhomSanPham.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<NhomSanPhamModel>($"{Url}/NhomSanPham", NhomSanPham) : await HttpClient.PutAsJsonAsync<NhomSanPhamModel>($"{Url}/NhomSanPham/{NhomSanPham.Id}", NhomSanPham);
+        var result = NhomSanPham.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<NhomSanPhamModel>(Url, NhomSanPham) : await HttpClient.PutAsJsonAsync<NhomSanPhamModel>(Url.AddQuery("id", NhomSanPham.Id.ToString()), NhomSanPham);
 
         if (result.IsSuccessStatusCode)
         {
             await Reload();
+            await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
         }
     }
 
     async Task Reload()
     {
-        NhomSanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
+        if (Page == 0) Page = 1;
+        NhomSanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? ""));
         NhomSanPham = new NhomSanPhamModel();
         TenNhomSanPham = "";
     }

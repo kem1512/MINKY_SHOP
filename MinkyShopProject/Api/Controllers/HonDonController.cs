@@ -36,7 +36,6 @@ namespace MinkyShopProject.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery] HoaDonQueryModel obj)
         {
-            obj.Url = $"{Request.Scheme}://{Request.Host.Value}/";
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
 

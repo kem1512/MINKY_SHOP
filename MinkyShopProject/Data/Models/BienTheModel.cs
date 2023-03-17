@@ -26,6 +26,8 @@ namespace MinkyShopProject.Data.Models
         public DateTime NgayTao { get; set; }
 
         public int TrangThai { get; set; }
+
+        public SanPhamModel? SanPham { get; set; }
     }
 
     public class BienTheChiTietModel

@@ -45,8 +45,8 @@ async function uploadImages(images) {
     console.log(images)
 }
 
-function choiceLoad(obj, index) {
-    var element = '.js-choice-' + index;
+function choiceLoad(obj, classname) {
+    var element = classname;
     if (element) new Choices(document.querySelector(element), JSON.parse(obj.replace(/'/g, '"')));
 }
 

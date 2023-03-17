@@ -34,7 +34,7 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _repository.AddAsync(obj));
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<ActionResult> UpdateAsync(Guid id, [FromBody] NhomSanPhamModel obj)
         {
             return Helper.TransformData(await _repository.UpdateAsync(id, obj));

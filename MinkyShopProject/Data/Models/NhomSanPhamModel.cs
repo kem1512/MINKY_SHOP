@@ -26,6 +26,8 @@ namespace MinkyShopProject.Data.Models
 
     public class NhomSanPhamQueryModel : PaginationRequest
     {
+        public string? Ten { get; set; }
 
+        public int? TrangThai { get; set; }
     }
 }

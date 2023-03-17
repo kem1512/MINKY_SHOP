@@ -35,7 +35,6 @@ namespace MinkyShopProject.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery] ThuocTinhQueryModel obj)
         {
-            obj.Url = $"{Request.Scheme}://{Request.Host.Value}/";
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
 

@@ -131,5 +131,7 @@
     void ChangeProduct()
     {
         BienThe = BienTheChiTiet?.Data.SanPham?.BienThes?.FirstOrDefault(c => string.Join(" + ", c.Ten) == string.Join(" + ", GiaTris) || string.Join(" + ", c.Ten) == string.Join(" + ", GiaTris.Reverse())) ?? new BienTheModel();
+        var sanPham = new SanPhamModel() { Ten = BienTheChiTiet?.Data.SanPham?.Ten };
+        BienThe.SanPham = sanPham;
     }
 }

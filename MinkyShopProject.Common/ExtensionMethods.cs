@@ -248,12 +248,7 @@ namespace MinkyShopProject.Common
                     NumberOfElements = items.Count,
                     Size = query.Size.Value,
                     TotalPages = totalsPages,
-                    TotalElements = totals,
-                    Url = query.Url,
-                    First = $"{query.Url}?page=1/size={query.Size.Value}",
-                    Last = $"{query.Url}?page={totalsPages}/size={query.Size.Value}",
-                    Next = query.Page.Value < totalsPages ? $"{query.Url}?page={query.Page.Value + 1}/size={query.Size.Value}" : null,
-                    Prev = query.Page.Value > 1 ? $"{query.Url}?page={query.Page.Value - 1}/size={query.Size.Value}" : null
+                    TotalElements = totals
                 };
             }
 
