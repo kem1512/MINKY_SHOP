@@ -19,7 +19,7 @@ namespace MinkyShopProject.Business.Entities
 
         public int SoDanhGia { get; set; }
 
-        public DateTime NgayDanhGia { get; set; } = DateTime.Now;
+        public DateTime NgayDanhGia { get; set; }
 
         public string? Anh { get; set; }
 

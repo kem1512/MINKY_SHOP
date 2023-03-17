@@ -37,7 +37,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         protected async override Task OnInitializedAsync()
         {
-            if (HoaDons == null && HoaDons?.Count == 0 && !HoaDons.Any()) { await AddOrder(); }
+            if (HoaDons == null || HoaDons?.Count == 0 || !HoaDons.Any()) { await AddOrder(); }
             HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
             SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"{Url}/SanPham");
         }
@@ -59,7 +59,6 @@ namespace MinkyShopProject.Admin.Pages.Sale
                 HoaDons?[index].HoaDonChiTiets.Add(new HoaDonChiTietModel() { BienThe = obj, SoLuong = soLuong });
                 HoaDons[index].TongTien = HoaDons?[index].HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) ?? 0;
                 await Session.SetItemAsync("cart", HoaDons);
-                HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
             }
         }
 
@@ -69,7 +68,30 @@ namespace MinkyShopProject.Admin.Pages.Sale
             {
                 HoaDons?[index].HoaDonChiTiets.Remove(HoaDons?[index].HoaDonChiTiets[indexHdct]);
                 await Session.SetItemAsync("cart", HoaDons);
-                HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
+            }
+        }
+
+        public async Task Update(int index, int indexHdct, bool plus, int soLuong = 0)
+        {
+            if (HoaDons?[index].HoaDonChiTiets != null)
+            {
+                if (soLuong != 0)
+                {
+                    HoaDons[index].HoaDonChiTiets[indexHdct].SoLuong = soLuong;
+                }
+                else
+                {
+                    if (plus)
+                    {
+                        HoaDons[index].HoaDonChiTiets[indexHdct].SoLuong += 1;
+                    }
+                    else
+                    {
+                        HoaDons[index].HoaDonChiTiets[indexHdct].SoLuong -= 1;
+                    }
+                }
+                HoaDons[index].TongTien = HoaDons?[index].HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) ?? 0;
+                await Session.SetItemAsync("cart", HoaDons);
             }
         }
 
@@ -82,14 +104,12 @@ namespace MinkyShopProject.Admin.Pages.Sale
         {
             HoaDons?.Add(new HoaDonModel());
             await Session.SetItemAsync("cart", HoaDons);
-            HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
         }
 
         private async Task RemoveOrder(int index)
         {
             HoaDons?.RemoveAt(index);
             await Session.SetItemAsync("cart", HoaDons);
-            HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
         }
     }
 }

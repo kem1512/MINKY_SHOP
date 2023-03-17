@@ -23,7 +23,7 @@ namespace MinkyShopProject.Business.Entities
 
         public string? Anh { get; set; }
 
-        public DateTime NgayTao { get; set; } = DateTime.Now;
+        public DateTime NgayTao { get; set; }
 
         public int TrangThai { get; set; }
 

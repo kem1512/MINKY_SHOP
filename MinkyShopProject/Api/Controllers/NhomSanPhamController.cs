@@ -40,7 +40,7 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _repository.UpdateAsync(id, obj));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<ActionResult> DeleteAsync(Guid id)
         {
             return Helper.TransformData(await _repository.DeleteAsync(id));

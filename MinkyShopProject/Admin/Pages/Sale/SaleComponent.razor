@@ -20,7 +20,9 @@
                     {
                         var localIndex = i - 1;
                         <li class="nav-item" style="font-size: .875rem">
-                            <button @onclick="() => index = localIndex" class="nav-link text-bold @(i == 1 ? "active" : "")" style="white-space: nowrap" @oncontextmenu="async(ui) => { if(ui.Button == 2){ await RemoveOrder(i); } }" data-bs-toggle="tab" data-bs-target="#hoa-don-@i" type="button">Hóa Đơn @i</button>
+                            <button @onclick="() => index = localIndex" class="nav-link text-bold @(i == 1 ? "active" : "")" style="white-space: nowrap;" @oncontextmenu="async(ui) => { if(ui.Button == 2){ await RemoveOrder(i); } }" data-bs-toggle="tab" data-bs-target="#hoa-don-@i" type="button">
+                              Hóa Đơn @i
+                             </button>
                         </li>
                     }
                 }
@@ -46,14 +48,18 @@
                                     {
                                         <div class="card mb-2">
                                             <div class="card-body">
-                                                <div class="d-flex justify-content-between">
+                                                <div class="d-flex justify-content-around align-items-center">
                                                     <span class="text-sm text-bold">@x.Value.BienThe?.SanPham?.Ten</span>
+                                                    <div class="d-flex justify-content-center">
+                                                        <button class="btn btn-xs mb-0 me-1" @onclick="() => Update(localIndex, x.Index, false)"><i class="fa fa-minus"></i></button>
+                                                        <input type="number" class="form-control w-25 h-25" value="@x.Value.SoLuong" @onchange='e => Update(localIndex, x.Index, false, int.Parse(e.Value?.ToString() ?? ""))' />
+                                                        <button class="btn btn-xs mb-0 ms-1" @onclick="() => Update(localIndex, x.Index, true)"><i class="fa fa-plus"></i></button>
+                                                    </div>
                                                     <button class="btn btn-danger btn-sm m-0" @onclick="() => RemoveItem(localIndex, x.Index)">Xóa</button>
                                                 </div>
                                                 <div class="d-flex justify-content-between align-items-center">
                                                     <img class="w-10" src="@x.Value.BienThe?.Anh" />
                                                     <span class="text-sm">@x.Value.BienThe?.Ten</span>
-                                                    <span class="text-sm">@x.Value.SoLuong</span>
                                                     <span class="text-sm">@Helper.FormatMoney(x.Value.BienThe?.GiaBan)</span>
                                                     <span class="text-sm">@Helper.FormatMoney(x.Value.BienThe?.GiaBan * x.Value.SoLuong)</span>
                                                 </div>
@@ -89,7 +95,7 @@
                                                 <div class="card-body p-1 text-left">
                                                     <div class="p-md-0 pt-3">
                                                         <h6 class="font-weight-bolder mb-0 text-sm">@x.Ten</h6>
-                                                        <p class="text-uppercase text-sm font-weight-bold text-sm">@string.Format("{0:0,0}", x.BienThes?.Min(c => c.GiaBan))</p>
+                                                        <p class="text-uppercase text-sm font-weight-bold text-sm">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan))</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -106,7 +112,14 @@
 </div>
 <div class="container-fluid bg-primary footer-sale p-1">
     <div class="d-flex justify-content-between align-items-center px-4">
-        <span class="text-light text-bolder">Tổng Tiền : @Helper.FormatMoney(HoaDons?[index].TongTien)</span>
+        @if (HoaDons != null && HoaDons.Any())
+        {
+            <span class="text-light text-bolder">Tổng Tiền : @Helper.FormatMoney(HoaDons?[index].TongTien)</span>
+        }
+        else
+        {
+            <span class="text-light text-bolder">Tổng Tiền : 0</span>
+        }
         <button class="btn btn-info m-0">Thanh Toán</button>
     </div>
 </div>

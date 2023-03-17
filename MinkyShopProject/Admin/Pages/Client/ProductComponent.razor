@@ -1,4 +1,5 @@
 ﻿@page "/product"
+@page "/"
 @inject HttpClient HttpClient;
 @using Data.Models;
 
@@ -40,10 +41,10 @@
                                                 <img src="@x.Anh" alt="img-blur-shadow" class="img-fluid shadow border-radius-lg p-2">
                                             </NavLink>
                                         </div>
-                                        <div class="card-body px-1 mt-2">
-                                            <div class="d-flex justify-content-between">
-                                                <p class="text-gradient text-primary text-bold m-0">@x.Ten</p>
-                                                <p class="m-0 text-bold">@string.Format("{0:0,0}", @x.BienThes?.Min(c => c.GiaBan))</p>
+                                        <div class="card-body px-1 py-3">
+                                            <div class="d-flex flex-column">
+                                                <p class="text-gradient text-primary text-bold me-1 mb-0">@x.Ten</p>
+                                                <p class="m-0 text-bold">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan))</p>
                                             </div>
                                         </div>
                                     </div>

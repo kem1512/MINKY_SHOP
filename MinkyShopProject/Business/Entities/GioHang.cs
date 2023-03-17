@@ -12,7 +12,7 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid IdKhachHang { get; set; }
 
-        public DateTime NgayTao { get; set; } = DateTime.Now;
+        public DateTime NgayTao { get; set; }
 
         public KhachHang? KhachHang { get; set; }
 

@@ -33,8 +33,6 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         ResponseObject<SanPhamModel>? SanPham;
 
-        string NhomSanPham = "";
-
         List<string>? ModelImage;
 
         bool showNhomSanPham = false;

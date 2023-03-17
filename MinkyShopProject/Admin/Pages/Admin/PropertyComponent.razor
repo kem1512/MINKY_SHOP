@@ -11,41 +11,35 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12 d-flex justify-content-between">
-                            <div class="me-3">
-                                <button class="btn m-0" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                                    <i class="ni ni-align-center"></i>
-                                </button>
-                                <div class="dropdown-menu w-50">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <select class="js-choice" @onchange='async (ui) =>{ Filter.TrangThai = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
-                                                        <option>Tất Cả</option>
-                                                        <option value="1">Đang Bán</option>
-                                                        <option value="0">Ngừng Bán</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-6">
-                                                    <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'>
-                                                        <option value="2">2 kết quả</option>
-                                                        @for (int i = 1; i < 5; i++)
-                                                        {
-                                                            var index = i * 5;
-                                                            <option value="@index">@index kết quả</option>
-                                                        }
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-3">
+                                    <select class="js-choice" @onchange='async (ui) =>{ Filter.TrangThai = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
+                                        <option>Tất Cả</option>
+                                        <option value="1">Đang Bán</option>
+                                        <option value="0">Ngừng Bán</option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'>
+                                        <option value="2">2 kết quả</option>
+                                        @for (int i = 1; i < 5; i++)
+                                        {
+                                            var index = i * 5;
+                                            <option value="@index">@index kết quả</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <input class="form-control" placeholder="Nhập tên thuộc tính" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
                                 </div>
                             </div>
-                            <div class="w-25">
-                                <input class="form-control" placeholder="Nhập tên thuộc tính" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
+                        </div>
+                        <div class="col-12 mt-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div style="height: 5px; width: 75%; border-bottom: 1px solid gray;"></div>
+                                <button class="btn btn-primary btn-sm" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                             </div>
-                            <button class="btn btn-primary btn-sm ms-auto" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                         </div>
                         <div class="col-6">
                             <label>Tên Thuộc Tính</label>
@@ -92,7 +86,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (ThuocTinhs == null || !ThuocTinhs.Data.Content.Any())
+                                @if (ThuocTinhs == null)
                                 {
                                     <tr>
                                         <td colspan="6">
@@ -142,7 +136,7 @@
                                                 </td>
                                                 <td class="align-middle text-center p-0" style="width: 16%">
                                                     <div class="form-check form-switch justify-content-center">
-                                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(x.Value.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : new Dictionary<string, object>())' @onchange="async() => { ThuocTinh = x.Value; await UpdateStatus(); }">
+                                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(x.Value.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : null)' @onchange="async() => { ThuocTinh = x.Value; await UpdateStatus(); }">
                                                     </div>
                                                 </td>
                                                 <td class="text-sm">

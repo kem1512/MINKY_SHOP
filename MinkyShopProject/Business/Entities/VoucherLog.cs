@@ -20,7 +20,7 @@ namespace MinkyShopProject.Business.Entities
 
         public float SoTienGiam { get; set; }
 
-        public DateTime NgayTao { get; set; } = DateTime.Now;
+        public DateTime NgayTao { get; set; }
 
         public HoaDon? HoaDon { get; set; }
 

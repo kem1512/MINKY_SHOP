@@ -17,7 +17,7 @@ namespace MinkyShopProject.Business.Entities
 
         public string Ma { get; set; } = null!;
 
-        public DateTime NgayTao { get; set; } = DateTime.Now;
+        public DateTime NgayTao { get; set; }
 
         public DateTime? NgayThanhToan { get; set; }
 

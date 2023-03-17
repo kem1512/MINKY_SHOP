@@ -15,7 +15,7 @@ namespace MinkyShopProject.Business.Entities
 
         public int TrangThai { get; set; }
 
-        public DateTime NgayTao { get; set; } = DateTime.Now;
+        public DateTime NgayTao { get; set; }
 
         public List<ThuocTinhSanPham>? ThuocTinhSanPhams { get; set; }
 

@@ -21,7 +21,7 @@
                                         <div class="row">
                                             <div class="col-8">
                                                 <div class="row">
-                                                    <div class="col-6 mb-3">san
+                                                    <div class="col-6 mb-3">
                                                         <label>Tên Sản Phẩm</label>
                                                         <input class="form-control" type="text" @bind="@SanPham.Data.Ten">
                                                     </div>
@@ -34,7 +34,7 @@
                                                             <label for="example-text-input" class="form-control-label">Nhóm Sản Phẩm</label>
                                                             <div class="position-relative">
                                                                 <input class="form-control" type="text" value="@SanPham.Data.NhomSanPham?.Ten" @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false" >
-                                                                <i class="fa fa-times position-absolute top-50 end-0 translate-middle-y" style="cursor: pointer"></i>
+                                                                <NavLink href="admin/group"><i class="fa fa-plus position-absolute top-50 end-0 translate-middle-y" style="cursor: pointer"></i></NavLink>
                                                             </div>
                                                             <div class="d-flex flex-wrap position-relative pb-2">
                                                                 <div class="list-group position-absolute w-100 top-0 list" style="z-index: 1">
@@ -44,9 +44,18 @@
                                                                         {
                                                                             foreach (var x in NhomSanPhamModels.Data.Content)
                                                                             {
-                                                                                <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.Data.IdNhomSanPham = x.Id; NhomSanPham = x.Ten;  }">
+                                                                                <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.Data.NhomSanPham = x; SanPham.Data.IdNhomSanPham = x.Id; }">
                                                                                     @x.Ten
                                                                                 </button>
+                                                                                if(x.NhomSanPhams != null)
+                                                                                {
+                                                                                    foreach (var y in x.NhomSanPhams)
+                                                                                    {
+                                                                                        <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.Data.NhomSanPham = y; SanPham.Data.IdNhomSanPham = y.Id; }">
+                                                                                            @y.Ten
+                                                                                        </button>
+                                                                                    }
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -57,17 +66,17 @@
                                                     <div class="col-6 mb-3">
                                                         <label>&nbsp;</label>
                                                         <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="">
+                                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(SanPham.Data.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : null)' @onchange="async() => { SanPham.Data.TrangThai = SanPham.Data.TrangThai == 1 ? 0 : 1; }">
                                                             <label class="form-check-label" for="flexSwitchCheckDefault">Trạng Thái</label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-3">
-                                                        <button class="btn btn-primary btn-sm" @onclick="UpdateSanPhamAsync">Sửa</button>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="" @onchange="() => showAll = !showAll">
-                                                            <label class="form-check-label" for="flexSwitchCheckDefault">Hiển Thị Tất Cả Biến Thể</label>
+                                                    <div class="col-12">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div class="form-check form-switch">
+                                                                <input class="form-check-input" type="checkbox" id="show-all" checked="" @onchange="() => showAll = !showAll">
+                                                                <label class="form-check-label text-bolder" for="show-all">Hiển thị tất cả</label>
+                                                            </div>
+                                                            <button class="btn btn-primary btn-sm" @onclick="UpdateSanPhamAsync">Sửa</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -122,7 +131,7 @@
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Giá Tiền</label>
-                                                        <input class="form-control" type="text" @bind="x.GiaBan">
+                                                        <input class="form-control" type="text" value="@string.Format("{0:0,0}", x.GiaBan)" @oninput='e => x.GiaBan = float.Parse(e.Value?.ToString() ?? "")'>
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>SKU</label>

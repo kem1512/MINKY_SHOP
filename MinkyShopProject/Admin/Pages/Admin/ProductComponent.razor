@@ -26,7 +26,7 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giá</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số Lượng</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Biến Thể</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
                                 </tr>
@@ -56,18 +56,18 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@(x.NhomSanPham?.Ten ?? "Không Có")</td>
-                                                <td class="text-secondary text-xs font-weight-bold align-middle">@x.BienThes?.Min(c => c.GiaBan)</td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan))</td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@x.Ma</td>
-                                                <td class="text-secondary text-xs font-weight-bold align-middle">@string.Format("{0:0,0}", x.BienThes?.Sum(c => c.GiaBan))</td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@x.BienThes?.Count() biến thể</td>
                                                 <td class="align-middle">
-                                                    <span class="badge badge-danger badge-sm">@x.TrangThai</span>
+                                                    <span class="badge badge-@(x.TrangThai == 1 ? "success" : "danger") badge-sm">@(x.TrangThai == 1 ? "Đang Bán" : "Ngừng Bán")</span>
                                                 </td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">
                                                     <NavLink href="@($"admin/product/{@x.Id}")" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
-                                                        <i class="fas fa-user-edit text-secondary" aria-hidden="true"></i>
+                                                        <i class="fas fa-user-edit text-info" aria-hidden="true"></i>
                                                     </NavLink>
                                                     <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => Delete(x.Id)">
-                                                        <i class="fas fa-trash text-secondary" aria-hidden="true"></i>
+                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                                                     </a>
                                                 </td>
                                             </tr>

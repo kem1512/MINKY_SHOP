@@ -36,11 +36,20 @@
                                         {
                                             if (NhomSanPhamModels?.Data.Content != null)
                                             {
-                                                foreach (var x in NhomSanPhamModels.Data.Content.Where(c => c.IdParent != null))
+                                                foreach (var x in NhomSanPhamModels.Data.Content)
                                                 {
                                                     <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.IdNhomSanPham = x.Id; LoaiHangHoa = x.Ten;  }">
                                                         @x.Ten
                                                     </button>
+                                                    if(x.NhomSanPhams != null)
+                                                    {
+                                                        foreach (var y in x.NhomSanPhams)
+                                                        {
+                                                            <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.IdNhomSanPham = y.Id; LoaiHangHoa = y.Ten;  }">
+                                                                @y.Ten
+                                                            </button>
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

@@ -18,7 +18,7 @@ namespace MinkyShopProject.Data.Models
 
         public string Ma { get; set; } = null!;
 
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
         public DateTime NgayThanhToan { get; set; }
 

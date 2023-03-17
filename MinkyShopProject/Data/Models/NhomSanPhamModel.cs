@@ -17,7 +17,7 @@ namespace MinkyShopProject.Data.Models
 
         public int TrangThai { get; set; }
 
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
         public List<NhomSanPhamModel>? NhomSanPhams { get; set; } = new List<NhomSanPhamModel>();
 
