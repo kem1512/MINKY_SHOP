@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
 using MinkyShopProject.Business.Repositories.NhomSanPham;
+using MinkyShopProject.Business.Repositories.NhanVien;
 using MinkyShopProject.Business.Repositories.KhachHang;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
@@ -30,12 +31,12 @@ builder.Services.AddScoped<IThuocTinhRepository, ThuocTinhRepository>();
 builder.Services.AddScoped<IBienTheRepository, BienTheRepository>();
 
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
-
 builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
 
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 
 builder.Services.AddScoped<INhomSanPhamRepository, NhomSanPhamRepository>();
+builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 
 builder.Services.AddScoped<IViDiemRepository, ViDiemRepository>();
 
