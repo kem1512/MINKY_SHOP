@@ -9,6 +9,6 @@ namespace MinkyShopProject.Data.Enums
 
     public enum TrangThaiHoaDon
     {
-        Done, Unfinished, Cancelled
+        Done, Unfinished, Cancelled, Debt, Ship
     }
 }

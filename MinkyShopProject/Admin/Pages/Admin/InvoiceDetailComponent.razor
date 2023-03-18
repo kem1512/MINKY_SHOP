@@ -1,6 +1,7 @@
 ﻿@using Data.Models;
 @inject HttpClient HttpClient;
 @page "/hoadon/{id:guid}";
+@inject ISessionStorageService Session;
 
 <div class="container-fluid mt--7" style="overflow-y: auto">
     @if(HoaDon != null)
@@ -21,7 +22,7 @@
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link text-dark" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-payment" type="button">Lịch sử thanh toán</button>
                                     </li>
-                                    @if(HoaDon.Data.LoaiDonHang == 1)
+                                    @if(HoaDon.Data.TrangThai == Data.Enums.TrangThaiHoaDon.Ship)
                                     {
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link text-dark" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-ship" type="button">Thông tin giao hàng</button>
@@ -53,11 +54,11 @@
                                     </div>
                                     <div class="col-4">
                                         <label class="col-form-label text-sm p-0 mb-2 me-3">Khách hàng</label>
-                                        <span class="text-bolder text-sm">@HoaDon?.Data.KhachHang?.Ten</span>
+                                        <span class="text-bolder text-sm">@(HoaDon?.Data.KhachHang?.Ten ?? "Khách Lẻ")</span>
                                     </div>
                                     <div class="col-4">
                                         <label class="col-form-label p-0 text-sm mb-2 me-3">Nhân viên</label>
-                                        <span class="text-bolder text-sm"></span>
+                                        <span class="text-bolder text-sm">@HoaDon?.Data.NhanVien?.Ten</span>
                                     </div>
                                 </div>
                                 <div class="table-responsive mt-2">
@@ -132,7 +133,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="d-flex flex-wrap">
-                                        <button class="btn btn-success me-2">Cập nhật</button>
+                                        <button class="btn btn-success me-2" @onclick="UpdateSale">Cập nhật</button>
                                         <button class="btn btn-success me-2">In</button>
                                         <button class="btn btn-danger me-2">Hủy đơn hàng</button>
                                     </div>
@@ -152,36 +153,56 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-
-                                            @foreach (var x in HoaDon.Data.HinhThucThanhToans.Select((Value, Index) => (Index, Value)))
+                                            @if (HoaDon != null)
                                             {
-                                                <tr>
-                                                    <td>
-                                                        <span class="text-secondary text-xs font-weight-bold">@x.Index</span>
+                                                @foreach (var x in HoaDon.Data.HinhThucThanhToans.Select((Value, Index) => (Index, Value)))
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Index</span>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <span class="text-secondary text-xs font-weight-bold">Hải Đăng</span>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@{
+                                                                    var kieuThanhToan = "";
+                                                                    switch (x.Value.KieuThanhToan)
+                                                                    {
+                                                                        case 0:
+                                                                            kieuThanhToan = "Tiền mặt";
+                                                                            break;
+                                                                        case 1:
+                                                                            kieuThanhToan = "Chuyển khoản";
+                                                                            break;
+                                                                        case 2:
+                                                                            kieuThanhToan = "Cọc";
+                                                                            break;
+                                                                        default:
+                                                                            break;
+                                                                    }
+                                                                }
+                                                                @kieuThanhToan
+                                                       </span>
                                                     </td>
-                                                    <td style="width: 20%">
-                                                        <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
-                                                    </td>
-                                                    <td style="width: 20%">
-                                                        <span class="text-secondary text-xs font-weight-bold">Hải Đăng</span>
-                                                    </td>
-                                                    <td class="align-middle text-center text-sm">
-                                                        <span class="text-secondary text-xs font-weight-bold">@(x.Value.KieuThanhToan == 0 ? "Tiền mặt" : "Chuyển khoản")</span>
-                                                    </td>
-                                                    <td class="align-middle text-center text-sm">
-                                                        <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.TongTienThanhToan)</span>
-                                                    </td>
-                                                    <td class="align-middle text-center text-sm">
-                                                        <span class="text-secondary text-xs font-weight-bold">Đã hoàn thành</span>
-                                                    </td>
-                                                </tr>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.TongTienThanhToan)</span>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@(x.Value.TongTienThanhToan <= 0 ? "Chưa thanh toán" : "Đã thanh toán")</span>
+                                                        </td>
+                                                    </tr>
+                                                }
                                             }
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="tab-ship">
-                                @if (HoaDon.Data.LoaiDonHang == 1)
+                                @if (HoaDon?.Data.LoaiDonHang == 1 || HoaDon?.Data.TrangThai == Data.Enums.TrangThaiHoaDon.Ship)
                                 {
                                     <div class="d-flex flex-wrap mt-3 justify-content-around text-center">
                                         <div class="d-flex flex-column">
@@ -228,7 +249,7 @@
                                         </div>
                                         <div class="col-12">
                                             <label class="col-form-label text-sm  me-2 p-0 mb-2">Trạng thái</label>
-                                            <span class="text-bolder text-sm">Đã thanh toán</span>
+                                            <span class="text-bolder text-sm">@(HoaDon?.Data?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) + HoaDon?.Data?.TienShip < HoaDon?.Data?.TongTien ? "Chưa thanh toán đủ" : "Đã thanh toán")</span>
                                         </div>
                                     </div>
                                 }
@@ -252,6 +273,16 @@
     protected async override Task OnParametersSetAsync()
     {
         HoaDon = await HttpClient.GetFromJsonAsync<ResponseObject<HoaDonModel>>(Url + "/" + Id);
+    }
+
+    async Task UpdateSale()
+    {
+        if(HoaDon != null)
+        {
+            List<HoaDonModel> HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart") ?? new List<HoaDonModel>();
+            HoaDons.Add(HoaDon.Data);
+            await Session.SetItemAsync("cart", HoaDons);
+        }
     }
 
     async Task UpdateAsync(int status)
@@ -280,6 +311,7 @@
             {
                 HoaDon.Data.TrangThai = Data.Enums.TrangThaiHoaDon.Done;
             }
+            HoaDon.Data.NhanVien = null;
             await HttpClient.PutAsJsonAsync<HoaDonModel>(Url.AddQuery("id", HoaDon.Data.Id.ToString()), HoaDon.Data);
         }
     }

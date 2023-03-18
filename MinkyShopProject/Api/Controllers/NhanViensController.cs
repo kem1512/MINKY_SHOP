@@ -20,7 +20,7 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpGet("{perPage}/{currentPage}/{status}/{keyword?}")]
-        public async Task<ActionResult<PaginationResponse>> Get(int perPage,int currentPage,int status,string? keyword = null)
+        public async Task<ActionResult<PaginationResponse>> Get(int perPage, int currentPage, int status, string? keyword = null)
         {
             return Ok(await _Repository.Get(perPage, currentPage, status, keyword));
         }
@@ -32,7 +32,7 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> Put(Guid id,NhanVienModel.NhanVienCreateModel model)
+        public async Task<ActionResult<bool>> Put(Guid id, NhanVienModel.NhanVienCreateModel model)
         {
             var NhanVien = new NhanVien()
             {

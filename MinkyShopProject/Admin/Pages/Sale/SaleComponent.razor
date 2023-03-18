@@ -130,7 +130,7 @@
                     </div>
                     <div class="row @(ThanhToan ? "d-block" : "d-none")">
                         <div class="col-12">
-                            @if (HoaDons != null && HoaDons.Any())
+                            @if (HoaDons != null && HoaDons.Any() && HoaDons[index] != null)
                             {
                                 <div class="card">
                                     <div class="card-body">
@@ -139,7 +139,7 @@
                                                 <label class="col-form-label text-sm me-3">Khách hàng</label>
                                                 <span class="text-bolder text-sm">
                                                     @(
-                                                        HoaDons[index].IdKhachHang == Guid.Empty ? "Khách Lẻ" : HoaDons[index].KhachHang.Ten
+                                                        HoaDons[index].IdKhachHang == Guid.Empty ? "Khách Lẻ" : HoaDons[index].KhachHang?.Ten
                                                      )
                                                 </span>
                                             </div>
@@ -154,42 +154,53 @@
                                             <div class="col-6">
                                                 <input class="form-control" placeholder="Voucher"/>
                                             </div>
-                                            @foreach (var x in HoaDons[index].HinhThucThanhToans.Select((Value, Index) => (Index, Value)))
+                                            @if(HoaDons?[index] != null)
                                             {
-                                                <div class="col-6">
-                                                    <label class="col-form-label text-sm">
-                                                        Khách thanh toán @(
-                                                x.Value.KieuThanhToan == 1 ? "thẻ" : "tiền mặt"
-                                                )
-                                                    </label>
-                                                    <input class="form-control text-secondary text-bold" type="text" value="@string.Format("{0:0,0}", HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan)" @oninput='e => HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan = float.Parse(e.Value?.ToString() ?? "")' @onchange="async() => await Reload()">
-                                                </div>
+                                                @foreach (var x in HoaDons[index].HinhThucThanhToans.Select((Value, Index) => (Index, Value)))
+                                                {
+                                                    if(x.Value.KieuThanhToan == 2)
+                                                    {
+                                                        <div class="col-6">
+                                                            <label class="col-form-label text-sm">
+                                                                Khách cọc
+                                                            </label>
+                                                            <input class="form-control text-secondary text-bold" type="text" value="@string.Format("{0:0,0}", HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan)">
+                                                        </div>
+                                                    }else{
+                                                        <div class="col-6">
+                                                            <label class="col-form-label text-sm">
+                                                                Khách thanh toán @(x.Value.KieuThanhToan == 1 ? "thẻ" : "tiền mặt")
+                                                            </label>
+                                                            <input class="form-control text-secondary text-bold" type="text" value="@string.Format("{0:0,0}", HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan)" @oninput='e => HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan = float.Parse(e.Value?.ToString() ?? "")' @onchange="async() => await Reload()">
+                                                        </div>
+                                                    }
+                                                }
                                             }
                                         </div>
                                         <div class="row mt-2">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex">
                                                     <div class="form-check me-3">
-                                                        <input class="form-check-input" @attributes='HoaDons[index].HinhThucThanhToans.Count() <= 1 && HoaDons[index].HinhThucThanhToans[0].KieuThanhToan == 0 ? new Dictionary<string, object>(){ { "checked", "" } } : null' type="radio" name="flexRadioDefault" id="flexRadioDefault1" @onchange="async() => { if(HoaDons[index].HinhThucThanhToans.Count() > 1){ HoaDons[index].HinhThucThanhToans.RemoveAt(0); }else { HoaDons[index].HinhThucThanhToans[0].KieuThanhToan = 0; await Reload(); }}">
+                                                        <input class="form-check-input" @attributes='HoaDons?[index].HinhThucThanhToans.Count() <= 1 && HoaDons[index].HinhThucThanhToans[0].KieuThanhToan == 0 ? new Dictionary<string, object>(){ { "checked", "" } } : null' type="radio" name="flexRadioDefault" id="flexRadioDefault1" @onchange="async() => { await AddHinhThucThanhToan(0); }">
                                                         <label class="form-check-label">
                                                             Tiền mặt
                                                         </label>
                                                     </div>
                                                     <div class="form-check me-3">
-                                                        <input class="form-check-input" @attributes='HoaDons[index].HinhThucThanhToans.Count() <= 1 && HoaDons[index].HinhThucThanhToans[0].KieuThanhToan == 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' type="radio" name="flexRadioDefault" id="flexRadioDefault2" @onchange="async() =>{ if(HoaDons[index].HinhThucThanhToans.Count() > 1){ HoaDons[index].HinhThucThanhToans.RemoveAt(1); }else { HoaDons[index].HinhThucThanhToans[0].KieuThanhToan = 1; await Reload(); }}">
+                                                        <input class="form-check-input" @attributes='HoaDons?[index].HinhThucThanhToans.Count() <= 1 && HoaDons[index].HinhThucThanhToans[0].KieuThanhToan == 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' type="radio" name="flexRadioDefault" id="flexRadioDefault2" @onchange="async() =>{ await AddHinhThucThanhToan(1); }">
                                                         <label class="form-check-label">
                                                             Chuyển khoản
                                                         </label>
                                                     </div>
                                                     <div class="form-check">
-                                                        <input class="form-check-input" @attributes='HoaDons[index].HinhThucThanhToans.Count() > 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' @onchange="async() => { HoaDons[index].HinhThucThanhToans = new List<Data.Models.HinhThucThanhToanModel>() { new Data.Models.HinhThucThanhToanModel(){ KieuThanhToan = 1 }, new Data.Models.HinhThucThanhToanModel(){ KieuThanhToan = 0 } }; await Reload(); }" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                                        <input class="form-check-input" @attributes='HoaDons?[index].HinhThucThanhToans.Count() > 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' @onchange="async() => { await AddHinhThucThanhToan(2); }" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
                                                         <label class="form-check-label">
                                                             Cả 2
                                                         </label>
                                                     </div>
                                                 </div>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='HoaDons[index].LoaiDonHang == 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' @onchange="async() => { HoaDons[index].LoaiDonHang = HoaDons[index].LoaiDonHang == 0 ? 1 : 0; await Reload(); }">
+                                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='HoaDons?[index].LoaiDonHang == 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' @onchange="async() => { HoaDons[index].LoaiDonHang = HoaDons[index].LoaiDonHang == 0 ? 1 : 0; await Reload(); }">
                                                     <label class="form-check-label" for="flexSwitchCheckDefault">Giao Hàng</label>
                                                 </div>
                                             </div>

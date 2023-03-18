@@ -34,7 +34,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                     return "Nhân viên này tồn tại hóa đơn không thể xóa";
                 }
 
-                if (nhanvien.TrangThai != Data.Enums.TrangThaiNhanVien.DaNghi)
+                if (nhanvien.TrangThai != 0)
                 {
                     return "Không thể xóa nhân viên còn hoạt động";
                 }
@@ -49,7 +49,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
             }
         }
 
-        public async Task<PaginationResponse> Get(int perPage,int currentPage,int status,string? keyword)
+        public async Task<PaginationResponse> Get(int perPage, int currentPage, int status, string? keyword)
         {
             List<Entities.NhanVien> NhanViens = new List<Entities.NhanVien>();
 
@@ -59,18 +59,18 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
             if (keyword == null)
             {
                 NhanViens = await _context.NhanVien
-                .Where(c => c.TrangThai == (TrangThaiNhanVien)status)
+                .Where(c => c.TrangThai == status)
                 .Skip((currentPage - 1) * pageResults)
                 .Take(pageResults)
                 .ToListAsync();
             }
             else
             {
-                 NhanViens = await _context.NhanVien
-                .Where(c => c.TrangThai == (TrangThaiNhanVien)status && c.Ten.Contains(keyword) || c.Ma.ToLower().Contains(keyword) || c.DiaChi.ToLower().Contains(keyword))
-                .Skip((currentPage - 1) * pageResults)
-                .Take(pageResults)
-                .ToListAsync();
+                NhanViens = await _context.NhanVien
+               .Where(c => c.TrangThai == status && c.Ten.Contains(keyword) || c.Ma.ToLower().Contains(keyword) || c.DiaChi.ToLower().Contains(keyword))
+               .Skip((currentPage - 1) * pageResults)
+               .Take(pageResults)
+               .ToListAsync();
             }
 
             var Response = new PaginationResponse()

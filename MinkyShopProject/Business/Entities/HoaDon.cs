@@ -13,7 +13,7 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid IdNhanVien { get; set; }
 
-        public Guid IdKhachHang { get; set; }
+        public Guid? IdKhachHang { get; set; }
 
         public string Ma { get; set; } = null!;
 

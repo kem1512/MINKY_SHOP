@@ -40,6 +40,8 @@ namespace MinkyShopProject.Data.Models
 
         public float TongTien { get; set; }
 
+        public NhanVienModel.NhanVienViewModel? NhanVien { get; set; }
+
         public List<HinhThucThanhToanModel> HinhThucThanhToans { get; set; } = new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() };
 
         public TrangThaiHoaDon TrangThai { get; set; }
@@ -53,7 +55,7 @@ namespace MinkyShopProject.Data.Models
 
         public Guid IdHoaDon { get; set; }
 
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
         public int KieuThanhToan { get; set; }
 
