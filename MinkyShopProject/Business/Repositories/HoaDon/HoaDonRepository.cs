@@ -81,6 +81,19 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
             }
         }
 
+        public async Task<Response> FindAsync(Guid id)
+        {
+            try
+            {
+                return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(await _context.HoaDon.Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).FirstOrDefaultAsync(c => c.Id == id)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
+
         public async Task<Response> GetAsync(HoaDonQueryModel obj)
         {
             try

@@ -9,6 +9,6 @@ namespace MinkyShopProject.Data.Enums
 
     public enum TrangThaiHoaDon
     {
-        Online, Offline
+        Done, Unfinished, Cancelled
     }
 }

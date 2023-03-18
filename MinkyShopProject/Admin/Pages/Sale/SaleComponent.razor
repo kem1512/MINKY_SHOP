@@ -20,7 +20,7 @@
                     {
                         var localIndex = i - 1;
                         <li class="nav-item" style="font-size: .875rem">
-                            <button @onclick="() => index = localIndex" class="nav-link text-bold @(i == 1 ? "active" : "")" style="white-space: nowrap;" @oncontextmenu="async(ui) => { if(ui.Button == 2){ await RemoveOrder(i); } }" data-bs-toggle="tab" data-bs-target="#hoa-don-@i" type="button">
+                            <button @onclick="async() => { index = localIndex; }" class="nav-link text-bold @(i == 1 ? "active" : "")" style="white-space: nowrap;" @oncontextmenu="async(ui) => { if(ui.Button == 2){ await RemoveOrder(i); } }" data-bs-toggle="tab" data-bs-target="#hoa-don-@i" type="button">
                               Hóa Đơn @i
                              </button>
                         </li>
@@ -74,19 +74,20 @@
             </div>
         </div>
         <div class="col-6">
-            <div class="card" style="height: 500px">
+            <div class="card" style="height: 500px; overflow-y: auto">
                 <div class="card-body">
                     <div class="row mb-2 align-items-center">
-                        <div class="col-6">
+                        <div class="col-6 position-relative">
                             @if (KhachHangs != null)
                             {
-                                <select class="select-khachhang" @onchange='async e => await AddKhachHang(int.Parse(e.Value?.ToString() ?? ""))'>
-                                    <option>Khách Lẻ</option>
+                                <select class="select-khachhang" id="select-khachhang" @onchange='async e => await AddKhachHang(int.Parse(e.Value?.ToString() ?? "999"))'>
+                                    <option value="999">Khách Lẻ</option>
                                     @foreach (var x in KhachHangs.Data.Content.Select((Value, Index) => (Index, Value)))
                                     {
                                         <option value="@x.Index">@x.Value.Ten</option>
                                     }
                                 </select>
+                                <label for="select-khachhang" class="form-control position-absolute top-0 ms-0">@(HoaDons?[index]?.KhachHang?.Ten ?? "Khách Lẻ")</label>
                             }
                         </div>
                         <div class="col-6">
@@ -129,78 +130,104 @@
                     </div>
                     <div class="row @(ThanhToan ? "d-block" : "d-none")">
                         <div class="col-12">
-                            @if(HoaDons != null && HoaDons.Any())
+                            @if (HoaDons != null && HoaDons.Any())
                             {
                                 <div class="card">
                                     <div class="card-body">
-                                        <div class="row g-3 align-items-center justify-content-between">
-                                            <div class="col-auto">
-                                                <label for="inputPassword6" class="col-form-label">Khách hàng</label>
+                                        <div class="row gy-1 align-items-center justify-content-between">
+                                            <div class="col-6">
+                                                <label class="col-form-label text-sm me-3">Khách hàng</label>
+                                                <span class="text-bolder text-sm">
+                                                    @(
+                                                        HoaDons[index].IdKhachHang == Guid.Empty ? "Khách Lẻ" : HoaDons[index].KhachHang.Ten
+                                                     )
+                                                </span>
                                             </div>
-                                            <div class="col-auto">
-                                                <span class="text-bolder">@(HoaDons[index].IdKhachHang == Guid.Empty ? "Khách Lẻ" : HoaDons[index].KhachHang.Ten)</span>
+                                            <div class="col-6">
+                                                <label class="col-form-label text-sm me-3">Tổng tiền hàng</label>
+                                                <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDons?[index].TongTien)</span>
+                                             </div>
+                                             <div class="col-6">
+                                                <label class="col-form-label text-sm me-3">Khách cần trả</label>
+                                                <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDons?[index].TongTien)</span>
+                                             </div>
+                                            <div class="col-6">
+                                                <input class="form-control" placeholder="Voucher"/>
                                             </div>
-                                        </div>
-                                        <div class="row g-3 align-items-center justify-content-between">
-                                            <div class="col-auto">
-                                                <label for="inputPassword6" class="col-form-label">Tổng tiền hàng</label>
-                                            </div>
-                                            <div class="col-auto">
-                                                <span class="text-bolder">@Helper.FormatMoney(HoaDons?[index].TongTien)</span>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-items-center justify-content-between">
-                                            <div class="col-auto">
-                                                <label for="inputPassword6" class="col-form-label">Khách cần trả</label>
-                                            </div>
-                                            <div class="col-auto">
-                                                <span class="text-bolder">@Helper.FormatMoney(HoaDons?[index].TongTien)</span>
-                                            </div>
-                                        </div>
-                                        @foreach (var x in HoaDons[index].HinhThucThanhToans.Select((Value, Index) => (Index, Value)))
-                                        {
-                                            <div class="row g-3 mb-2 align-items-center justify-content-between">
-                                                <div class="col-auto">
-                                                    <label for="inputPassword6" class="col-form-label">Khách thanh toán @(x.Value.KieuThanhToan == 1 ? "thẻ" : "tiền mặt")</label>
+                                            @foreach (var x in HoaDons[index].HinhThucThanhToans.Select((Value, Index) => (Index, Value)))
+                                            {
+                                                <div class="col-6">
+                                                    <label class="col-form-label text-sm">
+                                                        Khách thanh toán @(
+                                                x.Value.KieuThanhToan == 1 ? "thẻ" : "tiền mặt"
+                                                )
+                                                    </label>
+                                                    <input class="form-control text-secondary text-bold" type="text" value="@string.Format("{0:0,0}", HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan)" @oninput='e => HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan = float.Parse(e.Value?.ToString() ?? "")' @onchange="async() => await Reload()">
                                                 </div>
-                                                <div class="col-auto">
-                                                    <input class="form-control text-end text-bolder" type="text" value="@string.Format("{0:0,0}", HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan)" @oninput='e => HoaDons[index].HinhThucThanhToans[x.Index].TongTienThanhToan = float.Parse(e.Value?.ToString() ?? "")'>
+                                            }
+                                        </div>
+                                        <div class="row mt-2">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex">
+                                                    <div class="form-check me-3">
+                                                        <input class="form-check-input" @attributes='HoaDons[index].HinhThucThanhToans.Count() <= 1 && HoaDons[index].HinhThucThanhToans[0].KieuThanhToan == 0 ? new Dictionary<string, object>(){ { "checked", "" } } : null' type="radio" name="flexRadioDefault" id="flexRadioDefault1" @onchange="async() => { if(HoaDons[index].HinhThucThanhToans.Count() > 1){ HoaDons[index].HinhThucThanhToans.RemoveAt(0); }else { HoaDons[index].HinhThucThanhToans[0].KieuThanhToan = 0; await Reload(); }}">
+                                                        <label class="form-check-label">
+                                                            Tiền mặt
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check me-3">
+                                                        <input class="form-check-input" @attributes='HoaDons[index].HinhThucThanhToans.Count() <= 1 && HoaDons[index].HinhThucThanhToans[0].KieuThanhToan == 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' type="radio" name="flexRadioDefault" id="flexRadioDefault2" @onchange="async() =>{ if(HoaDons[index].HinhThucThanhToans.Count() > 1){ HoaDons[index].HinhThucThanhToans.RemoveAt(1); }else { HoaDons[index].HinhThucThanhToans[0].KieuThanhToan = 1; await Reload(); }}">
+                                                        <label class="form-check-label">
+                                                            Chuyển khoản
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" @attributes='HoaDons[index].HinhThucThanhToans.Count() > 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' @onchange="async() => { HoaDons[index].HinhThucThanhToans = new List<Data.Models.HinhThucThanhToanModel>() { new Data.Models.HinhThucThanhToanModel(){ KieuThanhToan = 1 }, new Data.Models.HinhThucThanhToanModel(){ KieuThanhToan = 0 } }; await Reload(); }" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                                        <label class="form-check-label">
+                                                            Cả 2
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='HoaDons[index].LoaiDonHang == 1 ? new Dictionary<string, object>(){ { "checked", "" } } : null' @onchange="async() => { HoaDons[index].LoaiDonHang = HoaDons[index].LoaiDonHang == 0 ? 1 : 0; await Reload(); }">
+                                                    <label class="form-check-label" for="flexSwitchCheckDefault">Giao Hàng</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 align-items-center justify-content-between">
+                                            <div class="col-auto">
+                                                <label for="inputPassword6" class="col-form-label text-sm">Tiền thừa trả khách</label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDons?[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan) - HoaDons?[index].TongTien)</span>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        @if(HoaDons?[index].LoaiDonHang == 1)
+                                        {
+                                            <div class="row gy-1 mb-2 align-items-center justify-content-between">
+                                                <div class="col-6">
+                                                    <label class="col-form-label me-3 text-sm">Tên người nhận</label>
+                                                    <input class="form-control" value="@HoaDons[index].TenNguoiNhan" @oninput="e => { HoaDons[index].TenNguoiNhan = e.Value?.ToString(); }" @onchange="async() => await Reload()">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="col-form-label me-3 text-sm">Số điện thoại</label>
+                                                    <input class="form-control" value="@HoaDons[index].Sdt" @oninput="e => { HoaDons[index].Sdt = e.Value?.ToString(); }" @onchange="async() => await Reload()">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="col-form-label me-3 text-sm">Địa chỉ</label>
+                                                    <input class="form-control" value="@HoaDons[index].DiaChi" @oninput="e => { HoaDons[index].DiaChi = e.Value?.ToString(); }" @onchange="async() => await Reload()">
+                                                </div>
+                                                <div class="col-6">
+                                                    <label class="col-form-label me-3 text-sm">Tiền ship</label>
+                                                    <input class="form-control" value="@string.Format("{0:0,0}", HoaDons[index].TienShip)" @oninput='e => HoaDons[index].TienShip = float.Parse(e.Value?.ToString() ?? "")' @onchange="async() => await Reload()">
+                                                </div>
+                                                <div class="col-12">
+                                                    <label class="col-form-label me-3 text-sm">Ghi chú</label>
+                                                    <textarea rows="3" class="form-control"></textarea>
                                                 </div>
                                             </div>
                                         }
-                                        <div class="row mt-2">
-                                            <div class="d-flex">
-                                                <div class="form-check me-3">
-                                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" @onchange="async() => { if(HoaDons[index].HinhThucThanhToans.Count() > 1){ HoaDons[index].HinhThucThanhToans.RemoveAt(0); }else { HoaDons[index].HinhThucThanhToans[0].KieuThanhToan = 0; await Reload(); }}">
-                                                    <label class="form-check-label" for="flexRadioDefault1">
-                                                        Tiền mặt
-                                                    </label>
-                                                </div>
-                                                <div class="form-check me-3">
-                                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" @onchange="async() =>{ if(HoaDons[index].HinhThucThanhToans.Count() > 1){ HoaDons[index].HinhThucThanhToans.RemoveAt(1); }else { HoaDons[index].HinhThucThanhToans[0].KieuThanhToan = 1; await Reload(); }}">
-                                                    <label class="form-check-label" for="flexRadioDefault2">
-                                                        Chuyển khoản
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" @onchange="() => HoaDons[index].HinhThucThanhToans = new List<Data.Models.HinhThucThanhToanModel>() { new Data.Models.HinhThucThanhToanModel(){ KieuThanhToan = 1 }, new Data.Models.HinhThucThanhToanModel(){ KieuThanhToan = 0 } }" type="radio" name="flexRadioDefault" id="flexRadioDefault2" @onclick="async() => { HoaDons[index].HinhThucThanhToans[0].KieuThanhToan = 1; await Reload();}">
-                                                    <label class="form-check-label" for="flexRadioDefault2">
-                                                        Cả 2
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-items-center justify-content-between">
-                                            <div class="col-auto">
-                                                <label for="inputPassword6" class="col-form-label">Tiền thừa trả khách</label>
-                                            </div>
-                                            <div class="col-auto">
-                                                <span class="text-bolder">@Helper.FormatMoney(HoaDons?[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan) - HoaDons?[index].TongTien)</span>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 align-items-center justify-content-between">
-                                            <textarea rows="3" class="form-control">Ghi Chú</textarea>
-                                        </div>
                                     </div>
                                 </div>
                             }
@@ -215,16 +242,16 @@
     <div class="d-flex justify-content-between align-items-center px-4">
         @if (HoaDons != null && HoaDons.Any())
         {
-            <span class="text-light text-bolder">Tổng Tiền : @Helper.FormatMoney(HoaDons?[index].TongTien)</span>
+            <span class="text-bolder text-light">Tổng Tiền : @Helper.FormatMoney(HoaDons?[index].TongTien)</span>
         }
         else
         {
-            <span class="text-light text-bolder">Tổng Tiền : 0</span>
+            <span class="text-bolder text-light">Tổng Tiền : 0</span>
         }
         <button class="btn btn-info m-0" @onclick="AddHoaDonThat">Thanh Toán</button>
     </div>
 </div>
-<div class="offcanvas offcanvas-end" style="width: 1000px" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+<div class="offcanvas offcanvas-end" style="width: 1000px;" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-body">
         <MinkyShopProject.Admin.Pages.Client.ProductDetailComponent Sale="this" @ref="_component" Id="Id"></MinkyShopProject.Admin.Pages.Client.ProductDetailComponent>
     </div>
