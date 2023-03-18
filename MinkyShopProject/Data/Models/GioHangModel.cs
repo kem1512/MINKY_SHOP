@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinkyShopProject.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; }
 
-        public List<GioHangChiTietModel>? GioHangChiTiets { get; set; } = null!;
+        public List<GioHangChiTietModel>? GioHangChiTiets { get; set; }
     }
 
     public class GioHangChiTietModel
@@ -28,5 +29,10 @@ namespace MinkyShopProject.Data.Models
         public int SoLuong { get; set; }
 
         public float DonGia { get; set; }
+    }
+
+    public class GioHangQueryModel : PaginationRequest
+    {
+
     }
 }

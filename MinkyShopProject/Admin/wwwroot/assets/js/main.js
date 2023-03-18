@@ -46,8 +46,10 @@ async function uploadImages(images) {
 }
 
 function choiceLoad(obj, classname) {
-    var element = classname;
-    if (element) new Choices(document.querySelector(element), JSON.parse(obj.replace(/'/g, '"')));
+    setTimeout(() => {
+        var element = classname;
+        if (element) new Choices(document.querySelector(element), JSON.parse(obj.replace(/'/g, '"')));
+    }, 1000)
 }
 
 function overflow() {

@@ -6,6 +6,8 @@ using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Business.Repositories.GioHang;
 using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.SanPham;
+using MinkyShopProject.Business.Repositories.ThuocTinh;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
 
@@ -22,23 +24,28 @@ namespace MinkyShopProject.Api.Controllers
             _repository = repository;
         }
 
-
-        [HttpGet()]
-        public async Task<ActionResult<List<GioHangModel>>> GetAsync()
-        {
-            return Ok(await _repository.GetAsync());
-        }
-
         [HttpPost()]
-        public async Task<ActionResult<bool>> AddAsync(GioHangModel obj)
+        public async Task<IActionResult> AddAsync([FromBody] GioHangModel obj)
         {
-            return Ok(await _repository.AddAsync(obj));
+            return Helper.TransformData(await _repository.AddAsync(obj));
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> DeleteAsync(Guid id)
+        [HttpPut]
+        public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] GioHangModel obj)
         {
-            return Ok(await _repository.DeleteAsync(id));
+            return Helper.TransformData(await _repository.UpdateAsync(id, obj));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAsync(Guid id, [FromQuery] GioHangQueryModel obj)
+        {
+            return Helper.TransformData(await _repository.GetAsync(id, obj));
+        }
+
+        [HttpDelete()]
+        public async Task<IActionResult> DeleteAsync(Guid id)
+        {
+            return Helper.TransformData(await _repository.DeleteAsync(id));
         }
     }
 }

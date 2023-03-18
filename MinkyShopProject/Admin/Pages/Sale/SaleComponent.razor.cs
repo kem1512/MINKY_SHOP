@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using MinkyShopProject.Common;
 using MinkyShopProject.Admin.Pages.Client;
+using CurrieTechnologies.Razor.SweetAlert2;
 
 namespace MinkyShopProject.Admin.Pages.Sale
 {
@@ -23,11 +24,18 @@ namespace MinkyShopProject.Admin.Pages.Sale
         [Inject]
         IJSRuntime JSRuntime { get; set; } = null!;
 
-        Guid Id = Guid.Empty;
+        [Inject]
+        SweetAlertService Swal { get; set; } = null!;
 
         ProductDetailComponent? _component;
 
+        Guid Id = Guid.Empty;
+
+        bool ThanhToan = false;
+
         ResponsePagination<SanPhamModel>? SanPhams;
+
+        ResponsePagination<KhachHangModel>? KhachHangs;
 
         List<HoaDonModel>? HoaDons = new List<HoaDonModel>();
 
@@ -37,28 +45,62 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         protected async override Task OnInitializedAsync()
         {
-            if (HoaDons == null || HoaDons?.Count == 0 || !HoaDons.Any()) { await AddOrder(); }
-            HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
+            HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart") ?? new List<HoaDonModel>();
             SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"{Url}/SanPham");
+            KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>($"{Url}/KhachHang/Get");
+        }
+
+        async Task AddHoaDonThat()
+        {
+            var status = await HttpClient.PostAsJsonAsync<HoaDonModel>($"{Url}/HoaDon", HoaDons[index]);
+            if (status.IsSuccessStatusCode)
+            {
+                await Swal.FireAsync("Thông báo", "Thêm Thành Công", SweetAlertIcon.Success);
+                HoaDons.RemoveAt(index);
+                await Session.SetItemAsync("cart", HoaDons);
+            }
+            else
+            {
+                await Swal.FireAsync("Thông báo", "Thêm Thất Bại", SweetAlertIcon.Error);
+            }
+        }
+
+        async Task AddKhachHang(int id)
+        {
+            var khachHang = KhachHangs?.Data.Content[id];
+            if (khachHang != null)
+            {
+                var hoaDon = HoaDons?[index];
+                if (hoaDon != null)
+                {
+                    hoaDon.KhachHang = khachHang;
+                    hoaDon.IdKhachHang = khachHang.Id;
+                    await Session.SetItemAsync("cart", HoaDons);
+                }
+            }
         }
 
         public async Task AddItem(int index, BienTheModel obj, int soLuong)
         {
             if (HoaDons?[index].HoaDonChiTiets != null)
             {
-                foreach (var x in HoaDons[index].HoaDonChiTiets)
+                var hoaDon = HoaDons?[index];
+                if (hoaDon != null)
                 {
-                    if (x.BienThe?.Id == obj.Id)
+                    foreach (var x in hoaDon.HoaDonChiTiets)
                     {
-                        x.SoLuong += soLuong;
-                        await Session.SetItemAsync("cart", HoaDons);
-                        HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
-                        return;
+                        if (x.BienThe?.Id == obj.Id)
+                        {
+                            x.SoLuong += soLuong;
+                            await Session.SetItemAsync("cart", HoaDons);
+                            HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
+                            return;
+                        }
                     }
+                    hoaDon.HoaDonChiTiets.Add(new HoaDonChiTietModel() { BienThe = obj, SoLuong = soLuong, IdBienThe = obj.Id, DonGia = obj.GiaBan });
+                    hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) ?? 0;
+                    await Session.SetItemAsync("cart", HoaDons);
                 }
-                HoaDons?[index].HoaDonChiTiets.Add(new HoaDonChiTietModel() { BienThe = obj, SoLuong = soLuong });
-                HoaDons[index].TongTien = HoaDons?[index].HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) ?? 0;
-                await Session.SetItemAsync("cart", HoaDons);
             }
         }
 
@@ -66,7 +108,11 @@ namespace MinkyShopProject.Admin.Pages.Sale
         {
             if (HoaDons?[index].HoaDonChiTiets != null)
             {
-                HoaDons?[index].HoaDonChiTiets.Remove(HoaDons?[index].HoaDonChiTiets[indexHdct]);
+                var hoaDon = HoaDons?[index];
+                if (hoaDon != null)
+                {
+                    HoaDons?[index].HoaDonChiTiets.Remove(hoaDon.HoaDonChiTiets[indexHdct]);
+                }
                 await Session.SetItemAsync("cart", HoaDons);
             }
         }
@@ -98,11 +144,20 @@ namespace MinkyShopProject.Admin.Pages.Sale
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
             await JSRuntime.InvokeVoidAsync("overflow");
+            if (firstRender)
+            {
+                await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': true, 'searchFields': ['label'] }", ".select-khachhang");
+            }
         }
 
         public async Task AddOrder()
         {
             HoaDons?.Add(new HoaDonModel());
+            await Session.SetItemAsync("cart", HoaDons);
+        }
+
+        public async Task Reload()
+        {
             await Session.SetItemAsync("cart", HoaDons);
         }
 

@@ -30,6 +30,8 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiHoaDon.Online);
 
+            builder.HasOne(c => c.KhachHang).WithMany(c => c.HoaDons).HasForeignKey(c => c.IdKhachHang).OnDelete(DeleteBehavior.Cascade);
+
             builder.HasOne(c => c.NhanVien).WithMany(c => c.HoaDons).HasForeignKey(c => c.IdNhanVien).OnDelete(DeleteBehavior.Cascade);
         }
     }

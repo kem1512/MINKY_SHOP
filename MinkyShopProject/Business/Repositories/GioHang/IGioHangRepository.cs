@@ -1,4 +1,5 @@
-﻿using MinkyShopProject.Data.Models;
+﻿using MinkyShopProject.Common;
+using MinkyShopProject.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ namespace MinkyShopProject.Business.Repositories.GioHang
 {
     public interface IGioHangRepository
     {
-        Task<bool> AddAsync(GioHangModel obj);
+        public Task<Response> GetAsync(Guid id, GioHangQueryModel obj);
 
-        Task<bool> UpdateAsync(GioHangModel obj);
+        public Task<Response> AddAsync(GioHangModel obj);
 
-        Task<bool> DeleteAsync(Guid id);
+        public Task<Response> UpdateAsync(Guid id, GioHangModel obj);
 
-        Task<List<GioHangModel>> GetAsync();
+        public Task<Response> DeleteAsync(Guid id);
     }
 }

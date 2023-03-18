@@ -8,6 +8,7 @@ using MinkyShopProject.Business.Repositories.ThuocTinh;
 using MinkyShopProject.Business.Repositories.ViDiem;
 using MinkyShopProject.Business.Repositories.GioHang;
 using System.Text.Json.Serialization;
+using MinkyShopProject.Business.Repositories.HoaDon;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,8 @@ builder.Services.AddScoped<IBienTheRepository, BienTheRepository>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 
 builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
+
+builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 
 builder.Services.AddScoped<INhomSanPhamRepository, NhomSanPhamRepository>();
 

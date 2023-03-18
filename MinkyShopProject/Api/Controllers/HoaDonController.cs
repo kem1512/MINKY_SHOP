@@ -21,7 +21,7 @@ namespace MinkyShopProject.Api.Controllers
             _repository = repository;
         }
 
-        [HttpPost()]
+        [HttpPost]
         public async Task<IActionResult> AddAsync([FromBody] HoaDonModel obj)
         {
             return Helper.TransformData(await _repository.AddAsync(obj));
@@ -39,7 +39,7 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
 
-        [HttpDelete()]
+        [HttpDelete]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             return Helper.TransformData(await _repository.DeleteAsync(id));

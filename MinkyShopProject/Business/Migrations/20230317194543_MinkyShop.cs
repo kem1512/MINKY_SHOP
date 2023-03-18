@@ -19,6 +19,7 @@ namespace MinkyShopProject.Business.Migrations
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GioiTinh = table.Column<bool>(type: "bit", nullable: false),
                     NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -312,17 +313,17 @@ namespace MinkyShopProject.Business.Migrations
                     Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TienShip = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TongTien = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    KhachHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HoaDon", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HoaDon_KhachHang_KhachHangId",
-                        column: x => x.KhachHangId,
+                        name: "FK_HoaDon_KhachHang_IdKhachHang",
+                        column: x => x.IdKhachHang,
                         principalTable: "KhachHang",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_HoaDon_NhanVien_IdNhanVien",
                         column: x => x.IdNhanVien,
@@ -611,14 +612,14 @@ namespace MinkyShopProject.Business.Migrations
                 column: "IdHoaDon");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HoaDon_IdKhachHang",
+                table: "HoaDon",
+                column: "IdKhachHang");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HoaDon_IdNhanVien",
                 table: "HoaDon",
                 column: "IdNhanVien");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_HoaDon_KhachHangId",
-                table: "HoaDon",
-                column: "KhachHangId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HoaDon_Ma",

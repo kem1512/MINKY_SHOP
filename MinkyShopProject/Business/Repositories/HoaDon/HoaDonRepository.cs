@@ -31,6 +31,8 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                 if (obj == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
 
+                obj.Ma = "HD" + Helper.RandomString(5);
+
                 var hoaDon = _mapper.Map<HoaDonModel, Entities.HoaDon>(obj);
 
                 await _context.HoaDon.AddAsync(hoaDon);
@@ -83,7 +85,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.HoaDonChiTiets).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.BienTheChiTiets).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {
