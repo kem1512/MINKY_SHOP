@@ -1,0 +1,112 @@
+﻿@page "/admin/invoice"
+@using MinkyShopProject.Data.Models
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã hóa đơn</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày tạo</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Khách hàng</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tổng tiền hàng</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giảm giá</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Khách đã trả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (HoaDons == null)
+                                {
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="spinner-grow text-primary" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    if (HoaDons.Data.Content.Count() > 0)
+                                    {
+                                        foreach (var x in HoaDons.Data.Content.Select((Value, Index) => (Index, Value)))
+                                        {
+                                            <tr data-bs-toggle="offcanvas" href="#offcanvasExample" aria-controls="offcanvasExample">
+                                                <td>
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Ma</span>
+                                                </td>
+                                                <td style="width: 20%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
+                                                </td>
+                                                <td style="width: 20%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.KhachHang?.Ten</span>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.TongTien)</span>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">0</span>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.HinhThucThanhToans.Sum(c => c.TongTienThanhToan))</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <MinkyShopProject.Admin.Shared.PaginationComponent Model="HoaDons" Url="admin/invoice" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+            </div>
+            <div class="dropdown mt-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Dropdown button
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+    ResponsePagination<HoaDonModel>? HoaDons;
+
+    HoaDonModel? HoaDon;
+
+    Uri Url = new Uri("https://localhost:7053/api/hoadon");
+
+    protected async override Task OnInitializedAsync()
+    {
+        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", "1").AddQuery("size", "5"));
+    }
+}

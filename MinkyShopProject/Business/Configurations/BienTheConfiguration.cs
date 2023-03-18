@@ -25,15 +25,13 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.HasIndex(c => c.Sku).IsUnique();
 
-            builder.Property(c => c.Anh).IsRequired(false);
-
-            builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
+            builder.Property(c => c.Anh).HasDefaultValue("https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png");
 
             builder.Property(c => c.SoLuong).HasDefaultValue(0);
 
             builder.Property(c => c.GiaBan).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiBienThe.DangBan);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
             builder.HasOne(c => c.SanPham).WithMany(c => c.BienThes).HasForeignKey(c => c.IdSanPham).OnDelete(DeleteBehavior.Cascade);
         }

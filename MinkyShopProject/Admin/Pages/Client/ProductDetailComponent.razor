@@ -1,0 +1,137 @@
+﻿@page "/product/{id:guid}"
+@inject HttpClient HttpClient;
+@using Data.Models;
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    @if (BienTheChiTiet == null)
+                    {
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-xl-5 col-lg-6 text-center">
+                                <img class="w-100 border-radius-lg shadow-lg mx-auto p-4" src="@(BienThe.Id == Guid.Empty ? BienTheChiTiet.Data.SanPham?.Anh : BienThe.Anh)">
+                                <div class="my-gallery d-flex mt-4 pt-2">
+                                    @if (BienTheChiTiet.Data.SanPham?.BienThes != null)
+                                    {
+                                        foreach (var y in BienTheChiTiet.Data.SanPham.BienThes.Select((Value, Index) => (Index, Value)))
+                                        {
+                                            @if (y.Index < 3)
+                                            {
+                                                <figure class="ms-2 me-3">
+                                                    <img class="w-100 min-height-100 max-height-100 border-radius-lg shadow p-2" src="@y.Value.Anh">
+                                                </figure>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-lg-5 mx-auto">
+                                <h5 class="mt-lg-0 mt-4 text-secondary font-weight-bold">@BienTheChiTiet?.Data.SanPham?.Ten</h5>
+                                <div class="rating">
+                                    <i class="fas fa-star" aria-hidden="true"></i>
+                                    <i class="fas fa-star" aria-hidden="true"></i>
+                                    <i class="fas fa-star" aria-hidden="true"></i>
+                                    <i class="fas fa-star" aria-hidden="true"></i>
+                                    <i class="fas fa-star-half-alt" aria-hidden="true"></i>
+                                </div>
+                                <br>
+                                <h6 class="mb-0 mt-2">
+                                    Giá Tiền : @(BienThe.GiaBan > 0 ? string.Format("{0:0,0}", BienThe.GiaBan) : string.Format("{0:0,0}", BienTheChiTiet?.Data?.SanPham?.BienThes?.Min(c => c.GiaBan)) + " - " + string.Format("{0:0,0}", BienTheChiTiet?.Data?.SanPham?.BienThes?.Max(c => c.GiaBan)))
+                                </h6>
+                                <span class="badge badge-danger mt-3">@BienTheChiTiet?.Data.SanPham?.NhomSanPham?.Ten @(" / " + @BienTheChiTiet?.Data.SanPham?.NhomSanPham?.NhomSanPhamEntity?.Ten)</span>
+                                <div class="row mt-3">
+                                    @if (BienTheChiTiet?.Data.ThuocTinhs != null)
+                                    {
+                                        foreach (var x in BienTheChiTiet.Data.ThuocTinhs.Select((Value, Index) => (Index, Value)))
+                                        {
+                                            <div class="col-md-12">
+                                                <label>@x.Value.Ten</label>
+                                                <div class="d-flex flex-wrap">
+                                                    @if (x.Value.GiaTris != null)
+                                                    {
+                                                        @foreach (var y in x.Value.GiaTris)
+                                                        {
+                                                            <button class="btn btn-light me-2 @(GiaTris[x.Index] == y.Ten ? "active" : "")" @onclick='() => { GiaTris[x.Index] = y.Ten ?? ""; ChangeProduct();  }'>@y.Ten</button>
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-lg-6">
+                                        <div class="d-flex">
+                                            <button class="btn btn-info m-0 me-1" @onclick="()=> SoLuong -= 1">-</button>
+                                            <input class="form-control" type="number" @bind="SoLuong">
+                                            <button class="btn btn-info m-0 ms-1" @onclick="() => SoLuong += 1">+</button>
+                                        </div>
+                                        <label>Kho : @(BienThe.SoLuong == 0 ? BienTheChiTiet?.Data.SanPham?.BienThes?.Sum(c => c.SoLuong) : BienThe.SoLuong)</label>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div>
+                                            <button class="btn btn-primary mb-0 mt-lg-auto w-100" type="button" name="button" @onclick="async () => { if(Sale != null) await Sale.AddItem(Sale.index, BienThe, SoLuong); }">Add to cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public Guid Id { get; set; }
+
+    int SoLuong { get; set; }
+
+    ResponseObject<BienTheChiTietModel>? BienTheChiTiet;
+
+    public BienTheModel BienThe = new BienTheModel();
+
+    [Parameter]
+    public Sale.SaleComponent? Sale { get; set; }
+
+    string[] GiaTris = new string[0];
+
+    protected async override Task OnInitializedAsync()
+    {
+        await Reload();
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await Reload();
+    }
+
+    async Task Reload()
+    {
+        if(Id != Guid.Empty)
+        {
+            BienTheChiTiet = await HttpClient.GetFromJsonAsync<ResponseObject<BienTheChiTietModel>>($"https://localhost:7053/api/BienThe/{Id}");
+            if (BienTheChiTiet?.Data.ThuocTinhs != null)
+            {
+                GiaTris = new string[BienTheChiTiet.Data.ThuocTinhs.Count()];
+            }
+        }
+    }
+
+    void ChangeProduct()
+    {
+        BienThe = BienTheChiTiet?.Data.SanPham?.BienThes?.FirstOrDefault(c => string.Join(" + ", c.Ten) == string.Join(" + ", GiaTris) || string.Join(" + ", c.Ten) == string.Join(" + ", GiaTris.Reverse())) ?? new BienTheModel();
+        var sanPham = new SanPhamModel() { Ten = BienTheChiTiet?.Data.SanPham?.Ten };
+        BienThe.SanPham = sanPham;
+    }
+}

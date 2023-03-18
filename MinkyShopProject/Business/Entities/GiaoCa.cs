@@ -31,7 +31,7 @@ namespace MinkyShopProject.Business.Entities
 
         public float TienPhatSinh { get; set; }
 
-        public string GhiChuPhatSinh { get; set; } = null!;
+        public string? GhiChuPhatSinh { get; set; }
 
         public float TongTienMatCaTruoc { get; set; }
 
@@ -39,8 +39,8 @@ namespace MinkyShopProject.Business.Entities
 
         public float TongTienMatRut { get; set; }
 
-        public TrangThaiGiaoCa TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
-        public NhanVien NhanVien { get; set; } = null!;
+        public NhanVien? NhanVien { get; set; }
     }
 }

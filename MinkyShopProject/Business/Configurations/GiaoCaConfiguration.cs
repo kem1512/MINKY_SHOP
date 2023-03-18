@@ -23,10 +23,6 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.HasIndex(c => c.Ma).IsUnique();
 
-            builder.Property(c => c.ThoiGianNhanCa).HasDefaultValue(DateTime.Now);
-
-            builder.Property(c => c.ThoiGianGiaoCa).HasDefaultValue(DateTime.Now);
-
             builder.Property(c => c.TienBanDau).HasDefaultValue(0);
 
             builder.Property(c => c.TongTienTrongCa).HasDefaultValue(0);
@@ -39,13 +35,9 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.TongTienMatCaTruoc).HasDefaultValue(0);
 
-            builder.Property(c => c.GhiChuPhatSinh).HasDefaultValue(null);
-
-            builder.Property(c => c.ThoiGianReset).HasDefaultValue(DateTime.Now);
-
             builder.Property(c => c.TongTienMatRut).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiGiaoCa.CaDauTien);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
             builder.HasOne(c => c.NhanVien).WithMany(c => c.GiaoCas).HasForeignKey(c => c.IdNhanVienCaTiepTheo).OnDelete(DeleteBehavior.Cascade);
 

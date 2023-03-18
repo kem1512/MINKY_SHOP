@@ -1,0 +1,121 @@
+﻿@page "/admin/product"
+@using MinkyShopProject.Data.Enums
+@using MinkyShopProject.Data.Models
+@using System.Reflection
+@using System.ComponentModel
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
+@layout Shared.MainLayout
+
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-12 text-end">
+                            <NavLink class="btn btn-primary btn-sm" href="admin/variant">Thêm Sản Phẩm</NavLink>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giá</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Biến Thể</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (SanPhams == null)
+                                {
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="spinner-grow text-primary" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @if (SanPhams.Data.Content.Count() > 0)
+                                    {
+                                        foreach (var x in SanPhams.Data.Content)
+                                        {
+                                            <tr>
+                                                <td class="w-25">
+                                                    <div class="d-flex">
+                                                        <img class="ms-3" style="width: 15%" src="@x.Anh">
+                                                        <input class="text-secondary ms-3 my-auto text-xs font-weight-bolder form-control border-0 py-0" disabled value="@x.Ten" />
+                                                    </div>
+                                                </td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@(x.NhomSanPham?.Ten ?? "Không Có")</td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan))</td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@x.Ma</td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@x.BienThes?.Count() biến thể</td>
+                                                <td class="align-middle">
+                                                    <span class="badge badge-@(x.TrangThai == 1 ? "success" : "danger") badge-sm">@(x.TrangThai == 1 ? "Đang Bán" : "Ngừng Bán")</span>
+                                                </td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">
+                                                    <NavLink href="@($"admin/product/{@x.Id}")" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
+                                                        <i class="fas fa-user-edit text-info" aria-hidden="true"></i>
+                                                    </NavLink>
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => Delete(x.Id)">
+                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    ResponsePagination<SanPhamModel>? SanPhams;
+
+    string Url = "https://localhost:7053/api";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Reload();
+    }
+
+    async Task Delete(Guid id)
+    {
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        var result = await HttpClient.DeleteAsync($"{Url}/SanPham?id={id}");
+
+        if (result.IsSuccessStatusCode)
+        {
+            await Reload();
+        }
+    }
+
+    async Task Reload()
+    {
+        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"{Url}/SanPham");
+    }
+}

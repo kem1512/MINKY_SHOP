@@ -1,4 +1,5 @@
-﻿using MinkyShopProject.Data.Enums;
+﻿using MinkyShopProject.Common;
+using MinkyShopProject.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,14 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
-        public TrangThaiThuocTinh TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public DateTime NgayTao { get; set; }
 
-        public List<ThuocTinhSanPham> ThuocTinhSanPhams { get; set; } = null!;
+        public List<ThuocTinhSanPham>? ThuocTinhSanPhams { get; set; }
 
-        public List<GiaTri> GiaTris { get; set; } = null!;
+        public List<GiaTri>? GiaTris { get; set; }
     }
 }

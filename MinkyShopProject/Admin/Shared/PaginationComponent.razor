@@ -1,0 +1,27 @@
+﻿@typeparam T;
+@inject NavigationManager NavigationManager;
+
+@if(Model?.Data.TotalPages > 1)
+{
+    <div class="d-flex justify-content-center">
+        <ul class="pagination pagination-primary">
+            @if (Model != null)
+            {
+                @foreach (var i in Enumerable.Range(1, Model.Data.TotalPages))
+                {
+                    <li class="page-item">
+                        <NavLink class="page-link" href="@($"{NavigationManager.BaseUri}{Url}/page/{i}")">@i</NavLink>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+}
+
+@code{
+    [Parameter]
+    public ResponsePagination<T>? Model { get; set; }
+
+    [Parameter]
+    public string? Url { get; set; }
+}

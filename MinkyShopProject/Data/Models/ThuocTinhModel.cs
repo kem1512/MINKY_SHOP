@@ -1,6 +1,8 @@
-﻿using MinkyShopProject.Data.Enums;
+﻿using MinkyShopProject.Common;
+using MinkyShopProject.Data.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,38 +13,32 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
-        public TrangThaiThuocTinh TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
-        public List<GiaTriModel> GiaTris { get; set; } = null!;
+        public List<GiaTriModel>? GiaTris { get; set; } = new List<GiaTriModel>();
 
-        public List<GiaTriModel> GiaTriTemplates { get; set; } = new List<GiaTriModel>();
+        public List<GiaTriModel>? GiaTriTemplates { get; set; } = new List<GiaTriModel>();
     }
 
     public class GiaTriModel
     {
         public Guid Id { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public Guid IdThuocTinh { get; set; }
+
+        public string? Ten { get; set; }
+
+        public ThuocTinhModel? ThuocTinh { get; set; }
     }
 
-    public class ThuocTinhCreateModel
+    public class ThuocTinhQueryModel : PaginationRequest
     {
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
-        public TrangThaiThuocTinh TrangThai { get; set; }
-
-        public string[]? GiaTris { get; set; }
-    }
-
-    public class ThuocTinhUpdateModel
-    {
-        // Nếu Truyền Thuộc Tính Thì Sẽ Update Thuộc Tính
-        public string Ten { get; set; } = null!;
-
-        public TrangThaiThuocTinh TrangThai { get; set; }
+        public int? TrangThai { get; set; }
     }
 }

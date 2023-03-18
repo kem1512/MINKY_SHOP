@@ -11,13 +11,13 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public string Ma { get; set; } = null!;
+        public string? Ma { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
-        public LoaiGiamGia LoaiGiamGia { get; set; }
+        public int LoaiGiamGia { get; set; }
 
-        public HinhThucGiamGia HinhThucGiamGia { get; set; }
+        public int HinhThucGiamGia { get; set; }
 
         public float SoTienCan { get; set; }
 
@@ -29,12 +29,12 @@ namespace MinkyShopProject.Business.Entities
 
         public int SoLuong { get; set; }
 
-        public string MoTa { get; set; } = null!;
+        public string? MoTa { get; set; }
 
-        public TrangThaiVoucher TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
-        public List<VoucherKhachHang> VoucherKhachHangs { get; set; } = null!;
+        public List<VoucherKhachHang>? VoucherKhachHangs { get; set; }
 
-        public List<VoucherLog> VoucherLogs { get; set; } = null!;
+        public List<VoucherLog>? VoucherLogs { get; set; } = null!;
     }
 }

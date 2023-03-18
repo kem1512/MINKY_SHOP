@@ -22,25 +22,11 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.HasIndex(c => c.Ma).IsUnique();
 
-            builder.Property(c => c.Ten).IsRequired(true);
-
-            builder.Property(c => c.Anh).IsRequired(false);
-
-            builder.Property(c => c.GioiTinh).HasDefaultValue(true);
-
             builder.Property(c => c.NgaySinh);
-
-            builder.Property(c => c.DiaChi).IsRequired(false);
-
-            builder.Property(c => c.Sdt).IsRequired(false);
-
-            builder.Property(c => c.Email).IsRequired(false);
-
-            builder.Property(c => c.MatKhau).IsRequired(false);
 
             builder.Property(c => c.SoLanMua).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiKhachHang.Online);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
             builder.HasOne(c => c.ViDiem).WithOne(c => c.KhachHang).HasForeignKey<KhachHang>(c => c.IdViDiem).OnDelete(DeleteBehavior.Cascade);
         }

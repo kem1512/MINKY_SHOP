@@ -23,25 +23,17 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.HasIndex(c => c.Ma).IsUnique();
 
-            builder.Property(c => c.Ten).HasMaxLength(30).HasDefaultValue(null);
+            builder.Property(c => c.LoaiGiamGia).HasDefaultValue(0);
 
-            builder.Property(c => c.LoaiGiamGia).HasDefaultValue(LoaiGiamGia.HoaDon);
-
-            builder.Property(c => c.HinhThucGiamGia).HasDefaultValue(HinhThucGiamGia.PhanTram);
+            builder.Property(c => c.HinhThucGiamGia).HasDefaultValue(0);
 
             builder.Property(c => c.SoTienCan).HasDefaultValue(0);
 
             builder.Property(c => c.SoTienGiam).HasDefaultValue(0);
 
-            builder.Property(c => c.NgayApDung).HasDefaultValue(DateTime.Now);
-
-            builder.Property(c => c.NgayKetThuc).HasDefaultValue(DateTime.Now);
-
             builder.Property(c => c.SoLuong).HasDefaultValue(0);
 
-            builder.Property(c => c.MoTa).HasDefaultValue(null);
-
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiVoucher.DangHoatDong);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
         }
     }
 }

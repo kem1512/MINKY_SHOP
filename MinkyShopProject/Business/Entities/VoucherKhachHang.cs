@@ -15,10 +15,10 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid IdKhachHang { get; set; }
 
-        public TrangThaiVoucherKhachHang TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
-        public Voucher Voucher { get; set; } = null!;
+        public Voucher? Voucher { get; set; }
 
-        public KhachHang KhachHang { get; set; } = null!;
+        public KhachHang? KhachHang { get; set; }
     }
 }

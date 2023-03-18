@@ -20,8 +20,6 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
-
             builder.HasOne(c => c.KhachHang).WithOne(c => c.GioHang).HasForeignKey<GioHang>(c => c.IdKhachHang).OnDelete(DeleteBehavior.Cascade);
         }
     }

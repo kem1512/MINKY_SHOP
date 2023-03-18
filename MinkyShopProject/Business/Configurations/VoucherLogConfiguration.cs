@@ -20,17 +20,11 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.Property(c => c.IdHoaDon).HasDefaultValue(Guid.Empty);
-
-            builder.Property(c => c.IdVoucher).HasDefaultValue(Guid.Empty);
-
             builder.Property(c => c.TienTruocKhiGiam).HasDefaultValue(0);
 
             builder.Property(c => c.TienSauKhiGiam).HasDefaultValue(0);
 
             builder.Property(c => c.SoTienGiam).HasDefaultValue(0);
-
-            builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
 
             builder.HasOne(c => c.HoaDon).WithMany(c => c.VoucherLogs).HasForeignKey(c => c.IdHoaDon);
 

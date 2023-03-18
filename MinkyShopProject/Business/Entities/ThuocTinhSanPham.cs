@@ -18,6 +18,6 @@ namespace MinkyShopProject.Business.Entities
 
         public ThuocTinh? ThuocTinh { get; set; }
 
-        public List<BienTheChiTiet> BienTheChiTiets { get; set; } = null!;
+        public List<BienTheChiTiet>? BienTheChiTiets { get; set; }
     }
 }

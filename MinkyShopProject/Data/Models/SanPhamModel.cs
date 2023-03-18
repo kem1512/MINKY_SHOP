@@ -1,4 +1,5 @@
-﻿using MinkyShopProject.Data.Enums;
+﻿using MinkyShopProject.Common;
+using MinkyShopProject.Data.Enums;
 
 namespace MinkyShopProject.Data.Models
 {
@@ -6,47 +7,25 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid? IdTheLoai { get; set; }
+        public Guid? IdNhomSanPham { get; set; }
 
-        public string Ten { get; set; } = null!;
+        public string? Ten { get; set; }
 
-        public TrangThaiSanPham TrangThai { get; set; }
+        public string? Ma { get; set; }
 
-        public DateTime NgayTao { get; set; }
+        public string? Anh { get; set; }
 
-        public List<SanPhamModel>? TheLoais { get; set; } = new List<SanPhamModel>() { };
+        public DateTime NgayTao { get; set; } = DateTime.Now;
+
+        public int TrangThai { get; set; }
+
+        public NhomSanPhamModel? NhomSanPham { get; set; }
+
+        public List<BienTheModel>? BienThes { get; set; }
     }
 
-    // Biến Thể
-
-    public class BienTheModel
+    public class SanPhamQueryModel : PaginationRequest
     {
-        public Guid Id { get; set; }
 
-        public string Ten { get; set; } = null!;
-
-        public string Sku { get; set; } = null!;
-
-        public float GiaBan { get; set; }
-
-        public string Anh { get; set; } = null!;
-
-        public int SoLuong { get; set; }
-
-        public string GiaTri { get; set; } = null!;
-    }
-
-    public class BienTheChiTietModel
-    {
-        public List<BienTheModel> BienTheModels { get; set; } = null!;
-
-        public List<ThuocTinhModel> ThuocTinhModels { get; set; } = null!;
-    }
-
-    public class BienTheCreateModel
-    {
-        public List<ThuocTinhModel> ThuocTinhs { get; set; } = null!;
-
-        public SanPhamModel SanPham { get; set; } = null!;
     }
 }

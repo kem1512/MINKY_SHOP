@@ -2,8 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
+using Serilog;
+using System.Net;
 using System.Xml.Linq;
 
 namespace MinkyShopProject.Business.Repositories.SanPham
@@ -19,92 +22,95 @@ namespace MinkyShopProject.Business.Repositories.SanPham
             _mapper = mapper;
         }
 
-        public async Task<bool> AddAsync(SanPhamModel obj)
+        public async Task<Response> DeleteAsync(Guid id)
         {
             try
             {
-                if(obj != null)
+                var sanPham = await _context.SanPham.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+
+                if (sanPham == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
+
+                _context.SanPham.Remove(sanPham);
+
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
                 {
-                    if (obj.Id != Guid.Empty)
-                    {
-                        if(obj.TheLoais != null)
-                        {
-                            foreach (var x in obj.TheLoais)
-                            {
-                                if(!_context.SanPham.Any(c => c.Id == x.Id))
-                                {
-                                    x.IdTheLoai = obj.Id;
-                                    await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(x));
-                                }
-                            }
-                            await _context.SaveChangesAsync();
-                        }
-                    }
-                    else
-                    {
-                        obj.Id = Guid.NewGuid();
-                        await _context.SanPham.AddAsync(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
-                        await _context.SaveChangesAsync();
-                    }
+                    return new ResponseError(HttpStatusCode.OK, "Xóa thành công");
                 }
-                return true;
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Xóa Thất Bại");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                Log.Error(e, string.Empty);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
             }
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<Response> FindAsync(Guid id)
         {
             try
             {
-                var sanPham = await _context.SanPham.FindAsync(id);
-                if (sanPham != null)
-                {
-                    _context.SanPham.Remove(sanPham);
-                    await _context.SaveChangesAsync();
-                }
-                return true;
+                return new ResponseObject<SanPhamModel>(_mapper.Map<Entities.SanPham, SanPhamModel>(await _context.SanPham.Include(c => c.NhomSanPham).Include(c => c.BienThes).FirstAsync(c => c.Id == id)));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
             }
         }
 
-        public async Task<List<SanPhamModel>> GetAsync()
-        {
-            var result = from sp in _context.SanPham
-                         join tl in _context.SanPham on sp.Id equals tl.IdTheLoai into spc
-                         from tl in spc.DefaultIfEmpty()
-                         where sp.IdTheLoai == null
-                         group new { sp, tl } by sp.Id into spc
-                         select new SanPhamModel
-                         {
-                             Id = spc.First().sp.Id,
-                             Ten = spc.First().sp.Ten,
-                             NgayTao = spc.First().sp.NgayTao,
-                             TrangThai = spc.First().sp.TrangThai,
-                             TheLoais = _mapper.Map<List<Entities.SanPham>, List<SanPhamModel>>(spc.Select(c => c.tl).ToList())
-                         };
-            return await result.ToListAsync();
-        }
-
-    public async Task<bool> UpdateAsync(Guid id, SanPhamModel obj)
+        public async Task<Response> GetAsync(SanPhamQueryModel obj)
         {
             try
             {
-                if (obj != null)
-                {
-                    if (obj.Id != Guid.Empty)
-                    {
-                        _context.SanPham.Update(_mapper.Map<SanPhamModel, Entities.SanPham>(obj));
+                return new ResponsePagination<SanPhamModel>(_mapper.Map<Pagination<Entities.SanPham>, Pagination<SanPhamModel>>(await _context.SanPham.Include(c => c.NhomSanPham).Include(c => c.BienThes).AsQueryable().GetPageAsync(obj)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
 
-                        await _context.SaveChangesAsync();
-                    }
+        public async Task<Response> UpdateAsync(Guid id, SanPhamModel obj)
+        {
+            try
+            {
+                if (obj == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Giá trị trả về không hợp lệ");
+
+                var sanPham = _context.SanPham.AsNoTracking().FirstOrDefault(c => c.Id == id);
+
+                if (sanPham == null)
+                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
+
+                sanPham.Ten = obj.Ten;
+
+                sanPham.Anh = obj.Anh;
+
+                sanPham.TrangThai = obj.TrangThai;
+
+                sanPham.IdNhomSanPham = obj.IdNhomSanPham;
+
+                if (obj.BienThes != null)
+                {
+                    sanPham.BienThes = _mapper.Map<List<BienTheModel>, List<Entities.BienThe>>(obj.BienThes);
                 }
-                return true;
+
+                _context.SanPham.Update(sanPham);
+
+                var status = await _context.SaveChangesAsync();
+
+                if (status > 0)
+                {
+                    var data = _mapper.Map<Entities.SanPham, SanPhamModel>(sanPham);
+                    return new ResponseObject<SanPhamModel>(obj, "Cập nhật thành công");
+                }
+
+                return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
             }
             catch (Exception)
             {

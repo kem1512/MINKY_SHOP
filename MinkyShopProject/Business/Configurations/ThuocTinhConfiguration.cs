@@ -17,11 +17,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.Property(c => c.Ten).HasMaxLength(30).HasDefaultValue(null);
-
-            builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
-
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiThuocTinh.DangBan);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
         }
     }
 }

@@ -14,8 +14,8 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public KhachHang KhachHang { get; set; } = null!;
+        public KhachHang? KhachHang { get; set; }
 
-        public List<GioHangChiTiet> GioHangChiTiets { get; set; } = null!;
+        public List<GioHangChiTiet>? GioHangChiTiets { get; set; }
     }
 }

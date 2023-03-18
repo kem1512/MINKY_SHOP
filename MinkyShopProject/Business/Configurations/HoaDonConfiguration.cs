@@ -22,17 +22,15 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.HasIndex(c => c.Ma).IsUnique();
 
-            builder.Property(c => c.NgayTao).HasDefaultValue(DateTime.Now);
-
-            builder.Property(c => c.LoaiDonHang).HasDefaultValue(LoaiDonHang.Offline);
-
-            builder.Property(c => c.Sdt).HasDefaultValue(0);
+            builder.Property(c => c.LoaiDonHang).HasDefaultValue(0);
 
             builder.Property(c => c.TienShip).HasDefaultValue(0);
 
             builder.Property(c => c.TongTien).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiHoaDon.ChuaHoanThanh);
+            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiHoaDon.Online);
+
+            builder.HasOne(c => c.KhachHang).WithMany(c => c.HoaDons).HasForeignKey(c => c.IdKhachHang).OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(c => c.NhanVien).WithMany(c => c.HoaDons).HasForeignKey(c => c.IdNhanVien).OnDelete(DeleteBehavior.Cascade);
         }

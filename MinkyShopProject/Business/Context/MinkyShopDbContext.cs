@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using MinkyShopProject.Business.Entities;
 
 namespace MinkyShopProject.Business.Context
@@ -22,6 +23,8 @@ namespace MinkyShopProject.Business.Context
         }
 
         public DbSet<SanPham> SanPham { get; set; } = null!;
+
+        public DbSet<NhomSanPham> NhomSanPham { get; set; } = null!;
 
         public DbSet<BienThe> BienThe { get; set; } = null!;
 

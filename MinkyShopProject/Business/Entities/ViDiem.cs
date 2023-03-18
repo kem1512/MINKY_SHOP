@@ -12,8 +12,8 @@ namespace MinkyShopProject.Business.Entities
 
         public float SoDiemDaCong { get; set; }
 
-        public TrangThaiViDiem TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
-        public KhachHang KhachHang { get; set; } = null!;
+        public KhachHang? KhachHang { get; set; }
     }
 }

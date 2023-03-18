@@ -21,7 +21,7 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(TrangThaiBienTheChiTiet.DangBan);
+            builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
             builder.HasOne(c => c.ThuocTinhSanPham).WithMany(c => c.BienTheChiTiets).HasForeignKey(c => c.IdThuocTinhSanPham).OnDelete(DeleteBehavior.ClientSetNull);
 
