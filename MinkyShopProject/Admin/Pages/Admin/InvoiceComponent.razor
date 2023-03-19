@@ -9,6 +9,16 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-4">
+                            <select class="select-loai-don-hang">
+                                <option value="">Tất cả</option>
+                                <option value="0">Tại quầy</option>
+                                <option value="1">Giao hàng</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
                         <table class="table table-bordered align-middle text-center">
                             <thead>
@@ -38,7 +48,7 @@
                                     {
                                         foreach (var x in HoaDons.Data.Content.Select((Value, Index) => (Index, Value)))
                                         {
-                                            <tr data-bs-toggle="offcanvas" href="#offcanvasExample" aria-controls="offcanvasExample">
+                                            <tr @onclick="() => HoaDon = x.Value" data-bs-toggle="offcanvas" href="#offcanvasExample" aria-controls="offcanvasExample">
                                                 <td>
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.Ma</span>
                                                 </td>
@@ -46,7 +56,7 @@
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
                                                 </td>
                                                 <td style="width: 20%">
-                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.KhachHang?.Ten</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">@(x.Value.KhachHang?.Ten ?? "Khách Lẻ")</span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.TongTien)</span>
@@ -71,28 +81,13 @@
                         </table>
                     </div>
                     <MinkyShopProject.Admin.Shared.PaginationComponent Model="HoaDons" Url="admin/invoice" />
+                    <div class="offcanvas offcanvas-end w-75" tabindex="-1" id="offcanvasExample">
+                        @if (HoaDon != null)
+                        {
+                            <InvoiceDetailComponent Id="HoaDon.Id"></InvoiceDetailComponent>
+                        }
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <div>
-                Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-            </div>
-            <div class="dropdown mt-3">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Dropdown button
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                </ul>
             </div>
         </div>
     </div>
@@ -108,5 +103,11 @@
     protected async override Task OnInitializedAsync()
     {
         HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", "1").AddQuery("size", "5"));
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".select-loai-don-hang");
     }
 }

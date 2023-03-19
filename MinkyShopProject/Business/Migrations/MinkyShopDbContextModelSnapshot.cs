@@ -43,9 +43,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayTao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 334, DateTimeKind.Local).AddTicks(1927));
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Sku")
                         .HasColumnType("VARCHAR(20)");
@@ -126,9 +124,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayDanhGia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 334, DateTimeKind.Local).AddTicks(6361));
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(max)");
@@ -351,7 +347,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<string>("DiaChi")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("IdKhachHang")
+                    b.Property<Guid?>("IdKhachHang")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("IdNhanVien")
@@ -831,6 +827,7 @@ namespace MinkyShopProject.Business.Migrations
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
+
                     b.Property<float>("SoTienGiam")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("real")
@@ -986,8 +983,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.HasOne("MinkyShopProject.Business.Entities.KhachHang", "KhachHang")
                         .WithMany("HoaDons")
                         .HasForeignKey("IdKhachHang")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MinkyShopProject.Business.Entities.NhanVien", "NhanVien")
                         .WithMany("HoaDons")

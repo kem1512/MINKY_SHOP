@@ -1,0 +1,318 @@
+﻿@using Data.Models;
+@inject HttpClient HttpClient;
+@page "/hoadon/{id:guid}";
+@inject ISessionStorageService Session;
+
+<div class="container-fluid mt--7" style="overflow-y: auto">
+    @if(HoaDon != null)
+    {
+        <div class="row">
+            <div class="col-xl-12 order-xl-1">
+                <div class="card shadow-none">
+                    <div class="card-header pb-2 pt-3">
+                        <div class="row align-items-center">
+                            <div class="col-4">
+                                <strong class="mb-0">&nbsp;</strong>
+                            </div>
+                            <div class="col-8">
+                                <ul class="nav nav-tabs" id="myTab">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link text-dark active" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-detail" type="button">Thông tin</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link text-dark" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-payment" type="button">Lịch sử thanh toán</button>
+                                    </li>
+                                    @if(HoaDon.Data.TrangThai == Data.Enums.TrangThaiHoaDon.Ship)
+                                    {
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link text-dark" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-ship" type="button">Thông tin giao hàng</button>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-0">
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="tab-detail">
+                                <div class="row align-items-center">
+                                    <div class="col-4">
+                                        <label class="col-form-label text-sm p-0 mb-2 me-3">Mã hóa đơn</label>
+                                        <span class="text-bolder text-sm">@HoaDon?.Data.Ma</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="col-form-label text-sm p-0 mb-2 me-3">Trạng thái</label>
+                                        <span class="text-bolder text-sm">@HoaDon?.Data.TrangThai</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="col-form-label text-sm p-0 mb-2 me-3">Kênh bán</label>
+                                        <span class="text-bolder text-sm">@(HoaDon?.Data.LoaiDonHang == 0 ? "Trực tiếp" : "Online")</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="col-form-label text-sm p-0 mb-2 me-3">Thời gian</label>
+                                        <span class="text-bolder text-sm">@HoaDon?.Data.NgayTao</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="col-form-label text-sm p-0 mb-2 me-3">Khách hàng</label>
+                                        <span class="text-bolder text-sm">@(HoaDon?.Data.KhachHang?.Ten ?? "Khách Lẻ")</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <label class="col-form-label p-0 text-sm mb-2 me-3">Nhân viên</label>
+                                        <span class="text-bolder text-sm">@HoaDon?.Data.NhanVien?.Ten</span>
+                                    </div>
+                                </div>
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-bordered align-middle text-center">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã hàng</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên hàng</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lượng</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Đơn giá</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giá bán</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thành tiền</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (HoaDon?.Data.HoaDonChiTiets.Count() > 0)
+                                            {
+                                                foreach (var x in HoaDon.Data.HoaDonChiTiets.Select((Value, Index) => (Index, Value)))
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.BienThe?.Sku</span>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.BienThe?.SanPham?.Ten (@x.Value.BienThe?.Ten)</span>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.SoLuong</span>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.DonGia)</span>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.BienThe?.GiaBan)</span>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.DonGia * x.Value.SoLuong)</span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row align-items-center text-end mt-2">
+                                    <div class="col-12">
+                                        <label class="col-form-label text-sm me-3 p-0 mb-2">Số lượng hàng hóa</label>
+                                        <span class="text-bolder text-sm">@HoaDon?.Data.HoaDonChiTiets.Count()</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="col-form-label text-sm me-3 p-0 mb-2">Tổng tiền hàng</label>
+                                        <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDon?.Data.TongTien)</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="col-form-label text-sm me-3 p-0 mb-2">Giảm giá hóa đơn</label>
+                                        <span class="text-bolder text-sm">0</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="col-form-label text-sm me-3 p-0 mb-2">Khách cần trả</label>
+                                        <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDon?.Data.TongTien)</span>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="col-form-label text-sm me-3 p-0 mb-2">Khách đã trả</label>
+                                        <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDon?.Data.HinhThucThanhToans.Sum(c => c.TongTienThanhToan))</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="d-flex flex-wrap">
+                                        <button class="btn btn-success me-2" @onclick="UpdateSale">Cập nhật</button>
+                                        <button class="btn btn-success me-2">In</button>
+                                        <button class="btn btn-danger me-2">Hủy đơn hàng</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="tab-payment">
+                                <div class="table-responsive mt-2">
+                                    <table class="table table-bordered align-middle text-center">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã phiếu</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thời gian</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhân viên</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Phương thức</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tiền thanh toán</th>
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (HoaDon != null)
+                                            {
+                                                @foreach (var x in HoaDon.Data.HinhThucThanhToans.Select((Value, Index) => (Index, Value)))
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Index</span>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
+                                                        </td>
+                                                        <td style="width: 20%">
+                                                            <span class="text-secondary text-xs font-weight-bold">Hải Đăng</span>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@{
+                                                                    var kieuThanhToan = "";
+                                                                    switch (x.Value.KieuThanhToan)
+                                                                    {
+                                                                        case 0:
+                                                                            kieuThanhToan = "Tiền mặt";
+                                                                            break;
+                                                                        case 1:
+                                                                            kieuThanhToan = "Chuyển khoản";
+                                                                            break;
+                                                                        case 2:
+                                                                            kieuThanhToan = "Cọc";
+                                                                            break;
+                                                                        default:
+                                                                            break;
+                                                                    }
+                                                                }
+                                                                @kieuThanhToan
+                                                       </span>
+                                                    </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.TongTienThanhToan)</span>
+                                                        </td>
+                                                        <td class="align-middle text-center text-sm">
+                                                            <span class="text-secondary text-xs font-weight-bold">@(x.Value.TongTienThanhToan <= 0 ? "Chưa thanh toán" : "Đã thanh toán")</span>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="tab-ship">
+                                @if (HoaDon?.Data.LoaiDonHang == 1 || HoaDon?.Data.TrangThai == Data.Enums.TrangThaiHoaDon.Ship)
+                                {
+                                    <div class="d-flex flex-wrap mt-3 justify-content-around text-center">
+                                        <div class="d-flex flex-column">
+                                            <button class="btn btn-success"><i class="ni ni-single-copy-04 p-4"></i></button>
+                                            <span class="text-bold">Đã xác nhận</span>
+                                            <p>@HoaDon.Data.NgayTao</p>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <button class="btn me-2 @(HoaDon.Data?.NgayGiaoHang != null ? "btn-success disabled" : "")" @onclick="async() => await UpdateAsync(1)"><i class="ni ni-user-run p-4"></i></button>
+                                            <span class="text-bold">Đang giao</span>
+                                            <p>@HoaDon.Data?.NgayGiaoHang</p>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <button class="btn me-2 @(HoaDon.Data?.NgayThanhToan != null ? "btn-success disabled" : "")" @onclick="async() => await UpdateAsync(2)"><i class="ni ni-check-bold p-4"></i></button>
+                                            <span class="text-bold">Đã thanh toán</span>
+                                            <p>@HoaDon.Data?.NgayThanhToan</p>
+                                        </div>
+                                        <div class="d-flex flex-column">
+                                            <button class="btn me-2 @(HoaDon.Data?.NgayNhan != null ? "btn-success disabled" : "")" @onclick="async() => await UpdateAsync(3)"><i class="ni ni-bag-17 p-4"></i></button>
+                                            <span class="text-bold">Đã nhận hàng</span>
+                                            <p>@HoaDon.Data?.NgayNhan</p>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center text-end mt-2">
+                                        <div class="col-12">
+                                            <label class="col-form-label text-sm me-2 p-0 mb-2">Người nhận</label>
+                                            <span class="text-bolder text-sm">@HoaDon?.Data?.TenNguoiNhan</span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="col-form-label text-sm me-2 p-0 mb-2">Số điện thoại</label>
+                                            <span class="text-bolder text-sm">@HoaDon?.Data?.Sdt</span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="col-form-label text-sm me-2 p-0 mb-2">Địa chỉ</label>
+                                            <span class="text-bolder text-sm">@HoaDon?.Data?.DiaChi</span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="col-form-label text-sm  me-2 p-0 mb-2">Tiền ship</label>
+                                            <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDon?.Data?.TienShip)</span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="col-form-label text-sm  me-2 p-0 mb-2">Khách phải trả</label>
+                                            <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDon?.Data?.TongTien + HoaDon?.Data?.TienShip) (@Helper.FormatMoney(HoaDon?.Data?.TienShip) tiền ship)</span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="col-form-label text-sm  me-2 p-0 mb-2">Trạng thái</label>
+                                            <span class="text-bolder text-sm">@(HoaDon?.Data?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) + HoaDon?.Data?.TienShip < HoaDon?.Data?.TongTien ? "Chưa thanh toán đủ" : "Đã thanh toán")</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    Uri Url = new Uri("https://localhost:7053/api/hoadon");
+
+    ResponseObject<HoaDonModel>? HoaDon;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        HoaDon = await HttpClient.GetFromJsonAsync<ResponseObject<HoaDonModel>>(Url + "/" + Id);
+    }
+
+    async Task UpdateSale()
+    {
+        if(HoaDon != null)
+        {
+            List<HoaDonModel> HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart") ?? new List<HoaDonModel>();
+            HoaDons.Add(HoaDon.Data);
+            await Session.SetItemAsync("cart", HoaDons);
+        }
+    }
+
+    async Task UpdateAsync(int status)
+    {
+        if(HoaDon != null)
+        {
+            switch (status)
+            {
+                case 1:
+                    HoaDon.Data.NgayGiaoHang = DateTime.Now;
+                    break;
+                case 2:
+                    HoaDon.Data.NgayThanhToan = DateTime.Now;
+                    break;
+                case 3:
+                    HoaDon.Data.NgayNhan = DateTime.Now;
+                    if(HoaDon.Data.NgayGiaoHang == null)
+                    {
+                        HoaDon.Data.NgayGiaoHang = DateTime.Now;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if(HoaDon.Data.NgayGiaoHang != null && HoaDon.Data.NgayNhan != null && HoaDon.Data.NgayThanhToan != null)
+            {
+                HoaDon.Data.TrangThai = Data.Enums.TrangThaiHoaDon.Done;
+            }
+            HoaDon.Data.NhanVien = null;
+            await HttpClient.PutAsJsonAsync<HoaDonModel>(Url.AddQuery("id", HoaDon.Data.Id.ToString()), HoaDon.Data);
+        }
+    }
+}
