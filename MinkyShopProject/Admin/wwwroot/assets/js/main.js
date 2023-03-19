@@ -49,7 +49,7 @@ function choiceLoad(obj, classname) {
     setTimeout(() => {
         var element = classname;
         if (element) new Choices(document.querySelector(element), JSON.parse(obj.replace(/'/g, '"')));
-    }, 1000)
+    }, 500)
 }
 
 function overflow() {

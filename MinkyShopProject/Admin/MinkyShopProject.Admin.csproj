@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Downloads\Compressed\MINKY_SHOP-master\MinkyShopProject\Common\MinkyShopProject.Common.csproj" />
     <ProjectReference Include="..\Business\MinkyShopProject.Business.csproj" />
+    <ProjectReference Include="..\Common\MinkyShopProject.Common.csproj" />
     <ProjectReference Include="..\Data\MinkyShopProject.Data.csproj" />
   </ItemGroup>
 

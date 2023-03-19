@@ -28,6 +28,12 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
 
+        [HttpGet("Get2")]
+        public async Task<ActionResult> GetAsync2([FromQuery] NhomSanPhamQueryModel obj)
+        {
+            return Helper.TransformData(await _repository.GetAsync2(obj));
+        }
+
         [HttpPost()]
         public async Task<ActionResult> AddAsync([FromBody] NhomSanPhamModel obj)
         {

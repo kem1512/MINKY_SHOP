@@ -28,6 +28,8 @@ namespace MinkyShopProject.Data.Models
 
         public int LoaiDonHang { get; set; }
 
+        public string? GhiChu { get; set; }
+
         public KhachHangModel? KhachHang { get; set; } = new KhachHangModel();
 
         public string? TenNguoiNhan { get; set; }

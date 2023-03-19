@@ -44,7 +44,7 @@
                                 </div>
                                 <br>
                                 <h6 class="mb-0 mt-2">
-                                    Giá Tiền : @(BienThe.GiaBan > 0 ? string.Format("{0:0,0}", BienThe.GiaBan) : string.Format("{0:0,0}", BienTheChiTiet?.Data?.SanPham?.BienThes?.Min(c => c.GiaBan)) + " - " + string.Format("{0:0,0}", BienTheChiTiet?.Data?.SanPham?.BienThes?.Max(c => c.GiaBan)))
+                                    Giá Tiền : @(BienThe.GiaBan > 0 ? Helper.FormatMoney(BienThe.GiaBan) : Helper.FormatMoney(BienTheChiTiet?.Data?.SanPham?.BienThes?.Min(c => c.GiaBan)) + " - " + Helper.FormatMoney(BienTheChiTiet?.Data?.SanPham?.BienThes?.Max(c => c.GiaBan)))
                                 </h6>
                                 <span class="badge badge-danger mt-3">@BienTheChiTiet?.Data.SanPham?.NhomSanPham?.Ten @(" / " + @BienTheChiTiet?.Data.SanPham?.NhomSanPham?.NhomSanPhamEntity?.Ten)</span>
                                 <div class="row mt-3">

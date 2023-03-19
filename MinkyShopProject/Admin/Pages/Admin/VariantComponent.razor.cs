@@ -36,9 +36,13 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         ResponsePagination<ThuocTinhModel>? ThuocTinhModels;
 
+        List<ThuocTinhModel>? ThuocTinhModelsParent;
+
         List<ThuocTinhModel> ThuocTinhModelsTemplate = new List<ThuocTinhModel>();
 
         ResponsePagination<NhomSanPhamModel>? NhomSanPhamModels;
+
+        List<NhomSanPhamModel>? NhomSanPhamModelsParent;
 
         SanPhamModel SanPham = new SanPhamModel();
 
@@ -46,6 +50,14 @@ namespace MinkyShopProject.Admin.Pages.Admin
         {
             ThuocTinhModels = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>($"{Url}/ThuocTinh");
             NhomSanPhamModels = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
+            if (NhomSanPhamModels != null && NhomSanPhamModels.Data.Content.Any())
+            {
+                NhomSanPhamModelsParent = NhomSanPhamModels.Data.Content;
+            }
+            if (ThuocTinhModels != null && ThuocTinhModels.Data.Content.Any())
+            {
+                ThuocTinhModelsParent = ThuocTinhModels.Data.Content;
+            }
         }
 
         public async Task AddAsync()

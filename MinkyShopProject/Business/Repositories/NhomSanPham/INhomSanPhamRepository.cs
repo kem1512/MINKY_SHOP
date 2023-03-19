@@ -13,6 +13,8 @@ namespace MinkyShopProject.Business.Repositories.NhomSanPham
     {
         public Task<Response> GetAsync(NhomSanPhamQueryModel obj);
 
+        public Task<Response> GetAsync2(NhomSanPhamQueryModel obj);
+
         public Task<Response> AddAsync(NhomSanPhamModel obj);
 
         public Task<Response> UpdateAsync(Guid id, NhomSanPhamModel obj);

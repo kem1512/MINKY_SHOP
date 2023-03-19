@@ -33,6 +33,8 @@ namespace MinkyShopProject.Business.Entities
 
         public string? Sdt { get; set; }
 
+        public string? GhiChu { get; set; }
+
         public float TienShip { get; set; }
 
         public float TongTien { get; set; }

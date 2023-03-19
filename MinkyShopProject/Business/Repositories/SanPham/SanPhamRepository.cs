@@ -66,7 +66,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
         {
             try
             {
-                return new ResponsePagination<SanPhamModel>(_mapper.Map<Pagination<Entities.SanPham>, Pagination<SanPhamModel>>(await _context.SanPham.Include(c => c.NhomSanPham).Include(c => c.BienThes).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<SanPhamModel>(_mapper.Map<Pagination<Entities.SanPham>, Pagination<SanPhamModel>>(await _context.SanPham.Include(c => c.NhomSanPham).ThenInclude(c => c.NhomSanPhamEntity).Include(c => c.BienThes).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {

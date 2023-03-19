@@ -347,6 +347,9 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<string>("DiaChi")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("IdKhachHang")
                         .HasColumnType("uniqueidentifier");
 
@@ -419,9 +422,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("real")
                         .HasDefaultValue(0f);
 
-                    b.Property<Guid?>("HoaDonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("IdBienThe")
                         .HasColumnType("uniqueidentifier");
 
@@ -435,9 +435,9 @@ namespace MinkyShopProject.Business.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HoaDonId");
-
                     b.HasIndex("IdBienThe");
+
+                    b.HasIndex("IdHoaDon");
 
                     b.ToTable("HoaDonChiTiet", (string)null);
                 });
@@ -998,13 +998,15 @@ namespace MinkyShopProject.Business.Migrations
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.HoaDonChiTiet", b =>
                 {
-                    b.HasOne("MinkyShopProject.Business.Entities.HoaDon", "HoaDon")
-                        .WithMany("HoaDonChiTiets")
-                        .HasForeignKey("HoaDonId");
-
                     b.HasOne("MinkyShopProject.Business.Entities.BienThe", "BienThe")
                         .WithMany("HoaDonChiTiets")
                         .HasForeignKey("IdBienThe")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MinkyShopProject.Business.Entities.HoaDon", "HoaDon")
+                        .WithMany("HoaDonChiTiets")
+                        .HasForeignKey("IdHoaDon")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

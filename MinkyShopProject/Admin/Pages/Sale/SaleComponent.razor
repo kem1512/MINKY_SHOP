@@ -30,6 +30,9 @@
             <button class="btn text-light text-bold shadow-none m-0 d-none" id="right-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(200, 0)'>></button>
             <button class="btn btn-info m-0" type="button" @onclick='async() => await AddOrder()'>+</button>
         </div>
+        <div class="col-2">
+            <NavLink class="btn btn-danger mb-0" href="admin/invoice">Hóa Đơn</NavLink>
+        </div>
     </div>
 </div>
 <div class="container-fluid mt-2 body-sale">
@@ -76,7 +79,7 @@
         <div class="col-6">
             <div class="card" style="height: 500px; overflow-y: auto">
                 <div class="card-body">
-                    <div class="row mb-2 align-items-center">
+                    <div class="row mb-0 align-items-center">
                         <div class="col-6 position-relative">
                             @if (KhachHangs != null)
                             {
@@ -87,7 +90,10 @@
                                         <option value="@x.Index">@x.Value.Ten</option>
                                     }
                                 </select>
-                                <label for="select-khachhang" class="form-control position-absolute top-0 ms-0">@(HoaDons?[index]?.KhachHang?.Ten ?? "Khách Lẻ")</label>
+                                @if(HoaDons != null && HoaDons.Any())
+                                {
+                                    <label for="select-khachhang" class="form-control position-absolute top-0 ms-0">@(HoaDons?[index]?.KhachHang?.Ten ?? "Khách Lẻ")</label>
+                                }
                             }
                         </div>
                         <div class="col-6">
@@ -97,7 +103,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class='@(ThanhToan ? "d-none" : "d-block")'>
+                    <div class='mt-2 @(ThanhToan ? "d-none" : "d-block")'>
                         <div class="row justify-content-center">
                             @if (SanPhams != null)
                             {
@@ -116,7 +122,7 @@
                                                 <div class="col-lg-7 ps-0 pe-0 my-auto">
                                                     <div class="card-body p-1 text-left">
                                                         <div class="p-md-0 pt-3">
-                                                            <h6 class="font-weight-bolder mb-0 text-sm">@x.Ten</h6>
+                                                            <h6 class="font-weight-bolder mb-0 text-sm">@(x.Ten?.Length > 20 ? x.Ten.Substring(0, 20) + "..." : x.Ten)</h6>
                                                             <p class="text-uppercase text-sm font-weight-bold text-sm">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan))</p>
                                                         </div>
                                                     </div>
