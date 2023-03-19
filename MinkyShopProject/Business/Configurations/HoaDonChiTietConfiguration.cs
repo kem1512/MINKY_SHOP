@@ -25,6 +25,8 @@ namespace MinkyShopProject.Business.Configurations
             builder.Property(c => c.DonGia).HasDefaultValue(0);
 
             builder.HasOne(c => c.BienThe).WithMany(c => c.HoaDonChiTiets).HasForeignKey(c => c.IdBienThe).OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(c => c.HoaDon).WithMany(c => c.HoaDonChiTiets).HasForeignKey(c => c.IdHoaDon).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -37,5 +37,10 @@ namespace MinkyShopProject.Common
         {
             return string.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:c}", money);
         }
+
+        public static string LowerText(string text)
+        {
+            return text.ToLower().Trim();
+        }
     }
 }

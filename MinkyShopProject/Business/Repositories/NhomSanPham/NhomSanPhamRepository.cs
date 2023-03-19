@@ -87,7 +87,20 @@ namespace MinkyShopProject.Business.Repositories.NhomSanPham
         {
             try
             {
-                return new ResponsePagination<NhomSanPhamModel>(_mapper.Map<Pagination<Entities.NhomSanPham>, Pagination<NhomSanPhamModel>>(await _context.NhomSanPham.Where(c => c.IdParent == null).Include(c => c.NhomSanPhams).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<NhomSanPhamModel>(_mapper.Map<Pagination<Entities.NhomSanPham>, Pagination<NhomSanPhamModel>>(await _context.NhomSanPham.Where(c => c.IdParent != null).Include(c => c.NhomSanPhams).Include(c => c.NhomSanPhamEntity).OrderByDescending(c => c.NgayTao).AsQueryable().GetPageAsync(obj)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
+
+        public async Task<Response> GetAsync2(NhomSanPhamQueryModel obj)
+        {
+            try
+            {
+                return new ResponsePagination<NhomSanPhamModel>(_mapper.Map<Pagination<Entities.NhomSanPham>, Pagination<NhomSanPhamModel>>(await _context.NhomSanPham.Where(c => c.IdParent == null).Include(c => c.NhomSanPhams).OrderByDescending(c => c.NgayTao).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {

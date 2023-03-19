@@ -33,7 +33,7 @@
                                                         <div class="form-group mb-3">
                                                             <label for="example-text-input" class="form-control-label">Nhóm Sản Phẩm</label>
                                                             <div class="position-relative">
-                                                                <input class="form-control" type="text" value="@SanPham.Data.NhomSanPham?.Ten" @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false" >
+                                                                <input class="form-control" type="text" value="@(SanPham.Data.NhomSanPham?.NhomSanPhamEntity?.Ten + " / " + SanPham.Data.NhomSanPham?.Ten)" @oninput='e => { if(NhomSanPhamModels != null && NhomSanPhamModelsParent != null){ NhomSanPhamModels.Data.Content = NhomSanPhamModelsParent.FindAll(c => Helper.LowerText(c.Ten).Contains(Helper.LowerText(e.Value?.ToString() ?? ""))); } }' @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false">
                                                                 <NavLink href="admin/group"><i class="fa fa-plus position-absolute top-50 end-0 translate-middle-y" style="cursor: pointer"></i></NavLink>
                                                             </div>
                                                             <div class="d-flex flex-wrap position-relative pb-2">
@@ -42,19 +42,13 @@
                                                                     {
                                                                         if (NhomSanPhamModels?.Data.Content != null)
                                                                         {
-                                                                            foreach (var x in NhomSanPhamModels.Data.Content)
+                                                                            foreach (var x in NhomSanPhamModels.Data.Content.Select((Value, Index) => (Index, Value)))
                                                                             {
-                                                                                <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.Data.NhomSanPham = x; SanPham.Data.IdNhomSanPham = x.Id; }">
-                                                                                    @x.Ten
-                                                                                </button>
-                                                                                if(x.NhomSanPhams != null)
+                                                                                if(x.Index < 5)
                                                                                 {
-                                                                                    foreach (var y in x.NhomSanPhams)
-                                                                                    {
-                                                                                        <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.Data.NhomSanPham = y; SanPham.Data.IdNhomSanPham = y.Id; }">
-                                                                                            @y.Ten
-                                                                                        </button>
-                                                                                    }
+                                                                                    <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => { SanPham.Data.NhomSanPham = x.Value; SanPham.Data.IdNhomSanPham = x.Value.Id; }">
+                                                                                        @x.Value.NhomSanPhamEntity?.Ten / @x.Value.Ten
+                                                                                    </button>
                                                                                 }
                                                                             }
                                                                         }

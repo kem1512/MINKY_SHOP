@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Api", "Min
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Business", "MinkyShopProject\Business\MinkyShopProject.Business.csproj", "{97AB2921-14E4-47D6-BD15-F5F61F102204}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Common", "..\..\..\Downloads\Compressed\MINKY_SHOP-master\MinkyShopProject\Common\MinkyShopProject.Common.csproj", "{119709C1-4F32-482F-A205-E1934B8AA38E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Common", "MinkyShopProject\Common\MinkyShopProject.Common.csproj", "{133526DF-C50F-4479-BD65-F9C54C1FFF6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,10 @@ Global
 		{97AB2921-14E4-47D6-BD15-F5F61F102204}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97AB2921-14E4-47D6-BD15-F5F61F102204}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97AB2921-14E4-47D6-BD15-F5F61F102204}.Release|Any CPU.Build.0 = Release|Any CPU
-		{119709C1-4F32-482F-A205-E1934B8AA38E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{119709C1-4F32-482F-A205-E1934B8AA38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{119709C1-4F32-482F-A205-E1934B8AA38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{119709C1-4F32-482F-A205-E1934B8AA38E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{133526DF-C50F-4479-BD65-F9C54C1FFF6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133526DF-C50F-4479-BD65-F9C54C1FFF6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133526DF-C50F-4479-BD65-F9C54C1FFF6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133526DF-C50F-4479-BD65-F9C54C1FFF6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

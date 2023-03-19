@@ -35,8 +35,6 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         List<HoaDonModel>? HoaDons = new List<HoaDonModel>();
 
-        List<HinhThucThanhToanModel>? Coc;
-
         public int index = 0;
 
         Uri Url = new Uri("https://localhost:7053/api/hoadon");
@@ -44,6 +42,10 @@ namespace MinkyShopProject.Admin.Pages.Sale
         protected async override Task OnInitializedAsync()
         {
             HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart") ?? new List<HoaDonModel>();
+            if (!HoaDons.Any())
+            {
+                await AddOrder();
+            }
             SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>("https://localhost:7053/api/SanPham");
             KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>("https://localhost:7053/api/KhachHang/Get");
         }
@@ -53,59 +55,107 @@ namespace MinkyShopProject.Admin.Pages.Sale
             var hoaDon = HoaDons?[index];
             if (hoaDon != null)
             {
-                hoaDon.NhanVien = null;
-
-                hoaDon.KhachHang = null;
-
-                if (hoaDon.LoaiDonHang == 0 && hoaDon.HinhThucThanhToans?.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip < hoaDon.TongTien)
+                if (hoaDon.HoaDonChiTiets.Any())
                 {
-                    hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Debt;
-
-                    if (hoaDon.HinhThucThanhToans != null)
+                    if (hoaDon.LoaiDonHang == 1)
                     {
-                        foreach (var x in hoaDon.HinhThucThanhToans)
+                        hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Ship;
+                    }
+                    else if (hoaDon.LoaiDonHang == 0 && hoaDon.HinhThucThanhToans?.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip < hoaDon.TongTien)
+                    {
+                        if (hoaDon.IdKhachHang != null && hoaDon.IdKhachHang != Guid.Empty)
                         {
-                            // Cọc
-                            x.KieuThanhToan = 2;
+                            if (hoaDon.HinhThucThanhToans?.Sum(c => c.TongTienThanhToan) <= 0)
+                            {
+                                await Swal.FireAsync("Thông báo", "Tiền Cọc Phải Lớn Hơn 0", SweetAlertIcon.Error);
+                                return;
+                            }
+
+                            hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Debt;
+
+                            if (hoaDon.HinhThucThanhToans != null)
+                            {
+                                foreach (var x in hoaDon.HinhThucThanhToans)
+                                {
+                                    // Cọc
+                                    x.KieuThanhToan = 2;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            await Swal.FireAsync("Thông báo", "Khách Hàng Có Trong Hệ Thống Mới Có Thể Cọc", SweetAlertIcon.Error);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Done;
+                    }
+
+                    if (hoaDon.Id != Guid.Empty)
+                    {
+                        if ((hoaDon.HinhThucThanhToans?.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip) < hoaDon.TongTien)
+                        {
+                            await Swal.FireAsync("Thông báo", "Hóa Đơn Cập Nhật Phải Thanh Toán Đủ", SweetAlertIcon.Error);
+                            return;
+                        }
+
+                        hoaDon.NhanVien = null;
+
+                        hoaDon.KhachHang = null;
+
+                        var status = await HttpClient.PutAsJsonAsync(Url.AddQuery("id", hoaDon.Id.ToString()), hoaDon);
+                        if (status.IsSuccessStatusCode)
+                        {
+                            HoaDons?.RemoveAt(index);
+                            await Session.SetItemAsync("cart", HoaDons);
+                            await Swal.FireAsync("Thông báo", "Thêm Thành Công", SweetAlertIcon.Success);
+                        }
+                        else
+                        {
+                            await Swal.FireAsync("Thông báo", "Thêm Thất Bại", SweetAlertIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        if (hoaDon.LoaiDonHang == 1)
+                        {
+                            if (string.IsNullOrEmpty(hoaDon.TenNguoiNhan) || string.IsNullOrEmpty(hoaDon.Sdt) || string.IsNullOrEmpty(hoaDon.DiaChi))
+                            {
+                                await Swal.FireAsync("Thông báo", "Vui Lòng Nhập Đầy Đủ Thông Tin Giao Hàng", SweetAlertIcon.Error);
+                                return;
+                            }
+                            else
+                            {
+                                if (hoaDon.HinhThucThanhToans != null)
+                                {
+                                    hoaDon.HinhThucThanhToans = new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() { KieuThanhToan = 2, TongTienThanhToan = hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) } };
+                                }
+                            }
+                        }
+
+                        hoaDon.NhanVien = null;
+
+                        hoaDon.KhachHang = null;
+
+                        var status = await HttpClient.PostAsJsonAsync(Url, HoaDons?[index]);
+
+                        if (status.IsSuccessStatusCode)
+                        {
+                            HoaDons?.RemoveAt(index);
+                            await Session.SetItemAsync("cart", HoaDons);
+                            await Swal.FireAsync("Thông báo", "Thêm Thành Công", SweetAlertIcon.Success);
+                        }
+                        else
+                        {
+                            await Swal.FireAsync("Thông báo", "Thêm Thất Bại", SweetAlertIcon.Error);
                         }
                     }
                 }
-                else if (hoaDon.LoaiDonHang == 1)
-                {
-                    hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Ship;
-                }
                 else
                 {
-                    hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Done;
-                }
-
-                if (hoaDon.Id != Guid.Empty)
-                {
-                    var status = await HttpClient.PutAsJsonAsync(Url.AddQuery("id", hoaDon.Id.ToString()), hoaDon);
-                    if (status.IsSuccessStatusCode)
-                    {
-                        await Swal.FireAsync("Thông báo", "Thêm Thành Công", SweetAlertIcon.Success);
-                        HoaDons?.RemoveAt(index);
-                        await Session.SetItemAsync("cart", HoaDons);
-                    }
-                    else
-                    {
-                        await Swal.FireAsync("Thông báo", "Thêm Thất Bại", SweetAlertIcon.Error);
-                    }
-                }
-                else
-                {
-                    var status = await HttpClient.PostAsJsonAsync(Url, HoaDons?[index]);
-                    if (status.IsSuccessStatusCode)
-                    {
-                        await Swal.FireAsync("Thông báo", "Thêm Thành Công", SweetAlertIcon.Success);
-                        HoaDons?.RemoveAt(index);
-                        await Session.SetItemAsync("cart", HoaDons);
-                    }
-                    else
-                    {
-                        await Swal.FireAsync("Thông báo", "Thêm Thất Bại", SweetAlertIcon.Error);
-                    }
+                    await Swal.FireAsync("Thông báo", "Hóa Đơn Chưa Có Sản Phẩm", SweetAlertIcon.Error);
                 }
             }
         }
@@ -226,13 +276,13 @@ namespace MinkyShopProject.Admin.Pages.Sale
                 var hoaDon = HoaDons?[index];
                 if (hoaDon != null)
                 {
-                    foreach (var x in hoaDon.HoaDonChiTiets)
+                    for (int i = 0; i < hoaDon.HoaDonChiTiets.Count(); i++)
                     {
-                        if (x.BienThe?.Id == obj.Id)
+                        if (hoaDon.HoaDonChiTiets[i].BienThe?.Id == obj.Id)
                         {
-                            x.SoLuong += soLuong;
+                            hoaDon.HoaDonChiTiets[i].SoLuong += soLuong;
+                            hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) + hoaDon?.TienShip ?? 0;
                             await Session.SetItemAsync("cart", HoaDons);
-                            HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart");
                             return;
                         }
                     }
