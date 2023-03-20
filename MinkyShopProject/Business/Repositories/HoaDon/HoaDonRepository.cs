@@ -81,11 +81,24 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
             }
         }
 
+        public async Task<Response> FindAsync(Guid id)
+        {
+            try
+            {
+                return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(await _context.HoaDon.Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).FirstOrDefaultAsync(c => c.Id == id)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
+
         public async Task<Response> GetAsync(HoaDonQueryModel obj)
         {
             try
             {
-                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.BienTheChiTiets).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.BienTheChiTiets).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {
@@ -106,15 +119,9 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                 if (hoaDon == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                hoaDon.TrangThai = obj.TrangThai;
+                hoaDon = _mapper.Map<HoaDonModel, Entities.HoaDon>(obj);
 
-                hoaDon.NgayNhan = obj.NgayNhan;
-
-                hoaDon.NgayGiaoHang = obj.NgayGiaoHang;
-
-                hoaDon.NgayThanhToan = obj.NgayThanhToan;
-
-                _context.HoaDon.Update(_mapper.Map<HoaDonModel, Entities.HoaDon>(obj));
+                _context.HoaDon.Update(hoaDon);
 
                 var status = await _context.SaveChangesAsync();
 

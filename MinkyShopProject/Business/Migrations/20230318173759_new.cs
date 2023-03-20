@@ -301,7 +301,7 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdNhanVien = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NgayThanhToan = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -311,6 +311,7 @@ namespace MinkyShopProject.Business.Migrations
                     TenNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TienShip = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TongTien = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
@@ -483,8 +484,7 @@ namespace MinkyShopProject.Business.Migrations
                     IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    DonGia = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    DonGia = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
                 },
                 constraints: table =>
                 {
@@ -496,10 +496,11 @@ namespace MinkyShopProject.Business.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HoaDonChiTiet_HoaDon_HoaDonId",
-                        column: x => x.HoaDonId,
+                        name: "FK_HoaDonChiTiet_HoaDon_IdHoaDon",
+                        column: x => x.IdHoaDon,
                         principalTable: "HoaDon",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -628,14 +629,14 @@ namespace MinkyShopProject.Business.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_HoaDonChiTiet_HoaDonId",
-                table: "HoaDonChiTiet",
-                column: "HoaDonId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HoaDonChiTiet_IdBienThe",
                 table: "HoaDonChiTiet",
                 column: "IdBienThe");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HoaDonChiTiet_IdHoaDon",
+                table: "HoaDonChiTiet",
+                column: "IdHoaDon");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KhachHang_IdViDiem",

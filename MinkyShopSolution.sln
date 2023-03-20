@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Api", "Min
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Business", "MinkyShopProject\Business\MinkyShopProject.Business.csproj", "{97AB2921-14E4-47D6-BD15-F5F61F102204}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Common", "MinkyShopProject.Common\MinkyShopProject.Common.csproj", "{546A0078-9E10-4A1E-90D8-7F6EF4A3D505}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinkyShopProject.Common", "MinkyShopProject\Common\MinkyShopProject.Common.csproj", "{133526DF-C50F-4479-BD65-F9C54C1FFF6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

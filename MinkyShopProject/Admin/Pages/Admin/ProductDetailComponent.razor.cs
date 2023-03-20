@@ -31,6 +31,8 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         ResponsePagination<NhomSanPhamModel>? NhomSanPhamModels;
 
+        List<NhomSanPhamModel>? NhomSanPhamModelsParent;
+
         ResponseObject<SanPhamModel>? SanPham;
 
         List<string>? ModelImage;
@@ -43,6 +45,10 @@ namespace MinkyShopProject.Admin.Pages.Admin
         {
             SanPham = await HttpClient.GetFromJsonAsync<ResponseObject<SanPhamModel>>($"{Url}/SanPham/{IdSanPham}");
             NhomSanPhamModels = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>($"{Url}/NhomSanPham");
+            if (NhomSanPhamModels != null && NhomSanPhamModels.Data.Content.Any())
+            {
+                NhomSanPhamModelsParent = NhomSanPhamModels.Data.Content;
+            }
             ModelImage = await JSRuntime.InvokeAsync<List<string>>("storageImages");
         }
 

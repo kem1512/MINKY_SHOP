@@ -37,6 +37,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 if (obj.ThuocTinhs != null)
                 {
+                    obj.ThuocTinhs.OrderBy(c => c.Id);
                     foreach (var x in obj.ThuocTinhs)
                     {
 
@@ -95,7 +96,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                     foreach (var x in skus.CartesianProduct())
                     {
                         // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                        var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = String.Join(" + ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) };
+                        var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = String.Join(" + ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) + Helper.RandomString(3) };
                         await _context.BienThe.AddAsync(bienThe);
 
                         foreach (var y in x)
@@ -164,6 +165,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                              join sp in _context.SanPham on ttsp.IdSanPham equals sp.Id
                              join btct in _context.BienTheChiTiet on new { gt = gt.Id, ttsp = ttsp.Id } equals new { gt = btct.IdGiaTri, ttsp = btct.IdThuocTinhSanPham }
                              join bt in _context.BienThe on btct.IdBienThe equals bt.Id
+                             orderby tt.Id
                              where sp.Id == id
                              group new { tt, gt } by new
                              {

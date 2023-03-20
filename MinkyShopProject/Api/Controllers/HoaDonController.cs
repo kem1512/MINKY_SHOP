@@ -39,6 +39,12 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> FindAsync(Guid id)
+        {
+            return Helper.TransformData(await _repository.FindAsync(id));
+        }
+
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {

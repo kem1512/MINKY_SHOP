@@ -13,7 +13,7 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid IdNhanVien { get; set; }
 
-        public Guid IdKhachHang { get; set; }
+        public Guid? IdKhachHang { get; set; }
 
         public string Ma { get; set; } = null!;
 
@@ -32,6 +32,8 @@ namespace MinkyShopProject.Business.Entities
         public string? DiaChi { get; set; }
 
         public string? Sdt { get; set; }
+
+        public string? GhiChu { get; set; }
 
         public float TienShip { get; set; }
 
