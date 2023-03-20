@@ -31,14 +31,14 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPost, Route("Create")]
-        public async Task<IActionResult> ThemKhachHang([FromQuery] KhachHangThemVaSuaModel model)
+        public async Task<IActionResult> ThemKhachHang([FromBody] KhachHangThemVaSuaModel model)
         {
             var result = await _IkhachHangRepository.CreateKhachHang(model);
             return Helper.TransformData(result);
         }
 
         [HttpPut, Route("Update")]
-        public async Task<IActionResult> SuaKhachHang(Guid Id, [FromQuery] KhachHangThemVaSuaModel model)
+        public async Task<IActionResult> SuaKhachHang(Guid Id, [FromBody] KhachHangThemVaSuaModel model)
         {
             var result = await _IkhachHangRepository.UpdateKhachHang(Id, model);
             return Helper.TransformData(result);

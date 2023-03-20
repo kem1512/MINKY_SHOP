@@ -1,0 +1,224 @@
+﻿@page "/admin/khachhang"
+@page "/admin/khachhang/page/{page:int}"
+@using MinkyShopProject.Data.Models
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="khachhang" class="row gy-2 mb-3">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-3">
+                                    <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'>
+                                        <option value="2">2 kết quả</option>
+                                        @for (int i = 1; i < 5; i++)
+                                        {
+                                            var index = i * 5;
+                                            <option value="@index">@index kết quả</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <input class="form-control" placeholder="Nhập tên khách hàng" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2 text-end">
+                            <button class="btn btn-primary btn-sm" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
+                        </div>
+                        <div class="col-6">
+                            <label>Tên Khách hàng</label>
+                            <input type="text" class="form-control" @bind-value="khachhang.Ten">
+                        </div>
+                        <div class="col-6">
+                            <label>Ảnh khách hàng</label>
+                            <input type="text" class="form-control" @bind-value="khachhang.Anh">
+                        </div>
+                        <div class="col-6">
+                            <label>Ngày sinh</label>
+                            <input type="date" class="form-control" @bind-value="khachhang.NgaySinh">
+                        </div>
+                        <div class="col-6">
+                            <label>Gmail</label>
+                            <input type="email" class="form-control" @bind-value="khachhang.Email">
+                        </div>
+                        <div class="col-6">
+                            <label>Địa chỉ</label>
+                            <input type="text" class="form-control" @bind-value="khachhang.DiaChi">
+                        </div>
+                        <div class="col-6">
+                            <label>Số điện thoại</label>
+                            <input type="text" class="form-control" @bind-value="khachhang.Sdt">
+                        </div>
+                        <div class="col-6">
+                            <label>Giới tính</label>
+                            <input type="text" class="form-control" @bind-value="khachhang.GioiTinh">
+                        </div>
+                    </EditForm>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên khách hàng</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ảnh khách hàng</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày Tạo</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày sinh</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Gmail</th>
+                                
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Địa chỉ</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số điện thoại</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lần mua</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giới tính</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @if (KhachHangs == null)
+                                {
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="spinner-grow text-primary" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    if (KhachHangs.Data.Content.Count() > 0)
+                                    {
+                                        foreach (var x in KhachHangs.Data.Content.Select((Value, Index) => (Index, Value)))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <p class="text-secondary text-xs font-weight-bold">@(x.Index + 1)</p>
+                                                </td>
+                                                <td style="width: 20%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <img/> 
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao.ToShortDateString()</span>
+                                                </td>
+                                                <td class="align-middle text-center text-sm">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgaySinh.ToShortDateString()</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Email</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.DiaChi</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Sdt</span>
+                                                </td>
+                                                <td style="width: 5%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.SoLanMua</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@(x.Value.GioiTinh ? "Nam" : "Nữ")</span>
+                                                </td>
+                                                <td class="text-sm">
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                                        <i class="fas fa-eye text-info" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => khachhang = x.Value">
+                                                        <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="javascript:;" @onclick="() => DeleteAsync(x.Value.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <MinkyShopProject.Admin.Shared.PaginationComponent Model="KhachHangs" Url="admin/khachhang" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Page { get; set; }
+
+    Uri Url = new Uri("https://localhost:7053/api/khachhang");
+
+    string TenGiaTri = "";
+
+    KhachHangQueryModel Filter = new KhachHangQueryModel() { Size = 2 };
+
+    KhachHangModel khachhang = new KhachHangModel();
+
+    ResponsePagination<KhachHangModel>? KhachHangs;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await Reload();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice");
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice-size");
+        }
+    }
+
+
+    async Task DeleteAsync(Guid id)
+    {
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+        var result = await HttpClient.DeleteAsync(Url + "/" + id + "/Delete");
+
+        if (result.IsSuccessStatusCode)
+        {
+            await Reload();
+            await Swal.FireAsync("Thông Báo", "Xóa thành công", SweetAlertIcon.Success);
+        }
+    }
+
+    async Task AddOrUpdateAsync()
+    {
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+            if (string.IsNullOrEmpty(confirm.Value)) return;
+        var s = Url.AddQuery("id", khachhang.Id.ToString());
+            var result = khachhang.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<KhachHangModel>(Url + "/Create", khachhang) : await HttpClient.PutAsJsonAsync<KhachHangModel>(new Uri(Url + "/Update" + s.Query), khachhang);
+
+            if (result.IsSuccessStatusCode)
+            {
+                await Reload();
+                await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
+            }
+    }
+    
+
+    async Task Reload()
+    {
+        if (Page == 0) Page = 1;
+        var s = Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("Ten", Filter.Ten);
+        KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>(new Uri(Url + "/get" + s.Query));
+    }
+}
