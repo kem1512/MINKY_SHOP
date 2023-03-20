@@ -1,19 +1,22 @@
-﻿using MinkyShopProject.Data.Models;
+﻿using MinkyShopProject.Business.Pagination;
+using MinkyShopProject.Common;
+using MinkyShopProject.Data.Models;
 using MinkyShopProject.Data.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PaginationRequest = MinkyShopProject.Business.Pagination.PaginationRequest;
 
 namespace MinkyShopProject.Business.Repositories.NhanVien
 {
     public interface INhanVienRepository
     {
-        Task<PaginationResponse> Get(int perPage,int currentPage,int status,string? keyword);
-        Task<Entities.NhanVien> GetById(Guid Id);
-        Task<string> Post(Entities.NhanVien NhanVien);
-        Task<string> Put(Entities.NhanVien NhanVien);
-        Task<string> Delete(Guid Id);
+        Task<Response> Get(PaginationRequest paginationRequest);
+        Task<Response> GetById(Guid Id);
+        Task<Response> Post(Entities.NhanVien NhanVien);
+        Task<Response> Put(Entities.NhanVien NhanVien);
+        Task<Response> Delete(Guid Id);
     }
 }
