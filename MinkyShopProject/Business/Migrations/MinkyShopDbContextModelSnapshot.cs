@@ -43,9 +43,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayTao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 334, DateTimeKind.Local).AddTicks(1927));
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Sku")
                         .HasColumnType("VARCHAR(20)");
@@ -126,9 +124,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayDanhGia")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2023, 3, 7, 21, 0, 57, 334, DateTimeKind.Local).AddTicks(6361));
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NoiDung")
                         .HasColumnType("nvarchar(max)");
@@ -831,6 +827,7 @@ namespace MinkyShopProject.Business.Migrations
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
+
                     b.Property<float>("SoTienGiam")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("real")

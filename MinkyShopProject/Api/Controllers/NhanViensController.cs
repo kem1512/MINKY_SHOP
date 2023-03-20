@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Entities;
+using MinkyShopProject.Business.Pagination;
 using MinkyShopProject.Business.Repositories.NhanVien;
+using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using MinkyShopProject.Data.Pagination;
+using System.Data;
 using System.Reflection.Metadata.Ecma335;
+using PaginationRequest = MinkyShopProject.Business.Pagination.PaginationRequest;
 
 namespace MinkyShopProject.Api.Controllers
 {
@@ -19,20 +23,20 @@ namespace MinkyShopProject.Api.Controllers
             _Repository = Repository;
         }
 
-        [HttpGet("{perPage}/{currentPage}/{status}/{keyword?}")]
-        public async Task<ActionResult<PaginationResponse>> Get(int perPage,int currentPage,int status,string? keyword = null)
+        [HttpGet]
+        public async Task<ActionResult> Get([FromQuery] PaginationRequest paginationRequest)
         {
-            return Ok(await _Repository.Get(perPage, currentPage, status, keyword));
+            return Helper.TransformData(await _Repository.Get(paginationRequest));
         }
 
         [HttpGet("/nhanvien/{id}")]
-        public async Task<ActionResult<NhanVien>> GetById(Guid id)
+        public async Task<ActionResult> GetById(Guid id)
         {
-            return Ok(await _Repository.GetById(id));
+            return Helper.TransformData(await _Repository.GetById(id));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> Put(Guid id,NhanVienModel.NhanVienCreateModel model)
+        public async Task<ActionResult> Put(Guid id,NhanVienModel.NhanVienCreateModel model)
         {
             var NhanVien = new NhanVien()
             {
@@ -50,11 +54,11 @@ namespace MinkyShopProject.Api.Controllers
                 VaiTro = model.VaiTro,
             };
 
-            return Ok(await _Repository.Put(NhanVien));
+            return Helper.TransformData(await _Repository.Put(NhanVien));
         }
 
         [HttpPost]
-        public async Task<ActionResult<bool>> Post(NhanVienModel.NhanVienCreateModel model)
+        public async Task<ActionResult> Post(NhanVienModel.NhanVienCreateModel model)
         {
             var NhanVien = new NhanVien()
             {
@@ -70,15 +74,16 @@ namespace MinkyShopProject.Api.Controllers
                 Ten = model.Ten,
                 TrangThai = model.TrangThai,
                 VaiTro = model.VaiTro,
+                NgayTao = DateTime.Now
             };
 
-            return Ok(await _Repository.Post(NhanVien));
+            return Helper.TransformData(await _Repository.Post(NhanVien));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<bool>> Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            return Ok(await _Repository.Delete(id));
+            return Helper.TransformData(await _Repository.Delete(id));
         }
     }
 }
