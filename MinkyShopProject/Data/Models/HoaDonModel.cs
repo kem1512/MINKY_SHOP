@@ -46,7 +46,7 @@ namespace MinkyShopProject.Data.Models
 
         public List<HinhThucThanhToanModel> HinhThucThanhToans { get; set; } = new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() };
 
-        public TrangThaiHoaDon TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public List<HoaDonChiTietModel> HoaDonChiTiets { get; set; } = new List<HoaDonChiTietModel>();
     }

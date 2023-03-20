@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace MinkyShopProject.Data.Pagination
 {
-    public class PaginationResponse
+    public class PaginationResponse<T>
     {
-        public List<NhanVien> Data { get; set; } = new List<NhanVien>();
+        public List<T> Data { get; set; } = new List<T>();
 
         public int Pages { get; set; }
 
