@@ -1,10 +1,5 @@
 ﻿using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MinkyShopProject.Data.Models
 {
@@ -42,11 +37,11 @@ namespace MinkyShopProject.Data.Models
 
         public float TongTien { get; set; }
 
-        public NhanVienModel.NhanVienViewModel? NhanVien { get; set; }
+        public NhanVienModel.NhanVienCreateModel? NhanVien { get; set; }
 
         public List<HinhThucThanhToanModel> HinhThucThanhToans { get; set; } = new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() };
 
-        public int TrangThai { get; set; }
+        public TrangThaiHoaDon TrangThai { get; set; }
 
         public List<HoaDonChiTietModel> HoaDonChiTiets { get; set; } = new List<HoaDonChiTietModel>();
     }

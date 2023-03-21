@@ -7,6 +7,7 @@ using MinkyShopProject.Business.Repositories.KhachHang;
 using MinkyShopProject.Business.Repositories.NhanVien;
 using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.SanPham;
+using MinkyShopProject.Business.Repositories.SeedingData;
 using MinkyShopProject.Business.Repositories.ThongKe;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
 using MinkyShopProject.Business.Repositories.ViDiem;
@@ -44,6 +45,8 @@ builder.Services.AddScoped<IViDiemRepository, ViDiemRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 
 builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
+
+builder.Services.AddScoped<SeendingData>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
