@@ -13,13 +13,13 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public string? Ten { get; set; }
+        public string Ten { get; set; } = null!;
 
         public int TrangThai { get; set; }
 
         public DateTime NgayTao { get; set; } = DateTime.Now;
 
-        public List<GiaTriModel>? GiaTris { get; set; } = new List<GiaTriModel>();
+        public List<GiaTriModel> GiaTris { get; set; } = null!;
 
         public List<GiaTriModel>? GiaTriTemplates { get; set; } = new List<GiaTriModel>();
     }
@@ -28,11 +28,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdThuocTinh { get; set; }
-
-        public string? Ten { get; set; }
-
-        public ThuocTinhModel? ThuocTinh { get; set; }
+        public string Ten { get; set; } = null!;
     }
 
     public class ThuocTinhQueryModel : PaginationRequest

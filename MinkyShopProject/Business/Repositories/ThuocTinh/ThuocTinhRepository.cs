@@ -51,9 +51,9 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
         {
             try
             {
-                var thuocTinh = await _context.ThuocTinh.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                var thuocTinh = await _context.ThuocTinh.Include(c => c.ThuocTinhSanPhams).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
-                var giaTri = await _context.GiaTri.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                var giaTri = await _context.GiaTri.Include(c => c.BienTheChiTiets).ThenInclude(c => c.BienThe).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
                 if (thuocTinh == null && giaTri == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
@@ -66,7 +66,14 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
                 {
                     if (giaTri != null)
                     {
-                        _context.GiaTri.Remove(giaTri);
+                        if (giaTri.BienTheChiTiets != null && giaTri.BienTheChiTiets.Any())
+                        {
+                            return new ResponseError(HttpStatusCode.OK, "Phải Xóa Các Sản Phẩm Có Giá Trị Này Trước Khi Xóa Giá Trị");
+                        }
+                        else
+                        {
+                            _context.GiaTri?.Remove(giaTri);
+                        }
                     }
                 }
 
@@ -95,7 +102,7 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
             catch (Exception e)
             {
                 Log.Error(e, "Lấy dữ liệu thất bại");
-                return new ResponseError(System.Net.HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
             }
         }
 

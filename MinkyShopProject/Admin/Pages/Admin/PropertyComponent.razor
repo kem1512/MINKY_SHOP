@@ -46,7 +46,7 @@
                             <div class="d-flex justify-content-between">
                                 <label>Giá Trị</label>
                             </div>
-                            <input type="text" class="form-control" @oninput='(ui) => TenGiaTri = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ ThuocTinh.GiaTris?.Add(new GiaTriModel(){ Ten = TenGiaTri }); } })'>
+                            <input type="text" class="form-control" @oninput='(ui) => TenGiaTri = ui.Value?.ToString() ?? ""' @onkeyup='((ui) => { if(ui.Code == "Enter"){ if(CheckDuplicateGiaTri(TenGiaTri)){ ThuocTinh.GiaTris?.Add(new GiaTriModel(){ Ten = TenGiaTri }); } } })'>
                         </div>
                         <div class="d-flex flex-wrap position-relative py-2">
                             <div class="d-flex flex-wrap">
@@ -129,7 +129,7 @@
                                                     </table>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao.ToShortDateString()</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
                                                 </td>
                                                 <td class="align-middle text-center p-0" style="width: 16%">
                                                     <div class="form-check form-switch justify-content-center">
@@ -177,7 +177,7 @@
 
     ThuocTinhQueryModel Filter = new ThuocTinhQueryModel() { Size = 2 };
 
-    ThuocTinhModel ThuocTinh = new ThuocTinhModel();
+    ThuocTinhModel ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
 
     ResponsePagination<ThuocTinhModel>? ThuocTinhs;
 
@@ -204,6 +204,7 @@
         if (result.IsSuccessStatusCode)
         {
             await Reload();
+            ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
             await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
         }
     }
@@ -219,19 +220,52 @@
         if (result.IsSuccessStatusCode)
         {
             await Reload();
+            ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
             await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
         }
     }
 
+    bool CheckDuplicateGiaTri(string value)
+    {
+        if (ThuocTinhs != null)
+            return string.IsNullOrEmpty(value.Trim()) || ThuocTinh.GiaTris.Any(c => c.Ten.ToTitleCase() == value.ToTitleCase()) || value.CheckCharacterSpecial() ? false : true;
+        return false;
+    }
+
     async Task AddOrUpdateAsync()
     {
-        if (ThuocTinh.GiaTris?.Count() <= 0)
+        if (string.IsNullOrEmpty(ThuocTinh.Ten.Trim()))
+        {
+            await Swal.FireAsync("Thông Báo", "Tên Thuộc Tính Không Thể Trống", SweetAlertIcon.Error);
+        }
+        else if (ThuocTinh.Ten.Length < 3)
+        {
+            await Swal.FireAsync("Thông Báo", "Tên Thuộc Tính Phải Có Ít Nhất 3 Ký Tự", SweetAlertIcon.Error);
+        }
+        else if(ThuocTinh.Ten.CheckCharacterSpecial())
+        {
+            await Swal.FireAsync("Thông Báo", "Tên Thuộc Tính Không Thể Chứa Ký Tự Đặc Biệt", SweetAlertIcon.Error);
+        }
+        else if(ThuocTinh.Id == Guid.Empty && ThuocTinhs != null && ThuocTinhs.Data.Content.Any(c => c.Ten.ToTitleCase() == ThuocTinh.Ten.ToTitleCase()))
+        {
+            await Swal.FireAsync("Thông Báo", "Thuộc Tính Này Đã Tồn Tại", SweetAlertIcon.Error);
+        }
+        else if (ThuocTinh.GiaTris?.Count() <= 0)
         {
             await Swal.FireAsync("Thông Báo", "Phải Có Ít Nhất Một Giá Trị", SweetAlertIcon.Error);
         }
         else
         {
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+            if(ThuocTinh.GiaTris != null)
+            {
+                if (ThuocTinh.GiaTris.Any(c => string.IsNullOrEmpty(c.Ten) || c.Ten.CheckCharacterSpecial()))
+                {
+                    await Swal.FireAsync("Thông Báo", "Vui Lòng Kiểm Tra Lại Các Giá Trị", SweetAlertIcon.Error);
+                    return;
+                }
+            }
+
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = $"Bạn Có Chắc Muốn {(ThuocTinh.Id == Guid.Empty ? "Thêm" : "Sửa" )}", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -240,6 +274,7 @@
             if (result.IsSuccessStatusCode)
             {
                 await Reload();
+                ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
                 await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
             }
         }
@@ -248,8 +283,7 @@
     async Task Reload()
     {
         if (Page == 0) Page = 1;
-        ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? ""));
-        ThuocTinh = new ThuocTinhModel();
+        ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? "").AddQuery("sort", "-NgayTao"));
         TenGiaTri = "";
     }
 }

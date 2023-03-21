@@ -84,7 +84,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                                 var tenGiaTri = giaTri?.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
 
                                 if (tenThuocTinh != null && tenGiaTri != null)
-                                    sku.Add(string.Join("", tenThuocTinh) + string.Join("", tenGiaTri) + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham + "/" + y.Ten);
+                                    sku.Add(string.Join("", tenThuocTinh) + string.Join("", tenGiaTri) + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham);
                             }
                         }
 
@@ -96,7 +96,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                     foreach (var x in skus.CartesianProduct())
                     {
                         // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                        var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Ten = String.Join(" + ", x.Select(c => c.Split("/")[4])), Sku = String.Join("", x.Select(c => c.Split("/")[0])) + Helper.RandomString(3) };
+                        var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Sku = String.Join("", x.Select(c => c.Split("/")[0])) + Helper.RandomString(3) };
                         await _context.BienThe.AddAsync(bienThe);
 
                         foreach (var y in x)

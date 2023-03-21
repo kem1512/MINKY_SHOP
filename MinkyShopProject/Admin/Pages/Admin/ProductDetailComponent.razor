@@ -95,7 +95,7 @@
                                                     <div class="d-flex flex-column">
                                                         @foreach (var x in SanPham.Data.BienThes)
                                                         {
-                                                            <NavLink href="@($"admin/product/{IdSanPham}/{x.Id}")" class="btn btn-light shadow-none my-2">@x.Ten</NavLink>
+                                                            <NavLink href="@($"admin/product/{IdSanPham}/{x.Id}")" class="btn btn-light shadow-none my-2">@string.Join(" + ", x.BienTheChiTiets.Select(c => c.GiaTri?.Ten))</NavLink>
                                                         }
                                                     </div>
                                                 </div>
@@ -117,7 +117,7 @@
                                                 <div class="row">
                                                     <div class="col-12 col-sm-6">
                                                         <label>Tên Biến Thể</label>
-                                                        <input class="form-control" type="text" value="@(SanPham.Data.Ten + " " + x.Ten)">
+                                                        <input class="form-control" type="text" value="@(SanPham.Data.Ten + " " + string.Join(" + ", x.BienTheChiTiets.Select(c => c.GiaTri?.Ten)))">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Số Lượng</label>
