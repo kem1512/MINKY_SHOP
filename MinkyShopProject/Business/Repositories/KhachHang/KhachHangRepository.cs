@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
-using Newtonsoft.Json;
 using Serilog;
 using Code = System.Net.HttpStatusCode;
 
@@ -35,9 +34,10 @@ namespace MinkyShopProject.Business.Repositories.KhachHang
                     Sdt = model.Sdt,
                     Email = model.Email,
                     MatKhau = model.MatKhau,
+                    NgayTao = DateTime.Now,
                     SoLanMua = model.SoLanMua
                 };
-                _Context.Add(entityModel);
+                await _Context.AddAsync(entityModel);
 
                 var status = await _Context.SaveChangesAsync();
 

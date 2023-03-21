@@ -1,15 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
-using MinkyShopProject.Business.Repositories.NhomSanPham;
-using MinkyShopProject.Business.Repositories.NhanVien;
+using MinkyShopProject.Business.Repositories.GioHang;
+using MinkyShopProject.Business.Repositories.HoaDon;
 using MinkyShopProject.Business.Repositories.KhachHang;
+using MinkyShopProject.Business.Repositories.NhanVien;
+using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.SanPham;
+using MinkyShopProject.Business.Repositories.SeedingData;
+using MinkyShopProject.Business.Repositories.ThongKe;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
 using MinkyShopProject.Business.Repositories.ViDiem;
-using MinkyShopProject.Business.Repositories.GioHang;
 using System.Text.Json.Serialization;
-using MinkyShopProject.Business.Repositories.HoaDon;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,10 @@ builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 builder.Services.AddScoped<IViDiemRepository, ViDiemRepository>();
 
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
+
+builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
+
+builder.Services.AddScoped<SeendingData>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
