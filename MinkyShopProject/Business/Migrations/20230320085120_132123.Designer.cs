@@ -12,8 +12,8 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    [Migration("20230319082014_MinkyShop")]
-    partial class MinkyShop
+    [Migration("20230320085120_132123")]
+    partial class _132123
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

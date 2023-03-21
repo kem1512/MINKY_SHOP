@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MinkyShopProject.Business.Migrations
 {
-    public partial class @new : Migration
+    public partial class _132123 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

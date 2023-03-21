@@ -26,8 +26,6 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         string GiaTri = "";
 
-        string LoaiHangHoa = "";
-
         bool showNhomSanPham = false;
 
         string Url = "https://localhost:7053/api";
