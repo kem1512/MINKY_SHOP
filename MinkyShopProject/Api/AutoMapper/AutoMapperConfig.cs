@@ -44,7 +44,7 @@ namespace MinkyShopProject.Api.AutoMapper
             CreateMap<GiaTri, GiaTriModel>().ReverseMap();
 
             // Nhân viên
-            CreateMap<NhanVien, NhanVienModel.NhanVienViewModel>().ReverseMap();
+            CreateMap<NhanVien, NhanVienModel.NhanVienCreateModel>().ReverseMap();
 
             // Biến thể
 
