@@ -100,7 +100,13 @@
                                                     </div>
                                                     <input class="form-control" type="text" @onfocus="() => { showGiaTri[x.Index] = true; }"
                                                    @oninput='(ui) => GiaTri = ui.Value?.ToString() ?? ""'
-                                                   @onkeyup='(KeyboardEventArgs ui) => { if(ui.Code == "Enter"){ x.Value.GiaTriTemplates?.Add(new Data.Models.GiaTriModel(){ Ten = GiaTri }); } } '>
+                                                   @onkeyup='(KeyboardEventArgs ui) => { if(ui.Code == "Enter"){ 
+                                                    if(!(string.IsNullOrEmpty(GiaTri.Trim()) || x.Value.GiaTriTemplates.Any(c => c.Ten.ToTitleCase() == GiaTri.ToTitleCase()) || GiaTri.CheckCharacterSpecial())){
+x.Value.GiaTriTemplates?.Add(new Data.Models.GiaTriModel(){ Ten = GiaTri });
+}
+
+
+} } '>
                                                 </div>
                                             </div>
                                             <div class="d-flex flex-wrap position-relative pb-2">
