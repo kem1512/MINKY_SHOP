@@ -21,5 +21,19 @@ namespace MinkyShopProject.Api.Controllers
             var result = await _IThongKeRepository.ThongKeSanPhamBanNhieuNhatTheoThangNam();
             return Helper.TransformData(result);
         }
+
+        [HttpGet, Route("ThongKeTongTienNgayTienThangNam")]
+        public async Task<IActionResult> ThongKeTongTienNgayTienThangNam()
+        {
+            var result = await _IThongKeRepository.ThongKeTongTienNgayTienThangNam();
+            return Helper.TransformData(result);
+        }
+
+        [HttpGet, Route("ThongKeNhanVienBanDuocNhieuHoaDonvaTienNhat")]
+        public async Task<IActionResult> ThongKeNhanVienBanDuocNhieuHoaDonvaTienNhat()
+        {
+            var result = await _IThongKeRepository.ThongKeNhanVienBanDuocNhieuHoaDonvaTienNhat();
+            return Helper.TransformData(result);
+        }
     }
 }
