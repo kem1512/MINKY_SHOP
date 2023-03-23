@@ -33,7 +33,7 @@ namespace MinkyShopProject.Business.Entities
 
         public int TrangThai { get; set; }
 
-        public List<VoucherKhachHang>? VoucherKhachHangs { get; set; }
+        public List<VoucherKhachHang> VoucherKhachHangs { get; set; } = null!;
 
         public List<VoucherLog>? VoucherLogs { get; set; } = null!;
     }

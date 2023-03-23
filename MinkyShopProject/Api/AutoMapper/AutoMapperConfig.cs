@@ -27,6 +27,12 @@ namespace MinkyShopProject.Api.AutoMapper
             // Sản Phẩm
             CreateMap<SanPham, SanPhamModel>().ReverseMap();
 
+            CreateMap<Voucher, VoucherModel>().ReverseMap();
+
+            CreateMap<Pagination<Voucher>, Pagination<VoucherModel>>().ReverseMap();
+
+            CreateMap<Voucher, VoucherCreateModel>().ReverseMap();
+
             CreateMap<Pagination<SanPham>, Pagination<SanPhamModel>>().ReverseMap();
 
             // Hóa đơn

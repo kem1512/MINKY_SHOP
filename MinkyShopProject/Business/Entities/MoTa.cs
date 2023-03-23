@@ -14,6 +14,6 @@ namespace MinkyShopProject.Business.Entities
 
         public string? Anh { get; set; }
 
-        public SanPham? SanPham { get; set; }
+        public SanPham SanPham { get; set; } = null!;
     }
 }

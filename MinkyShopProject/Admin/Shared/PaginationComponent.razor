@@ -10,7 +10,7 @@
                 @foreach (var i in Enumerable.Range(1, Model.Data.TotalPages))
                 {
                     <li class="page-item">
-                        <NavLink class="page-link" href="@($"{NavigationManager.BaseUri}{Url}/page/{i}")">@i</NavLink>
+                        <NavLink class=@($"page-link {(i == 1 && !NavigationManager.Uri.ToLower().Contains("page") ? "active" : "") }") href="@($"{NavigationManager.BaseUri}{Url}/page/{i}")">@i</NavLink>
                     </li>
                 }
             }

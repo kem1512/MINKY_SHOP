@@ -7,7 +7,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdNhanVien { get; set; } = Guid.Parse("E0921328-1982-4107-8272-DE00F8505341");
+        public Guid IdNhanVien { get; set; } = Guid.Parse("5712f288-c1f7-4215-9c29-ef182fb42527");
 
         public Guid? IdKhachHang { get; set; }
 

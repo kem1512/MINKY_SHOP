@@ -14,10 +14,10 @@ namespace MinkyShopProject.Business.Entities
 
         public Guid IdSanPham { get; set; }
 
-        public SanPham? SanPham { get; set; }
+        public SanPham SanPham { get; set; } = null!;
 
-        public ThuocTinh? ThuocTinh { get; set; }
+        public ThuocTinh ThuocTinh { get; set; } = null!;
 
-        public List<BienTheChiTiet>? BienTheChiTiets { get; set; }
+        public List<BienTheChiTiet> BienTheChiTiets { get; set; } = null!;
     }
 }

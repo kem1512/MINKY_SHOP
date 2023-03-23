@@ -53,7 +53,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
         {
             try
             {
-                return new ResponseObject<SanPhamModel>(_mapper.Map<Entities.SanPham, SanPhamModel>(await _context.SanPham.Include(c => c.NhomSanPham).Include(c => c.BienThes).ThenInclude(c => c.BienTheChiTiets).ThenInclude(c => c.GiaTri).FirstAsync(c => c.Id == id)));
+                return new ResponseObject<SanPhamModel>(_mapper.Map<Entities.SanPham, SanPhamModel>(await _context.SanPham.AsNoTracking().Include(c => c.NhomSanPham).Include(c => c.BienThes).ThenInclude(c => c.BienTheChiTiets).ThenInclude(c => c.GiaTri).FirstAsync(c => c.Id == id)));
             }
             catch (Exception e)
             {

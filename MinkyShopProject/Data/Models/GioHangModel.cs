@@ -11,7 +11,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdKhachHang { get; set; }
+        public Guid IdKhachHang { get; set; } = Guid.Parse("77CE0336-843F-417B-979A-82B61068C477");
 
         public DateTime NgayTao { get; set; }
 
@@ -29,6 +29,8 @@ namespace MinkyShopProject.Data.Models
         public int SoLuong { get; set; }
 
         public float DonGia { get; set; }
+
+        public BienTheModel? BienThe { get; set; }
     }
 
     public class GioHangQueryModel : PaginationRequest

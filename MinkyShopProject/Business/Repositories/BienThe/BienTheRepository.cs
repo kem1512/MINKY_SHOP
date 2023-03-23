@@ -96,7 +96,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                     foreach (var x in skus.CartesianProduct())
                     {
                         // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                        var bienThe = new Entities.BienThe() { Id = idBienThe, IdSanPham = idSanPham, Sku = String.Join("", x.Select(c => c.Split("/")[0])) + Helper.RandomString(3) };
+                        var bienThe = new Entities.BienThe() { Id = idBienThe, SoLuong = new Random().Next(0, 100), GiaBan = new Random().Next(500, 5000000), IdSanPham = idSanPham, Sku = String.Join("", x.Select(c => c.Split("/")[0])) + Helper.RandomString(3) };
                         await _context.BienThe.AddAsync(bienThe);
 
                         foreach (var y in x)
@@ -183,7 +183,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                              };
             #endregion
 
-            var sanPham = await _context.SanPham.AsNoTracking().Include(c => c.BienThes).ThenInclude(c => c.BienTheChiTiets).AsNoTracking().Include(c => c.NhomSanPham).ThenInclude(c => c.NhomSanPhamEntity).AsNoTracking().FirstAsync(c => c.Id == id);
+            var sanPham = await _context.SanPham.AsNoTracking().Include(c => c.BienThes).ThenInclude(c => c.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().Include(c => c.NhomSanPham).ThenInclude(c => c.NhomSanPhamEntity).AsNoTracking().FirstAsync(c => c.Id == id);
 
             var bienTheChiTietModel = new BienTheChiTietModel() { ThuocTinhs = thuocTinhs.ToList(), SanPham = _mapper.Map<Entities.SanPham, SanPhamModel>(sanPham) };
 
@@ -201,8 +201,6 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 if (bienThe == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
-
-                bienThe.Ten = obj.Ten;
 
                 bienThe.TrangThai = obj.TrangThai;
 

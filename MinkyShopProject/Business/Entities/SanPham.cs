@@ -23,12 +23,12 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public MoTa? MoTa { get; set; }
+        public MoTa MoTa { get; set; } = null!;
 
-        public NhomSanPham? NhomSanPham { get; set; }
+        public NhomSanPham NhomSanPham { get; set; } = null!;
 
-        public List<BienThe>? BienThes { get; set; }
+        public List<BienThe> BienThes { get; set; } = null!;
 
-        public List<ThuocTinhSanPham>? ThuocTinhSanPhams { get; set; }
+        public List<ThuocTinhSanPham> ThuocTinhSanPhams { get; set; } = null!;
     }
 }

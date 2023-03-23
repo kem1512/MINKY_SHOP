@@ -22,8 +22,8 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public HoaDon? HoaDon { get; set; }
+        public HoaDon HoaDon { get; set; } = null!;
 
-        public Voucher? Voucher { get; set; }
+        public Voucher Voucher { get; set; } = null!;
     }
 }

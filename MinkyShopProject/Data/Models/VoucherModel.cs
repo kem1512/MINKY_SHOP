@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinkyShopProject.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,42 @@ using System.Threading.Tasks;
 namespace MinkyShopProject.Data.Models
 {
     public class VoucherModel
+    {
+        public Guid Id { get; set; }
+
+        public string? Ma { get; set; }
+
+        public string? Ten { get; set; }
+
+        public int LoaiGiamGia { get; set; }
+
+        public int HinhThucGiamGia { get; set; }
+
+        public float SoTienCan { get; set; }
+
+        public float SoTienGiam { get; set; }
+
+        public DateTime NgayApDung { get; set; }
+
+        public DateTime NgayKetThuc { get; set; }
+
+        public int SoLuong { get; set; }
+
+        public string? MoTa { get; set; }
+
+        public int TrangThai { get; set; }
+
+        public List<VoucherKhachHangModel>? VoucherKhachHangs { get; set; }
+
+        public List<VoucherLogModel>? VoucherLogs { get; set; } = null!;
+    }
+
+    public class VoucherQueryModel : PaginationRequest
+    {
+        public int? TrangThai { get; set; }
+    }
+
+    public class VoucherCreateModel
     {
         public Guid Id { get; set; }
 

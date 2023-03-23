@@ -11,7 +11,6 @@ namespace MinkyShopProject.Data.Models
 
         public string? Ma { get; set; } = null!;
 
-        [Required]
         public string? Ten { get; set; } = null!;
 
         public string? Anh { get; set; } = null!;

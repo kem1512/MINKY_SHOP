@@ -85,7 +85,10 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(await _context.HoaDon.Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).FirstOrDefaultAsync(c => c.Id == id)));
+                var result = await _context.HoaDon.Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).FirstOrDefaultAsync(c => c.Id == id);
+                if (result != null)
+                    return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(result));
+                return new ResponseError(HttpStatusCode.InternalServerError, "Không Tìm Thấy");
             }
             catch (Exception e)
             {

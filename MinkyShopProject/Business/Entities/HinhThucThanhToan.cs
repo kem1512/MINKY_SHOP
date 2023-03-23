@@ -19,8 +19,8 @@ namespace MinkyShopProject.Business.Entities
 
         public float TongTienThanhToan { get; set; }
 
-        public string? GhiChu { get; set; }
+        public string GhiChu { get; set; } = null!;
 
-        public HoaDon? HoaDon { get; set; }
+        public HoaDon HoaDon { get; set; } = null!;
     }
 }

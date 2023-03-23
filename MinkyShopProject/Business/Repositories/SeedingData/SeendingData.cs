@@ -38,8 +38,8 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
                     TrangThai = faker.Random.Int(min: 0, max: 1),
                 }
                 );
-                _Context.SaveChangesAsync();
             }
+            await _Context.SaveChangesAsync();
         }
         public async Task SeeddingNhanVien()
         {
@@ -67,8 +67,8 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
                     VaiTro = faker.Random.Int(min: 0, max: 1),
                 }
                 );
-                _Context.SaveChangesAsync();
             }
+            await _Context.SaveChangesAsync();
         }
         public async Task SeeddingHoaDon()
         {
@@ -100,8 +100,8 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
                     TenNguoiNhan = faker.Name.FirstName(),
                     NgayTao = faker.Date.Between(DateTime.Today.AddMonths(-6), DateTime.Now),
                 });
-                await _Context.SaveChangesAsync();
             }
+            await _Context.SaveChangesAsync();
         }
         public async Task SeeddingKhachHang()
         {
@@ -129,8 +129,8 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
                     TrangThai = faker.Random.Int(min: 0, max: 1),
                     NgayTao = faker.Date.Between(DateTime.Today.AddMonths(-6), DateTime.Now),
                 });
-                await _Context.SaveChangesAsync();
             }
+            await _Context.SaveChangesAsync();
         }
     }
 }

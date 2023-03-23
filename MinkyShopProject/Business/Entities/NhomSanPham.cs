@@ -18,10 +18,10 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public List<NhomSanPham>? NhomSanPhams { get; set; }
+        public List<NhomSanPham> NhomSanPhams { get; set; } = null!;
 
-        public NhomSanPham? NhomSanPhamEntity { get; set; }
+        public NhomSanPham NhomSanPhamEntity { get; set; } = null!;
 
-        public List<SanPham>? SanPhams { get; set; }
+        public List<SanPham> SanPhams { get; set; } = null!;
     }
 }

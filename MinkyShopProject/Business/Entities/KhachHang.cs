@@ -19,9 +19,9 @@ namespace MinkyShopProject.Business.Entities
 
         public string? Anh { get; set; }
 
-        public bool GioiTinh { get; set; }
+        public bool? GioiTinh { get; set; }
 
-        public DateTime NgaySinh { get; set; }
+        public DateTime? NgaySinh { get; set; }
 
         public string? DiaChi { get; set; }
 
@@ -37,12 +37,12 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public GioHang? GioHang { get; set; }
+        public GioHang GioHang { get; set; } = null!;
 
-        public ViDiem? ViDiem { get; set; }
+        public ViDiem ViDiem { get; set; } = null!;
 
-        public List<HoaDon>? HoaDons { get; set; }
+        public List<HoaDon> HoaDons { get; set; } = null!;
 
-        public List<DanhGia>? DanhGias { get; set; }
+        public List<DanhGia> DanhGias { get; set; } = null!;
     }
 }

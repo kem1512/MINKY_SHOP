@@ -19,7 +19,7 @@ namespace MinkyShopProject.Business.Entities
 
         public bool GioiTinh { get; set; }
 
-        public DateTime NgaySinh { get; set; }
+        public DateTime? NgaySinh { get; set; }
 
         public DateTime NgayTao { get; set; }
 

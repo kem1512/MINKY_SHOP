@@ -53,7 +53,7 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
             {
                 var thuocTinh = await _context.ThuocTinh.Include(c => c.ThuocTinhSanPhams).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
-                var giaTri = await _context.GiaTri.Include(c => c.BienTheChiTiets).ThenInclude(c => c.BienThe).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                var giaTri = await _context.GiaTri.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
                 if (thuocTinh == null && giaTri == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");

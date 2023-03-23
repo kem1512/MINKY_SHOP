@@ -1,6 +1,7 @@
 ﻿@page "/product/{id:guid}"
 @inject HttpClient HttpClient;
 @using Data.Models;
+@inject SweetAlertService Swal
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -78,7 +79,7 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div>
-                                            <button class="btn btn-primary mb-0 mt-lg-auto w-100" type="button" name="button" @onclick="async () => { if(Sale != null) await Sale.AddItem(Sale.index, BienThe, SoLuong); }">Add to cart</button>
+                                            <button class="btn btn-primary mb-0 mt-lg-auto w-100" type="button" name="button" @onclick="async () => { if(Sale != null) { await Sale.AddItem(Sale.index, BienThe, SoLuong); }else{ await AddCart(); } }">Add to cart</button>
                                         </div>
                                     </div>
                                 </div>
@@ -103,6 +104,8 @@
 
     [Parameter]
     public Sale.SaleComponent? Sale { get; set; }
+
+    GioHangModel GioHang = new GioHangModel() { GioHangChiTiets = new List<GioHangChiTietModel>() };
 
     string[] GiaTris = new string[0];
 
@@ -130,8 +133,16 @@
 
     void ChangeProduct()
     {
-        BienThe = BienTheChiTiet?.Data.SanPham?.BienThes?.FirstOrDefault(c => string.Join(" + ", c.Ten) == string.Join(" + ", GiaTris) || string.Join(" + ", c.Ten) == string.Join(" + ", GiaTris.Reverse())) ?? new BienTheModel();
+        BienThe = BienTheChiTiet?.Data.SanPham?.BienThes?.FirstOrDefault(c => string.Join(" + ", c.BienTheChiTiets.OrderBy(c => c.GiaTri?.Ten).Select(c => c.GiaTri?.Ten)) == string.Join(" + ", GiaTris.OrderBy(c => c))) ?? new BienTheModel();
         var sanPham = new SanPhamModel() { Ten = BienTheChiTiet?.Data.SanPham?.Ten };
         BienThe.SanPham = sanPham;
+    }
+
+    async Task AddCart()
+    {
+        GioHang.GioHangChiTiets.Add(new GioHangChiTietModel() { IdBienThe = BienThe.Id, SoLuong = SoLuong, DonGia = BienThe.GiaBan });
+        var status = await HttpClient.PutAsJsonAsync<GioHangModel>("https://localhost:7053/api/GioHang", GioHang);
+        if (status.IsSuccessStatusCode)
+            await Swal.FireAsync("Thông Báo", "Xóa Thành Công", SweetAlertIcon.Success);
     }
 }
