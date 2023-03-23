@@ -1,14 +1,11 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MinkyShopProject.Business.Context;
+﻿using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Common;
-using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
 
 namespace MinkyShopProject.Api.Controllers
 {
+    [ApiExplorerSettings(GroupName = "SanPham")]
     [Route("api/[controller]")]
     [ApiController]
     public class SanPhamController : ControllerBase

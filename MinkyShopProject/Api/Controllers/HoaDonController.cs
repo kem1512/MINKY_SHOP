@@ -1,10 +1,5 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
-using MinkyShopProject.Business.Context;
+﻿using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Repositories.HoaDon;
-using MinkyShopProject.Business.Repositories.ThuocTinh;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 

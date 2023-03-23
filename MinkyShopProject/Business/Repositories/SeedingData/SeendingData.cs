@@ -72,7 +72,7 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
         }
         public async Task SeeddingHoaDon()
         {
-            int soluong = 30;
+            int soluong = 1000;
             var ListId = ListGuid(soluong);
             var IdKhachHang = _Context.KhachHang.Select(x => x.Id).ToList();
             var IdNhanVien = _Context.NhanVien.Select(x => x.Id).ToList();
@@ -86,8 +86,8 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
                     Id = ListId[i],
                     IdKhachHang = faker.PickRandom(IdKhachHang),
                     IdNhanVien = faker.PickRandom(IdNhanVien),
-                    Ma = (i + 1).ToString().PadLeft(2, '0'),
-                    Sdt = faker.Phone.Random.ToString(),
+                    Ma = (i + 1).ToString().PadLeft(4, '0'),
+                    Sdt = faker.Phone.PhoneNumber(),
                     DiaChi = faker.Address.FullAddress(),
                     NgayNhan = faker.Date.Between(DateTime.Today.AddMonths(-5), DateTime.Now),
                     NgayGiaoHang = faker.Date.Between(DateTime.Today.AddMonths(-5), DateTime.Now),
