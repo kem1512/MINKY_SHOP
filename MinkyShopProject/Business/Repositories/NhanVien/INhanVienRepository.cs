@@ -18,5 +18,6 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
         Task<Response> Post(Entities.NhanVien NhanVien);
         Task<Response> Put(Entities.NhanVien NhanVien);
         Task<Response> Delete(Guid Id);
+        Task<Response> ChangeStatus(Guid Id,int status);
     }
 }
