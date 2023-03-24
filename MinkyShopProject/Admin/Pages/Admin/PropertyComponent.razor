@@ -36,6 +36,10 @@
                             </div>
                         </div>
                         <div class="col-12 mt-2 text-end">
+                            @if(ThuocTinh.Id != Guid.Empty)
+                            {
+                                <button class="btn btn-danger btn-sm me-2" @onclick='() => ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() }'>Hủy</button>
+                            }
                             <button class="btn btn-primary btn-sm" @onclick="AddOrUpdateAsync">Lưu Thông Tin</button>
                         </div>
                         <div class="col-6">

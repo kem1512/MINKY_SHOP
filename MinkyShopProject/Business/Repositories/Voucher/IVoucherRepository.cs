@@ -12,5 +12,7 @@ namespace MinkyShopProject.Business.Repositories.Voucher
         public Task<Response> UpdateAsync(Guid id, VoucherCreateModel obj);
 
         public Task<Response> DeleteAsync(Guid id);
+
+        public Task<Response> FindAsync(string id);
     }
 }

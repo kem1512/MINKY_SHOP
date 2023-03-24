@@ -62,7 +62,7 @@
                                                     <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.TongTien)</span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span class="text-secondary text-xs font-weight-bold">0</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">@((x.Value.VoucherLogs != null && x.Value.VoucherLogs.Any()) ? Helper.FormatMoney(x.Value.VoucherLogs?[0].SoTienGiam) : 0)</span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.HinhThucThanhToans.Sum(c => c.TongTienThanhToan))</span>
@@ -84,7 +84,7 @@
                     <div class="offcanvas offcanvas-end w-75" tabindex="-1" id="offcanvasExample">
                         @if (HoaDon != null)
                         {
-                            <InvoiceDetailComponent Id="HoaDon.Id"></InvoiceDetailComponent>
+                            <InvoiceDetailComponent HoaDon="HoaDon"></InvoiceDetailComponent>
                         }
                     </div>
                 </div>
@@ -102,7 +102,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", "1").AddQuery("size", "5"));
+        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", "1").AddQuery("size", "5").AddQuery("sort", "-NgayTao"));
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

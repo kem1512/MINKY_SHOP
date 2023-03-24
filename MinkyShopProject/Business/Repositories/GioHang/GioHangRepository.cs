@@ -57,11 +57,17 @@ namespace MinkyShopProject.Business.Repositories.GioHang
         {
             try
             {
+                var gioHang = await _context.GioHang.FirstOrDefaultAsync(c => c.IdKhachHang == id);
                 var gioHangChiTiet = await _context.GioHangChiTiet.FirstOrDefaultAsync(c => c.BienThe.Id == id);
 
                 if (gioHangChiTiet != null)
                 {
                     _context.GioHangChiTiet.Remove(gioHangChiTiet);
+                }
+                else
+                {
+                    if (gioHang != null)
+                        _context.GioHang.Remove(gioHang);
                 }
 
                 var status = await _context.SaveChangesAsync();
@@ -116,7 +122,10 @@ namespace MinkyShopProject.Business.Repositories.GioHang
                 var gioHang = _context.GioHang.AsNoTracking().FirstOrDefault(c => c.IdKhachHang == obj.IdKhachHang);
 
                 if (gioHang == null)
+                {
                     gioHang = new Entities.GioHang() { Id = Guid.NewGuid(), IdKhachHang = obj.IdKhachHang };
+                    await _context.GioHang.AddAsync(gioHang);
+                }
 
                 if (obj.GioHangChiTiets != null && obj.GioHangChiTiets.Count() > 0)
                 {

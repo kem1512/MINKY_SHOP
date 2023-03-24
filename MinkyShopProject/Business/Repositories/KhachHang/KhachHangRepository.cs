@@ -99,7 +99,7 @@ namespace MinkyShopProject.Business.Repositories.KhachHang
             try
             {
 
-                var result = _Context.KhachHang.GetPage(filter);
+                var result = _Context.KhachHang.Where(c => c.Ten.Contains(filter.Ten ?? "")).GetPage(filter);
                 var data = _Mapper.Map<Pagination<Entities.KhachHang>, Pagination<KhachHangModel>>(result);
                 return new ResponsePagination<KhachHangModel>(data);
 

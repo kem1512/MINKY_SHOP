@@ -7,7 +7,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdNhanVien { get; set; } = Guid.Parse("5712f288-c1f7-4215-9c29-ef182fb42527");
+        public Guid IdNhanVien { get; set; } = Guid.Parse("0433161f-eb7d-44c6-a95a-f9c10978bcd9");
 
         public Guid? IdKhachHang { get; set; }
 
@@ -43,6 +43,8 @@ namespace MinkyShopProject.Data.Models
 
         public TrangThaiHoaDon TrangThai { get; set; }
 
+        public List<VoucherLogModel>? VoucherLogs { get; set; }
+
         public List<HoaDonChiTietModel> HoaDonChiTiets { get; set; } = new List<HoaDonChiTietModel>();
     }
 
@@ -58,7 +60,7 @@ namespace MinkyShopProject.Data.Models
 
         public float TongTienThanhToan { get; set; }
 
-        public string? GhiChu { get; set; }
+        public string? GhiChu { get; set; } = "";
     }
 
     public class HoaDonChiTietModel

@@ -85,7 +85,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                var result = await _context.HoaDon.Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).FirstOrDefaultAsync(c => c.Id == id);
+                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).FirstOrDefaultAsync(c => c.Id == id);
                 if (result != null)
                     return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(result));
                 return new ResponseError(HttpStatusCode.InternalServerError, "Không Tìm Thấy");
@@ -101,7 +101,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.BienTheChiTiets).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {
@@ -123,6 +123,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
                 hoaDon = _mapper.Map<HoaDonModel, Entities.HoaDon>(obj);
+                hoaDon.VoucherLogs = new List<Entities.VoucherLog>();
 
                 _context.HoaDon.Update(hoaDon);
 

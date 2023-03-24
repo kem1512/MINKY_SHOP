@@ -143,6 +143,6 @@
         GioHang.GioHangChiTiets.Add(new GioHangChiTietModel() { IdBienThe = BienThe.Id, SoLuong = SoLuong, DonGia = BienThe.GiaBan });
         var status = await HttpClient.PutAsJsonAsync<GioHangModel>("https://localhost:7053/api/GioHang", GioHang);
         if (status.IsSuccessStatusCode)
-            await Swal.FireAsync("Thông Báo", "Xóa Thành Công", SweetAlertIcon.Success);
+            await Swal.FireAsync("Thông Báo", "Thêm Thành Công", SweetAlertIcon.Success);
     }
 }

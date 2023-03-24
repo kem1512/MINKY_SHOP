@@ -26,6 +26,16 @@ namespace MinkyShopProject.Common
             return result;
         }
 
+        public static string BaCham(this string text, int soLuong)
+        {
+            return text.Substring(0, soLuong) + "...";
+        }
+
+        public static T ConvertJson<T>(object obj)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+        }
+
         public static string ToTitleCase(this string title)
         {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower().Trim());

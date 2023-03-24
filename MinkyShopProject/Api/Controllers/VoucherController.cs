@@ -29,6 +29,12 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _repository.GetAsync(obj));
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult> FindAsync(string id)
+        {
+            return Helper.TransformData(await _repository.FindAsync(id));
+        }
+
         [HttpPost()]
         public async Task<ActionResult> AddAsync([FromBody] VoucherCreateModel obj)
         {

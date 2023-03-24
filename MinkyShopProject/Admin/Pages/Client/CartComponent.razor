@@ -58,7 +58,7 @@
                                     <div class="d-flex justify-content-between">
                                         <label class="form-control-label" for="input-name">Tên người nhận</label>
                                     </div>
-                                    <input type="text" id="input-name" class="form-control form-control-alternative" placeholder="Nhập tên người nhận">
+                                    <input type="text" id="input-name" class="form-control form-control-alternative" @bind="HoaDon.TenNguoiNhan" placeholder="Nhập tên người nhận">
                                 </div>
                             </div>
                             <div class="d-block">
@@ -66,7 +66,7 @@
                                     <div class="d-flex justify-content-between">
                                         <label class="form-control-label" for="input-address">Địa chỉ</label>
                                     </div>
-                                    <input type="text" id="input-address" class="form-control form-control-alternative" placeholder="Nhập địa chỉ">
+                                    <input type="text" id="input-address" class="form-control form-control-alternative" @bind="HoaDon.DiaChi" placeholder="Nhập địa chỉ">
                                 </div>
                             </div>
                             <div class="d-block">
@@ -74,14 +74,14 @@
                                     <div class="d-flex justify-content-between">
                                         <label class="form-control-label" for="input-phone">Số điện thoại</label>
                                     </div>
-                                    <input type="text" id="input-phone" class="form-control form-control-alternative" placeholder="Nhập số điện thoại">
+                                    <input type="text" id="input-phone" class="form-control form-control-alternative" @bind="HoaDon.Sdt" placeholder="Nhập số điện thoại">
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer pt-0">
                             <div class="d-flex align-items-center justify-content-between">
-                                <button class="btn btn-primary" type="submit">Xác nhận</button>
-                                <h4 class="text-muted text-right text-sm">Tổng tiền: @string.Format("{0:0,0}", GioHangs.Data.GioHangChiTiets.Sum(c => c.DonGia * c.SoLuong)) VNĐ</h4>
+                                <button class="btn btn-primary" type="submit" @onclick="Add">Xác nhận</button>
+                                <h4 class="text-muted text-right text-sm text-bolder">Tổng tiền: @string.Format("{0:0,0}", GioHangs.Data.GioHangChiTiets.Sum(c => c.DonGia * c.SoLuong)) VNĐ</h4>
                             </div>
                         </div>
                     </div>
@@ -100,9 +100,11 @@
 @code{
     ResponseObject<GioHangModel>? GioHangs;
 
+    HoaDonModel HoaDon = new HoaDonModel();
+
     protected async override Task OnInitializedAsync()
     {
-        GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=77CE0336-843F-417B-979A-82B61068C477");
+        GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=8b00e3e6-9743-453e-9c97-c7b480772948");
     }
 
     async Task Remove(Guid id)
@@ -114,5 +116,27 @@
             return;
         }
         await Swal.FireAsync("Thông báo", "Xóa thất bại", SweetAlertIcon.Success);
+    }
+
+    async Task Add()
+    {
+        if(GioHangs?.Data.GioHangChiTiets != null)
+        {
+            HoaDon.IdKhachHang = Guid.Parse("8b00e3e6-9743-453e-9c97-c7b480772948");
+            HoaDon.LoaiDonHang = 1;
+            HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Ship;
+            foreach (var x in GioHangs.Data.GioHangChiTiets)
+            {
+                HoaDon.HoaDonChiTiets.Add(new HoaDonChiTietModel() { IdBienThe = x.IdBienThe, DonGia = x.DonGia, SoLuong = x.SoLuong });
+            }
+            HoaDon.TongTien = HoaDon.HoaDonChiTiets.Sum(c => c.SoLuong * c.DonGia);
+        }
+        var status = await HttpClient.PostAsJsonAsync<HoaDonModel>("https://localhost:7053/api/HoaDon", HoaDon);
+        if(status.IsSuccessStatusCode)
+        {
+            await HttpClient.DeleteAsync("https://localhost:7053/api/GioHang?id=" + HoaDon.IdKhachHang);
+            GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=8b00e3e6-9743-453e-9c97-c7b480772948");
+            await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
+        }
     }
 }
