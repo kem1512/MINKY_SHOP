@@ -7,8 +7,12 @@ using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using MinkyShopProject.Data.Pagination;
 using System.Data;
+using System.IO;
 using System.Reflection.Metadata.Ecma335;
 using PaginationRequest = MinkyShopProject.Business.Pagination.PaginationRequest;
+using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace MinkyShopProject.Api.Controllers
 {
@@ -17,10 +21,16 @@ namespace MinkyShopProject.Api.Controllers
     public class NhanViensController : ControllerBase
     {
         private readonly INhanVienRepository _Repository;
+        private readonly IWebHostEnvironment _env;
+        private static string ApiKey = "AIzaSyC1CQ9feCUbui7LV6qId8nesbF9TNma05E";
+        private static string Bucket = "imagesangularapp.appspot.com";
+        private static string AuthEmail = "truong@gmail.com";
+        private static string AuthPassword = "123456";
 
-        public NhanViensController(INhanVienRepository Repository)
+        public NhanViensController(INhanVienRepository Repository,IWebHostEnvironment env)
         {
             _Repository = Repository;
+            _env = env;
         }
 
         [HttpGet]
@@ -29,7 +39,7 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _Repository.Get(paginationRequest));
         }
 
-        [HttpGet("/nhanvien/{id}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult> GetById(Guid id)
         {
             return Helper.TransformData(await _Repository.GetById(id));
@@ -84,6 +94,12 @@ namespace MinkyShopProject.Api.Controllers
         public async Task<ActionResult> Delete(Guid id)
         {
             return Helper.TransformData(await _Repository.Delete(id));
+        }
+
+        [HttpDelete("ChangeStatus/{Id}/{Status}")]
+        public async Task<ActionResult> ChangeStatus(Guid Id,int Status)
+        {
+            return Helper.TransformData(await _Repository.ChangeStatus(Id, Status));
         }
     }
 }

@@ -42,7 +42,9 @@ async function uploadImages(images) {
     //    //});
     //    console.log(new File([image], image.name, { type: image.contentType }));
     //}
-    console.log(images)
+    for (var x of images) {
+        console.log(x);
+    }
 }
 
 function choiceLoad(obj, classname) {
@@ -69,3 +71,4 @@ window.storageImages = storageImages;
 window.uploadImages = uploadImages;
 window.choiceLoad = choiceLoad;
 window.overflow = overflow;
+

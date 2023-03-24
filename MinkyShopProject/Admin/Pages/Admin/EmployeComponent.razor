@@ -10,6 +10,11 @@
                         <EditForm Model="Model" OnValidSubmit="Submit">
                             <DataAnnotationsValidator />
                             <div class="row">
+                                @if(Model.Anh != null){
+                                    <div class="col-md-12 d-flex justify-content-center mb-3">
+                                        <img class="img-thumbnail" src="@Model.Anh" style="width: 200px;border-radius: 50%;height: 200px;" />
+                                    </div>
+                                }
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between">
@@ -65,7 +70,7 @@
                                             <ValidationMessage class="form-control-label text-danger" For="() => Model.Anh"></ValidationMessage>
                                         </div>
                                         <div>
-                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Anh">
+                                            <InputFile class="form-control" id="exampleFormControlInput1" OnChange="UploadImage" multiple></InputFile>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -155,7 +160,7 @@
                                 </div>
                                 <div class="col-3">
                                     <select class="js-choice-size" @onchange="ChangePerPage">
-                                        <option value="1">1 kết quả</option>
+                                        <option value="2">2 kết quả</option>
                                         @for (int i = 1; i < 5; i++)
                                         {
                                             var index = i * 5;
@@ -187,22 +192,26 @@
                                     @foreach (var nhanvien in Response.Data.Data)
                                     {
                                         <tr>
-                                            <td class="align-middle text-center text-sm">@(nhanvien.Anh)</td>
+                                            <td class="align-middle text-center text-sm"><img src="@(nhanvien.Anh)" style="width: 100px;border-radius: 50%;height: 100px;" /></td>
                                             <td class="align-middle text-center text-sm">@(nhanvien.Ma)</td>
                                             <td class="align-middle text-center text-sm">@(nhanvien.Ten)</td>
-                                            <td class="align-middle text-center text-sm">@(nhanvien.TrangThai == 1 ? "Hoạt động" : "Không hoạt động")</td>
+                                            <td class="align-middle text-center">
+                                                <div class="form-check form-switch d-flex justify-content-center">
+                                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked="@(nhanvien.TrangThai == 0 ? false : true)" @onchange="() => ChangeStatus(nhanvien.Id,nhanvien.TrangThai)"/>
+                                                </div>
+                                            </td>
                                             <td class="align-middle text-center text-sm">@(nhanvien.VaiTro == 0 ? "Quản lí" : "Nhân viên")</td>
                                             <td class="align-middle text-center text-sm">@(nhanvien.NgayTao.ToShortDateString())</td>
                                             <td class="text-secondary text-xs font-weight-bold align-middle">
                                                 <a data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2" @onclick="() => Remove(nhanvien.Id)">
                                                     <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2">
+                                                <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2" @onclick="() => GetNhanVien(nhanvien.Id)">
                                                     <i class="fa fa-pen text-warning" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2">
+                                                @*<a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2">
                                                     <i class="fa fa-eye text-primary" aria-hidden="true"></i>
-                                                </a>
+                                                </a>*@
                                             </td>
                                         </tr>
                                     }
