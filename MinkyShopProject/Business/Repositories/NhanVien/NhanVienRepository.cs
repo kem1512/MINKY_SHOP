@@ -26,6 +26,27 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
             _context = context;
         }
 
+        public async Task<Response> ChangeStatus(Guid Id,int status)
+        {
+            try
+            {
+                var newStatus = status == 0 ? 1 : 0;
+                var nhanvien = await _context.NhanVien.FirstOrDefaultAsync(c => c.Id == Id);
+                nhanvien.TrangThai = newStatus;
+                var result = await _context.SaveChangesAsync();
+                if (result > 0)
+                {
+                    return new Response(Code.OK, "Sửa thành công");
+                }
+
+                return new ResponseError(Code.BadRequest, "Sửa thất bại");
+            }
+            catch (Exception exeption)
+            {
+                return new ResponseError(Code.InternalServerError, exeption.ToString());
+            }
+        }
+
         public async Task<Response> Delete(Guid Id)
         {
             try
