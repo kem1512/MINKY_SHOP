@@ -313,7 +313,9 @@ namespace MinkyShopProject.Business.Migrations
                     GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TienShip = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
                     TongTien = table.Column<float>(type: "real", nullable: false, defaultValue: 0f),
-                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    TrangThaiGiaoHang = table.Column<int>(type: "int", nullable: false),
+                    GhiChuGiaoHang = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -485,6 +487,7 @@ namespace MinkyShopProject.Business.Migrations
                     IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    TrangThai = table.Column<int>(type: "int", nullable: false),
                     DonGia = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
                 },
                 constraints: table =>

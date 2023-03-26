@@ -17,7 +17,7 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody] HoaDonModel obj)
+        public async Task<IActionResult> AddAsync([FromBody] HoaDonCreateModel obj)
         {
             return Helper.TransformData(await _repository.AddAsync(obj));
         }

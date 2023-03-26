@@ -41,6 +41,10 @@ namespace MinkyShopProject.Business.Entities
 
         public int TrangThai { get; set; }
 
+        public int TrangThaiGiaoHang { get; set; }
+
+        public string? GhiChuGiaoHang { get; set; }
+
         public NhanVien NhanVien { get; set; } = null!;
 
         public DanhGia DanhGia { get; set; } = null!;

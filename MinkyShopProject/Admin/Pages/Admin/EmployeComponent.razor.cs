@@ -27,7 +27,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         private SweetAlertService Swal { get; set; } = null!;
         [Parameter]
         public int Page { get; set; }
-        private PaginationRequest PaginationRequest = new PaginationRequest() { PerPage = 2};
+        private PaginationRequest PaginationRequest = new PaginationRequest() { PerPage = 2 };
         private Response<PaginationResponse<NhanVien>> Response = new Response<PaginationResponse<NhanVien>>();
         private string url = "https://localhost:7053/api/NhanViens";
         private string query = "";
@@ -223,7 +223,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
                 GioiTinh = nhanvien.GioiTinh,
                 Ma = nhanvien.Ma,
                 MatKhau = nhanvien.MatKhau,
-                NgaySinh = nhanvien.NgaySinh,
+                NgaySinh = nhanvien.NgaySinh ?? DateTime.Now,
                 Sdt = nhanvien.Sdt,
                 Ten = nhanvien.Ten,
                 TrangThai = nhanvien.TrangThai,
@@ -269,7 +269,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
             }
         }
 
-        async Task ChangeStatus(Guid Id,int Status)
+        async Task ChangeStatus(Guid Id, int Status)
         {
             var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa Trạng Thái", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
             if (string.IsNullOrEmpty(confirm.Value)) return;

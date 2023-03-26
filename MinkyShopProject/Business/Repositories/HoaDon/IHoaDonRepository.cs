@@ -14,7 +14,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
 
         public Task<Response> FindAsync(Guid id);
 
-        public Task<Response> AddAsync(HoaDonModel obj);
+        public Task<Response> AddAsync(HoaDonCreateModel obj);
 
         public Task<Response> UpdateAsync(Guid id, HoaDonModel obj);
 

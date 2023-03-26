@@ -24,7 +24,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
             _mapper = mapper;
         }
 
-        public async Task<Response> AddAsync(HoaDonModel obj)
+        public async Task<Response> AddAsync(HoaDonCreateModel obj)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
 
                 obj.Ma = "HD" + Helper.RandomString(5);
 
-                var hoaDon = _mapper.Map<HoaDonModel, Entities.HoaDon>(obj);
+                var hoaDon = _mapper.Map<HoaDonCreateModel, Entities.HoaDon>(obj);
 
                 await _context.HoaDon.AddAsync(hoaDon);
 

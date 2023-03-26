@@ -15,6 +15,8 @@ namespace MinkyShopProject.Admin.Pages.Sale
         [Inject]
         ISessionStorageService Session { get; set; } = null!;
 
+        Guid Id = Guid.Empty;
+
         [Inject]
         HttpClient HttpClient { get; set; } = null!;
 
@@ -24,391 +26,142 @@ namespace MinkyShopProject.Admin.Pages.Sale
         [Inject]
         SweetAlertService Swal { get; set; } = null!;
 
-        ProductDetailComponent? _component;
-
-        Guid Id = Guid.Empty;
-
-        bool ThanhToan = false;
+        List<HoaDonCreateModel> HoaDons = new List<HoaDonCreateModel>();
 
         ResponsePagination<SanPhamModel>? SanPhams;
 
-        ResponsePagination<KhachHangModel>? KhachHangs;
+        List<SanPhamModel> SanPhamsSearch = new List<SanPhamModel>();
 
-        List<HoaDonModel>? HoaDons = new List<HoaDonModel>();
+        Uri Url = new Uri("https://localhost:7053/api/");
 
-        public int index = 0;
+        int index = 0;
 
-        Uri Url = new Uri("https://localhost:7053/api/hoadon");
+        float soTienThanhToan = 0;
 
-        protected async override Task OnInitializedAsync()
+        List<HinhThucThanhToanModel>? HinhThucThanhToans;
+
+        protected override async Task OnInitializedAsync()
         {
-            KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>("https://localhost:7053/api/KhachHang/Get");
-            HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart") ?? new List<HoaDonModel>();
-            if (!HoaDons.Any())
-            {
-                await AddOrder();
-            }
-            SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>("https://localhost:7053/api/SanPham");
+            SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>(Url + "sanpham");
+            await Reload();
         }
 
-        async Task CheckVoucher(string voucher)
+        async Task CapNhatTongTien()
         {
-            var voucherLog = await HttpClient.GetFromJsonAsync<ResponseObject<VoucherModel>>("https://localhost:7053/api/voucher/" + voucher);
-
-            if (voucherLog != null)
+            if (HoaDons != null && HoaDons.Any())
             {
-
-                var hoaDon = HoaDons?[index];
-
-                if (hoaDon?.TongTien < voucherLog.Data.SoTienCan)
-                {
-                    await Swal.FireAsync("", "Không Đủ Điều Kiện Áp Dụng", SweetAlertIcon.Error);
-                    return;
-                }
-
-                var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Muốn Áp Dụng Giảm Giá", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Info });
-
-                if (string.IsNullOrEmpty(confirm.Value)) return;
-
-                if (hoaDon != null)
-                {
-                    switch (voucherLog.Data.HinhThucGiamGia)
-                    {
-                        case 0:
-                            break;
-                        case 1:
-                            // Giảm giá theo giá tiền
-                            if (voucherLog.Data.LoaiGiamGia == 0)
-                            {
-                                hoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucherLog.Data.Id, Voucher = voucherLog.Data, SoTienGiam = voucherLog.Data.SoTienGiam, TienTruocKhiGiam = hoaDon.TongTien, TienSauKhiGiam = hoaDon.TongTien - voucherLog.Data.SoTienGiam } };
-                                hoaDon.TongTien = hoaDon.TongTien - voucherLog.Data.SoTienGiam;
-                            }
-                            else
-                            {
-                                var after = hoaDon.TongTien - (hoaDon.TongTien * voucherLog.Data.SoTienGiam / 100);
-                                hoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucherLog.Data.Id, Voucher = voucherLog.Data, SoTienGiam = hoaDon.TongTien - after, TienTruocKhiGiam = hoaDon.TongTien, TienSauKhiGiam = after } };
-                                hoaDon.TongTien = after;
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    await Reload();
-                }
-                return;
+                var hoaDon = HoaDons[index];
+                hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong) + hoaDon.TienShip;
             }
         }
 
-        async Task AddHoaDonThat()
+        async Task TimKiemSanPham(string value)
         {
-            var hoaDon = HoaDons?[index];
-            if (hoaDon != null)
+            if (SanPhams != null)
             {
-                if (hoaDon.HoaDonChiTiets.Any())
+                SanPhamsSearch = SanPhams.Data.Content.Where(c => c.Ma?.ToLower().Trim() == value.ToLower().Trim() || c.Ten.ToLower().Trim().Contains(value.ToLower().Trim())).ToList();
+            }
+        }
+
+        async Task XoaSanPham(int hdct)
+        {
+            if (HoaDons != null && HoaDons.Any())
+            {
+                HoaDons[index].HoaDonChiTiets.RemoveAt(hdct);
+            }
+        }
+
+        public async Task ThemSanPham(List<BienTheModel> obj)
+        {
+            if (HoaDons != null && HoaDons.Any())
+            {
+                foreach (var x in obj)
                 {
-                    if (hoaDon.LoaiDonHang == 1)
+                    if (x.SoLuongTam > x.SoLuong)
                     {
-                        hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Ship;
-                    }
-                    else if (hoaDon.LoaiDonHang == 0 && hoaDon.HinhThucThanhToans?.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip < hoaDon.TongTien)
-                    {
-                        if (hoaDon.IdKhachHang != null && hoaDon.IdKhachHang != Guid.Empty)
-                        {
-                            if (hoaDon.HinhThucThanhToans?.Sum(c => c.TongTienThanhToan) <= 0)
-                            {
-                                await Swal.FireAsync("Thông báo", "Tiền Cọc Phải Lớn Hơn 0", SweetAlertIcon.Error);
-                                return;
-                            }
-
-                            hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Debt;
-
-                            if (hoaDon.HinhThucThanhToans != null)
-                            {
-                                foreach (var x in hoaDon.HinhThucThanhToans)
-                                {
-                                    // Cọc
-                                    x.KieuThanhToan = 2;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            await Swal.FireAsync("Thông báo", "Khách Hàng Có Trong Hệ Thống Mới Có Thể Cọc", SweetAlertIcon.Error);
-                            return;
-                        }
+                        await Swal.FireAsync("", $"{x.SanPham?.Ten} Không Đủ Sản Phẩm Trong Kho", SweetAlertIcon.Error);
+                        return;
                     }
                     else
                     {
-                        hoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.Done;
-                    }
-
-                    if (hoaDon.Id != Guid.Empty)
-                    {
-                        if ((hoaDon.HinhThucThanhToans?.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip) < hoaDon.TongTien)
+                        var hdct = HoaDons[index].HoaDonChiTiets.FirstOrDefault(c => c.IdBienThe == x.Id);
+                        if (hdct != null && hdct.BienThe != null)
                         {
-                            await Swal.FireAsync("Thông báo", "Hóa Đơn Cập Nhật Phải Thanh Toán Đủ", SweetAlertIcon.Error);
-                            return;
-                        }
-
-                        hoaDon.NhanVien = null;
-
-                        hoaDon.KhachHang = null;
-
-                        var status = await HttpClient.PutAsJsonAsync(Url.AddQuery("id", hoaDon.Id.ToString()), hoaDon);
-                        if (status.IsSuccessStatusCode)
-                        {
-                            HoaDons?.RemoveAt(index);
-                            await Session.SetItemAsync("cart", HoaDons);
-                            await Swal.FireAsync("Thông báo", "Thêm Thành Công", SweetAlertIcon.Success);
+                            hdct.SoLuong += x.SoLuongTam;
                         }
                         else
                         {
-                            await Swal.FireAsync("Thông báo", "Thêm Thất Bại", SweetAlertIcon.Error);
+                            HoaDons[index].HoaDonChiTiets.Add(new HoaDonChiTietModel() { IdBienThe = x.Id, SoLuong = x.SoLuongTam, DonGia = x.GiaBan, BienThe = x });
                         }
                     }
-                    else
+                }
+                HoaDons[index].TongTien = HoaDons[index].HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong);
+                StateHasChanged();
+            }
+        }
+
+        void XoaHinhThucThanhToan(int kieuThanhToan)
+        {
+            if (HinhThucThanhToans != null)
+            {
+                var hinhThucThanhToan = HinhThucThanhToans.FirstOrDefault(c => c.KieuThanhToan == kieuThanhToan);
+                if (hinhThucThanhToan != null)
+                {
+                    HinhThucThanhToans.Remove(hinhThucThanhToan);
+                    if (HinhThucThanhToans.Count <= 0)
                     {
-                        if (hoaDon.LoaiDonHang == 1)
-                        {
-                            if (string.IsNullOrEmpty(hoaDon.TenNguoiNhan) || string.IsNullOrEmpty(hoaDon.Sdt) || string.IsNullOrEmpty(hoaDon.DiaChi))
-                            {
-                                await Swal.FireAsync("Thông báo", "Vui Lòng Nhập Đầy Đủ Thông Tin Giao Hàng", SweetAlertIcon.Error);
-                                return;
-                            }
-                            else
-                            {
-                                if (hoaDon.HinhThucThanhToans != null)
-                                {
-                                    hoaDon.HinhThucThanhToans = new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() { KieuThanhToan = 2, TongTienThanhToan = hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) } };
-                                }
-                            }
-                        }
-
-                        hoaDon.NhanVien = null;
-
-                        hoaDon.KhachHang = null;
-
-                        if (hoaDon.VoucherLogs != null)
-                            hoaDon.VoucherLogs[0].Voucher = null;
-
-                        var status = await HttpClient.PostAsJsonAsync(Url, HoaDons?[index]);
-
-                        if (status.IsSuccessStatusCode)
-                        {
-                            HoaDons?.RemoveAt(index);
-                            await Session.SetItemAsync("cart", HoaDons);
-                            await Swal.FireAsync("Thông báo", "Thêm Thành Công", SweetAlertIcon.Success);
-                        }
-                        else
-                        {
-                            await Swal.FireAsync("Thông báo", "Thêm Thất Bại", SweetAlertIcon.Error);
-                        }
+                        HinhThucThanhToans.Add(new HinhThucThanhToanModel() { KieuThanhToan = 0, TongTienThanhToan = 0 });
                     }
+                }
+            }
+        }
+
+        public async Task ThemHinhThucThanhToan(int kieuThanhToan)
+        {
+            if (HinhThucThanhToans != null)
+            {
+                var hinhThucThanhToan = HinhThucThanhToans.FirstOrDefault(c => c.KieuThanhToan == kieuThanhToan);
+                if (hinhThucThanhToan == null)
+                {
+                    HinhThucThanhToans.Add(new HinhThucThanhToanModel() { KieuThanhToan = kieuThanhToan, TongTienThanhToan = soTienThanhToan });
                 }
                 else
                 {
-                    await Swal.FireAsync("Thông báo", "Hóa Đơn Chưa Có Sản Phẩm", SweetAlertIcon.Error);
+                    hinhThucThanhToan.TongTienThanhToan += soTienThanhToan;
                 }
+                soTienThanhToan = 0;
             }
         }
 
-        async Task AddHinhThucThanhToan(int i)
+        async Task ThemHoaDon()
         {
-            var hoaDon = HoaDons?[index];
-            if (hoaDon != null)
+            if (HoaDons != null && HoaDons.Any() && HoaDons.Count < 10)
             {
-                if (i == 1)
-                {
-                    if (hoaDon.Id != Guid.Empty)
-                    {
-                        if (hoaDon.HinhThucThanhToans.Count() == 3)
-                        {
-                            hoaDon.HinhThucThanhToans.RemoveAt(2);
-                        }
-                        else
-                        {
-                            hoaDon.HinhThucThanhToans[1].KieuThanhToan = 1;
-                        }
-                    }
-                    else
-                    {
-                        if (hoaDon.HinhThucThanhToans.Count() > 1)
-                        {
-                            hoaDon.HinhThucThanhToans.RemoveAt(1);
-                        }
-                        else
-                        {
-                            hoaDon.HinhThucThanhToans[0].KieuThanhToan = 1;
-                        }
-                    }
-                }
-                else if (i == 0)
-                {
-                    if (hoaDon.Id != Guid.Empty)
-                    {
-                        if (hoaDon.HinhThucThanhToans.Count == 3)
-                        {
-                            hoaDon.HinhThucThanhToans.RemoveAt(1);
-                        }
-                        else
-                        {
-                            hoaDon.HinhThucThanhToans[1].KieuThanhToan = 0;
-                        }
-                    }
-                    else
-                    {
-                        if (hoaDon.HinhThucThanhToans.Count() > 1)
-                        {
-                            hoaDon.HinhThucThanhToans.RemoveAt(0);
-                        }
-                        else
-                        {
-                            hoaDon.HinhThucThanhToans[0].KieuThanhToan = 0;
-                        }
-                    }
-                }
-                else if (i == 2)
-                {
-                    if (hoaDon.Id != Guid.Empty)
-                    {
-                        switch (hoaDon.HinhThucThanhToans.Count())
-                        {
-                            case 1:
-                                hoaDon.HinhThucThanhToans.AddRange(new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() { KieuThanhToan = 1 }, new HinhThucThanhToanModel() { KieuThanhToan = 0 } });
-                                break;
-                            case 2:
-                                hoaDon.HinhThucThanhToans.RemoveAt(1);
-                                hoaDon.HinhThucThanhToans.AddRange(new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() { KieuThanhToan = 1 }, new HinhThucThanhToanModel() { KieuThanhToan = 0 } });
-                                break;
-                            case 3:
-                                hoaDon.HinhThucThanhToans[1].KieuThanhToan = 1;
-                                hoaDon.HinhThucThanhToans[2].KieuThanhToan = 0;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        hoaDon.HinhThucThanhToans = new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() { KieuThanhToan = 1 }, new HinhThucThanhToanModel() { KieuThanhToan = 0 } };
-                    }
-                }
-                await Reload();
-            }
-        }
-
-        async Task AddKhachHang(int id)
-        {
-            if (id == 999)
-            {
-                HoaDons[index].KhachHang = new KhachHangModel() { Ten = "Khách Lẻ" };
-                HoaDons[index].IdKhachHang = null;
-                await Session.SetItemAsync("cart", HoaDons);
+                HoaDons.Add(new HoaDonCreateModel());
+                await JSRuntime.InvokeVoidAsync("overflow");
             }
             else
             {
-                var khachHang = KhachHangs?.Data.Content[id];
-                if (khachHang != null)
-                {
-                    var hoaDon = HoaDons?[index];
-                    if (hoaDon != null)
-                    {
-                        hoaDon.KhachHang = khachHang;
-                        hoaDon.IdKhachHang = khachHang.Id;
-                        await Session.SetItemAsync("cart", HoaDons);
-                    }
-                }
+                await Swal.FireAsync("", "Không Thể Thêm Quá 10 Hóa Đơn", SweetAlertIcon.Error);
             }
         }
 
-        public async Task AddItem(int index, BienTheModel obj, int soLuong)
+        async Task XoaHoaDon(int index)
         {
-            if (HoaDons?[index].HoaDonChiTiets != null)
+            if (HoaDons != null && HoaDons.Any())
             {
-                var hoaDon = HoaDons?[index];
-                if (hoaDon != null)
+                HoaDons.RemoveAt(index);
+                await JSRuntime.InvokeVoidAsync("overflow");
+                if (HoaDons.Count <= 0)
                 {
-                    for (int i = 0; i < hoaDon.HoaDonChiTiets.Count(); i++)
-                    {
-                        if (hoaDon.HoaDonChiTiets[i].BienThe?.Id == obj.Id)
-                        {
-                            hoaDon.HoaDonChiTiets[i].SoLuong += soLuong;
-                            hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) + hoaDon?.TienShip - hoaDon?.VoucherLogs?[0].SoTienGiam ?? 0;
-                            await Session.SetItemAsync("cart", HoaDons);
-                            return;
-                        }
-                    }
-                    hoaDon.HoaDonChiTiets.Add(new HoaDonChiTietModel() { BienThe = obj, SoLuong = soLuong, IdBienThe = obj.Id, DonGia = obj.GiaBan });
-                    hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) + hoaDon?.TienShip ?? 0;
-                    await Session.SetItemAsync("cart", HoaDons);
+                    HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() { } };
                 }
             }
-        }
-
-        async Task RemoveItem(int index, int indexHdct)
-        {
-            if (HoaDons?[index].HoaDonChiTiets != null)
-            {
-                var hoaDon = HoaDons?[index];
-                if (hoaDon != null)
-                {
-                    HoaDons?[index].HoaDonChiTiets.Remove(hoaDon.HoaDonChiTiets[indexHdct]);
-                    hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) + hoaDon?.TienShip - hoaDon?.VoucherLogs?[0].SoTienGiam ?? 0;
-                }
-                await Session.SetItemAsync("cart", HoaDons);
-            }
-        }
-
-        async Task Update(int index, int indexHdct, bool plus, int soLuong = 0)
-        {
-            if (HoaDons?[index].HoaDonChiTiets != null)
-            {
-                if (soLuong != 0)
-                {
-                    HoaDons[index].HoaDonChiTiets[indexHdct].SoLuong = soLuong;
-                }
-                else
-                {
-                    if (plus)
-                    {
-                        HoaDons[index].HoaDonChiTiets[indexHdct].SoLuong += 1;
-                    }
-                    else
-                    {
-                        HoaDons[index].HoaDonChiTiets[indexHdct].SoLuong -= 1;
-                    }
-                }
-                HoaDons[index].TongTien = HoaDons?[index].HoaDonChiTiets.Sum(c => c.BienThe?.GiaBan * c.SoLuong) + HoaDons?[index]?.TienShip - HoaDons?[index].VoucherLogs?[0].SoTienGiam ?? 0;
-                await Session.SetItemAsync("cart", HoaDons);
-            }
-        }
-
-        protected async override Task OnAfterRenderAsync(bool firstRender)
-        {
-            await JSRuntime.InvokeVoidAsync("overflow");
-            if (firstRender)
-            {
-                await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': true, 'searchFields': ['label'] }", ".select-khachhang");
-            }
-        }
-
-        async Task AddOrder()
-        {
-            HoaDons?.Add(new HoaDonModel());
-            await Session.SetItemAsync("cart", HoaDons);
         }
 
         async Task Reload()
         {
-            await Session.SetItemAsync("cart", HoaDons);
+            HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
         }
-
-        async Task RemoveOrder(int index)
-        {
-            HoaDons?.RemoveAt(index);
-            await Session.SetItemAsync("cart", HoaDons);
-        }
-
-
     }
 }

@@ -28,7 +28,7 @@ namespace MinkyShopProject.Common
 
         public static string BaCham(this string text, int soLuong)
         {
-            return text.Substring(0, soLuong) + "...";
+            return soLuong < text.Length ? text.Substring(0, soLuong) + "..." : text;
         }
 
         public static T ConvertJson<T>(object obj)
