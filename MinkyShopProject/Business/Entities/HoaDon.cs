@@ -21,9 +21,17 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime? NgayThanhToan { get; set; }
 
+        public DateTime? NgayXacNhan { get; set; }
+
         public DateTime? NgayGiaoHang { get; set; }
 
         public DateTime? NgayNhan { get; set; }
+
+        public DateTime? NgayHoanThanh { get; set; }
+
+        public DateTime? NgayLayHang { get; set; }
+
+        public DateTime? NgayCapNhat { get; set; }
 
         public int LoaiDonHang { get; set; }
 

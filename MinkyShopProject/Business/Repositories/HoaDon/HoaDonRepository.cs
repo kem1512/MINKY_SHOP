@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using AutoMapper.Internal;
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
+using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using Serilog;
@@ -110,19 +112,29 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
             }
         }
 
-        public async Task<Response> UpdateAsync(Guid id, HoaDonModel obj)
+        public async Task<Response> UpdateAsync(Guid id, HoaDonCreateModel obj)
         {
             try
             {
                 if (obj == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Giá trị trả về không hợp lệ");
 
-                var hoaDon = _context.HoaDon.AsNoTracking().FirstOrDefault(c => c.Id == id);
+                obj.NhanVien = null;
+
+                var hoaDon = _context.HoaDon.AsNoTracking().Include(c => c.HoaDonChiTiets).AsNoTracking().FirstOrDefault(c => c.Id == id);
 
                 if (hoaDon == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                hoaDon = _mapper.Map<HoaDonModel, Entities.HoaDon>(obj);
+                var result = hoaDon.HoaDonChiTiets.Where(p => !obj.HoaDonChiTiets.Any(l => p.IdBienThe == l.IdBienThe)).ToList();
+
+                foreach (var x in result)
+                {
+                    _context.HoaDonChiTiet.Remove(x);
+                }
+
+                hoaDon = _mapper.Map<HoaDonCreateModel, Entities.HoaDon>(obj);
+
                 hoaDon.VoucherLogs = new List<Entities.VoucherLog>();
 
                 _context.HoaDon.Update(hoaDon);

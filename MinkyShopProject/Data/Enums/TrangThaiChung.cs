@@ -9,11 +9,21 @@ namespace MinkyShopProject.Data.Enums
 
     public enum TrangThaiHoaDon
     {
-        Done, Unfinished, Cancelled, Debt, Ship, Confirm
+        HoanThanh, DaHuy, Ship, ChoXacNhan
     }
 
     public enum TrangThaiHoaDonChiTiet
     {
         Done, Unfinished, Cancelled,
+    }
+
+    public enum TrangThaiGiaoHang
+    {
+        ChoXacNhan, ChoLayHang, DangGiao, DaGiao, DaHuy, DaGiaoNhungKhachChiNhanMotPhanHang, GiaoThatBai, KhachKhongNgheMay
+    }
+
+    public enum LoaiHoaDon
+    {
+        BanTaiQuay, DatHang, GiaoHang,
     }
 }

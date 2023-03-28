@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\MinkyShopProject.Common.csproj" />
     <ProjectReference Include="..\Data\MinkyShopProject.Data.csproj" />
   </ItemGroup>
 

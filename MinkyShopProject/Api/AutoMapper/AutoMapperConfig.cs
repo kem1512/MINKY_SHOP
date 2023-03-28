@@ -81,7 +81,7 @@ namespace MinkyShopProject.Api.AutoMapper
 
             CreateMap<VoucherKhachHang, VoucherKhachHangModel>().ReverseMap();
 
-            CreateMap<VoucherLog, VoucherLogModel>().ReverseMap();
+            CreateMap<VoucherLog, VoucherLogModel>().ForMember(c => c.Voucher, c => c.Ignore()).ReverseMap();
         }
     }
 }

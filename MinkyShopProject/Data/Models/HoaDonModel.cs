@@ -1,5 +1,6 @@
 ﻿using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
+using Newtonsoft.Json;
 
 namespace MinkyShopProject.Data.Models
 {
@@ -7,15 +8,23 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdNhanVien { get; set; } = Guid.Parse("0433161f-eb7d-44c6-a95a-f9c10978bcd9");
+        public Guid IdNhanVien { get; set; }
 
         public Guid? IdKhachHang { get; set; }
+
+        public DateTime? NgayLayHang { get; set; }
 
         public string? Ma { get; set; }
 
         public DateTime NgayTao { get; set; } = DateTime.Now;
 
+        public DateTime? NgayHoanThanh { get; set; }
+
+        public DateTime? NgayCapNhat { get; set; }
+
         public DateTime? NgayThanhToan { get; set; }
+
+        public DateTime? NgayXacNhan { get; set; }
 
         public DateTime? NgayGiaoHang { get; set; }
 
@@ -37,6 +46,10 @@ namespace MinkyShopProject.Data.Models
 
         public float TongTien { get; set; }
 
+        public int TrangThaiGiaoHang { get; set; } // 0 : Giao Thành Công, 1 : Giao Thất Bại
+
+        public string? GhiChuGiaoHang { get; set; }
+
         public NhanVienModel.NhanVienCreateModel? NhanVien { get; set; }
 
         public List<HinhThucThanhToanModel> HinhThucThanhToans { get; set; } = new List<HinhThucThanhToanModel>() { new HinhThucThanhToanModel() };
@@ -52,7 +65,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdNhanVien { get; set; } = Guid.Parse("0433161f-eb7d-44c6-a95a-f9c10978bcd9");
+        public Guid IdNhanVien { get; set; } = Guid.Parse("0b84f8c1-93df-4658-8691-6fc9e089e3ac");
 
         public Guid? IdKhachHang { get; set; }
 
@@ -60,13 +73,21 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgayTao { get; set; } = DateTime.Now;
 
+        public DateTime? NgayHoanThanh { get; set; }
+
+        public DateTime? NgayCapNhat { get; set; }
+
         public DateTime? NgayThanhToan { get; set; }
 
         public DateTime? NgayGiaoHang { get; set; }
 
         public DateTime? NgayNhan { get; set; }
 
-        public int LoaiDonHang { get; set; }
+        public DateTime? NgayXacNhan { get; set; }
+
+        public DateTime? NgayLayHang { get; set; }
+
+        public int LoaiDonHang { get; set; } = 0;
 
         public string? GhiChu { get; set; }
 
@@ -124,7 +145,7 @@ namespace MinkyShopProject.Data.Models
 
         public float DonGia { get; set; }
 
-        public TrangThaiHoaDon TrangThai { get; set; }
+        public int TrangThai { get; set; }
 
         public BienTheModel? BienThe { get; set; }
     }

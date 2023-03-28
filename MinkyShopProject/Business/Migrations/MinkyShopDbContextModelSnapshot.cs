@@ -370,7 +370,16 @@ namespace MinkyShopProject.Business.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTime?>("NgayCapNhat")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("NgayGiaoHang")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayHoanThanh")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayLayHang")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayNhan")
@@ -380,6 +389,9 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayThanhToan")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("NgayXacNhan")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Sdt")
