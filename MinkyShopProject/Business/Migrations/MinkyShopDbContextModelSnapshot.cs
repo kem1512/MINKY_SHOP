@@ -352,6 +352,9 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<string>("GhiChu")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GhiChuCapNhat")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("GhiChuGiaoHang")
                         .HasColumnType("nvarchar(max)");
 

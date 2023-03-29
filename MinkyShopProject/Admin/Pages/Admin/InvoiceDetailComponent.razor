@@ -26,16 +26,22 @@
                                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-ship" type="button">Thông tin giao hàng</button>
                                         </li>
                                     }
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-ghi-chu" type="button">Ghi Chú Cập Nhật</button>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="col-6 text-end">
-                                <button class="btn btn-success me-2" @onclick="async() => await CapNhatHoaDon()">Cập Nhật</button>
-                                <button class="btn btn-success me-2" @onclick="async() => { HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.HoanThanh; if(HoaDon?.NgayHoanThanh == null){ HoaDon.NgayHoanThanh = DateTime.Now; } await CapNhatHoaDon(); }">Hoàn thành</button>
+                                <button class="btn btn-success me-2" @onclick="async() => { if(await Confirm()) await CapNhatHoaDon(); }">Cập Nhật</button>
+                                <button class="btn btn-success me-2" @onclick='async() => { if(HoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) > HoaDon.TongTien && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.ChoXacNhan){ 
+                                if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.HoanThanh;
+                                    if(HoaDon?.NgayHoanThanh == null){ HoaDon.NgayHoanThanh = DateTime.Now; } await CapNhatHoaDon(); }
+                                }else{ await Swal.FireAsync("", "Hóa Đơn Phải Xác Nhận Và Thanh Toán Đủ Trước Khi Hoàn Thành", SweetAlertIcon.Error); }; }'>Hoàn thành</button>
                                 <button class="btn btn-success me-2">In</button>
-                                <button class="btn btn-danger me-2" @onclick="async() => { HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaHuy; await CapNhatHoaDon(); }">Hủy</button>
-                                @if (HoaDon?.TrangThai == MinkyShopProject.Data.Enums.TrangThaiHoaDon.ChoXacNhan && HoaDon?.LoaiDonHang != (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang)
+                                <button class="btn btn-danger me-2" @onclick="async() => { if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaHuy; await CapNhatHoaDon();} }">Hủy</button>
+                                @if (HoaDon?.TrangThai == MinkyShopProject.Data.Enums.TrangThaiHoaDon.ChoXacNhan && HoaDon?.LoaiDonHang != (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang && HoaDon?.NgayXacNhan == null)
                                 {
-                                    <button class="btn btn-danger me-2" @onclick="async() => { HoaDon.NgayXacNhan = DateTime.Now; await CapNhatHoaDon(); }">Xác Nhận</button>
+                                    <button class="btn btn-danger me-2" @onclick="async() => { if(await Confirm()) { if(HoaDon?.NgayXacNhan == null){ HoaDon.NgayXacNhan = DateTime.Now; HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaXacNhan; } await CapNhatHoaDon(); } }">Xác Nhận</button>
                                 }
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="offcanvas">Đóng</button>
                             </div>
@@ -166,18 +172,19 @@
                                                             <div class="form-check d-flex justify-content-center">
                                                                 <input class="form-check-input" type="checkbox" value="" id="fcustomCheck1" 
                                                                 @attributes='x.Value.TrangThai == 0 ? new Dictionary<string, object>(){ { "checked", "" } } : null'
-                                                                @onchange='async() => await ThayDoiTrangThaiSanPham(x.Index)'
-                                                                >
+                                                           @onchange='async() => { if(await Confirm()) { await ThayDoiTrangThaiSanPham(x.Index); } }'>
                                                             </div>
                                                         </td>
                                                         <td class="align-middle text-center text-sm">
                                                             <button class="btn btn-xs mb-0" 
                                                             @onclick='async() => { 
-                                                                if(HoaDon.HoaDonChiTiets.Count <= 0){
-                                                                    await Swal.FireAsync("", "Không Thể Xóa Hết Sản Phẩm", SweetAlertIcon.Error);
-                                                                }else{
-                                                                    HoaDon.HoaDonChiTiets.Remove(x.Value); 
-                                                                    await CapNhatTongTien();
+                                                                if(await Confirm()){
+                                                                    if(HoaDon.HoaDonChiTiets.Count <= 0){
+                                                                        await Swal.FireAsync("", "Không Thể Xóa Hết Sản Phẩm", SweetAlertIcon.Error);
+                                                                    }else{
+                                                                        HoaDon.HoaDonChiTiets.Remove(x.Value);
+                                                                        await CapNhatTongTien();
+                                                                    }
                                                                 }
                                                             }'
                                                                 ><i class="fa fa-trash text-danger"></i></button>
@@ -197,7 +204,7 @@
                                 <div class="row align-items-center text-end mt-2">
                                     <div class="col-8 d-flex">
                                         <input class="form-control w-25 me-2" @bind="Ma"/>
-                                        <button class="btn btn-primary mb-0 me-2" @onclick="() => ThemSanPham()">Thêm SP</button>
+                                        <button class="btn btn-primary mb-0 me-2" @onclick="async() => { if(await Confirm()){ await ThemSanPham(); }; }">Thêm SP</button>
                                         <input placeholder="Ghi Chú" class="form-control w-50" @bind="HoaDon.GhiChu"/>
                                     </div>
                                     <div class="col-4">
@@ -212,29 +219,43 @@
                                             <span class="text-bolder text-sm">( @Helper.FormatMoney(HoaDon?.TienShip) tiền ship)</span>
                                         }
                                     </div>
-                                    <div class="col-6 text-start">
-                                        @if (HoaDon.NgayCapNhat != null)
-                                        {
+                                    @if (HoaDon.NgayCapNhat != null)
+                                    {
+                                        <div class="col-6 text-start">
                                             <span class="text-bolder text-sm">Ngày Cập Nhật : @HoaDon.NgayCapNhat</span>
-                                        }
-                                    </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-6"></div>
+                                    }
                                     <div class="col-6">
                                         <label class="col-form-label text-sm me-3 p-0 mb-2">Giảm giá hóa đơn</label>
                                         <span class="text-bolder text-sm">@(
                                         HoaDon?.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? Helper.FormatMoney(HoaDon?.VoucherLogs?[0].SoTienGiam) : 0
                                         )</span>
                                     </div>
-                                    <div class="col-6 text-start">
-                                        @if (HoaDon.NgayHoanThanh != null)
-                                        {
+                                    @if (HoaDon.NgayHoanThanh != null)
+                                    {
+                                        <div class="col-6 text-start">
                                             <span class="text-bolder text-sm">Ngày Hoàn Thành : @HoaDon.NgayHoanThanh</span>
-                                        }
-                                    </div>
+                                        </div>
+                                    }else{
+                                        <div class="col-6"></div>
+                                    }
                                     <div class="col-6">
                                         <label class="col-form-label text-sm me-3 p-0 mb-2">Khách cần trả</label>
-                                        <span class="text-bolder text-sm">@( Helper.FormatMoney(HoaDon?.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].TienSauKhiGiam : HoaDon?.TongTien))</span>
+                                        <span class="text-bolder text-sm">@(Helper.FormatMoney(HoaDon?.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].TienSauKhiGiam : HoaDon?.TongTien))</span>
                                     </div>
-                                    <div class="col-12">
+                                    @if (HoaDon.NgayXacNhan != null)
+                                    {
+                                        <div class="col-6 text-start">
+                                            <span class="text-bolder text-sm">Ngày Xác Nhận : @HoaDon.NgayXacNhan</span>
+                                        </div>
+                                    }else{
+                                        <div class="col-6"></div>
+                                    }
+                                    <div class="col-6">
                                         <label class="col-form-label text-sm me-3 p-0 mb-2">Khách đã trả</label>
                                         <span class="text-bolder text-sm">@Helper.FormatMoney(HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan))</span>
                                     </div>
@@ -350,8 +371,8 @@
                                     </div>
                                 }
                                 <div class="d-flex flex-wrap justify-content-end">
-                                    <button class="btn btn-primary btn-sm mb-0 me-2" @onclick="() => ThemHinhThucThanhToan(0)">Tiền Mặt</button>
-                                    <button class="btn btn-success btn-sm mb-0 me-2" @onclick="() => ThemHinhThucThanhToan(1)">Chuyển Khoản</button>
+                                    <button class="btn btn-primary btn-sm mb-0 me-2" @onclick="async() => {  await ThemHinhThucThanhToan(0); }">Tiền Mặt</button>
+                                    <button class="btn btn-success btn-sm mb-0 me-2" @onclick="async() => {  await ThemHinhThucThanhToan(1); }">Chuyển Khoản</button>
                                     <input class="form-control w-25 me-2" value="@string.Format("{0:0,0}", soTienThanhToan)" @oninput='e => soTienThanhToan = float.Parse(e.Value?.ToString() ?? "")'>
                                     <button class="btn btn-danger btn-sm mb-0 me-2" @onclick="() => HoaDon.HinhThucThanhToans = new List<HinhThucThanhToanModel>()">Hủy</button>
                                 </div>
@@ -359,7 +380,7 @@
                             <div class="tab-pane fade" id="tab-ship">
                                 <div class="d-flex flex-wrap mt-3 justify-content-around text-center">
                                     <div class="d-flex flex-column">
-                                        <button class="btn @(HoaDon?.NgayXacNhan != null ? "btn-success" : "")" @onclick="async() => { if(HoaDon?.NgayXacNhan == null) HoaDon.NgayXacNhan = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int) MinkyShopProject.Data.Enums.TrangThaiGiaoHang.ChoLayHang; await CapNhatHoaDon(); }"><i class="ni ni-single-copy-04 p-4"></i></button>
+                                        <button class="btn @(HoaDon?.NgayXacNhan != null ? "btn-success" : "")" @onclick="async() => { if(await Confirm()) { if(HoaDon?.NgayXacNhan == null) { HoaDon.NgayXacNhan = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int) MinkyShopProject.Data.Enums.TrangThaiGiaoHang.ChoLayHang; await CapNhatHoaDon(); } } }"><i class="ni ni-single-copy-04 p-4"></i></button>
                                         @if (HoaDon?.NgayXacNhan != null)
                                         {
                                             <span class="text-bold">Đã Xác nhận</span>
@@ -372,39 +393,43 @@
                                     </div>
                                     <div class="d-flex flex-column">
                                         <button class="btn me-2 @(HoaDon?.NgayLayHang != null ? "btn-success disabled" : "")" @onclick='async() => { 
-                                            if(HoaDon?.NgayXacNhan != null){
+                                            if(await Confirm()){
+                                                    if(HoaDon?.NgayXacNhan != null){
                                                 HoaDon.NgayLayHang = DateTime.Now;
                                                 HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.ChoLayHang;
                                                 await CapNhatHoaDon();
                                             }else{
                                                 await Swal.FireAsync("", "Đơn phải xác nhận trước khi chờ lấy hàng", SweetAlertIcon.Error);
+                                                }
                                             }
                                         }'><i class="fa fa-cart-shopping-fast p-4"></i></button>
                                         <span class="text-bold">Chờ lấy hàng</span>
                                     </div>
                                     <div class="d-flex flex-column">
                                         <button class="btn me-2 @(HoaDon?.NgayGiaoHang != null ? "btn-success disabled" : "")" @onclick='async() => { 
-                                            if(HoaDon?.NgayLayHang != null){
+                                            if(await Confirm()){
+                                                if(HoaDon?.NgayLayHang != null){
                                                 HoaDon.NgayGiaoHang = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.DangGiao;
                                                 await CapNhatHoaDon();
                                             } else{
                                                  await Swal.FireAsync("", "Chưa lấy hàng không thể giao", SweetAlertIcon.Error);
+                                            }
                                             }
                                         }'><i class="ni ni-user-run p-4"></i></button>
                                         <span class="text-bold">Đang giao</span>
                                         <p>@HoaDon?.NgayGiaoHang</p>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <button class="btn me-2 @(HoaDon?.TrangThaiGiaoHang == 3 ? "btn-success disabled" : "")" @onclick="async() => { CapNhatTrangThai(3);  }"><i class="ni ni-bag-17 p-4"></i></button>
+                                        <button class="btn me-2 @(HoaDon?.TrangThaiGiaoHang == 3 ? "btn-success disabled" : "")" @onclick="async() => { await CapNhatTrangThai(3);  }"><i class="ni ni-bag-17 p-4"></i></button>
                                         <span class="text-bold">Đã nhận hàng</span>
                                         <p>@(HoaDon?.TrangThaiGiaoHang == 3 ? HoaDon?.NgayNhan : "")</p>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <button class="btn me-2 @(HoaDon?.TrangThaiGiaoHang == 7 ? "btn-success disabled" : "")" @onclick="async() => { CapNhatTrangThai(7); }"><i class="ni ni-bag-17 p-4"></i></button>
+                                        <button class="btn me-2 @(HoaDon?.TrangThaiGiaoHang == 7 ? "btn-success disabled" : "")" @onclick="async() => { await CapNhatTrangThai(7); }"><i class="ni ni-bag-17 p-4"></i></button>
                                         <span class="text-bold">Không Nghe Máy</span>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <button class="btn me-2 @(HoaDon?.TrangThaiGiaoHang == 5 ? "btn-success disabled" : "")" @onclick="async() => { CapNhatTrangThai(5); }"><i class="ni ni-bag-17 p-4"></i></button>
+                                        <button class="btn me-2 @(HoaDon?.TrangThaiGiaoHang == 5 ? "btn-success disabled" : "")" @onclick="async() => { await CapNhatTrangThai(5); }"><i class="ni ni-bag-17 p-4"></i></button>
                                         <span class="text-bold">Chỉ Nhận Một Phần</span>
                                         <p>@(HoaDon?.TrangThaiGiaoHang == 5 ? HoaDon?.NgayNhan : "")</p>
                                     </div>
@@ -440,6 +465,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" id="tab-ghi-chu">
+                                <div class="d-flex flex-column">
+                                    <input class="form-control mb-3" placeholder="Ghi Chú Cập Nhật" @bind="GhiChuCapNhat" />
+                                    <textarea disabled rows="5" class="form-control">
+                                        @{
+                                            var ghiChuCapNhat = HoaDon.GhiChuCapNhat?.Substring(1).Split("&");
+                                        }
+                                        @if(ghiChuCapNhat != null)
+                                        {
+                                            @string.Join("\n", ghiChuCapNhat)
+                                        }
+                                    </textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -457,25 +496,9 @@
 
     string Ma = "";
 
-    List<HinhThucThanhToanModel> HinhThucThanhToans = new List<HinhThucThanhToanModel>();
+    string GhiChuCapNhat = "";
 
-    async Task UpdateSale()
-    {
-        if(HoaDon != null)
-        {
-            if(HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh)
-            {
-                List<HoaDonModel> HoaDons = await Session.GetItemAsync<List<HoaDonModel>>("cart") ?? new List<HoaDonModel>();
-                HoaDons.Add(HoaDon);
-                await Session.SetItemAsync("cart", HoaDons);
-                NavigationManager.NavigateTo("sale");
-            }
-            else
-            {
-                await Swal.FireAsync("Thông báo", "Hóa Đơn Đã Hoàn Thanh Không Thể Sửa", SweetAlertIcon.Error);
-            }
-        }
-    }
+    List<HinhThucThanhToanModel> HinhThucThanhToans = new List<HinhThucThanhToanModel>();
 
     async Task Cancel()
     {
@@ -496,12 +519,27 @@
         }
     }
 
-    async Task CapNhatHoaDon()
+    async Task<bool> Confirm()
     {
+        if (HoaDon?.NgayHoanThanh != null && string.IsNullOrEmpty(GhiChuCapNhat.Trim()))
+        {
+            await Swal.FireAsync("", "Vui Lòng Nhập Ghi Chú Cập Nhật", SweetAlertIcon.Error);
+            return false;
+        }
+
         var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Cập Nhật", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
-        if (string.IsNullOrEmpty(confirm.Value)) return;
+        if (string.IsNullOrEmpty(confirm.Value)) return false;
+        return true;
+    }
 
+    async Task CapNhatHoaDon()
+    {
+        if (HoaDon?.NgayHoanThanh != null && !string.IsNullOrEmpty(GhiChuCapNhat.Trim()))
+        {
+            HoaDon.GhiChuCapNhat += "&" + DateTime.Now.ToString() + " : " + GhiChuCapNhat;
+            GhiChuCapNhat = "";
+        }
         HoaDon.NgayCapNhat = DateTime.Now;
         var status = await HttpClient.PutAsJsonAsync<HoaDonModel>(Url.AddQuery("id", HoaDon.Id.ToString()), HoaDon);
         if (status.IsSuccessStatusCode)
@@ -531,47 +569,55 @@
             }
             HoaDon.TongTien = HoaDon.HoaDonChiTiets.Sum(c => c.SoLuong * c.DonGia) + HoaDon.TienShip;
         }
+        else
+        {
+            await Swal.FireAsync("", "Sản Phẩm Không Tồn Tại", SweetAlertIcon.Error);
+        }
     }
 
     float soTienThanhToan = 0;
 
     async Task CapNhatTrangThai(int val)
     {
-        if (HoaDon?.TrangThaiGiaoHang == 2 || HoaDon?.TrangThaiGiaoHang == 7)
+        if(await Confirm())
         {
-            switch (val)
+            if (HoaDon?.TrangThaiGiaoHang == 2 || HoaDon?.TrangThaiGiaoHang == 7)
             {
-                case 3:
-                    if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < HoaDon?.TongTien)
-                    {
-                        await Swal.FireAsync("", "Phải Thanh Toán Đủ Trước Khi Nhận Hàng", SweetAlertIcon.Error);
-                        return;
-                    }
+                switch (val)
+                {
+                    case 3:
+                        if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < HoaDon?.TongTien)
+                        {
+                            await Swal.FireAsync("", "Phải Thanh Toán Đủ Trước Khi Nhận Hàng", SweetAlertIcon.Error);
+                            return;
+                        }
 
-                    HoaDon.NgayNhan = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.DaGiao;
-                    if (HoaDon.NgayHoanThanh == null) { HoaDon.NgayHoanThanh = DateTime.Now; }
-                    await CapNhatHoaDon();
-                    break;
-                case 7:
-                    HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.KhachKhongNgheMay; await CapNhatHoaDon();
-                    break;
-                case 5:
-                    if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < HoaDon?.TongTien)
-                    {
-                        await Swal.FireAsync("", "Phải Thanh Toán Đủ Trước Khi Nhận Hàng", SweetAlertIcon.Error);
-                        return;
-                    }
-                    HoaDon.NgayNhan = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.DaGiaoNhungKhachChiNhanMotPhanHang;
-                    if (HoaDon.NgayHoanThanh == null) { HoaDon.NgayHoanThanh = DateTime.Now; }
-                    await CapNhatHoaDon();
-                    break;
-                default:
-                    break;
+                        HoaDon.NgayNhan = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.DaGiao;
+                        if (HoaDon.NgayHoanThanh == null) { HoaDon.NgayHoanThanh = DateTime.Now; }
+                        await CapNhatHoaDon();
+                        break;
+                    case 7:
+                        HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.KhachKhongNgheMay; await CapNhatHoaDon();
+                        break;
+                    case 5:
+                        if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < HoaDon?.TongTien)
+                        {
+                            await Swal.FireAsync("", "Phải Thanh Toán Đủ Trước Khi Nhận Hàng", SweetAlertIcon.Error);
+                            return;
+                        }
+                        HoaDon.NgayNhan = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.DaGiaoNhungKhachChiNhanMotPhanHang;
+                        if (HoaDon.NgayHoanThanh == null) { HoaDon.NgayHoanThanh = DateTime.Now; }
+                        await CapNhatHoaDon();
+                        break;
+                    default:
+                        break;
+                }
+                HoaDon.TrangThaiGiaoHang = val;
             }
-        }
-        else
-        {
-            await Swal.FireAsync("","Chỉ Đơn Đang Giao Mới Có Thể Thay Đổi", SweetAlertIcon.Error);
+            else
+            {
+                await Swal.FireAsync("", "Chỉ Đơn Đang Giao Mới Có Thể Thay Đổi", SweetAlertIcon.Error);
+            }
         }
     }
 
@@ -579,19 +625,26 @@
     {
         if(HoaDon != null)
         {
-            var hinhThucThanhToan = HoaDon.HinhThucThanhToans.FirstOrDefault(c => c.KieuThanhToan == kieuThanhToan);
-            if (hinhThucThanhToan == null)
+            if(HoaDon.NgayXacNhan == null)
             {
-                HoaDon.HinhThucThanhToans.Add(new HinhThucThanhToanModel() { KieuThanhToan = kieuThanhToan, TongTienThanhToan = soTienThanhToan, NgayTao = DateTime.Now });
+                await Swal.FireAsync("", "Chỉ Hóa Đơn Xác Nhận Trước Mới Có Thể Thanh Toán", SweetAlertIcon.Error);
             }
             else
             {
-                hinhThucThanhToan.TongTienThanhToan += soTienThanhToan;
-                hinhThucThanhToan.NgayTao = DateTime.Now;
+
+                var hinhThucThanhToan = HoaDon.HinhThucThanhToans.FirstOrDefault(c => c.KieuThanhToan == kieuThanhToan);
+                if (hinhThucThanhToan == null)
+                {
+                    HoaDon.HinhThucThanhToans.Add(new HinhThucThanhToanModel() { KieuThanhToan = kieuThanhToan, TongTienThanhToan = soTienThanhToan, NgayTao = DateTime.Now });
+                }
+                else
+                {
+                    hinhThucThanhToan.TongTienThanhToan += soTienThanhToan;
+                    hinhThucThanhToan.NgayTao = DateTime.Now;
+                }
+                HoaDon.TongTien = (HoaDon.HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong) + HoaDon.TienShip) - (HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].SoTienGiam : 0);
+                soTienThanhToan = 0;
             }
-            var voucher = HoaDon.VoucherLogs?[0];
-            HoaDon.TongTien = (HoaDon.HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong) + HoaDon.TienShip) - (voucher != null ? voucher.SoTienGiam : 0);
-            soTienThanhToan = 0;
         }
     }
 
@@ -616,7 +669,7 @@
     {
         if(HoaDon != null)
         {
-            var voucher = HoaDon?.VoucherLogs;
+            var voucher = HoaDon.VoucherLogs;
             if(voucher != null && voucher.Any())
             {
                 HoaDon.TongTien = (HoaDon.HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong) + HoaDon.TienShip) - voucher[0].SoTienGiam;

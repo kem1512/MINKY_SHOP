@@ -12,7 +12,7 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    [Migration("20230328084739_MinkyShop")]
+    [Migration("20230329082228_MinkyShop")]
     partial class MinkyShop
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -352,6 +352,9 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GhiChuCapNhat")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("GhiChuGiaoHang")

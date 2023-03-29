@@ -37,6 +37,8 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         List<SanPhamModel> SanPhamsSearch = new List<SanPhamModel>();
 
+        List<KhachHangModel> KhachHangsSeach = new List<KhachHangModel>();
+
         Uri Url = new Uri("https://localhost:7053/api/");
 
         int index = 0;
@@ -51,6 +53,12 @@ namespace MinkyShopProject.Admin.Pages.Sale
             KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>(Url + "khachhang/get");
             Vouchers = await HttpClient.GetFromJsonAsync<ResponsePagination<VoucherModel>>(Url + "voucher");
             await Reload();
+        }
+
+        async Task TimKiemKhachHang(string val)
+        {
+            if (KhachHangs != null)
+                KhachHangsSeach = KhachHangs.Data.Content.Where(c => c.Ten.ToLower().Trim().Contains(val.ToLower().Trim())).ToList();
         }
 
         async Task CapNhatTongTien()
@@ -317,10 +325,19 @@ namespace MinkyShopProject.Admin.Pages.Sale
             {
                 if (HoaDons[index] != null && HoaDons.Any())
                 {
-                    HoaDons[index].VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Id, SoTienGiam = voucher.SoTienGiam, TienTruocKhiGiam = HoaDons[index].TongTien, TienSauKhiGiam = HoaDons[index].TongTien - voucher.SoTienGiam, Voucher = voucher } };
+                    if (voucher.HinhThucGiamGia == 1)
+                    {
+                        HoaDons[index].VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Id, SoTienGiam = voucher.SoTienGiam, TienTruocKhiGiam = HoaDons[index].TongTien, TienSauKhiGiam = HoaDons[index].TongTien - voucher.SoTienGiam, Voucher = voucher } };
+                        await CapNhatTongTien();
+                    }
+                    else
+                    {
+                        var after = HoaDons[index].TongTien - (HoaDons[index].TongTien * voucher.SoTienGiam / 100);
+                        HoaDons[index].VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Id, SoTienGiam = HoaDons[index].TongTien - after, TienTruocKhiGiam = HoaDons[index].TongTien, TienSauKhiGiam = after, Voucher = voucher } };
+                        HoaDons[index].TongTien = after;
+                    }
                 }
                 VouchersThoaMan = null;
-                await CapNhatTongTien();
             }
         }
     }

@@ -16,6 +16,8 @@ namespace MinkyShopProject.Data.Models
 
         public string? Ma { get; set; }
 
+        public string? GhiChuCapNhat { get; set; }
+
         public DateTime NgayTao { get; set; } = DateTime.Now;
 
         public DateTime? NgayHoanThanh { get; set; }
@@ -65,7 +67,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdNhanVien { get; set; } = Guid.Parse("0b84f8c1-93df-4658-8691-6fc9e089e3ac");
+        public Guid IdNhanVien { get; set; } = Guid.Parse("c83a8161-99a6-45fe-8d8c-cf2e567725ee");
 
         public Guid? IdKhachHang { get; set; }
 
@@ -78,6 +80,8 @@ namespace MinkyShopProject.Data.Models
         public DateTime? NgayCapNhat { get; set; }
 
         public DateTime? NgayThanhToan { get; set; }
+
+        public string? GhiChuCapNhat { get; set; }
 
         public DateTime? NgayGiaoHang { get; set; }
 

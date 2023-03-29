@@ -312,6 +312,7 @@ namespace MinkyShopProject.Business.Migrations
                     NgayCapNhat = table.Column<DateTime>(type: "datetime2", nullable: true),
                     LoaiDonHang = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     TenNguoiNhan = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GhiChuCapNhat = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true),

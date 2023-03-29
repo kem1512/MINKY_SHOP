@@ -37,6 +37,8 @@ namespace MinkyShopProject.Business.Entities
 
         public string? TenNguoiNhan { get; set; }
 
+        public string? GhiChuCapNhat { get; set; }
+
         public string? DiaChi { get; set; }
 
         public string? Sdt { get; set; }
