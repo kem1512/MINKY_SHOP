@@ -39,6 +39,13 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
 
                 await _context.HoaDon.AddAsync(hoaDon);
 
+                foreach (var x in obj.HoaDonChiTiets)
+                {
+                    var bienThe = _context.BienThe.FirstOrDefault(c => c.Id == x.IdBienThe);
+                    if (bienThe != null)
+                        bienThe.SoLuong -= x.SoLuong;
+                }
+
                 var status = await _context.SaveChangesAsync();
 
                 if (status > 0)
@@ -103,7 +110,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).Where(c => c.LoaiDonHang == obj.LoaiHoaDon || (c.LoaiDonHang < 5 && obj.LoaiHoaDon == null)).Where(c => c.TrangThaiGiaoHang == obj.TrangThaiGiaoHang || (c.TrangThaiGiaoHang < 20 && obj.TrangThaiGiaoHang == null)).Where(c => c.Ma == obj.Ma || c.TenNguoiNhan.ToLower().Trim().Contains(!string.IsNullOrEmpty(obj.Ma) ? obj.Ma.ToLower().Trim() : "")).AsNoTracking().AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {

@@ -156,6 +156,10 @@ namespace MinkyShopProject.Data.Models
 
     public class HoaDonQueryModel : PaginationRequest
     {
+        public string? Ma { get; set; } = "";
 
+        public int? TrangThaiGiaoHang { get; set; }
+
+        public int? LoaiHoaDon { get; set; }
     }
 }

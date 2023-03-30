@@ -60,7 +60,10 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
 
                 if (thuocTinh != null)
                 {
-                    _context.ThuocTinh.Remove(thuocTinh);
+                    if (thuocTinh.ThuocTinhSanPhams != null && !thuocTinh.ThuocTinhSanPhams.Any())
+                    {
+                        _context.ThuocTinh.Remove(thuocTinh);
+                    }
                 }
                 else
                 {

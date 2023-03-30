@@ -1,4 +1,5 @@
 ﻿@page "/admin/invoice"
+@page "/admin/invoice/page/{page:int}"
 @using MinkyShopProject.Data.Models
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
@@ -11,11 +12,31 @@
                 <div class="card-body">
                     <div class="row mb-2">
                         <div class="col-4">
-                            <select class="select-loai-don-hang">
-                                <option value="">Tất cả</option>
+                            <select class="select-loai-don-hang" @onchange='async (ui) =>{ Filter.LoaiHoaDon = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
+                                <option value="">Loại Hóa Đơn</option>
                                 <option value="0">Tại quầy</option>
-                                <option value="1">Giao hàng</option>
+                                <option value="1">Đặt hàng</option>
+                                <option value="2">Giao hàng</option>
                             </select>
+                        </div>
+                        @if(Filter.LoaiHoaDon == 2)
+                        {
+                            <div class="col-4">
+                                <select class="select-trang-thai-giao-hang" @onchange='async (ui) =>{ Filter.TrangThaiGiaoHang = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
+                                    <option value="">Trạng Thái Giao Hàng</option>
+                                    <option value="0">Chờ Xác Nhận</option>
+                                    <option value="1">Chờ Lấy Hàng</option>
+                                    <option value="2">Đang Giao</option>
+                                    <option value="3">Đã Giao</option>
+                                    <option value="4">Đã Hủy</option>
+                                    <option value="5">Nhận Một Phần</option>
+                                    <option value="6">Giao Thất Bại</option>
+                                    <option value="7">Không Nghe Máy</option>
+                                </select>
+                            </div>
+                        }
+                        <div class="col-4">
+                            <input class="form-control" placeholder="Nhập mã hóa đơn hoặc tên khách hàng" @oninput='e => Filter.Ma = e.Value?.ToString() ?? ""' @onchange="async() => await Reload()"/>
                         </div>
                     </div>
 
@@ -94,20 +115,37 @@
 </div>
 
 @code{
+    [Parameter]
+    public int Page { get; set; }
+
     ResponsePagination<HoaDonModel>? HoaDons;
+
+    HoaDonQueryModel Filter = new HoaDonQueryModel() { Size = 5, };
 
     HoaDonModel? HoaDon;
 
     Uri Url = new Uri("https://localhost:7053/api/hoadon");
 
-    protected async override Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
     {
-        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", "1").AddQuery("size", "5").AddQuery("sort", "-NgayTao"));
+        await Reload();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
+        {
             await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".select-loai-don-hang");
+        }
+        else if(Filter.LoaiHoaDon == 2)
+        {
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".select-trang-thai-giao-hang");
+        }
+    }
+
+    async Task Reload()
+    {
+        if (Page == 0) Page = 1;
+        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "").AddQuery("Ma", Filter.Ma?.ToString() ?? "").AddQuery("LoaiHoaDon", Filter.LoaiHoaDon.ToString() ?? "").AddQuery("TrangThaiGiaoHang", Filter.TrangThaiGiaoHang.ToString() ?? "").AddQuery("sort", "-NgayTao"));
     }
 }

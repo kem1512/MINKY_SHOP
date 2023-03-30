@@ -60,7 +60,7 @@
                                     <span class="text-sm text-bold" data-toggle="tooltip" data-placement="bottom" title="@x.v.BienThe?.SanPham?.Ten">@x.v.BienThe?.SanPham?.Ten?.BaCham(50)</span>
                                     <span class="text-sm text-bold text-secondary">@String.Join(" + ", x.v.BienThe?.BienTheChiTiets.Select(c => c.GiaTri.Ten))</span>
                                 </div>
-                                <input type="number" value="@x.v.SoLuong" @onchange='async e => { x.v.SoLuong = int.Parse(e.Value?.ToString() ?? ""); await CapNhatTongTien(); }' class="form-control w-10 text-center h-25" />
+                                <input type="number" min="1" value="@x.v.SoLuong" @onchange='async e => { x.v.SoLuong = int.Parse(e.Value?.ToString() ?? ""); await CapNhatTongTien(); }' class="form-control w-10 text-center h-25" />
                                 <span class="text-sm">@Helper.FormatMoney(x.v.DonGia)</span>
                                 <span class="text-sm text-primary text-bold">@Helper.FormatMoney(x.v.DonGia * x.v.SoLuong)</span>
                                 <button class="btn text-danger btn-xs m-0" @onclick="() => XoaSanPham(x.i)"><span class="fa fa-trash"></span></button>
@@ -82,18 +82,20 @@
                                     <button class="btn btn-xs shadow-none position-absolute top-50 end-4 translate-middle-y" @onclick='() => { HoaDons[index].IdKhachHang = null; HoaDons[index].KhachHang = null;
                                     }'><i class="fa fa-times text-danger"></i></button>
                                 }
-                                @if(KhachHangsSeach != null)
-                                {
-                                    <div class="position-absolute list-group w-100 px-3" style="z-index: 1; right: 0;" onfocus="" @onfocusout='() => { KhachHangsSeach = new List<Data.Models.KhachHangModel>(); }'>
-                                        @foreach (var x in KhachHangsSeach.Select((v, i) => (i, v)))
-                                        {
-                                            if (x.i < 5)
+                                <div class="position-relative">
+                                    @if (KhachHangsSeach != null)
+                                    {
+                                        <div class="position-absolute list-group w-100" style="z-index: 1; right: 0;" onfocus="" @onfocusout='() => { KhachHangsSeach = new List<Data.Models.KhachHangModel>(); }'>
+                                            @foreach (var x in KhachHangsSeach.Select((v, i) => (i, v)))
                                             {
-                                                <button @onmousedown="() => { HoaDons[index].IdKhachHang = x.v.Id; HoaDons[index].KhachHang = x.v; KhachHangsSeach = new List<Data.Models.KhachHangModel>(); }" class="d-flex list-group-item list-group-item-action align-items-center">@x.v.Ten</button>
+                                                if (x.i < 5)
+                                                {
+                                                    <button @onmousedown="() => { HoaDons[index].IdKhachHang = x.v.Id; HoaDons[index].KhachHang = x.v; KhachHangsSeach = new List<Data.Models.KhachHangModel>(); }" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten - @x.v.DiaChi</button>
+                                                }
                                             }
-                                        }
-                                    </div>
-                                }
+                                        </div>
+                                    }
+                                </div>
                             </div>
                             <div class="col-12 d-flex justify-content-between">
                                 <div></div>
@@ -114,10 +116,11 @@
                             <div class="col-12">
                                 <ul class="nav nav-tabs text-sm">
                                     <li class="nav-item">
-                                        <button class="nav-link @(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay ? "active": "")" id="hoa_don" data-bs-toggle="tab" data-bs-target="#hoa-don-tab-pane" @onclick="() => HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay">Hóa Đơn</button>
+                                        <button class="nav-link @(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay ? "active": "")" id="hoa_don" data-bs-toggle="tab" data-bs-target="#hoa-don-tab-pane" @onclick="() => { HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay; 
+                                            HoaDons[index].TenNguoiNhan = null; HoaDons[index].Sdt = null; HoaDons[index].DiaChi = null; HoaDons[index].GhiChuGiaoHang = null; }">Hóa Đơn</button>
                                     </li>
                                     <li class="nav-item">
-                                        <button class="nav-link @(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.DatHang ? "active": "")" id="dat_hang" data-bs-toggle="tab" data-bs-target="#dat-hang-tab-pane" @onclick="() => HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.DatHang">Đặt Hàng</button>
+                                        <button class="nav-link @(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.DatHang ? "active": "")" id="dat_hang" data-bs-toggle="tab" data-bs-target="#dat-hang-tab-pane" @onclick="() => { HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.DatHang; HoaDons[index].TienShip = 0; }">Đặt Hàng</button>
                                     </li>
                                 </ul>
                             </div>
@@ -140,23 +143,23 @@
                                                     {
                                                         <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
                                                     }
-                                                </div>
-                                                @if (VouchersThoaMan != null && VouchersThoaMan.Any())
-                                                {
-                                                    <div class="position-absolute list-group w-50" id="voucher-list" style="z-index: 1; right: 0; transform: translateY(100%); display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
-                                                        @foreach (var x in VouchersThoaMan.Select((v, i) => (i, v)))
-                                                        {
-                                                            if (x.i < 5)
+                                                    <div class="position-absolute list-group w-100" id="voucher-list" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
+                                                    @if (VouchersThoaMan != null && VouchersThoaMan.Any())
+                                                    {
+                                                            @foreach (var x in VouchersThoaMan.Select((v, i) => (i, v)))
                                                             {
-                                                                <button @onclick="() => ApDungVoucher(x.i)" class="d-flex list-group-item list-group-item-action align-items-center">@x.v.Ten</button>
+                                                                if (x.i < 5)
+                                                                {
+                                                                    <button @onclick="() => ApDungVoucher(x.i)" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten</button>
+                                                                }
                                                             }
-                                                        }
+                                                    }
                                                     </div>
-                                                }
+                                                </div>
                                             </div>
                                             <div class="col-12 d-flex justify-content-between align-items-center">
                                                 <label class="text-xs">Khách Cần Trả</label>
-                                                <span class="text-sm">@Helper.FormatMoney(HoaDons[index].TongTien)</span>
+                                                <span class="text-bolder text-sm">@(Helper.FormatMoney(HoaDons[index].TongTien + HoaDons[index]?.TienShip - (HoaDons[index]?.VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? HoaDons[index]?.VoucherLogs[0].SoTienGiam : 0)))</span>
                                             </div>
                                             <div class="col-12 d-flex justify-content-between align-items-center">
                                                 <div class="d-flex flex-column">
@@ -189,6 +192,31 @@
                                         {
                                             <div class="row gy-3">
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
+                                                    <label class="text-xs">Giảm Giá</label>
+                                                    <div class="position-relative">
+                                                        <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
+                                                               value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten"
+                                                               onfocus="document.getElementById('voucher-list-2').style.display='block'"
+                                                               onblur="setTimeout(() => { document.getElementById('voucher-list-2').style.display='none' }, 100)">
+                                                        @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
+                                                        {
+                                                            <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
+                                                        }
+                                                        <div class="position-absolute list-group w-100" id="voucher-list-2" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
+                                                            @if (VouchersThoaMan != null && VouchersThoaMan.Any())
+                                                            {
+                                                                @foreach (var x in VouchersThoaMan.Select((v, i) => (i, v)))
+                                                                {
+                                                                    if (x.i < 5)
+                                                                    {
+                                                                        <button @onclick="() => ApDungVoucher(x.i)" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten</button>
+                                                                    }
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Tên Người Nhận <span class="text-danger">*</span></label>
                                                     <input type="text" @bind="HoaDons[index].TenNguoiNhan" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
                                                 </div>
@@ -202,7 +230,7 @@
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <label class="text-xs">Khách Cần Trả</label>
-                                                    <span class="text-sm">@Helper.FormatMoney(HoaDons[index].TongTien)</span>
+                                                    <span class="text-bolder text-sm">@(Helper.FormatMoney(HoaDons[index].TongTien + HoaDons[index]?.TienShip - (HoaDons[index]?.VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? HoaDons[index]?.VoucherLogs[0].SoTienGiam : 0)))</span>
                                                 </div>
                                                 <div class="col-12 d-flex">
                                                     <span class="fa fa-edit"></span>
@@ -215,6 +243,31 @@
                                         @if (HoaDons != null && HoaDons.Any())
                                         {
                                             <div class="row gy-3">
+                                                <div class="col-12 d-flex justify-content-between align-items-center position-relative">
+                                                    <label class="text-xs">Giảm Giá</label>
+                                                    <div class="position-relative">
+                                                        <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
+                                                               value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten"
+                                                               onfocus="document.getElementById('voucher-list-3').style.display='block'"
+                                                               onblur="setTimeout(() => { document.getElementById('voucher-list-3').style.display='none' }, 100)">
+                                                        @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
+                                                        {
+                                                            <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
+                                                        }
+                                                        <div class="position-absolute list-group w-100" id="voucher-list-3" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
+                                                            @if (VouchersThoaMan != null && VouchersThoaMan.Any())
+                                                            {
+                                                                @foreach (var x in VouchersThoaMan.Select((v, i) => (i, v)))
+                                                                {
+                                                                    if (x.i < 5)
+                                                                    {
+                                                                        <button @onclick="() => ApDungVoucher(x.i)" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten</button>
+                                                                    }
+                                                                }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Tên Người Nhận <span class="text-danger">*</span></label>
                                                     <input type="text" @bind="HoaDons[index].TenNguoiNhan" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
@@ -229,11 +282,11 @@
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Tiền Ship <span class="text-danger">*</span></label>
-                                                    <input type="text" @bind="HoaDons[index].TienShip" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
+                                                    <input type="text" value="@string.Format("{0:0,0}", HoaDons[index].TienShip)" @oninput='async e =>{ HoaDons[index].TienShip = float.Parse(e.Value?.ToString() ?? ""); await CapNhatTongTien(); }' class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <label class="text-xs">Khách Cần Trả</label>
-                                                    <span class="text-sm">@Helper.FormatMoney(HoaDons[index].TongTien)</span>
+                                                    <span class="text-bolder text-sm">@(Helper.FormatMoney(HoaDons[index].TongTien + HoaDons[index]?.TienShip - (HoaDons[index]?.VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? HoaDons[index]?.VoucherLogs[0].SoTienGiam : 0)))</span>
                                                 </div>
                                                 <div class="col-12 d-flex">
                                                     <span class="fa fa-edit"></span>

@@ -225,7 +225,11 @@
         {
             await Reload();
             ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
-            await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
+            await Swal.FireAsync("Thông Báo", "Xóa thành công", SweetAlertIcon.Success);
+        }
+        else
+        {
+            await Swal.FireAsync("Thông Báo", "Thuộc Tính Hoặc Giá Trị Này Đã Gán Với Giá Trị", SweetAlertIcon.Error);
         }
     }
 

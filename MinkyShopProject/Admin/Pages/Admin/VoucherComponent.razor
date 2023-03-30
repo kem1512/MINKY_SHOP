@@ -87,15 +87,15 @@
                                     <input type="number" class="form-control" @bind="Voucher.SoTienGiam">
                                 </div>
                                 <div class="col-6">
-                                    <label>Mô tả</label>
-                                    <textarea class="form-control" @bind="Voucher.MoTa" rows="3"></textarea>
-                                </div>
-                                <div class="col-6">
                                     <label>Trạng Thái</label>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="() => Voucher.TrangThai = Voucher.TrangThai == 0 ? 1 : 0" checked="">
                                         <label class="form-check-label" for="flexSwitchCheckDefault">Trạng Thái</label>
                                     </div>
+                                </div>
+                                <div class="col-6">
+                                    <label>Mô tả</label>
+                                    <textarea class="form-control" @bind="Voucher.MoTa" rows="3"></textarea>
                                 </div>
                             </div>
                         }

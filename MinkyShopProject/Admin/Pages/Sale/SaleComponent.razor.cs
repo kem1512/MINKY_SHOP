@@ -66,8 +66,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
             if (HoaDons != null && HoaDons.Any())
             {
                 var hoaDon = HoaDons[index];
-                var voucher = hoaDon.VoucherLogs?[0];
-                hoaDon.TongTien = (hoaDon.HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong) + hoaDon.TienShip) - (voucher != null ? voucher.SoTienGiam : 0);
+                hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong);
             }
         }
 
@@ -222,6 +221,10 @@ namespace MinkyShopProject.Admin.Pages.Sale
                         {
                             await Swal.FireAsync("", "Thêm Thất Bại", SweetAlertIcon.Error);
                         }
+                        if (HoaDons.Count() <= 0 && !HoaDons.Any())
+                        {
+                            HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
+                        }
                     }
                 }
                 else
@@ -261,6 +264,10 @@ namespace MinkyShopProject.Admin.Pages.Sale
                             else
                             {
                                 await Swal.FireAsync("", "Thêm Thất Bại", SweetAlertIcon.Error);
+                            }
+                            if (HoaDons.Count() <= 0 && !HoaDons.Any())
+                            {
+                                HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
                             }
                         }
                     }
@@ -334,7 +341,6 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     {
                         var after = HoaDons[index].TongTien - (HoaDons[index].TongTien * voucher.SoTienGiam / 100);
                         HoaDons[index].VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Id, SoTienGiam = HoaDons[index].TongTien - after, TienTruocKhiGiam = HoaDons[index].TongTien, TienSauKhiGiam = after, Voucher = voucher } };
-                        HoaDons[index].TongTien = after;
                     }
                 }
                 VouchersThoaMan = null;
