@@ -61,7 +61,7 @@
                                             <div class="form-group mb-0">
                                                 <label for="example-text-input" class="form-control-label">Thuộc Tính</label>
                                                 <input class="form-control" @attributes='new Dictionary<string, object>(){ { ThuocTinhs[x.Index].Disabled ? "disabled" : "template", "" } }' type="text"
-                                               @oninput='(ui) => { if(x.Value.Id != Guid.Empty){ x.Value.Ten = ui.Value?.ToString() ?? ""; }else{ if(ThuocTinhModels != null && ThuocTinhModelsParent != null){ x.Value.Ten = ui.Value?.ToString() ?? ""; ThuocTinhModels.Data.Content = ThuocTinhModelsParent.FindAll(c => c.Ten.ToLower().Contains(ui.Value?.ToString()?.ToLower() ?? "")); } } } ' value="@x.Value.Ten"
+                                               @oninput='(ui) => { if(x.Value.Id == Guid.Empty){ x.Value.Ten = ui.Value?.ToString() ?? ""; }else{ if(ThuocTinhModels != null && ThuocTinhModelsParent != null){ x.Value.Ten = ui.Value?.ToString() ?? ""; ThuocTinhModels.Data.Content = ThuocTinhModelsParent.FindAll(c => c.Ten.ToLower().Contains(ui.Value?.ToString()?.ToLower() ?? "")); } } } ' value="@x.Value.Ten"
                                                @onfocus="() => { ThuocTinhs[x.Index].Show = true; }"
                                                @onfocusout="() => { ThuocTinhs[x.Index].Show = false; }">
                                             </div>
@@ -100,7 +100,13 @@
                                                     </div>
                                                     <input class="form-control" type="text" @onfocus="() => { showGiaTri[x.Index] = true; }"
                                                    @oninput='(ui) => GiaTri = ui.Value?.ToString() ?? ""'
-                                                   @onkeyup='(KeyboardEventArgs ui) => { if(ui.Code == "Enter"){ x.Value.GiaTriTemplates?.Add(new Data.Models.GiaTriModel(){ Ten = GiaTri }); } } '>
+                                                   @onkeyup='(KeyboardEventArgs ui) => { if(ui.Code == "Enter"){ 
+                                                    if(!(string.IsNullOrEmpty(GiaTri.Trim()) || x.Value.GiaTriTemplates.Any(c => c.Ten.ToTitleCase() == GiaTri.ToTitleCase()) || GiaTri.CheckCharacterSpecial())){
+x.Value.GiaTriTemplates?.Add(new Data.Models.GiaTriModel(){ Ten = GiaTri });
+}
+
+
+} } '>
                                                 </div>
                                             </div>
                                             <div class="d-flex flex-wrap position-relative pb-2">

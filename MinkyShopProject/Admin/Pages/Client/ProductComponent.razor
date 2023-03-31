@@ -1,5 +1,5 @@
 ﻿@page "/product"
-@page "/"
+@page "/product/page/{page:int}"
 @inject HttpClient HttpClient;
 @using Data.Models;
 
@@ -52,6 +52,7 @@
                             }
                         }
                     </div>
+                    <MinkyShopProject.Admin.Shared.PaginationComponent Model="SanPhams" Url="product"></MinkyShopProject.Admin.Shared.PaginationComponent>
                 </div>
             </div>
         </div>
@@ -59,10 +60,14 @@
 </div>
 
 @code{
+    [Parameter]
+    public int Page { get; set; }
+
     ResponsePagination<SanPhamModel>? SanPhams;
 
-    protected override async Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
     {
-        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>("https://localhost:7053/api/SanPham");
+        if (Page == 0) Page = 1;
+        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"https://localhost:7053/api/SanPham?page={Page}&size=10");
     }
 }

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
@@ -29,6 +28,12 @@ namespace MinkyShopProject.Api.Controllers
         public async Task<IActionResult> FindAsync(Guid id)
         {
             return Helper.TransformData(await _repository.FindAsync(id));
+        }
+
+        [HttpGet("search/{ma}")]
+        public async Task<IActionResult> FindAsync(string ma)
+        {
+            return Helper.TransformData(await _repository.FindAsync(ma));
         }
 
         [HttpPut("{id}")]

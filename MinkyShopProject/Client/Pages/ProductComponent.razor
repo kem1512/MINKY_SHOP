@@ -1,4 +1,4 @@
-﻿@*@page "/product"
+﻿@page "/product"
 @inject IJSRuntime JSRuntime
 @using Data.Models;
 @inject HttpClient HttpClient
@@ -207,21 +207,21 @@
             <div class="row small-gutters">
                 @if (SanPhams != null)
                 {
-                    @foreach (var x in SanPhams)
+                    @foreach (var x in SanPhams.Data.Content)
                     {
                         <div class="col-6 col-md-4">
                             <div class="grid_item">
                                 <span class="ribbon off">New</span>
-                                <figure>
+                                <figure style="margin: 0">
                                     <a href="product-detail-1.html">
                                         <img class="img-fluid lazy" src="@x.Anh" alt="">
                                     </a>
                                 </figure>
                                 <NavLink href="@($"/product/{x.Id}")">
-                                    <h3>@x.Ten</h3>
+                                    <h3 style="margin-bottom: 3px">@x.Ten</h3>
                                 </NavLink>
                                 <div class="price_box">
-                                    <span class="new_price">@string.Format("{0:0,0}", x.Gia)</span>
+                                    <span class="new_price">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan)) - @Helper.FormatMoney( x.BienThes?.Max(c => c.GiaBan))</span>
                                 </div>
                                 <ul>
                                     <li><a href="#0" class="tooltip-1" data-toggle="tooltip" data-placement="left" title="Add to favorites"><i class="ti-heart"></i><span>Add to favorites</span></a></li>
@@ -262,10 +262,10 @@
 <!-- /container -->
 
 @code {
-    List<SanPhamModel>? SanPhams;
+    ResponsePagination<SanPhamModel>? SanPhams;
 
     protected override async Task OnInitializedAsync()
     {
-        SanPhams = await HttpClient.GetFromJsonAsync<List<SanPhamModel>>("https://localhost:7053/api/SanPham");
+        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>("https://localhost:7053/api/SanPham");
     }
-}*@
+}

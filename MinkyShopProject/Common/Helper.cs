@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
+using System.Globalization;
 
 namespace MinkyShopProject.Common
 {
@@ -24,6 +26,21 @@ namespace MinkyShopProject.Common
             return result;
         }
 
+        public static string BaCham(this string text, int soLuong)
+        {
+            return soLuong < text.Length ? text.Substring(0, soLuong) + "..." : text;
+        }
+
+        public static T ConvertJson<T>(object obj)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
+        }
+
+        public static string ToTitleCase(this string title)
+        {
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower().Trim());
+        }
+
         private static Random random = new Random();
 
         public static string RandomString(int length)
@@ -31,6 +48,11 @@ namespace MinkyShopProject.Common
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        public static bool CheckCharacterSpecial(this string value)
+        {
+            return value.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c) ? true : false);
         }
 
         public static string FormatMoney(float? money)

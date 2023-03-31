@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinkyShopProject.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,10 +17,12 @@ namespace MinkyShopProject.Business.Entities
 
         public int SoLuong { get; set; }
 
+        public int TrangThai { get; set; }
+
         public float DonGia { get; set; }
 
-        public HoaDon? HoaDon { get; set; }
+        public HoaDon HoaDon { get; set; } = null!;
 
-        public BienThe? BienThe { get; set; }
+        public BienThe BienThe { get; set; } = null!;
     }
 }

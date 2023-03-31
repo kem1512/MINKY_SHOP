@@ -21,13 +21,23 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime? NgayThanhToan { get; set; }
 
+        public DateTime? NgayXacNhan { get; set; }
+
         public DateTime? NgayGiaoHang { get; set; }
 
         public DateTime? NgayNhan { get; set; }
 
+        public DateTime? NgayHoanThanh { get; set; }
+
+        public DateTime? NgayLayHang { get; set; }
+
+        public DateTime? NgayCapNhat { get; set; }
+
         public int LoaiDonHang { get; set; }
 
         public string? TenNguoiNhan { get; set; }
+
+        public string? GhiChuCapNhat { get; set; }
 
         public string? DiaChi { get; set; }
 
@@ -41,16 +51,20 @@ namespace MinkyShopProject.Business.Entities
 
         public int TrangThai { get; set; }
 
-        public NhanVien? NhanVien { get; set; }
+        public int TrangThaiGiaoHang { get; set; }
 
-        public DanhGia? DanhGia { get; set; }
+        public string? GhiChuGiaoHang { get; set; }
 
-        public KhachHang? KhachHang { get; set; }
+        public NhanVien NhanVien { get; set; } = null!;
 
-        public List<HoaDonChiTiet>? HoaDonChiTiets { get; set; }
+        public DanhGia DanhGia { get; set; } = null!;
 
-        public List<VoucherLog>? VoucherLogs { get; set; }
+        public KhachHang KhachHang { get; set; } = null!;
 
-        public List<HinhThucThanhToan>? HinhThucThanhToans { get; set; }
+        public List<HoaDonChiTiet> HoaDonChiTiets { get; set; } = null!;
+
+        public List<VoucherLog> VoucherLogs { get; set; } = null!;
+
+        public List<HinhThucThanhToan> HinhThucThanhToans { get; set; } = null!;
     }
 }

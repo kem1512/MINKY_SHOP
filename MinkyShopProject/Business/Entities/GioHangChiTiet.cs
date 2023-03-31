@@ -18,8 +18,8 @@ namespace MinkyShopProject.Business.Entities
 
         public float DonGia { get; set; }
 
-        public BienThe? BienThe { get; set; }
+        public BienThe BienThe { get; set; } = null!;
 
-        public GioHang? GioHang { get; set; }
+        public GioHang GioHang { get; set; } = null!;
     }
 }

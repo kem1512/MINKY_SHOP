@@ -70,6 +70,14 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
+            if (SanPham?.Data.BienThes != null)
+            {
+                foreach (var x in SanPham.Data.BienThes)
+                {
+                    x.BienTheChiTiets = null;
+                }
+            }
+
             var result = await HttpClient.PutAsJsonAsync($"{Url}/SanPham/{SanPham?.Data.Id}", SanPham?.Data);
 
             if (result.IsSuccessStatusCode)

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
+
 using MinkyShopProject.Business.Repositories.GiaoCa;
 using MinkyShopProject.Business.Repositories.GioHang;
 using MinkyShopProject.Business.Repositories.HoaDon;
@@ -11,13 +12,16 @@ using MinkyShopProject.Business.Repositories.NhanVien;
 using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.NhanVien;
 using MinkyShopProject.Business.Repositories.KhachHang;
+using MinkyShopProject.Business.Repositories.NhanVien;
+using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.SanPham;
+using MinkyShopProject.Business.Repositories.SeedingData;
+using MinkyShopProject.Business.Repositories.ThongKe;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
 using MinkyShopProject.Business.Repositories.ViDiem;
 using MinkyShopProject.Business.Repositories.Voucher;
 using System.Text;
 using System.Text.Json.Serialization;
-using MinkyShopProject.Business.Repositories.HoaDon;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +57,7 @@ builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 builder.Services.AddScoped<IVoucherRepository, MinkyShopProject.Business.Repositories.Voucher.VoucherRepository>();
 
 builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
+
 
 builder.Services.AddScoped<IGiaoCaRepositories, GiaoCaRepositories>();
 

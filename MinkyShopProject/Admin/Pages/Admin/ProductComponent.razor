@@ -1,4 +1,5 @@
 ﻿@page "/admin/product"
+@page "/admin/product/page/{page:int}"
 @using MinkyShopProject.Data.Enums
 @using MinkyShopProject.Data.Models
 @using System.Reflection
@@ -76,7 +77,7 @@
                                     else
                                     {
                                         <tr>
-                                            <td colspan="6" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                            <td colspan="7" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
                                         </tr>
                                     }
                                 }
@@ -84,6 +85,7 @@
 
                         </table>
                     </div>
+                    <MinkyShopProject.Admin.Shared.PaginationComponent Model="SanPhams" Url="admin/product"></MinkyShopProject.Admin.Shared.PaginationComponent>
                 </div>
             </div>
         </div>
@@ -91,11 +93,14 @@
 </div>
 
 @code {
+    [Parameter]
+    public int Page { get; set; }
+
     ResponsePagination<SanPhamModel>? SanPhams;
 
-    string Url = "https://localhost:7053/api";
+    Uri Url = new Uri("https://localhost:7053/api/sanpham");
 
-    protected override async Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
     {
         await Reload();
     }
@@ -116,6 +121,7 @@
 
     async Task Reload()
     {
-        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"{Url}/SanPham");
+        if (Page == 0) Page = 1;
+        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>(Url.AddQuery("size", "5").AddQuery("page", Page.ToString()));
     }
 }

@@ -17,5 +17,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
         public Task<Response> UpdateAsync(Guid id, BienTheModel obj);
 
         public Task<Response> FindAsync(Guid id);
+
+        public Task<Response> FindAsync(string ma);
     }
 }

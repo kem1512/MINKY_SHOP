@@ -1,0 +1,282 @@
+﻿@page "/admin/khachhang"
+@page "/admin/khachhang/page/{page:int}"
+@using MinkyShopProject.Data.Models
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                            <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'>
+                                <option value="2">2 kết quả</option>
+                                @for (int i = 1; i < 5; i++)
+                                {
+                                    var index = i * 5;
+                                    <option value="@index">@index kết quả</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <input class="form-control" placeholder="Nhập tên khách hàng" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
+                        </div>
+                    </div>
+                    <EditForm Model="khachhang" class="row gy-2 mb-3" OnSubmit="AddOrUpdateAsync">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <div class="col-12 mt-2 text-end">
+                            @if (Show)
+                            {
+                                if(khachhang.Id != Guid.Empty)
+                                {
+                                    <button class="btn btn-warning btn-sm me-3" @onclick="() => khachhang = new KhachHangThemVaSuaModel()">Hủy Chỉnh Sửa</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary btn-sm me-3" type="submit">Lưu Dữ Liệu</button>
+                                }
+                            }
+                            <button class="btn btn-@(Show ? "danger" : "success") btn-sm" type="button" @onclick="() => Show = !Show">@(!Show ? "Thêm Dữ Liệu" : "Đóng Form")</button>
+                        </div>
+                        @if(Show){
+                            <div class="row mb-3 gy-3">
+                                <div class="col-6">
+                                    <label>Tên Khách hàng</label>
+                                    <input type="text" class="form-control" @bind-value="khachhang.Ten">
+                                </div>
+                                <div class="col-6">
+                                    <label>Ngày sinh</label>
+                                    <input type="date" class="form-control" @bind-value="khachhang.NgaySinh">
+                                </div>
+                                <div class="col-6">
+                                    <label>Gmail</label>
+                                    <input type="email" class="form-control" @bind-value="khachhang.Email">
+                                </div>
+                                <div class="col-6">
+                                    <label>Địa chỉ</label>
+                                    <input type="text" class="form-control" @bind-value="khachhang.DiaChi">
+                                </div>
+                                <div class="col-6">
+                                    <label>Số điện thoại</label>
+                                    <input type="text" class="form-control" @bind-value="khachhang.Sdt">
+                                </div>
+                                <div class="col-6">
+                                    <label>Giới tính</label>
+                                    <div class="d-flex">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault2" @onclick="() => khachhang.GioiTinh = true" checked>
+                                            <label class="custom-control-label">Nam</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault2" @onclick="() => khachhang.GioiTinh = false">
+                                            <label class="custom-control-label">Nữ</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </EditForm >
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên khách hàng</th>                             
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Địa chỉ</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số điện thoại</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giới tính</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lần mua</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                @if (KhachHangs == null)
+                                {
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="spinner-grow text-primary" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    if (KhachHangs.Data.Content.Count() > 0)
+                                    {
+                                        foreach (var x in KhachHangs.Data.Content.Select((Value, Index) => (Index, Value)))
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <span class="text-secondary text-xs font-weight-bold">@(x.Index + 1)</span>
+                                                </td>
+                                                <td style="width: 20%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.DiaChi</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.Sdt</span>
+                                                </td>
+                                                <td style="width: 10%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@(x.Value.GioiTinh ? "Nam" : "Nữ")</span>
+                                                </td>
+                                                <td style="width: 5%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.SoLanMua</span>
+                                                </td>
+                                                <td class="text-sm">
+                                                    <a data-bs-toggle="offcanvas" href="#offcanvasExample" data-bs-original-title="Preview product" @onclick="() => khachhang = Helper.ConvertJson<KhachHangThemVaSuaModel>(x.Value)">
+                                                        <i class="fas fa-eye text-info" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => khachhang = Helper.ConvertJson<KhachHangThemVaSuaModel>(x.Value)">
+                                                        <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
+                                                    </a>
+                                                    <a href="javascript:;" @onclick="() => DeleteAsync(x.Value.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="10" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <MinkyShopProject.Admin.Shared.PaginationComponent Model="KhachHangs" Url="admin/khachhang" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="offcanvas offcanvas-end w-50" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Thông tin khách hàng</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="row">
+            <div class="col-6">
+                <img src="https://cdn.pixabay.com/photo/2013/07/13/10/07/man-156584__340.png" class="w-75" />
+            </div>
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Họ và tên : </label>
+                        <span class="text-bolder text-sm">@khachhang.Ten</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Ngày sinh : </label>
+                        <span class="text-bolder text-sm">@khachhang.NgaySinh</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Địa chỉ : </label>
+                        <span class="text-bolder text-sm">@khachhang.DiaChi</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Số điện thoại : </label>
+                        <span class="text-bolder text-sm">@khachhang.Sdt</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Email : </label>
+                        <span class="text-bolder text-sm">@khachhang.Email</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Ngày Tạo :</label>
+                        <span class="text-bolder text-sm">@khachhang.NgayTao</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Giới tính : </label>
+                        <span class="text-bolder text-sm">@(khachhang.GioiTinh ? "Nam" : "Nữ")</span>
+                    </div>
+                    <div class="col-12">
+                        <label class="col-form-label text-sm me-2 p-0 mb-2">Số lần mua</label>
+                        <span class="text-bolder text-sm">@khachhang.SoLanMua</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Page { get; set; }
+
+    Uri Url = new Uri("https://localhost:7053/api/khachhang");
+
+    KhachHangQueryModel Filter = new KhachHangQueryModel() { Size = 5 };
+
+    KhachHangThemVaSuaModel khachhang = new KhachHangThemVaSuaModel();
+
+    ResponsePagination<KhachHangModel>? KhachHangs;
+
+    bool Show = false;
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await Reload();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice");
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice-size");
+        }
+    }
+
+
+    async Task DeleteAsync(Guid id)
+    {
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+        var result = await HttpClient.DeleteAsync(Url + "/" + id + "/Delete");
+
+        if (result.IsSuccessStatusCode)
+        {
+            await Reload();
+            await Swal.FireAsync("Thông Báo", "Xóa thành công", SweetAlertIcon.Success);
+        }
+    }
+
+    async Task AddOrUpdateAsync(EditContext context)
+    {
+        if (context.Validate())
+        {
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+            if (string.IsNullOrEmpty(confirm.Value)) return;
+            var s = Url.AddQuery("id", khachhang.Id.ToString());
+            var result = khachhang.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", khachhang) : await HttpClient.PutAsJsonAsync<KhachHangThemVaSuaModel>(new Uri(Url + "/Update" + s.Query), khachhang);
+
+            if (result.IsSuccessStatusCode)
+            {
+                await Reload();
+                await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
+            }
+        }
+        else
+        {
+            await Swal.FireAsync("", string.Join("<br>", context.GetValidationMessages().Select(c => c)), SweetAlertIcon.Error);
+        }
+    }
+    
+
+    async Task Reload()
+    {
+        if (Page == 0) Page = 1;
+        var s = Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "5").AddQuery("Ten", Filter.Ten ?? "").AddQuery("sort", "-NgayTao");
+        KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>(new Uri(Url + "/get" + s.Query));
+    }
+}

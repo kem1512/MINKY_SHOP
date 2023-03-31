@@ -17,6 +17,8 @@ namespace MinkyShopProject.Data.Models
 
         public int SoLuong { get; set; }
 
+        public int SoLuongTam { get; set; }
+
         public float GiaBan { get; set; }
 
         public string? Sku { get; set; }
@@ -28,6 +30,8 @@ namespace MinkyShopProject.Data.Models
         public int TrangThai { get; set; }
 
         public SanPhamModel? SanPham { get; set; }
+
+        public List<BienTheChiTietModelGet>? BienTheChiTiets { get; set; }
     }
 
     public class BienTheChiTietModel
@@ -35,6 +39,21 @@ namespace MinkyShopProject.Data.Models
         public List<ThuocTinhModel>? ThuocTinhs { get; set; }
 
         public SanPhamModel? SanPham { get; set; }
+    }
+
+    public class BienTheChiTietModelGet
+    {
+        public Guid Id { get; set; }
+
+        public Guid IdThuocTinhSanPham { get; set; }
+
+        public Guid IdBienThe { get; set; }
+
+        public Guid IdGiaTri { get; set; }
+
+        public int TrangThai { get; set; }
+
+        public GiaTriModel? GiaTri { get; set; }
     }
 
     public class BienTheCreateModel

@@ -29,7 +29,7 @@ namespace MinkyShopProject.Business.Entities
 
         public float? TienPhatSinh { get; set; }
 
-        public string? GhiChuPhatSinh { get; set; }
+        public string GhiChuPhatSinh { get; set; } = null!;
 
         public float? TongTienMatCaTruoc { get; set; }
 
@@ -39,6 +39,6 @@ namespace MinkyShopProject.Business.Entities
 
         public int TrangThai { get; set; }
 
-        public NhanVien? NhanVien { get; set; }
+        public NhanVien NhanVien { get; set; } = null!;
     }
 }

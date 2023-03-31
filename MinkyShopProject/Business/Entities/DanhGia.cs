@@ -21,16 +21,16 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayDanhGia { get; set; }
 
-        public string? Anh { get; set; }
+        public string Anh { get; set; } = null!;
 
-        public string? NoiDung { get; set; }
+        public string NoiDung { get; set; } = null!;
 
         public int TrangThai { get; set; }
 
-        public BienThe? BienThe { get; set; }
+        public BienThe BienThe { get; set; } = null!;
 
-        public KhachHang? KhachHang { get; set; }
+        public KhachHang KhachHang { get; set; } = null!;
 
-        public HoaDon? HoaDon { get; set; }
+        public HoaDon HoaDon { get; set; } = null!;
     }
 }

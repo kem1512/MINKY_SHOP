@@ -1,4 +1,5 @@
 ﻿using MinkyShopProject.Common;
+using System.ComponentModel.DataAnnotations;
 
 namespace MinkyShopProject.Data.Models
 {
@@ -18,6 +19,8 @@ namespace MinkyShopProject.Data.Models
 
         public DateTime NgaySinh { get; set; }
 
+        public DateTime NgayTao { get; set; }
+
         public string? DiaChi { get; set; } = null!;
 
         public string? Sdt { get; set; } = null!;
@@ -31,6 +34,8 @@ namespace MinkyShopProject.Data.Models
     public class KhachHangThemVaSuaModel
     {
 
+        public Guid Id { get; set; }
+
         public Guid? IdViDiem { get; set; }
 
         public string? Ma { get; set; } = null!;
@@ -39,9 +44,12 @@ namespace MinkyShopProject.Data.Models
 
         public string? Anh { get; set; } = null!;
 
-        public bool GioiTinh { get; set; }
+        public bool GioiTinh { get; set; } = true;
 
-        public DateTime NgaySinh { get; set; }
+        [CheckAge(ErrorMessage = "Khách phải 16 tuổi trở lên")]
+        public DateTime NgaySinh { get; set; } = DateTime.Now;
+
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
         public string? DiaChi { get; set; } = null!;
 
@@ -56,5 +64,6 @@ namespace MinkyShopProject.Data.Models
     public class KhachHangQueryModel : PaginationRequest
     {
         public Guid? khachhangId { get; set; }
+        public string? Ten { get; set; }
     }
 }
