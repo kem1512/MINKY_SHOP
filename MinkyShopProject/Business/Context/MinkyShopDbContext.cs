@@ -30,6 +30,8 @@ namespace MinkyShopProject.Business.Context
 
         public DbSet<GioHang> GioHang { get; set; } = null!;
 
+        public DbSet<GiaoCa> giaoCas { get; set; }
+
         public DbSet<GioHangChiTiet> GioHangChiTiet { get; set; } = null!;
 
         public DbSet<ViDiem> ViDiem { get; set; } = null!;

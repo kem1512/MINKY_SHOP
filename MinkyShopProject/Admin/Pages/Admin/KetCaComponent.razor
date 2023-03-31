@@ -1,0 +1,164 @@
+﻿@page "/ketca"
+@using System.IdentityModel.Tokens.Jwt;
+@using MinkyShopProject.Business.Entities;
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="card">
+            <div class="card-header">
+                <h2>Báo Cáo Kết Ca</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Mệnh giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Moneys)
+                                    {
+                                        <tr>
+                                            <td><input value="@string.Format("{0:0,0}",item.MenhGia)" class="form-control form-control-sm" disabled /></td>
+                                            <td><input value="@(item.SoLuong == 0 ? "" : item.SoLuong)" type="number" class="form-control form-control-sm" @oninput="@(e => ChangeThanhtien(e,item.Id))" /></td>
+                                            <td><input value="@string.Format("{0:0,0}",item.ThanhTien)" class="form-control form-control-sm" /></td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td colspan="2" class="table-primary">Tổng kê khai cuối ca</td>
+                                        <td><input value="@string.Format("{0:0,0}",TongThanhTien)" class="form-control form-control-sm" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div>
+                            <div class="form-group">
+                                <span class="form-control-label">Thời gian vào ca: @(Ca.ThoiGianNhanCa.Hour):@(Ca.ThoiGianNhanCa.Minute) @(Ca.ThoiGianNhanCa.Day)/@(Ca.ThoiGianNhanCa.Month)/@(Ca.ThoiGianNhanCa.Year) </span>
+                            </div>
+                            <div class="form-group">
+                                <span class="form-control-label">Nhân viên trực ca: @(NhanVien.Ten)</span>
+                            </div>
+                            <div class="form-group d-flex justify-content-between">
+                                <span class="form-control-label">Tiền mặt đầu ca</span>
+                                <input value="@string.Format("{0:0,0}",Ca.TienBanDau)" type="text" class="form-control-sm" disabled/>
+                            </div>
+                            <div class="form-group  d-flex justify-content-between">
+                                <span class="form-control-label">Tổng hóa đơn</span>
+                                <input type="text" class="form-control-sm" />
+                            </div>
+                            <div class="form-group  d-flex justify-content-between">
+                                <span class="form-control-label">Tiền phát sinh</span>
+                                <input type="text" class="form-control-sm" />
+                            </div>
+                            <div class="form-group">
+                                <span class="form-control-label">Lý do phát sinh</span>
+                                <textarea class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div>
+                            <div class="form-group">
+                                <span class="form-control-label">Thời gian hiện tại </span>
+                            </div>
+                            <div class="form-group">
+                                <span class="form-control-label">Nhân viên bàn giao </span>
+                            </div>
+                            <div class="form-group  d-flex justify-content-between">
+                                <span class="form-control-label">Tổng tiền trong ca</span>
+                                <input type="text" class="form-control-sm" />
+                            </div>
+                            <div class="form-group  d-flex justify-content-between">
+                                <span class="form-control-label">Tổng tiền mặt</span>
+                                <input type="text" class="form-control-sm" />
+                            </div>
+                            <div class="form-group  d-flex justify-content-between">
+                                <span class="form-control-label">Tổng tiền khác</span>
+                                <input type="text" class="form-control-sm" />
+                            </div>
+                            <div class="form-group  d-flex justify-content-between">
+                                <span class="form-control-label">Tổng tiền mặt cuối ca</span>
+                                <input type="text" class="form-control-sm" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public ISessionStorageService session { get; set; } = null!;
+
+    [Inject]
+    public SweetAlertService Swal { get; set; } = null!;
+
+    [Inject]
+    public HttpClient HttpClient { get; set; } = null!;
+
+    private class Money
+    {
+        public Guid Id { get; set; }
+        public float MenhGia { get; set; }
+        public float SoLuong { get; set; }
+        public float ThanhTien { get; set; }
+    }
+
+    private List<Money> Moneys = new List<Money>()
+    {
+        new Money(){Id = Guid.NewGuid(),MenhGia = 500000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 200000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 100000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 50000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 20000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 10000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 5000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 2000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 1000,SoLuong = 0,ThanhTien=0},
+    };
+    private float TongThanhTien = 0;
+
+    private DateTime Time = DateTime.Now;
+
+    private GiaoCa Ca = new();
+
+    private NhanVien NhanVien = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await session.GetItemAsStringAsync("Token"));
+        var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={Time}");
+        Ca = result.Data;
+        var result2 = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"https://localhost:7053/api/NhanViens/{Ca.IdNhanVienTrongCa}");
+        NhanVien = result2.Data;
+    }
+
+    private async Task ChangeThanhtien(ChangeEventArgs e, Guid Id)
+    {
+        float tongThanhTien = 0;
+        var soLuong = e.Value?.ToString() == "" ? 0 : Convert.ToInt32(e.Value);
+        var Money = Moneys.FirstOrDefault(c => c.Id == Id);
+        Money.SoLuong = soLuong;
+        Money.ThanhTien = Money.MenhGia * soLuong;
+        foreach (var item in Moneys)
+        {
+            tongThanhTien += item.ThanhTien;
+        }
+        TongThanhTien = tongThanhTien;
+    }
+}
