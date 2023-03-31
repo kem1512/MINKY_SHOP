@@ -74,11 +74,28 @@ namespace MinkyShopProject.Business.Repositories.Voucher
             }
         }
 
+        public async Task<Response> FindAsync(string id)
+        {
+            try
+            {
+                var voucher = await _context.Voucher.FirstOrDefaultAsync(c => c.Ma == id);
+
+                if (voucher != null)
+                    return new ResponseObject<VoucherModel>(_mapper.Map<Entities.Voucher, VoucherModel>(voucher));
+                return new ResponseError(HttpStatusCode.NotFound, "Không tìm thấy");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
+
         public async Task<Response> GetAsync(VoucherQueryModel obj)
         {
             try
             {
-                return new ResponsePagination<VoucherModel>(_mapper.Map<Pagination<Entities.Voucher>, Pagination<VoucherModel>>(await _context.Voucher.AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<VoucherModel>(_mapper.Map<Pagination<Entities.Voucher>, Pagination<VoucherModel>>(await _context.Voucher.Where(c => c.Ten.Contains(obj.Ten ?? "")).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThai < 2 && obj.TrangThai == null)).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {
@@ -98,8 +115,6 @@ namespace MinkyShopProject.Business.Repositories.Voucher
 
                 if (voucher == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
-
-                voucher.Ten = obj.Ten;
 
                 voucher.TrangThai = obj.TrangThai;
 

@@ -101,5 +101,11 @@ namespace MinkyShopProject.Api.Controllers
         {
             return Helper.TransformData(await _Repository.ChangeStatus(Id, Status));
         }
+
+        [HttpPost("Login")]
+        public async Task<ActionResult> Login(LoginModels.Login model)
+        {
+            return Helper.TransformData(await _Repository.Login(model));
+        }
     }
 }

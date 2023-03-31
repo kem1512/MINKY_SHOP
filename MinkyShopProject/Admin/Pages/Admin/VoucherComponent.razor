@@ -1,9 +1,9 @@
 ﻿@page "/admin/voucher"
 @page "/admin/voucher/page/{page:int}"
 @using MinkyShopProject.Data.Models;
-@*@inject SweetAlertService Swal;*@
+@inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
-@*@inject IJSRuntime JSRuntime*@
+@inject IJSRuntime JSRuntime
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -11,33 +11,95 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-3">
-                                </div>
-                                <div class="col-3">
-                                    <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; }'>
-                                        <option value="2">2 kết quả</option>
-                                        @for (int i = 1; i < 5; i++)
-                                        {
-                                            var index = i * 5;
-                                            <option value="@index">@index kết quả</option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="col-3">
-                                    <input class="form-control" placeholder="Nhập tên thuộc tính"/>
-                                </div>
-                            </div>
+                        <div class="col-3">
+                            <select class="js-choice" @onchange='async (ui) =>{ Filter.TrangThai = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
+                                <option>Tất Cả</option>
+                                <option value="1">Đang Bán</option>
+                                <option value="0">Ngừng Bán</option>
+                            </select>
                         </div>
-                        <div class="col-12 mt-2 text-end">
-                            <button class="btn btn-primary btn-sm">Lưu Thông Tin</button>
+                        <div class="col-3">
+                            <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'>
+                                <option value="2">2 kết quả</option>
+                                @for (int i = 1; i < 5; i++)
+                                {
+                                    var index = i * 5;
+                                    <option value="@index">@index kết quả</option>
+                                }
+                            </select>
                         </div>
-                        <div class="col-6">
-                            <label>Tên Thuộc Tính</label>
-                            <input type="text" class="form-control">
+                        <div class="col-3">
+                            <input class="form-control" placeholder="Nhập tên thuộc tính" @onchange="async e =>{ Filter.Ten = e.Value?.ToString(); await Reload(); }" />
                         </div>
                     </div>
+                    <EditForm Model="Voucher" OnSubmit="AddAsync">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <div class="col-12 mt-2 text-end">
+                            @if(Show){
+                                if(Voucher.Id != Guid.Empty)
+                                {
+                                    <button class="btn btn-warning btn-sm me-3" @onclick="() => Voucher = new VoucherCreateModel()">Hủy Chỉnh Sửa</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary btn-sm me-3" type="submit">Lưu Dữ Liệu</button>
+                                }                         
+                            }
+                            <button class="btn btn-@(Show ? "danger" : "success") btn-sm" type="button" @onclick="() => Show = !Show">@(!Show ? "Thêm Dữ Liệu" : "Hủy")</button>
+                        </div>
+                        @if(Show){
+                            <div class="row mb-3 gy-3">
+                                <div class="col-6">
+                                    <label>Tên Voucher <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" @bind="Voucher.Ten">
+                                </div>
+                                <div class="col-6">
+                                    <label>Mã Voucher</label>
+                                    <input type="text" class="form-control" @bind="Voucher.Ma">
+                                </div>
+                                <div class="col-6">
+                                    <label>Hình Thức Giảm Giá</label>
+                                    <div class="d-flex">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault2" @onclick="() => Voucher.HinhThucGiamGia = 0" checked>
+                                            <label class="custom-control-label">Phần Trăm</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault2" @onclick="() => Voucher.HinhThucGiamGia = 1">
+                                            <label class="custom-control-label">Giá Tiền</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label>Ngày Kết Thúc</label>
+                                    <input class="form-control" type="datetime-local" @bind="Voucher.NgayKetThuc">
+                                </div>
+                                <div class="col-6">
+                                    <label>Số lượng</label>
+                                    <input type="number" class="form-control" @bind="Voucher.SoLuong">
+                                </div>
+                                <div class="col-6">
+                                    <label>Số tiền cần</label>
+                                    <input type="number" class="form-control" @bind="Voucher.SoTienCan">
+                                </div>
+                                <div class="col-6">
+                                    <label>Số tiền giảm</label>
+                                    <input type="number" class="form-control" @bind="Voucher.SoTienGiam">
+                                </div>
+                                <div class="col-6">
+                                    <label>Trạng Thái</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="() => Voucher.TrangThai = Voucher.TrangThai == 0 ? 1 : 0" checked="">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">Trạng Thái</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label>Mô tả</label>
+                                    <textarea class="form-control" @bind="Voucher.MoTa" rows="3"></textarea>
+                                </div>
+                            </div>
+                        }
+                    </EditForm>
                     <div class="table-responsive">
                         <table class="table table-bordered align-middle text-center">
                             <thead>
@@ -69,7 +131,7 @@
                                         {
                                             <tr>
                                                 <td>
-                                                    <p class="text-secondary text-xs font-weight-bold">@(x.Value.Ma)</p>
+                                                    <span class="text-secondary text-xs font-weight-bold">@(x.Value.Ma)</span>
                                                 </td>
                                                 <td style="width: 20%">
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.Ten</span>
@@ -82,17 +144,14 @@
                                                 </td>
                                                 <td class="align-middle text-center p-0" style="width: 16%">
                                                     <div class="form-check form-switch justify-content-center">
-                                                        @*<input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(x.Value.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : null)' @onchange="async() => { vouch = x.Value; await UpdateStatus(); }">*@
+                                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange='async() => { x.Value.TrangThai = x.Value.TrangThai == 1 ? 0 : 1; await UpdateAsync(x.Index); }' @attributes='@(x.Value.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : null)'>
                                                     </div>
                                                 </td>
                                                 <td class="text-sm">
-                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" class="me-3" data-bs-original-title="Preview product">
                                                         <i class="fas fa-eye text-info" aria-hidden="true"></i>
                                                     </a>
-                                                    <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
-                                                        <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
-                                                    </a>
-                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => DeleteAsync(x.Index)">
                                                         <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                                                     </a>
                                                 </td>
@@ -122,12 +181,85 @@
 
     Uri Url = new Uri("https://localhost:7053/api/voucher");
 
-    VoucherQueryModel Filter = new VoucherQueryModel() { Size = 2 };
+    VoucherQueryModel Filter = new VoucherQueryModel() { Size = 5 };
+
+    bool Show = false;
 
     MinkyShopProject.Common.ResponsePagination<VoucherModel>? Vouchers;
 
-    protected async override Task OnInitializedAsync()
+    VoucherCreateModel Voucher = new VoucherCreateModel();
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        Vouchers = await HttpClient.GetFromJsonAsync<ResponsePagination<VoucherModel>>(Url);
+        if(firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice");
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice-size");
+        }
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await Reload();
+    }
+
+    async Task AddAsync(EditContext context)
+    {
+        if (context.Validate())
+        {
+            var status = await HttpClient.PostAsJsonAsync<VoucherCreateModel>(Url, Voucher);
+
+            if (status.IsSuccessStatusCode)
+            {
+                await Swal.FireAsync("Thông Báo", "Thêm thành công", SweetAlertIcon.Success);
+                await Reload();
+            }
+        }
+        else
+        {
+            await Swal.FireAsync("", string.Join("<br>", context.GetValidationMessages().Select(c => c)), SweetAlertIcon.Error);
+        }
+    }
+
+    async Task UpdateAsync(int index)
+    {
+        var voucher = Vouchers?.Data.Content[index];
+
+        if(voucher != null)
+        {
+            var status = await HttpClient.PutAsJsonAsync<VoucherCreateModel>(Url.AddQuery("id", voucher.Id.ToString()), Helper.ConvertJson<VoucherCreateModel>(voucher));
+
+            if (status.IsSuccessStatusCode)
+            {
+                await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
+                await Reload();
+            }
+        }
+    }
+
+    async Task DeleteAsync(int index)
+    {
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        var voucher = Vouchers?.Data.Content[index];
+
+        if(voucher != null)
+        {
+            var result = await HttpClient.DeleteAsync(Url.AddQuery("id", voucher.Id.ToString()));
+
+            if (result.IsSuccessStatusCode)
+            {
+                Vouchers?.Data.Content.Remove(voucher);
+                await Swal.FireAsync("Thông Báo", "Xóa thành công", SweetAlertIcon.Success);
+            }
+        }
+    }
+
+    async Task Reload()
+    {
+        if (Page == 0) Page = 1;
+        Vouchers = await HttpClient.GetFromJsonAsync<ResponsePagination<VoucherModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "5").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? "").AddQuery("sort", "-NgayTao"));
     }
 }

@@ -190,6 +190,19 @@ namespace MinkyShopProject.Business.Repositories.BienThe
             return new ResponseObject<BienTheChiTietModel>(bienTheChiTietModel);
         }
 
+        public async Task<Response> FindAsync(string ma)
+        {
+            try
+            {
+                return new ResponseObject<BienTheModel>(_mapper.Map<Entities.BienThe, BienTheModel>(await _context.BienThe.AsNoTracking().Include(c => c.BienTheChiTiets).ThenInclude(c => c.GiaTri).Include(c => c.SanPham).FirstAsync(c => c.Sku == ma)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
+
         public async Task<Response> UpdateAsync(Guid id, BienTheModel obj)
         {
             try

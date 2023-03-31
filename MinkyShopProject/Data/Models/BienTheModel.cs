@@ -17,6 +17,8 @@ namespace MinkyShopProject.Data.Models
 
         public int SoLuong { get; set; }
 
+        public int SoLuongTam { get; set; }
+
         public float GiaBan { get; set; }
 
         public string? Sku { get; set; }

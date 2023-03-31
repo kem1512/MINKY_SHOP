@@ -68,6 +68,6 @@
     protected async override Task OnParametersSetAsync()
     {
         if (Page == 0) Page = 1;
-        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"https://localhost:7053/api/SanPham?page={Page}&size=2");
+        SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>($"https://localhost:7053/api/SanPham?page={Page}&size=10");
     }
 }

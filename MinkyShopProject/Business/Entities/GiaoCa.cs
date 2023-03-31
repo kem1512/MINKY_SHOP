@@ -11,33 +11,31 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public string Ma { get; set; } = null!;
-
         public DateTime ThoiGianNhanCa { get; set; }
 
         public DateTime ThoiGianGiaoCa { get; set; }
 
         public Guid IdNhanVienTrongCa { get; set; }
 
-        public Guid IdNhanVienCaTiepTheo { get; set; }
+        public Guid? IdNhanVienCaTiepTheo { get; set; }
 
         public float TienBanDau { get; set; }
 
-        public float TongTienTrongCa { get; set; }
+        public float? TongTienTrongCa { get; set; }
 
-        public float TongTienMat { get; set; }
+        public float? TongTienMat { get; set; }
 
-        public float TongTienKhac { get; set; }
+        public float? TongTienKhac { get; set; }
 
-        public float TienPhatSinh { get; set; }
+        public float? TienPhatSinh { get; set; }
 
         public string GhiChuPhatSinh { get; set; } = null!;
 
-        public float TongTienMatCaTruoc { get; set; }
+        public float? TongTienMatCaTruoc { get; set; }
 
-        public DateTime ThoiGianReset { get; set; }
+        public DateTime? ThoiGianReset { get; set; }
 
-        public float TongTienMatRut { get; set; }
+        public float? TongTienMatRut { get; set; }
 
         public int TrangThai { get; set; }
 

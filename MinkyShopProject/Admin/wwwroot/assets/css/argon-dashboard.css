@@ -4133,7 +4133,7 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
     .nav-tabs .nav-link {
         margin-bottom: calc(var(--bs-nav-tabs-border-width) * -1);
         background: none;
-        color: white;
+        color: black;
         border: var(--bs-nav-tabs-border-width) solid transparent;
         border-top-left-radius: var(--bs-nav-tabs-border-radius);
         border-top-right-radius: var(--bs-nav-tabs-border-radius)
@@ -4151,8 +4151,8 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
         }
 
         .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
-            color: var(--bs-nav-tabs-link-active-color);
-            background-color: var(--bs-nav-tabs-link-active-bg);
+            color: white;
+            background-color: #5e72e4;
             border-color: var(--bs-nav-tabs-link-active-border-color)
         }
 
@@ -19919,8 +19919,8 @@ textarea.form-control, textarea.form-control-lg, textarea.form-control-sm {
 }
 
 .btn-light:not(:disabled):not(.disabled).active, .btn-light:not(:disabled):not(.disabled):active, .btn.bg-gradient-light:not(:disabled):not(.disabled).active, .btn.bg-gradient-light:not(:disabled):not(.disabled):active, .show > .btn-light.dropdown-toggle, .show > .btn.bg-gradient-light.dropdown-toggle {
-    color: white;
-    background-color: #5e72e4
+    color: black;
+    background-color: white;
 }
 
 .btn-outline-light {
@@ -32352,14 +32352,7 @@ input[type=number] {
 .body-sale {
     position: absolute;
     right: 0;
-    top: 40px;
+    top: 9%;
     bottom: 0;
-    left: 0;
-}
-
-.footer-sale {
-    position: absolute;
-    bottom: 0;
-    right: 0;
     left: 0;
 }

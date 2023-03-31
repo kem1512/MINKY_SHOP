@@ -21,13 +21,23 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime? NgayThanhToan { get; set; }
 
+        public DateTime? NgayXacNhan { get; set; }
+
         public DateTime? NgayGiaoHang { get; set; }
 
         public DateTime? NgayNhan { get; set; }
 
+        public DateTime? NgayHoanThanh { get; set; }
+
+        public DateTime? NgayLayHang { get; set; }
+
+        public DateTime? NgayCapNhat { get; set; }
+
         public int LoaiDonHang { get; set; }
 
         public string? TenNguoiNhan { get; set; }
+
+        public string? GhiChuCapNhat { get; set; }
 
         public string? DiaChi { get; set; }
 
@@ -40,6 +50,10 @@ namespace MinkyShopProject.Business.Entities
         public float TongTien { get; set; }
 
         public int TrangThai { get; set; }
+
+        public int TrangThaiGiaoHang { get; set; }
+
+        public string? GhiChuGiaoHang { get; set; }
 
         public NhanVien NhanVien { get; set; } = null!;
 

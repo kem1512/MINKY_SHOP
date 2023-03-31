@@ -30,6 +30,12 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _repository.FindAsync(id));
         }
 
+        [HttpGet("search/{ma}")]
+        public async Task<IActionResult> FindAsync(string ma)
+        {
+            return Helper.TransformData(await _repository.FindAsync(ma));
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(Guid id, BienTheModel obj)
         {

@@ -36,7 +36,9 @@ namespace MinkyShopProject.Api.AutoMapper
             CreateMap<Pagination<SanPham>, Pagination<SanPhamModel>>().ReverseMap();
 
             // Hóa đơn
-            CreateMap<HoaDonModel, HoaDon>().ForMember(c => c.KhachHang, c => c.Ignore()).ReverseMap();
+            CreateMap<HoaDonModel, HoaDon>().ReverseMap();
+
+            CreateMap<HoaDonCreateModel, HoaDon>().ForMember(c => c.KhachHang, c => c.Ignore()).ForMember(c => c.NhanVien, c => c.Ignore()).ForMember(c => c.DanhGia, c => c.Ignore()).ReverseMap();
 
             CreateMap<Pagination<HoaDon>, Pagination<HoaDonModel>>().ReverseMap();
 
@@ -79,7 +81,7 @@ namespace MinkyShopProject.Api.AutoMapper
 
             CreateMap<VoucherKhachHang, VoucherKhachHangModel>().ReverseMap();
 
-            CreateMap<VoucherLog, VoucherLogModel>().ReverseMap();
+            CreateMap<VoucherLog, VoucherLogModel>().ForMember(c => c.Voucher, c => c.Ignore()).ReverseMap();
         }
     }
 }

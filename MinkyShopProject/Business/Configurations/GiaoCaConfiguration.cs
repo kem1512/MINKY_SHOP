@@ -21,23 +21,21 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.HasIndex(c => c.Ma).IsUnique();
+            builder.Property(c => c.TienBanDau);
 
-            builder.Property(c => c.TienBanDau).HasDefaultValue(0);
+            builder.Property(c => c.TongTienTrongCa);
 
-            builder.Property(c => c.TongTienTrongCa).HasDefaultValue(0);
+            builder.Property(c => c.TongTienMat);
 
-            builder.Property(c => c.TongTienMat).HasDefaultValue(0);
+            builder.Property(c => c.TongTienKhac);
 
-            builder.Property(c => c.TongTienKhac).HasDefaultValue(0);
+            builder.Property(c => c.TienPhatSinh);
 
-            builder.Property(c => c.TienPhatSinh).HasDefaultValue(0);
+            builder.Property(c => c.TongTienMatCaTruoc);
 
-            builder.Property(c => c.TongTienMatCaTruoc).HasDefaultValue(0);
+            builder.Property(c => c.TongTienMatRut);
 
-            builder.Property(c => c.TongTienMatRut).HasDefaultValue(0);
-
-            builder.Property(c => c.TrangThai).HasDefaultValue(0);
+            builder.Property(c => c.TrangThai);
 
             builder.HasOne(c => c.NhanVien).WithMany(c => c.GiaoCas).HasForeignKey(c => c.IdNhanVienCaTiepTheo).OnDelete(DeleteBehavior.Cascade);
 

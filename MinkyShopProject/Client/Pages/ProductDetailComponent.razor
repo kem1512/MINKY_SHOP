@@ -1,4 +1,4 @@
-﻿@*@page "/product/{id:guid}"
+﻿@page "/product/{id:guid}"
 @inject IJSRuntime JSRuntime
 @using MinkyShopProject.Data.Models
 @inject HttpClient HttpClient
@@ -8,30 +8,33 @@
     <main>
         <div class="container margin_30">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="all">
-                        <div class="slider">
-                            <div class="owl-carousel owl-theme main">
-                                @foreach (var x in BienTheChiTiet.BienTheModels)
-                                {
-                                    <div style="background-image: url(@x.Anh);" class="item-box"></div>
-                                }
+                @if(BienTheChiTiet.Data.SanPham?.BienThes != null)
+                {
+                    <div class="col-md-6">
+                        <div class="all">
+                            <div class="slider">
+                                <div class="owl-carousel owl-theme main">
+                                    @foreach (var x in BienTheChiTiet.Data.SanPham.BienThes)
+                                    {
+                                        <div style="background-image: url(@x.Anh);" class="item-box"></div>
+                                    }
+                                </div>
+                                <div class="left nonl"><i class="ti-angle-left"></i></div>
+                                <div class="right"><i class="ti-angle-right"></i></div>
                             </div>
-                            <div class="left nonl"><i class="ti-angle-left"></i></div>
-                            <div class="right"><i class="ti-angle-right"></i></div>
-                        </div>
-                        <div class="slider-two">
-                            <div class="owl-carousel owl-theme thumbs">
-                                @foreach (var x in BienTheChiTiet.BienTheModels)
-                                {
-                                    <div style="background-image: url(@x.Anh);" class="item-box"></div>
-                                }
+                            <div class="slider-two">
+                                <div class="owl-carousel owl-theme thumbs">
+                                    @foreach (var x in BienTheChiTiet.Data.SanPham.BienThes)
+                                    {
+                                        <div style="background-image: url(@x.Anh);" class="item-box"></div>
+                                    }
+                                </div>
+                                <div class="left-t nonl-t"></div>
+                                <div class="right-t"></div>
                             </div>
-                            <div class="left-t nonl-t"></div>
-                            <div class="right-t"></div>
                         </div>
                     </div>
-                </div>
+                }
                 <div class="col-md-6">
                     <div class="breadcrumbs">
                         <ul>
@@ -42,23 +45,26 @@
                     </div>
                     <!-- /page_header -->
                     <div class="prod_info">
-                        <h1>@BienThe.Ten</h1>
+                        <h1>@BienThe.SanPham?.Ten</h1>
                         <span class="rating"><i class="icon-star voted"></i><i class="icon-star voted"></i><i class="icon-star voted"></i><i class="icon-star voted"></i><i class="icon-star"></i><em>4 reviews</em></span>
                         <p><small>SKU: MTKRY-001</small><br>Sed ex labitur adolescens scriptorem. Te saepe verear tibique sed. Et wisi ridens vix, lorem iudico blandit mel cu. Ex vel sint zril oportere, amet wisi aperiri te cum.</p>
                         <div class="prod_options">
-                            @foreach (var x in BienTheChiTiet.ThuocTinhModels)
+                            @if(BienTheChiTiet.Data.ThuocTinhs != null)
                             {
-                                <div class="row">
-                                    <label class="col-xl-5 col-lg-5  col-md-6 col-6 pt-0"><strong>@x.Ten</strong></label>
-                                    <div class="col-xl-4 col-lg-5 col-md-6 col-6 colors">
-                                        @foreach (var y in x.GiaTris)
-                                        {
-                                            <ul>
-                                                <li><button class="btn_1">@y.Ten</button></li>
-                                            </ul>
-                                        }
+                                @foreach (var x in BienTheChiTiet.Data.ThuocTinhs)
+                                {
+                                    <div class="row">
+                                        <label class="col-xl-3 col-lg-5  col-md-6 col-6 pt-0"><strong>@x.Ten</strong></label>
+                                        <div class="col-xl-6 col-lg-5 col-md-6 col-6" style="display: flex">
+                                            @foreach (var y in x.GiaTris)
+                                            {
+                                                <ul style="list-style: none; padding-left: 0; padding-right: 3px">
+                                                    <li><button class="btn_1">@y.Ten</button></li>
+                                                </ul>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             }
                         </div>
                         <div class="row">
@@ -396,22 +402,29 @@
     [Parameter]
     public Guid Id { get; set; }
 
-    BienTheChiTietModel? BienTheChiTiet;
+    ResponseObject<BienTheChiTietModel>? BienTheChiTiet;
 
     BienTheModel BienThe = new BienTheModel();
 
     string[] GiaTris = new string[0];
 
+    protected async override void OnAfterRender(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("carousel_with_thumb");
+    }
+
     protected async override Task OnInitializedAsync()
     {
-        BienTheChiTiet = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>($"https://localhost:7053/api/BienThe/{Id}") ?? new BienTheChiTietModel();
+        BienTheChiTiet = await HttpClient.GetFromJsonAsync<ResponseObject<BienTheChiTietModel>>($"https://localhost:7053/api/BienThe/{Id}");
     }
 
     protected async override Task OnParametersSetAsync()
     {
-        BienTheChiTiet = await HttpClient.GetFromJsonAsync<BienTheChiTietModel>($"https://localhost:7053/api/BienThe/{Id}") ?? new BienTheChiTietModel();
-        GiaTris = new string[BienTheChiTiet.ThuocTinhModels.Count()];
+        BienTheChiTiet = await HttpClient.GetFromJsonAsync<ResponseObject<BienTheChiTietModel>>($"https://localhost:7053/api/BienThe/{Id}");
+        if(BienTheChiTiet?.Data.ThuocTinhs != null)
+        {
+            GiaTris = new string[BienTheChiTiet.Data.ThuocTinhs.Count()];
+        }
         await JSRuntime.InvokeVoidAsync("carousel_with_thumb");
     }
 }
-*@
