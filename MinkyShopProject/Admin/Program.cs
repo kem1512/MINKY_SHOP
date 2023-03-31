@@ -1,3 +1,4 @@
+using Blazored.Modal;
 using Blazored.SessionStorage;
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,4 +12,5 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddSweetAlert2();
 builder.Services.AddBlazoredSessionStorage();
+
 await builder.Build().RunAsync();

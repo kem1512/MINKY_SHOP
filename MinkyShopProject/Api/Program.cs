@@ -1,13 +1,21 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Repositories.BienThe;
+using MinkyShopProject.Business.Repositories.GiaoCa;
+using MinkyShopProject.Business.Repositories.GioHang;
+using MinkyShopProject.Business.Repositories.HoaDon;
+using MinkyShopProject.Business.Repositories.KhachHang;
+using MinkyShopProject.Business.Repositories.NhanVien;
 using MinkyShopProject.Business.Repositories.NhomSanPham;
 using MinkyShopProject.Business.Repositories.NhanVien;
 using MinkyShopProject.Business.Repositories.KhachHang;
 using MinkyShopProject.Business.Repositories.SanPham;
 using MinkyShopProject.Business.Repositories.ThuocTinh;
 using MinkyShopProject.Business.Repositories.ViDiem;
-using MinkyShopProject.Business.Repositories.GioHang;
+using MinkyShopProject.Business.Repositories.Voucher;
+using System.Text;
 using System.Text.Json.Serialization;
 using MinkyShopProject.Business.Repositories.HoaDon;
 
@@ -42,6 +50,14 @@ builder.Services.AddScoped<IViDiemRepository, ViDiemRepository>();
 
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 
+builder.Services.AddScoped<IVoucherRepository, MinkyShopProject.Business.Repositories.Voucher.VoucherRepository>();
+
+builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
+
+builder.Services.AddScoped<IGiaoCaRepositories, GiaoCaRepositories>();
+
+builder.Services.AddScoped<SeendingData>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddCors(options =>
@@ -51,6 +67,23 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
+builder.Services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:ValidateAudience"],
+        ValidIssuer = builder.Configuration["Jwt:ValidIssuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])),
+    };
+});
 
 var app = builder.Build();
 
@@ -62,6 +95,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
