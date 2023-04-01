@@ -1,5 +1,4 @@
 ﻿@page "/admin/product/{idsanpham:guid}"
-@page "/admin/product/{idsanpham:guid}/{idbienthe:guid}"
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -64,19 +63,20 @@
                                                             <label class="form-check-label" for="flexSwitchCheckDefault">Trạng Thái</label>
                                                         </div>
                                                     </div>
-                                                    <div class="col-12">
-                                                        <div class="d-flex justify-content-between">
-                                                            <div class="form-check form-switch">
-                                                                <input class="form-check-input" type="checkbox" id="show-all" checked="" @onchange="() => showAll = !showAll">
-                                                                <label class="form-check-label text-bolder" for="show-all">Hiển thị tất cả</label>
-                                                            </div>
-                                                            <button class="btn btn-primary btn-sm" @onclick="UpdateSanPhamAsync">Sửa</button>
+                                                    <div class="col-md-6">
+                                                        <textarea class="form-control" rows="3"></textarea>
+                                                    </div>
+                                                    <div class="col-6 d-flex justify-content-around align-items-center">
+                                                        <div class="form-check form-switch mb-3">
+                                                            <input class="form-check-input" type="checkbox" id="show-all" @onchange="() => { showAll = !showAll; }">
+                                                            <label class="form-check-label text-bolder" for="show-all">Hiển thị tất cả</label>
                                                         </div>
+                                                        <button class="btn btn-primary btn-sm" @onclick="UpdateSanPhamAsync">Sửa</button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <img class="w-100 border-radius-lg shadow-lg mt-3 p-5" src="@SanPham.Data.Anh" @onclick="() => Anh = true"
+                                                <img class="w-100 border-radius-lg shadow-lg mt-3 p-5" src="@SanPham.Data.Anh" @onclick="() => IdBienThe = 999"
                                                      alt="product_image" data-bs-toggle="modal" data-bs-target="#modal-image">
                                             </div>
                                         </div>
@@ -93,9 +93,9 @@
                                             <div class="row">
                                                 <div class="col-12 p-0">
                                                     <div class="d-flex flex-column">
-                                                        @foreach (var x in SanPham.Data.BienThes)
+                                                        @foreach (var x in SanPham.Data.BienThes.Select((v, i) => (i, v)))
                                                         {
-                                                            <NavLink href="@($"admin/product/{IdSanPham}/{x.Id}")" class="btn btn-light shadow-none my-2">@string.Join(" + ", x.BienTheChiTiets.Select(c => c.GiaTri?.Ten))</NavLink>
+                                                            <button @onclick="() =>  IdBienThe = x.i" class="btn @(IdBienThe == x.i ? "btn-primary" : "btn-light") shadow-none my-2">@string.Join(" + ", x.v.BienTheChiTiets.Select(c => c.GiaTri?.Ten))</button>
                                                         }
                                                     </div>
                                                 </div>
@@ -103,36 +103,36 @@
                                         </div>
                                     </div>
                                 </div>
-                                @foreach (var x in SanPham.Data.BienThes)
+                                @foreach (var x in SanPham.Data.BienThes.Select((v, i) => (i, v)))
                                 {
-                                    <div class="mt-lg-0 my-4 @(showAll ? "d-block col-lg-6" : IdBienThe == x.Id ? "d-block col-lg-8" : "d-none")">
+                                    <div class="mt-lg-0 my-4 @(showAll ? "d-block col-lg-6" : IdBienThe == x.i ? "d-block col-lg-8" : "d-none")">
                                         <div class="card">
                                             <div class="card-header d-flex justify-content-between pe-4 pt-3 pb-0">
                                                 <div></div>
                                                 <div>
-                                                    <button class="btn btn-danger btn-sm m-0" @onclick="() => DeleteAsync(x.Id)">Xóa</button>
+                                                    <button class="btn btn-danger btn-sm m-0" @onclick="() => DeleteAsync(x.v.Id)">Xóa</button>
                                                 </div>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-12 col-sm-6">
                                                         <label>Tên Biến Thể</label>
-                                                        <input class="form-control" type="text" value="@(SanPham.Data.Ten + " " + string.Join(" + ", x.BienTheChiTiets.Select(c => c.GiaTri?.Ten)))">
+                                                        <input class="form-control" type="text" value="@(SanPham.Data.Ten + " " + string.Join(" + ", x.v.BienTheChiTiets.Select(c => c.GiaTri?.Ten)))">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Số Lượng</label>
-                                                        <input class="form-control" type="number" @bind="x.SoLuong" onfocus="focused(this)" onfocusout="defocused(this)">
+                                                        <input class="form-control" type="number" @bind="x.v.SoLuong" onfocus="focused(this)" onfocusout="defocused(this)">
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Giá Tiền</label>
-                                                        <input class="form-control" type="text" value="@string.Format("{0:0,0}", x.GiaBan)" @oninput='e => x.GiaBan = float.Parse(e.Value?.ToString() ?? "")'>
+                                                        <input class="form-control" type="text" value="@string.Format("{0:0,0}", x.v.GiaBan)" @oninput='e => x.v.GiaBan = float.Parse(e.Value?.ToString() ?? "")'>
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>SKU</label>
-                                                        <input class="form-control" type="text" value="@x.Sku">
+                                                        <input class="form-control" type="text" value="@x.v.Sku">
                                                     </div>
                                                     <div class="col-6 col-sm-6 mb-3">
-                                                        <img class="w-100 border-radius-lg shadow-lg mt-3 p-4" src="@x.Anh"
+                                                        <img class="w-100 border-radius-lg shadow-lg mt-3 p-4" src="@x.v.Anh" @onclick="() => IdBienThe = x.i"
                                                              alt="product_image" data-bs-toggle="modal" data-bs-target="#modal-image">
                                                     </div>
                                                 </div>
@@ -163,7 +163,7 @@
                         @foreach (var x in ModelImage.Select((Value, Index) => (Index, Value)))
                         {
                             <div class="col-2 border">
-                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(!Anh) { var result = SanPham?.Data.BienThes?.FirstOrDefault(c => c.Id == IdBienThe); if(result != null) result.Anh = ModelImage[x.Index]; } else { if(SanPham != null) SanPham.Data.Anh = ModelImage[x.Index]; } Anh = false; }" data-bs-dismiss="modal" />
+                                <img src="@x.Value" class="w-100 p-3" @onclick="() => { if(IdBienThe == 999){ if(SanPham != null) SanPham.Data.Anh = x.Value; }else{ if(SanPham != null && SanPham.Data.BienThes != null) SanPham.Data.BienThes[IdBienThe].Anh = x.Value; } }" data-bs-dismiss="modal" />
                             </div>
                         }
                     }
@@ -171,9 +171,9 @@
             </div>
             <div class="modal-footer">
                 <div class="w-100 d-flex justify-content-between">
-                    <InputFile class="form-control w-25" OnChange="@LoadFiles" multiple />
+                    <InputFile class="form-control w-25" OnChange='async e => { await JSRuntime.InvokeVoidAsync("uploadImages", e.File); }' multiple />
                     @*                    <button type="button" class="btn btn-secondary m-0" @onclick='async() => await JSRuntime.InvokeVoidAsync("uploadImages", loadedFiles) '>Tải Ảnh Lên</button>*@
-                    <button type="button" class="btn btn-secondary m-0" data-bs-dismiss="modal" @onmousedown="() => Anh = false">Đóng</button>
+                    <button type="button" class="btn btn-secondary m-0" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>
         </div>

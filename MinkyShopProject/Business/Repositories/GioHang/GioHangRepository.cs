@@ -57,8 +57,8 @@ namespace MinkyShopProject.Business.Repositories.GioHang
         {
             try
             {
-                var gioHang = await _context.GioHang.FirstOrDefaultAsync(c => c.IdKhachHang == id);
-                var gioHangChiTiet = await _context.GioHangChiTiet.FirstOrDefaultAsync(c => c.BienThe.Id == id);
+                var gioHang = await _context.GioHang.AsNoTracking().FirstOrDefaultAsync(c => c.IdKhachHang == id);
+                var gioHangChiTiet = await _context.GioHangChiTiet.AsNoTracking().FirstOrDefaultAsync(c => c.BienThe.Id == id);
 
                 if (gioHangChiTiet != null)
                 {
@@ -91,6 +91,7 @@ namespace MinkyShopProject.Business.Repositories.GioHang
             try
             {
                 var result = await _context.GioHang.Include(c => c.GioHangChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.BienTheChiTiets).ThenInclude(c => c.GiaTri).FirstOrDefaultAsync(c => c.IdKhachHang == id);
+                var gioHang = new GioHangModel();
                 if (result != null)
                 {
                     if (result.GioHangChiTiets != null)
@@ -101,9 +102,21 @@ namespace MinkyShopProject.Business.Repositories.GioHang
                             if (sp != null)
                                 x.BienThe.SanPham = sp;
                         }
+
+                        gioHang = _mapper.Map<Entities.GioHang, GioHangModel>(result);
+
+                        if (gioHang.GioHangChiTiets != null)
+                        {
+
+                            foreach (var x in gioHang.GioHangChiTiets)
+                            {
+                                var bienThe = await _context.BienThe.AsNoTracking().FirstOrDefaultAsync(c => c.Id == x.IdBienThe);
+                                if (bienThe != null) x.SoLuongLucDau = bienThe.SoLuong;
+                            }
+                        }
                     }
                 }
-                return new ResponseObject<GioHangModel>(_mapper.Map<Entities.GioHang, GioHangModel>(result ?? new Entities.GioHang()));
+                return new ResponseObject<GioHangModel>(gioHang);
             }
             catch (Exception e)
             {
@@ -119,26 +132,29 @@ namespace MinkyShopProject.Business.Repositories.GioHang
                 if (obj == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Giá trị trả về không hợp lệ");
 
+                if (obj.GioHangChiTiets != null)
+                {
+                    foreach (var x in obj.GioHangChiTiets)
+                    {
+                        x.BienThe = null;
+                    }
+                }
+
                 var gioHang = _context.GioHang.AsNoTracking().FirstOrDefault(c => c.IdKhachHang == obj.IdKhachHang);
 
                 if (gioHang == null)
                 {
                     gioHang = new Entities.GioHang() { Id = Guid.NewGuid(), IdKhachHang = obj.IdKhachHang };
+                    if (obj.GioHangChiTiets != null)
+                    {
+                        gioHang.GioHangChiTiets = _mapper.Map<List<GioHangChiTietModel>, List<GioHangChiTiet>>(obj.GioHangChiTiets);
+                    }
                     await _context.GioHang.AddAsync(gioHang);
                 }
-
-                if (obj.GioHangChiTiets != null && obj.GioHangChiTiets.Count() > 0)
+                else
                 {
-                    var gioHangChiTiet = await _context.GioHangChiTiet.FirstOrDefaultAsync(c => c.IdBienThe == obj.GioHangChiTiets[0].IdBienThe);
-                    if (gioHangChiTiet != null)
-                    {
-                        await _context.GioHangChiTiet.AddAsync(gioHangChiTiet);
-                    }
-                    else
-                    {
-                        gioHangChiTiet = new Entities.GioHangChiTiet() { IdGioHang = gioHang.Id, SoLuong = obj.GioHangChiTiets[0].SoLuong, IdBienThe = obj.GioHangChiTiets[0].IdBienThe, DonGia = obj.GioHangChiTiets[0].DonGia };
-                        _context.GioHangChiTiet.Update(gioHangChiTiet);
-                    }
+                    gioHang = _mapper.Map<GioHangModel, Entities.GioHang>(obj);
+                    _context.GioHang.Update(gioHang);
                 }
 
                 var status = await _context.SaveChangesAsync();

@@ -207,6 +207,8 @@
     {
         if (context.Validate())
         {
+            Voucher.NgayApDung = DateTime.Now;
+
             var status = await HttpClient.PostAsJsonAsync<VoucherCreateModel>(Url, Voucher);
 
             if (status.IsSuccessStatusCode)

@@ -78,7 +78,7 @@ namespace MinkyShopProject.Business.Repositories.Voucher
         {
             try
             {
-                var voucher = await _context.Voucher.FirstOrDefaultAsync(c => c.Ma == id);
+                var voucher = await _context.Voucher.FirstOrDefaultAsync(c => c.Ma.ToLower().Trim() == id.ToLower().Trim());
 
                 if (voucher != null)
                     return new ResponseObject<VoucherModel>(_mapper.Map<Entities.Voucher, VoucherModel>(voucher));

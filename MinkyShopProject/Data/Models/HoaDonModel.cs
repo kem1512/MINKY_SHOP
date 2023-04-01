@@ -161,5 +161,7 @@ namespace MinkyShopProject.Data.Models
         public int? TrangThaiGiaoHang { get; set; }
 
         public int? LoaiHoaDon { get; set; }
+
+        public Guid? IdKhachHang { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public Guid IdKhachHang { get; set; } = Guid.Parse("8b00e3e6-9743-453e-9c97-c7b480772948");
+        public Guid IdKhachHang { get; set; } = Guid.Parse("68ad5c67-81d8-4f1f-a596-5d7fd7eda692");
 
         public DateTime NgayTao { get; set; }
 
@@ -27,6 +27,8 @@ namespace MinkyShopProject.Data.Models
         public Guid IdGioHang { get; set; }
 
         public int SoLuong { get; set; }
+
+        public int SoLuongLucDau { get; set; }
 
         public float DonGia { get; set; }
 
