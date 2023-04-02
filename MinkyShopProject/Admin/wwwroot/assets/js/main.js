@@ -36,15 +36,15 @@ async function storageImages() {
 
 async function uploadImages(images) {
     //for (var image of images) {
-    //    //const storageRef = ref(storage, 'images/' + image.name);
     //    //uploadBytes(storageRef, new File([image], image.name, { type: image.contentType })).then((snapshot) => {
     //    //    console.log('Uploaded a blob or file!');
     //    //});
     //    console.log(new File([image], image.name, { type: image.contentType }));
     //}
-    for (var x of images) {
-        console.log(x);
-    }
+    const storageRef = ref(storage, 'images/' + "123");
+    uploadBytes(storageRef, images).then((snapshot) => {
+        console.log('Uploaded a blob or file!');
+    });
 }
 
 function choiceLoad(obj, classname) {

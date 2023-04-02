@@ -38,7 +38,7 @@
                                     if(HoaDon?.NgayHoanThanh == null){ HoaDon.NgayHoanThanh = DateTime.Now; } await CapNhatHoaDon(); }
                                 }else{ await Swal.FireAsync("", "Hóa Đơn Phải Xác Nhận Và Thanh Toán Đủ Trước Khi Hoàn Thành", SweetAlertIcon.Error); }; }'>Hoàn thành</button>
                                 <button class="btn btn-success me-2">In</button>
-                                <button class="btn btn-danger me-2" @onclick="async() => { if(await Confirm()){ if(HoaDon.LoaiDonHang == 2) { HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaHuy; await CapNhatHoaDon(); }else{ HoaDon.TrangThaiGiaoHang = (int)Data.Enums.TrangThaiGiaoHang.DaHuy; await CapNhatHoaDon(); }} }">Hủy</button>
+                                <button class="btn btn-danger me-2" @onclick="async() => { if(await Confirm()){ if(HoaDon.LoaiDonHang != 2) { HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaHuy; await CapNhatHoaDon(); }else{ HoaDon.TrangThaiGiaoHang = (int)Data.Enums.TrangThaiGiaoHang.DaHuy; await CapNhatHoaDon(); }} }">Hủy</button>
                                 @if (HoaDon?.TrangThai == MinkyShopProject.Data.Enums.TrangThaiHoaDon.ChoXacNhan && HoaDon?.LoaiDonHang != (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang && HoaDon?.NgayXacNhan == null)
                                 {
                                     <button class="btn btn-danger me-2" @onclick="async() => { if(await Confirm()) { if(HoaDon?.NgayXacNhan == null){ HoaDon.NgayXacNhan = DateTime.Now; HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaXacNhan; } await CapNhatHoaDon(); } }">Xác Nhận</button>
@@ -112,6 +112,9 @@
                                                     break;
                                                 case 2:
                                                     loaiDonHang = "Giao Hàng";
+                                                    break;
+                                                case 3:
+                                                    loaiDonHang = "Đơn Online";
                                                     break;
                                                 default:
                                                     break;

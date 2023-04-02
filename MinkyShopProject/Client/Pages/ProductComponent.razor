@@ -8,153 +8,33 @@
         <aside class="col-lg-3" id="sidebar_fixed">
             <div class="filter_col">
                 <div class="inner_bt"><a href="#" class="open_filters"><i class="ti-close"></i></a></div>
-                <div class="filter_type version_2">
-                    <h4><a href="#filter_1" data-toggle="collapse" class="opened">Categories</a></h4>
-                    <div class="collapse show" id="filter_1">
-                        <ul>
-                            <li>
-                                <label class="container_check">
-                                    Men <small>12</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Women <small>24</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Running <small>23</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Training <small>11</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- /filter_type -->
-                </div>
-                <!-- /filter_type -->
-                <div class="filter_type version_2">
-                    <h4><a href="#filter_2" data-toggle="collapse" class="opened">Color</a></h4>
-                    <div class="collapse show" id="filter_2">
-                        <ul>
-                            <li>
-                                <label class="container_check">
-                                    Blue <small>06</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Red <small>12</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Orange <small>17</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Black <small>43</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- /filter_type -->
-                <div class="filter_type version_2">
-                    <h4><a href="#filter_3" data-toggle="collapse" class="closed">Brands</a></h4>
-                    <div class="collapse" id="filter_3">
-                        <ul>
-                            <li>
-                                <label class="container_check">
-                                    Adidas <small>11</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Nike <small>08</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Vans <small>05</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    Puma <small>18</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- /filter_type -->
-                <div class="filter_type version_2">
-                    <h4><a href="#filter_4" data-toggle="collapse" class="closed">Price</a></h4>
-                    <div class="collapse" id="filter_4">
-                        <ul>
-                            <li>
-                                <label class="container_check">
-                                    $0 — $50<small>11</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    $50 — $100<small>08</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    $100 — $150<small>05</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                            <li>
-                                <label class="container_check">
-                                    $150 — $200<small>18</small>
-                                    <input type="checkbox">
-                                    <span class="checkmark"></span>
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                @if(ThuocTinhs != null && ThuocTinhs.Data.Content.Any())
+                {
+                    foreach (var x in ThuocTinhs.Data.Content.Select((v, i) => (i, v)))
+                    {
+                        <div class="filter_type version_2">
+                            <h4><a href="#filter_@x.i" data-toggle="collapse" class="opened">@x.v.Ten</a></h4>
+                            <div class="collapse show" id="filter_@x.i">
+                                <ul>
+                                    @foreach (var y in x.v.GiaTris)
+                                    {
+                                        <li>
+                                            <label class="container_check">
+                                                @y.Ten <small>12</small>
+                                                <input type="checkbox" @onclick="() => { var giaTri =  GiaTris.FindIndex(c => c == y.Id); if(giaTri != -1){ GiaTris.RemoveAt(giaTri); }else{ GiaTris.Add(y.Id); } }">
+                                                <span class="checkmark"></span>
+                                            </label>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <!-- /filter_type -->
+                        </div>
+                    }
+                }
                 <!-- /filter_type -->
                 <div class="buttons">
-                    <a href="#0" class="btn_1">Filter</a> <a href="#0" class="btn_1 gray">Reset</a>
+                    <a class="btn_1" @onclick="LocGiaTri">Filter</a> <a @onclick="() => SanPhamsSauKhiLoc = new List<SanPhamModel>()" class="btn_1 gray">Reset</a>
                 </div>
             </div>
         </aside>
@@ -207,30 +87,61 @@
             <div class="row small-gutters">
                 @if (SanPhams != null)
                 {
-                    @foreach (var x in SanPhams.Data.Content)
+                    if(SanPhamsSauKhiLoc != null && SanPhamsSauKhiLoc.Any())
                     {
-                        <div class="col-6 col-md-4">
-                            <div class="grid_item">
-                                <span class="ribbon off">New</span>
-                                <figure style="margin: 0">
-                                    <a href="product-detail-1.html">
-                                        <img class="img-fluid lazy" src="@x.Anh" alt="">
-                                    </a>
-                                </figure>
-                                <NavLink href="@($"/product/{x.Id}")">
-                                    <h3 style="margin-bottom: 3px">@x.Ten</h3>
-                                </NavLink>
-                                <div class="price_box">
-                                    <span class="new_price">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan)) - @Helper.FormatMoney( x.BienThes?.Max(c => c.GiaBan))</span>
+                        @foreach (var x in SanPhamsSauKhiLoc)
+                        {
+                            <div class="col-6 col-md-4">
+                                <div class="grid_item">
+                                    <span class="ribbon off">-30%</span>
+                                    <figure>
+                                        <NavLink href="@($"/product/{x.Id}")">
+                                            <img class="img-fluid lazy loaded" src="@x.Anh" data-src="@x.Anh" alt="" data-was-processed="true">
+                                        </NavLink>
+                                    </figure>
+                                    <NavLink href="@($"/product/{x.Id}")">
+                                        <h3>@x.Ten</h3>
+                                    </NavLink>
+                                    <div class="price_box">
+                                        <span class="new_price">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan)) - @Helper.FormatMoney( x.BienThes?.Max(c => c.GiaBan))</span>
+                                    </div>
+                                    <ul>
+                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to favorites"><i class="ti-heart"></i><span>Add to favorites</span></a></li>
+                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to compare"><i class="ti-control-shuffle"></i><span>Add to compare</span></a></li>
+                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to cart"><i class="ti-shopping-cart"></i><span>Add to cart</span></a></li>
+                                    </ul>
                                 </div>
-                                <ul>
-                                    <li><a href="#0" class="tooltip-1" data-toggle="tooltip" data-placement="left" title="Add to favorites"><i class="ti-heart"></i><span>Add to favorites</span></a></li>
-                                    <li><a href="#0" class="tooltip-1" data-toggle="tooltip" data-placement="left" title="Add to compare"><i class="ti-control-shuffle"></i><span>Add to compare</span></a></li>
-                                    <li><a href="#0" class="tooltip-1" data-toggle="tooltip" data-placement="left" title="Add to cart"><i class="ti-shopping-cart"></i><span>Add to cart</span></a></li>
-                                </ul>
+                                <!-- /grid_item -->
                             </div>
-                            <!-- /grid_item -->
-                        </div>
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var x in SanPhams.Data.Content)
+                        {
+                            <div class="col-6 col-md-4">
+                                <div class="grid_item">
+                                    <span class="ribbon off">-30%</span>
+                                    <figure>
+                                        <NavLink href="@($"/product/{x.Id}")">
+                                            <img class="img-fluid lazy loaded" src="@x.Anh" data-src="@x.Anh" alt="" data-was-processed="true">
+                                        </NavLink>
+                                    </figure>
+                                    <NavLink href="@($"/product/{x.Id}")">
+                                        <h3>@x.Ten</h3>
+                                    </NavLink>
+                                    <div class="price_box">
+                                        <span class="new_price">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan)) - @Helper.FormatMoney( x.BienThes?.Max(c => c.GiaBan))</span>
+                                    </div>
+                                    <ul>
+                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to favorites"><i class="ti-heart"></i><span>Add to favorites</span></a></li>
+                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to compare"><i class="ti-control-shuffle"></i><span>Add to compare</span></a></li>
+                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to cart"><i class="ti-shopping-cart"></i><span>Add to cart</span></a></li>
+                                    </ul>
+                                </div>
+                                <!-- /grid_item -->
+                            </div>
+                        }
                     }
                 }
                 <!-- /col -->
@@ -264,8 +175,45 @@
 @code {
     ResponsePagination<SanPhamModel>? SanPhams;
 
+    List<SanPhamModel> SanPhamsSauKhiLoc = new List<SanPhamModel>();
+
+    ResponsePagination<ThuocTinhModel>? ThuocTinhs;
+
+    List<Guid> GiaTris = new List<Guid>();
+
     protected override async Task OnInitializedAsync()
     {
         SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>("https://localhost:7053/api/SanPham");
+        ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>("https://localhost:7053/api/ThuocTinh");
+    }
+
+    async Task LocGiaTri()
+    {
+        if(SanPhams != null)
+        {
+            foreach (var x in SanPhams.Data.Content)
+            {
+                @if(x.BienThes != null)
+                {
+                    foreach (var y in x.BienThes)
+                    {
+                        if(y.BienTheChiTiets != null)
+                        {
+                            foreach (var z in y.BienTheChiTiets)
+                            {
+                                if(GiaTris.Any(c => c == z.GiaTri?.Id))
+                                {
+                                    if(!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id))
+                                    {
+                                        SanPhamsSauKhiLoc.Add(x); 
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

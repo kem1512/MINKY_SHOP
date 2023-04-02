@@ -2,6 +2,7 @@
 @inject IJSRuntime JSRuntime
 @using MinkyShopProject.Data.Models
 @inject HttpClient HttpClient
+@inject SweetAlertService Swal
 
 @if (BienTheChiTiet != null)
 {
@@ -26,7 +27,7 @@
                                 <div class="owl-carousel owl-theme thumbs">
                                     @foreach (var x in BienTheChiTiet.Data.SanPham.BienThes)
                                     {
-                                        <div style="background-image: url(@x.Anh);" class="item-box"></div>
+                                        <div style="background-image: url(@x.Anh);" class="item"></div>
                                     }
                                 </div>
                                 <div class="left-t nonl-t"></div>
@@ -45,21 +46,21 @@
                     </div>
                     <!-- /page_header -->
                     <div class="prod_info">
-                        <h1>@BienThe.SanPham?.Ten</h1>
+                        <h1>@BienTheChiTiet.Data.SanPham?.Ten</h1>
                         <span class="rating"><i class="icon-star voted"></i><i class="icon-star voted"></i><i class="icon-star voted"></i><i class="icon-star voted"></i><i class="icon-star"></i><em>4 reviews</em></span>
-                        <p><small>SKU: MTKRY-001</small><br>Sed ex labitur adolescens scriptorem. Te saepe verear tibique sed. Et wisi ridens vix, lorem iudico blandit mel cu. Ex vel sint zril oportere, amet wisi aperiri te cum.</p>
+                        <p><small>@( BienThe.Id != Guid.Empty ? "SKU: " + BienThe.Sku : "SKU: #" )</small><br>Sed ex labitur adolescens scriptorem. Te saepe verear tibique sed. Et wisi ridens vix, lorem iudico blandit mel cu. Ex vel sint zril oportere, amet wisi aperiri te cum.</p>
                         <div class="prod_options">
                             @if(BienTheChiTiet.Data.ThuocTinhs != null)
                             {
-                                @foreach (var x in BienTheChiTiet.Data.ThuocTinhs)
+                                @foreach (var x in BienTheChiTiet.Data.ThuocTinhs.Select((v, i) => (i, v)))
                                 {
                                     <div class="row">
-                                        <label class="col-xl-3 col-lg-5  col-md-6 col-6 pt-0"><strong>@x.Ten</strong></label>
+                                        <label class="col-xl-3 col-lg-5  col-md-6 col-6 pt-0"><strong>@x.v.Ten</strong></label>
                                         <div class="col-xl-6 col-lg-5 col-md-6 col-6" style="display: flex">
-                                            @foreach (var y in x.GiaTris)
+                                            @foreach (var y in x.v.GiaTris)
                                             {
                                                 <ul style="list-style: none; padding-left: 0; padding-right: 3px">
-                                                    <li><button class="btn_1">@y.Ten</button></li>
+                                                    <li><button class="btn_1 @(GiaTris[x.i] == y.Ten ? "active" : "")" @onclick='async() => { if(GiaTris[x.i] != y.Ten) { GiaTris[x.i] = y.Ten; }else{ GiaTris[x.i] = ""; BienThe = new BienTheModel(); }; await TimKiemBienThe(); }'>@y.Ten</button></li>
                                                 </ul>
                                             }
                                         </div>
@@ -68,11 +69,19 @@
                             }
                         </div>
                         <div class="row">
-                            <div class="col-lg-5 col-md-6">
-                                <div class="price_main"><span class="new_price">$148.00</span><span class="percentage">-20%</span> <span class="old_price">$160.00</span></div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="price_main"><span class="new_price">@(BienThe.Id != Guid.Empty ? Helper.FormatMoney(BienThe.GiaBan) : Helper.FormatMoney(BienTheChiTiet.Data.SanPham?.BienThes?.Min(c => c.GiaBan)))</span></div>
                             </div>
                             <div class="col-lg-4 col-md-6">
-                                <div class="btn_add_to_cart"><a href="#0" class="btn_1">Add to Cart</a></div>
+                                <div class="d-flex">
+                                    <button class="btn_1" @onclick="() =>{ if(BienThe.SoLuongTam > 1) BienThe.SoLuongTam -= 1; }">-</button>
+                                    <input type="number" @bind="BienThe.SoLuongTam" min="1" style="width: 50%; text-align: center" />
+                                    <button class="btn_1" @onclick="() => BienThe.SoLuongTam += 1">+</button>
+                                </div>
+                                <p class="mt-2">Kho : @(BienThe.Id != Guid.Empty ? BienThe.SoLuong : BienTheChiTiet.Data.SanPham?.BienThes?.Sum(c => c.SoLuong))</p>
+                            </div>
+                            <div class="col-lg-5 col-md-6">
+                                <div class="btn_add_to_cart" @onclick="ThemVaoGioHang"><a class="btn_1">Add to Cart</a></div>
                             </div>
                         </div>
                     </div>
@@ -404,6 +413,8 @@
 
     ResponseObject<BienTheChiTietModel>? BienTheChiTiet;
 
+    private ResponseObject<GioHangModel>? GioHangs;
+
     BienTheModel BienThe = new BienTheModel();
 
     string[] GiaTris = new string[0];
@@ -415,16 +426,50 @@
 
     protected async override Task OnInitializedAsync()
     {
+        GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=68AD5C67-81D8-4F1F-A596-5D7FD7EDA692");
         BienTheChiTiet = await HttpClient.GetFromJsonAsync<ResponseObject<BienTheChiTietModel>>($"https://localhost:7053/api/BienThe/{Id}");
+        if (BienTheChiTiet?.Data.ThuocTinhs != null)
+        {
+            GiaTris = new string[BienTheChiTiet.Data.ThuocTinhs.Count()];
+        }
     }
 
     protected async override Task OnParametersSetAsync()
     {
-        BienTheChiTiet = await HttpClient.GetFromJsonAsync<ResponseObject<BienTheChiTietModel>>($"https://localhost:7053/api/BienThe/{Id}");
-        if(BienTheChiTiet?.Data.ThuocTinhs != null)
-        {
-            GiaTris = new string[BienTheChiTiet.Data.ThuocTinhs.Count()];
-        }
         await JSRuntime.InvokeVoidAsync("carousel_with_thumb");
+    }
+
+    async Task TimKiemBienThe()
+    {
+        var result = BienTheChiTiet.Data.SanPham.BienThes.FirstOrDefault(c => string.Join(" + ", c.BienTheChiTiets.OrderBy(c => c.GiaTri?.Ten).Select(c => c.GiaTri?.Ten)) == string.Join(" + ", GiaTris.OrderBy(c => c)));
+        if(result != null)
+        {
+            BienThe = result;
+        }
+    }
+
+    async Task ThemVaoGioHang()
+    {
+        if(BienThe != null && GioHangs != null && GioHangs.Data.GioHangChiTiets != null && GioHangs.Data.GioHangChiTiets.Any())
+        {
+            var gioHangChiTiet = GioHangs.Data.GioHangChiTiets.FirstOrDefault(c => c.IdBienThe == BienThe.Id);
+            if(gioHangChiTiet != null)
+            {
+                gioHangChiTiet.SoLuong += BienThe.SoLuongTam;
+            }
+            else
+            {
+                GioHangs.Data.GioHangChiTiets.Add(new GioHangChiTietModel() { IdBienThe = BienThe.Id, SoLuong = BienThe.SoLuongTam, DonGia = BienThe.GiaBan });
+            }
+            var status = await HttpClient.PutAsJsonAsync<GioHangModel>("https://localhost:7053/api/GioHang", GioHangs.Data);
+            if (status.IsSuccessStatusCode)
+            {
+                await Swal.FireAsync("Thông Báo", "Thêm Thành Công", SweetAlertIcon.Success);
+            }
+            else
+            {
+                await Swal.FireAsync("Thông Báo", "Thêm Thất Bại", SweetAlertIcon.Error);
+            }
+        }
     }
 }

@@ -5,6 +5,8 @@ using Microsoft.JSInterop;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace MinkyShopProject.Admin.Pages.Admin
 {
@@ -19,13 +21,10 @@ namespace MinkyShopProject.Admin.Pages.Admin
         [Inject]
         IJSRuntime JSRuntime { get; set; } = null!;
 
-        [Parameter]
-        public Guid IdBienThe { get; set; }
+        public int IdBienThe = 999;
 
         [Parameter]
         public Guid IdSanPham { get; set; }
-
-        bool Anh = false;
 
         bool showAll = false;
 

@@ -1985,6 +1985,12 @@ a {
             padding: 18px 40px;
         }
 
+        a.btn_1.active,
+        .btn_1.active {
+            background-color: #FFC107;
+            color: #111 !important;
+        }
+
         a.btn_1.outline,
         .btn_1.outline {
             border: 2px solid #111;
