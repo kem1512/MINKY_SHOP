@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinkyShopProject.Business.Context;
 
@@ -11,9 +12,10 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    partial class MinkyShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230324135040_new")]
+    partial class @new
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,7 +160,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValueSql("(NEWID())");
 
                     b.Property<string>("GhiChuPhatSinh")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("IdNhanVienCaTiepTheo")
@@ -329,12 +330,6 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<string>("GhiChu")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("GhiChuCapNhat")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("GhiChuGiaoHang")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("IdKhachHang")
                         .HasColumnType("uniqueidentifier");
 
@@ -350,16 +345,7 @@ namespace MinkyShopProject.Business.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("NgayCapNhat")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("NgayGiaoHang")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NgayHoanThanh")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NgayLayHang")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayNhan")
@@ -369,9 +355,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayThanhToan")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NgayXacNhan")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Sdt")
@@ -394,9 +377,6 @@ namespace MinkyShopProject.Business.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
-
-                    b.Property<int>("TrangThaiGiaoHang")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -432,9 +412,6 @@ namespace MinkyShopProject.Business.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
-
-                    b.Property<int>("TrangThai")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -508,6 +485,27 @@ namespace MinkyShopProject.Business.Migrations
                     b.ToTable("KhachHang", (string)null);
                 });
 
+            modelBuilder.Entity("MinkyShopProject.Business.Entities.MoTa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(NEWID())");
+
+                    b.Property<string>("Anh")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("IdSanPham")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdSanPham")
+                        .IsUnique();
+
+                    b.ToTable("MoTa", (string)null);
+                });
+
             modelBuilder.Entity("MinkyShopProject.Business.Entities.NhanVien", b =>
                 {
                     b.Property<Guid>("Id")
@@ -533,7 +531,7 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<string>("MatKhau")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("NgaySinh")
+                    b.Property<DateTime>("NgaySinh")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayTao")
@@ -609,9 +607,6 @@ namespace MinkyShopProject.Business.Migrations
 
                     b.Property<string>("Ma")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("MoTa")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
@@ -1010,6 +1005,17 @@ namespace MinkyShopProject.Business.Migrations
                     b.Navigation("ViDiem");
                 });
 
+            modelBuilder.Entity("MinkyShopProject.Business.Entities.MoTa", b =>
+                {
+                    b.HasOne("MinkyShopProject.Business.Entities.SanPham", "SanPham")
+                        .WithOne("MoTa")
+                        .HasForeignKey("MinkyShopProject.Business.Entities.MoTa", "IdSanPham")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SanPham");
+                });
+
             modelBuilder.Entity("MinkyShopProject.Business.Entities.NhomSanPham", b =>
                 {
                     b.HasOne("MinkyShopProject.Business.Entities.NhomSanPham", "NhomSanPhamEntity")
@@ -1146,6 +1152,9 @@ namespace MinkyShopProject.Business.Migrations
             modelBuilder.Entity("MinkyShopProject.Business.Entities.SanPham", b =>
                 {
                     b.Navigation("BienThes");
+
+                    b.Navigation("MoTa")
+                        .IsRequired();
 
                     b.Navigation("ThuocTinhSanPhams");
                 });

@@ -1,4 +1,8 @@
-﻿<!-- Navbar -->
+﻿@using MinkyShopProject.Business.Entities;
+@using System.IdentityModel.Tokens.Jwt;
+
+    <!-- Navbar -->
+<!-- Navbar -->
 <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl " id="navbarBlur" data-scroll="false">
     <div class="container-fluid py-1 px-3">
         <nav aria-label="breadcrumb">
@@ -25,6 +29,13 @@
                 </div>
             </div>
             <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item px-3 d-flex align-items-center">
+                        <a class="nav-link text-white font-weight-bold px-0" data-bs-toggle="modal" data-bs-target="#exampleModal" style="cursor:pointer">
+                            <i class="fa fa-play"></i>
+                            <span class="d-sm-inline d-none">Bắt đầu ca</span>
+                        </a>
+                    </li>
+
                 <li class="nav-item d-flex align-items-center">
                     <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
                         <i class="fa fa-user me-sm-1"></i>
@@ -122,4 +133,6 @@
         </div>
     </div>
 </nav>
-<!-- End Navbar -->
+
+<BeginingModalComponent></BeginingModalComponent>
+

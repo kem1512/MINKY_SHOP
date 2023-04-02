@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Business.Pagination;
@@ -6,10 +9,14 @@ using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
 using MinkyShopProject.Data.Pagination;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Code = System.Net.HttpStatusCode;
@@ -21,9 +28,12 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
     {
         private readonly MinkyShopDbContext _context;
 
-        public NhanVienRepository(MinkyShopDbContext context)
+        private readonly IConfiguration _configuration;
+
+        public NhanVienRepository(MinkyShopDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<Response> ChangeStatus(Guid Id,int status)
@@ -233,6 +243,60 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
             catch (Exception exception)
             {
                 return new ResponseError(Code.InternalServerError, exception.ToString());
+            }
+        }
+
+        public async Task<Response> Login(LoginModels.Login model)
+        {
+            try
+            {
+                var NhanVien = await _context.NhanVien.FirstOrDefaultAsync(c => c.Sdt == model.SoDienThoaiOrEmail && c.MatKhau == model.MatKhau || c.Email == model.SoDienThoaiOrEmail && c.MatKhau == model.MatKhau);
+
+                if (NhanVien == null)
+                {
+                    return new ResponseError(Code.NotFound, "Tên đăng nhập hoặc mật khẩ không chính xác");
+                }
+                else if (NhanVien.TrangThai == 0)
+                {
+                    return new ResponseError(Code.BadRequest, "Tài khoản không được quyến sử dụng");
+                }
+                else if (NhanVien != null)
+                {
+                    var authenClaims = new List<Claim>
+                    {
+                        new Claim("Id",NhanVien.Id.ToString()),
+                        new Claim("Ten",NhanVien.Ten),
+                        new Claim("Anh",NhanVien.Anh),
+                        new Claim("VaiTro",NhanVien.VaiTro == 0 ? "0" : "1"),
+                        new Claim("TrangThai",NhanVien.TrangThai == 0 ? "0" : "1"),
+                    };
+
+                    var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+
+                    var authenToken = new JwtSecurityToken(
+                        issuer: _configuration["Jwt:ValidIssuer"],
+                        audience: _configuration["Jwt:ValidateAudience"],
+                        expires: DateTime.Now.AddHours(1),
+                        claims: authenClaims,
+                        signingCredentials: new Microsoft.IdentityModel.Tokens.SigningCredentials(
+                            authenKey,
+                            SecurityAlgorithms.HmacSha512Signature)
+                        );
+
+                    var Token = new JwtSecurityTokenHandler().WriteToken(authenToken);
+
+                    return new Response(Code.OK, $"Đăng nhập thành công,{Token}");
+                }
+                else
+                {
+                    return new ResponseError(Code.BadRequest, "Đăng nhập thất bại");
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                return new Response(Code.InternalServerError,ex.ToString());
             }
         }
     }

@@ -23,7 +23,7 @@ namespace MinkyShopProject.Data.Models
 
             public bool GioiTinh { get; set; }
 
-            public DateTime NgaySinh { get; set; }
+            public DateTime? NgaySinh { get; set; }
 
             [Required(ErrorMessage = "Địa chỉ nhân viên không được để trống")]
             public string DiaChi { get; set; } = null!;

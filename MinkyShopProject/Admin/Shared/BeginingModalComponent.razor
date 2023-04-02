@@ -1,0 +1,168 @@
+﻿@using Blazored.SessionStorage;
+@using MinkyShopProject.Business.Entities;
+@using MinkyShopProject.Data.Models;
+@using System.IdentityModel.Tokens.Jwt;
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Khai báo tiền đầu ca</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @if(Ca != null){
+                    <div>
+                        <span>Đã khai báo tiền đầu ca</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-3 d-flex justify-content-between">
+                        <div>
+                            <label class="form-control-label">Ngày nhận ca: Ngày @ThoiGianNhanCa.Day Tháng @ThoiGianNhanCa.Month Năm @ThoiGianNhanCa.Year</label>
+                        </div>
+                        <div>
+                            <label class="form-control-label">Thời gian nhận ca: @ThoiGianNhanCa.ToShortTimeString()</label>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Mệnh giá</th>
+                                    <th>Số lượng</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Moneys)
+                                {
+                                    <tr>
+                                        <td><input value="@string.Format("{0:0,0}",item.MenhGia)" class="form-control form-control-sm" disabled /></td>
+                                        <td><input value="@(item.SoLuong == 0 ? "" : item.SoLuong)" type="number" class="form-control form-control-sm" @oninput="@(e => ChangeThanhtien(e,item.Id))" /></td>
+                                        <td><input value="@string.Format("{0:0,0}",item.ThanhTien)" class="form-control form-control-sm" /></td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="2" class="table-primary">Tổng tiền đầu ca</td>
+                                    <td><input value="@string.Format("{0:0,0}",TongThanhTien)" class="form-control form-control-sm" /></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                @if(Ca == null){
+                            <button type="button" class="btn btn-outline-success text-success" data-bs-dismiss="modal" @onclick="BatDau">
+                            <i class="fa fa-check"></i> Lưu
+                        </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public ISessionStorageService session { get; set; } = null!;
+
+    [Inject]
+    public SweetAlertService Swal { get; set; } = null!;
+
+    [Inject]
+    public HttpClient HttpClient { get; set; } = null!;
+
+    private DateTime thoigian = DateTime.Now;
+
+    private GiaoCa Ca = new();
+
+
+
+    private class Money
+    {
+        public Guid Id { get; set; }
+        public float MenhGia { get; set; }
+        public float SoLuong { get; set; }
+        public float ThanhTien { get; set; }
+    }
+    private List<Money> Moneys = new List<Money>()
+    {
+        new Money(){Id = Guid.NewGuid(),MenhGia = 500000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 200000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 100000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 50000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 20000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 10000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 5000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 2000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 1000,SoLuong = 0,ThanhTien=0},
+    };
+    private float TongThanhTien = 0;
+    private DateTime ThoiGianNhanCa = DateTime.Now;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await session.GetItemAsStringAsync("Token"));
+        var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={thoigian}");
+        Ca = result.Data;
+    }
+
+    private async Task ChangeThanhtien(ChangeEventArgs e, Guid Id)
+    {
+        float tongThanhTien = 0;
+        var soLuong = e.Value?.ToString() == "" ? 0 : Convert.ToInt32(e.Value);
+        var Money = Moneys.FirstOrDefault(c => c.Id == Id);
+        Money.SoLuong = soLuong;
+        Money.ThanhTien = Money.MenhGia * soLuong;
+        foreach (var item in Moneys)
+        {
+            tongThanhTien += item.ThanhTien;
+        }
+        TongThanhTien = tongThanhTien;
+    }
+
+    private async Task BatDau()
+    {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await session.GetItemAsStringAsync("Token"));
+        var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+
+
+        var model = new GiaoCaModels.GiaoCaCreateModel()
+        {
+            IdNhanVienTrongCa = Guid.Parse(IdNhanVien),
+            ThoiGianNhanCa = ThoiGianNhanCa,
+            TienBanDau = TongThanhTien,
+            TrangThai = 0,
+        };
+
+        var result = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/GiaoCas",model);
+        var response = await result.Content.ReadFromJsonAsync<Response>();
+
+        if (result.IsSuccessStatusCode)
+        {
+            var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={thoigian}");
+            Ca = result2.Data;
+            await Swal.FireAsync(new SweetAlertOptions()
+            {
+                    Title = response.Message,
+                    ShowConfirmButton = true,
+                    Icon = SweetAlertIcon.Success
+            });
+        }
+        else
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+            {
+                    Title = response.Message,
+                    ShowConfirmButton = true,
+                    Icon = SweetAlertIcon.Error
+            });
+        }
+    }
+}
