@@ -23,7 +23,7 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayTao { get; set; }
 
-        public MoTa MoTa { get; set; } = null!;
+        public string? MoTa { get; set; }
 
         public NhomSanPham NhomSanPham { get; set; } = null!;
 

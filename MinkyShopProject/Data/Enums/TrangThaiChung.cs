@@ -24,6 +24,6 @@ namespace MinkyShopProject.Data.Enums
 
     public enum LoaiHoaDon
     {
-        BanTaiQuay, DatHang, GiaoHang, Online
+        BanTaiQuay, DatHang, GiaoHang
     }
 }

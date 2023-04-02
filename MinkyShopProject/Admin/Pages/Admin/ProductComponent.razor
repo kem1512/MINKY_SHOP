@@ -7,6 +7,7 @@
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
 @layout Shared.MainLayout
+@using Net.ConnectCode.Barcode
 
 
 <div class="container-fluid py-4">
@@ -15,8 +16,9 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-3">
-                        <div class="col-12 text-end">
+                        <div class="col-12 justify-content-end">
                             <NavLink class="btn btn-primary btn-sm" href="admin/variant">Thêm Sản Phẩm</NavLink>
+                            @*<button class="btn btn-success btn-sm" @onclick="GenerateBarcode" data-bs-toggle="modal" data-bs-target="#exampleModal">Tạo Barcode</button>*@
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -91,6 +93,38 @@
         </div>
     </div>
 </div>
+@*
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @if (Barcodes.Any())
+                {
+                    <div class="d-flex flex-wrap gap-3">
+                        @foreach (var x in Barcodes)
+                        {
+                            <div class="d-flex flex-column">
+                                <div id="barcode">@x.Barcode</div>
+                                <div id="barcode_text">@x.BarcodeText</div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn bg-gradient-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+</div>*@
 
 @code {
     [Parameter]
@@ -99,6 +133,8 @@
     ResponsePagination<SanPhamModel>? SanPhams;
 
     Uri Url = new Uri("https://localhost:7053/api/sanpham");
+
+    List<BarcodeModel> Barcodes = new List<BarcodeModel>();
 
     protected async override Task OnParametersSetAsync()
     {
@@ -124,4 +160,20 @@
         if (Page == 0) Page = 1;
         SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>(Url.AddQuery("size", "5").AddQuery("page", Page.ToString()));
     }
+
+    //void GenerateBarcode()
+    //{
+    //    foreach (var x in SanPhams.Data.Content)
+    //    {
+    //        foreach (var y in x.BienThes)
+    //        {
+    //            BarcodeFonts bcf = new BarcodeFonts();
+    //            bcf.BarcodeType = BarcodeFonts.BarcodeEnum.Code39;
+    //            bcf.CheckDigit = BarcodeFonts.YesNoEnum.Yes;
+    //            bcf.Data = y.Sku;
+    //            bcf.encode();
+    //            Barcodes.Add(new BarcodeModel() { Barcode = bcf.EncodedData, BarcodeText = bcf.HumanText.Substring(1, bcf.HumanText.Length - 2) });
+    //        }
+    //    }
+    //}
 }

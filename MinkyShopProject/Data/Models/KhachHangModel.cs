@@ -40,6 +40,7 @@ namespace MinkyShopProject.Data.Models
 
         public string? Ma { get; set; } = null!;
 
+        [Required(ErrorMessage = "Tên không được bỏ trống")]
         public string? Ten { get; set; } = null!;
 
         public string? Anh { get; set; } = null!;
@@ -53,6 +54,7 @@ namespace MinkyShopProject.Data.Models
 
         public string? DiaChi { get; set; } = null!;
 
+        [Required(ErrorMessage = "Số điện thoại không được bỏ trống")]
         public string? Sdt { get; set; } = null!;
 
         public string? Email { get; set; } = null!;

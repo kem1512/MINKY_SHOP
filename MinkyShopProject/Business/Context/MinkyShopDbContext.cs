@@ -52,8 +52,6 @@ namespace MinkyShopProject.Business.Context
 
         public DbSet<HoaDon> HoaDon { get; set; } = null!;
 
-        public DbSet<MoTa> MoTa { get; set; } = null!;
-
         public DbSet<KhachHang> KhachHang { get; set; } = null!;
 
         public DbSet<Voucher> Voucher { get; set; } = null!;

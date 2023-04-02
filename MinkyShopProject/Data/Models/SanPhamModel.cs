@@ -15,6 +15,8 @@ namespace MinkyShopProject.Data.Models
 
         public string? Anh { get; set; }
 
+        public string? MoTa { get; set; }
+
         public DateTime NgayTao { get; set; } = DateTime.Now;
 
         public int TrangThai { get; set; }
