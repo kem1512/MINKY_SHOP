@@ -28,6 +28,8 @@ namespace MinkyShopProject.Data.Models
 
     public class SanPhamQueryModel : PaginationRequest
     {
+        public string? Ten { get; set; } = "";
 
+        public Guid IdNhomSanPham { get; set; }
     }
 }

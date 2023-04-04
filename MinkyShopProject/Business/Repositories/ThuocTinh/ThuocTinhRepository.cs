@@ -51,33 +51,12 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
         {
             try
             {
-                var thuocTinh = await _context.ThuocTinh.Include(c => c.ThuocTinhSanPhams).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                var giaTri = _context.GiaTri.AsNoTracking().FirstOrDefault(c => c.Id == id);
 
-                var giaTri = await _context.GiaTri.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
-
-                if (thuocTinh == null && giaTri == null)
-                    return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
-
-                if (thuocTinh != null)
+                if (giaTri != null)
                 {
-                    if (thuocTinh.ThuocTinhSanPhams != null && !thuocTinh.ThuocTinhSanPhams.Any())
-                    {
-                        _context.ThuocTinh.Remove(thuocTinh);
-                    }
-                }
-                else
-                {
-                    if (giaTri != null)
-                    {
-                        if (giaTri.BienTheChiTiets != null && giaTri.BienTheChiTiets.Any())
-                        {
-                            return new ResponseError(HttpStatusCode.OK, "Phải Xóa Các Sản Phẩm Có Giá Trị Này Trước Khi Xóa Giá Trị");
-                        }
-                        else
-                        {
-                            _context.GiaTri?.Remove(giaTri);
-                        }
-                    }
+                    giaTri.TrangThai = !giaTri.TrangThai;
+                    _context.GiaTri.Update(giaTri);
                 }
 
                 var status = await _context.SaveChangesAsync();
@@ -100,7 +79,7 @@ namespace MinkyShopProject.Business.Repositories.ThuocTinh
         {
             try
             {
-                return new ResponsePagination<ThuocTinhModel>(_mapper.Map<Pagination<Entities.ThuocTinh>, Pagination<ThuocTinhModel>>(await _context.ThuocTinh.Include(c => c.GiaTris).Where(c => c.Ten.Contains(obj.Ten ?? "")).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThai < 2 && obj.TrangThai == null)).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<ThuocTinhModel>(_mapper.Map<Pagination<Entities.ThuocTinh>, Pagination<ThuocTinhModel>>(await _context.ThuocTinh.Include(c => c.GiaTris.OrderBy(c => c.Ten)).Where(c => c.Ten.Contains(obj.Ten ?? "")).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThai < 2 && obj.TrangThai == null)).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {

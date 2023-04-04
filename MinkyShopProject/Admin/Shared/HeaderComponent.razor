@@ -1,5 +1,7 @@
 ﻿@using MinkyShopProject.Business.Entities;
 @using System.IdentityModel.Tokens.Jwt;
+@inject ISessionStorageService Session;
+@inject HttpClient HttpClient;
 
     <!-- Navbar -->
 <!-- Navbar -->
@@ -39,7 +41,12 @@
                 <li class="nav-item d-flex align-items-center">
                     <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
                         <i class="fa fa-user me-sm-1"></i>
-                        <span class="d-sm-inline d-none">Sign In</span>
+                        @if (!IsAuth)
+                        {
+                            <span class="d-sm-inline d-none">Sign In</span>
+                        }else{
+                            <span class="d-sm-inline d-none">Xin Chào @Ten</span>
+                        }
                     </a>
                 </li>
                 <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
@@ -135,4 +142,24 @@
 </nav>
 
 <BeginingModalComponent></BeginingModalComponent>
+
+@code{
+    bool IsAuth = false;
+
+    string Ten = "";
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (await Session.GetItemAsStringAsync("Token") != null)
+        {
+            IsAuth = true;
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await Session.GetItemAsStringAsync("Token"));
+            Ten = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Ten"))?.Value ?? "";
+        }
+        else
+        {
+            IsAuth = false;
+        }
+    }
+}
 

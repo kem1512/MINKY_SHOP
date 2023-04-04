@@ -37,6 +37,15 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
 
                 var hoaDon = _mapper.Map<HoaDonCreateModel, Entities.HoaDon>(obj);
 
+                if (hoaDon.IdKhachHang != null && hoaDon.IdKhachHang != Guid.Empty)
+                {
+                    var khachHang = _context.KhachHang.FirstOrDefault(c => c.Id == hoaDon.IdKhachHang);
+                    if (khachHang != null)
+                    {
+                        khachHang.SoLanMua += 1;
+                    }
+                }
+
                 await _context.HoaDon.AddAsync(hoaDon);
 
                 foreach (var x in obj.HoaDonChiTiets)
@@ -159,16 +168,81 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                 if (hoaDon == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                var result = hoaDon.HoaDonChiTiets.Where(p => !obj.HoaDonChiTiets.Any(l => p.IdBienThe == l.IdBienThe)).ToList();
-
-                foreach (var x in result)
-                {
-                    _context.HoaDonChiTiet.Remove(x);
-                }
-
                 hoaDon = _mapper.Map<HoaDonCreateModel, Entities.HoaDon>(obj);
 
-                hoaDon.VoucherLogs = new List<Entities.VoucherLog>();
+                if (hoaDon.TrangThai == 1 || hoaDon.TrangThaiGiaoHang == 4)
+                {
+                    foreach (var x in hoaDon.HoaDonChiTiets)
+                    {
+                        var bienThe = await _context.BienThe.FirstOrDefaultAsync(c => c.Id == x.IdBienThe);
+                        if (bienThe != null)
+                        {
+                            bienThe.SoLuong += x.SoLuong;
+                        }
+                    }
+                }
+                else
+                {
+                    if (hoaDon.TrangThaiGiaoHang == 5)
+                    {
+                        foreach (var x in hoaDon.HoaDonChiTiets)
+                        {
+                            var hoaDonChiTiet = _context.HoaDonChiTiet.AsNoTracking().FirstOrDefault(c => c.Id == x.Id);
+                            var bienThe = await _context.BienThe.FirstOrDefaultAsync(c => c.Id == x.IdBienThe);
+                            if (bienThe != null && x.TrangThai == 1)
+                            {
+                                if (hoaDonChiTiet != null && bienThe.SoLuong != hoaDonChiTiet.SoLuong)
+                                {
+                                    bienThe.SoLuong += hoaDonChiTiet.SoLuong;
+                                }
+                                bienThe.SoLuong += x.SoLuong;
+                            }
+                            else
+                            {
+                                if (bienThe != null && hoaDonChiTiet != null && x.TrangThai == 0 && hoaDonChiTiet.TrangThai == 1)
+                                {
+                                    if (bienThe.SoLuong != hoaDonChiTiet.SoLuong)
+                                    {
+                                        bienThe.SoLuong += hoaDonChiTiet.SoLuong;
+                                    }
+                                    bienThe.SoLuong -= x.SoLuong;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var hoaDonBanDau = _context.HoaDon.AsNoTracking().FirstOrDefault(c => c.Id == id);
+                        if (hoaDonBanDau != null && hoaDonBanDau.TrangThai == 1)
+                        {
+                            foreach (var x in hoaDon.HoaDonChiTiets)
+                            {
+                                var hoaDonChiTiet = _context.HoaDonChiTiet.AsNoTracking().FirstOrDefault(c => c.Id == x.Id);
+                                var bienThe = await _context.BienThe.FirstOrDefaultAsync(c => c.Id == x.IdBienThe);
+                                if (bienThe != null && hoaDonChiTiet != null)
+                                {
+                                    bienThe.SoLuong -= x.SoLuong;
+                                }
+                            }
+                        }
+
+                        foreach (var x in hoaDon.HoaDonChiTiets)
+                        {
+                            var hoaDonChiTiet = _context.HoaDonChiTiet.AsNoTracking().FirstOrDefault(c => c.Id == x.Id);
+                            var bienThe = await _context.BienThe.FirstOrDefaultAsync(c => c.Id == x.IdBienThe);
+                            if (bienThe != null && hoaDonChiTiet != null)
+                            {
+                                if (bienThe.SoLuong != hoaDonChiTiet.SoLuong)
+                                {
+                                    bienThe.SoLuong += hoaDonChiTiet.SoLuong;
+                                }
+                                bienThe.SoLuong -= x.SoLuong;
+                            }
+                        }
+                    }
+                }
+
+                hoaDon.VoucherLogs = new List<VoucherLog>();
 
                 _context.HoaDon.Update(hoaDon);
 

@@ -22,11 +22,15 @@ namespace MinkyShopProject.Data.Models
         public List<GiaTriModel> GiaTris { get; set; } = null!;
 
         public List<GiaTriModel>? GiaTriTemplates { get; set; } = new List<GiaTriModel>();
+
+        public List<GiaTriModel>? GiaTriParent { get; set; } = new List<GiaTriModel>();
     }
 
     public class GiaTriModel
     {
         public Guid Id { get; set; }
+
+        public bool TrangThai { get; set; }
 
         public string Ten { get; set; } = null!;
     }

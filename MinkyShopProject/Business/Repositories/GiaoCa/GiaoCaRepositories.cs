@@ -32,6 +32,7 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
                     ThoiGianNhanCa = model.ThoiGianNhanCa,
                     TienBanDau = model.TienBanDau,
                     TrangThai = model.TrangThai,
+                    GhiChuPhatSinh = ""
                 };
 
                 await _context.AddAsync(ca);
@@ -49,10 +50,10 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             }
         }
 
-        public async Task<Response> GetCaHienThai(Guid Id,DateTime Time)
+        public async Task<Response> GetCaHienThai(Guid Id, DateTime Time)
         {
-              var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa == Id && c.ThoiGianNhanCa.Day == Time.Day && c.ThoiGianNhanCa.Month == Time.Month && c.ThoiGianNhanCa.Year == Time.Year && c.TrangThai == 0);
-              return new Response<Entities.GiaoCa>(Code.OK,Ca);
+            var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa == Id && c.ThoiGianNhanCa.Day == Time.Day && c.ThoiGianNhanCa.Month == Time.Month && c.ThoiGianNhanCa.Year == Time.Year && c.TrangThai == 0);
+            return new Response<Entities.GiaoCa>(Code.OK, Ca);
         }
 
         public async Task<Response> KetCa(Guid Id, DateTime Time, GiaoCaModels.GiaoCaEditModel model)

@@ -22,7 +22,7 @@
                             </select>
                         </div>
                         <div class="col-3">
-                            <input class="form-control" placeholder="Nhập tên khách hàng" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
+                            <input class="form-control" placeholder="Nhập tên hoặc số điện thoại khách hàng" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" />
                         </div>
                     </div>
                     <EditForm Model="khachhang" class="row gy-2 mb-3" OnSubmit="AddOrUpdateAsync">
@@ -33,6 +33,7 @@
                                 if(khachhang.Id != Guid.Empty)
                                 {
                                     <button class="btn btn-warning btn-sm me-3" @onclick="() => khachhang = new KhachHangThemVaSuaModel()">Hủy Chỉnh Sửa</button>
+                                    <button class="btn btn-primary btn-sm me-3" type="submit">Lưu Dữ Liệu</button>
                                 }
                                 else
                                 {
@@ -83,13 +84,97 @@
                         <table class="table table-bordered align-middle text-center">
                             <thead>
                             <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên khách hàng</th>                             
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Địa chỉ</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày sinh</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số điện thoại</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giới tính</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày tạo</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-Ten" ? "+Ten" : "-Ten"; await Reload(); }'>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Tên</span>
+                                        @if (Filter.Sort != "-Ten")
+                                        {
+                                            <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                        }
+                                    </div>
+                                </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-DiaChi" ? "+DiaChi" : "-DiaChi"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Địa Chỉ</span>
+                                            @if (Filter.Sort != "-DiaChi")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-NgaySinh" ? "+NgaySinh" : "-NgaySinh"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Ngày Sinh</span>
+                                            @if (Filter.Sort != "-NgaySinh")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-Sdt" ? "+Sdt" : "-Sdt"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Số Điện Thoại</span>
+                                            @if (Filter.Sort != "-Sdt")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-GioiTinh" ? "+GioiTinh" : "-GioiTinh"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Giới Tính</span>
+                                            @if (Filter.Sort != "-GioiTinh")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-Email" ? "+Email" : "-Email"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Email</span>
+                                            @if (Filter.Sort != "-Email")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-NgayTao" ? "+NgayTao" : "-NgayTao"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Ngày Tạo</span>
+                                            @if (Filter.Sort != "-NgayTao")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lần mua</th>
                             </tr>
                             </thead>
@@ -169,7 +254,7 @@
 
     Uri Url = new Uri("https://localhost:7053/api/khachhang");
 
-    KhachHangQueryModel Filter = new KhachHangQueryModel() { Size = 5 };
+    KhachHangQueryModel Filter = new KhachHangQueryModel() { Size = 5, Sort = "-NgayTao" };
 
     KhachHangThemVaSuaModel khachhang = new KhachHangThemVaSuaModel();
 
@@ -212,12 +297,14 @@
             var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
+
             var s = Url.AddQuery("id", khachhang.Id.ToString());
             var result = khachhang.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", khachhang) : await HttpClient.PutAsJsonAsync<KhachHangThemVaSuaModel>(new Uri(Url + "/Update" + s.Query), khachhang);
 
             if (result.IsSuccessStatusCode)
             {
                 await Reload();
+                khachhang = new KhachHangThemVaSuaModel();
                 await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
             }
         }
@@ -231,7 +318,7 @@
     async Task Reload()
     {
         if (Page == 0) Page = 1;
-        var s = Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "5").AddQuery("Ten", Filter.Ten ?? "").AddQuery("sort", "-NgayTao");
+        var s = Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "5").AddQuery("Ten", Filter.Ten ?? "").AddQuery("sort", Filter.Sort);
         KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>(new Uri(Url + "/get" + s.Query));
     }
 }

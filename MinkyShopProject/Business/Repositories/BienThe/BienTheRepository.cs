@@ -25,6 +25,11 @@ namespace MinkyShopProject.Business.Repositories.BienThe
         {
             try
             {
+                if (_context.SanPham.FirstOrDefault(c => c.Ten.ToLower().Trim() == obj.SanPham.Ten.ToLower().Trim()) != null)
+                {
+                    return new ResponseError(HttpStatusCode.BadRequest, "Sản Phẩm Đã Tồn Tại");
+                }
+
                 var skus = new List<string[]>();
 
                 var idBienThe = Guid.NewGuid();
@@ -40,8 +45,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                     obj.ThuocTinhs.OrderBy(c => c.Id);
                     foreach (var x in obj.ThuocTinhs)
                     {
-
-                        if (x.Id == Guid.Empty)
+                        if (x.Id == Guid.Empty && _context.ThuocTinh.AsNoTracking().Any(c => c.Ten.ToLower().Trim().Contains(x.Ten.ToLower().Trim())))
                         {
                             x.Id = Guid.NewGuid();
                             await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten });
@@ -67,21 +71,21 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                         {
                             foreach (var y in x.GiaTris)
                             {
-                                if (y.Id == Guid.Empty)
+                                if (y.Id == Guid.Empty && _context.GiaTri.AsNoTracking().Any(c => c.Ten.ToLower().Trim().Contains(y.Ten.ToLower().Trim())))
                                 {
                                     y.Id = Guid.NewGuid();
                                     await _context.GiaTri.AddAsync(new GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id });
                                 }
 
                                 // Nếu Tên Thuộc Tính Có 2 Kí Tự Trở Lên Thì Lấy 2 Ký Tự Không Thì Chỉ Lấy Kí Tự Đầu Tiên
-                                var thuocTinh = x.Ten?.Split(" ");
+                                var thuocTinh = x.Ten.RemoveSpecialCharacters().Split(" ");
 
-                                var tenThuocTinh = thuocTinh?.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
+                                var tenThuocTinh = thuocTinh?.Select(c => string.IsNullOrEmpty(c) ? null : c.Length >= 2 ? c.Substring(0, 2) : c.Substring(0, 1));
 
                                 // Lấy Kí Tự Đầu Tiên
-                                var giaTri = y.Ten?.Split(" ");
+                                var giaTri = y.Ten.RemoveSpecialCharacters().Split(" ");
 
-                                var tenGiaTri = giaTri?.Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
+                                var tenGiaTri = giaTri?.Select(c => string.IsNullOrEmpty(c) ? null : c.Length >= 2 ? c.Substring(0, 2) : c.Substring(0, 1));
 
                                 if (tenThuocTinh != null && tenGiaTri != null)
                                     sku.Add(string.Join("", tenThuocTinh) + string.Join("", tenGiaTri) + "/" + y.Id + "/" + x.Id + "/" + idThuocTinhSanPham);
@@ -95,8 +99,9 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                     // Tổ Hợp Các Trường Hợp Từ Các Giá Trị
                     foreach (var x in skus.CartesianProduct())
                     {
+                        var tenSanPham = obj.SanPham?.Ten?.Split(" ").Select(c => string.IsNullOrEmpty(c) ? null : c.Substring(0, 1));
                         // Mỗi Giá Trị X Sẽ Là Một Biến Thể
-                        var bienThe = new Entities.BienThe() { Id = idBienThe, SoLuong = new Random().Next(0, 100), GiaBan = new Random().Next(500, 5000000), IdSanPham = idSanPham, Sku = String.Join("", x.Select(c => c.Split("/")[0])) + Helper.RandomString(3) };
+                        var bienThe = new Entities.BienThe() { Id = idBienThe, SoLuong = new Random().Next(0, 100), GiaBan = new Random().Next(500, 5000000), IdSanPham = idSanPham, Sku = String.Join("", tenSanPham) + String.Join("", x.Select(c => c.Split("/")[0])) };
                         await _context.BienThe.AddAsync(bienThe);
 
                         foreach (var y in x)

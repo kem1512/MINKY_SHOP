@@ -222,6 +222,9 @@ namespace MinkyShopProject.Business.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<bool>("TrangThai")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("IdThuocTinh");
@@ -421,6 +424,10 @@ namespace MinkyShopProject.Business.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("real")
                         .HasDefaultValue(0f);
+
+                    b.Property<string>("GhiChu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("IdBienThe")
                         .HasColumnType("uniqueidentifier");

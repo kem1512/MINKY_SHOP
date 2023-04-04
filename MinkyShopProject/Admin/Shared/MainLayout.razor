@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase;
 @inject NavigationManager NavigationManager;
+@inject ISessionStorageService Session;
 
 <div class="min-height-300 bg-primary position-absolute w-100" style="background-image: url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/profile-layout-header.jpg'); background-position-y: 50%;">
     <span class="mask bg-primary opacity-6"></span>
@@ -12,5 +13,13 @@
     <HeaderComponent></HeaderComponent>
     @Body
 </main>
+
+@code{
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (await Session.GetItemAsStringAsync("Token") == null) NavigationManager.NavigateTo("/login");
+    }
+}
 
 

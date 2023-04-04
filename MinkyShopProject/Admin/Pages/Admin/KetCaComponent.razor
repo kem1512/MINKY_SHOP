@@ -142,7 +142,7 @@
     {
         var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await session.GetItemAsStringAsync("Token"));
         var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
-        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={Time}");
+        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={Time.ToString("yyyy-MM-dd h:m:s")}");
         Ca = result.Data;
         var result2 = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"https://localhost:7053/api/NhanViens/{Ca.IdNhanVienTrongCa}");
         NhanVien = result2.Data;

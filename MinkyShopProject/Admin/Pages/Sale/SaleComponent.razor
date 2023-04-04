@@ -12,7 +12,7 @@
                 @if (SanPhamsSearch != null && SanPhamsSearch.Any())
                 {
                     <div class="position-absolute list-group" style="z-index: 1; left: 0; right: 0" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
-                        @foreach (var x in SanPhamsSearch.Select((v, i) => (i, v)))
+                        @foreach (var x in SanPhamsSearch.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
                         {
                             if (x.i < 5)
                             {
@@ -41,7 +41,7 @@
             }
         </div>
         <div class="col-2 d-flex align-items-center justify-content-end">
-            <span class="me-1 text-light text-bolder text-sm">Admin</span>
+            <span class="me-1 text-light text-bolder text-sm">@HoaDons?[index].NhanVien?.Ten</span>
             <button class="btn mb-0 text-bolder shadow-none text-light"><span class="fa fa-bars"></span></button>
         </div>
     </div>
@@ -90,7 +90,7 @@
                                             {
                                                 if (x.i < 5)
                                                 {
-                                                    <button @onmousedown="() => { HoaDons[index].IdKhachHang = x.v.Id; HoaDons[index].KhachHang = x.v; KhachHangsSeach = new List<Data.Models.KhachHangModel>(); }" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten - @x.v.DiaChi</button>
+                                                    <button @onmousedown="() => { HoaDons[index].IdKhachHang = x.v.Id; HoaDons[index].KhachHang = x.v; KhachHangsSeach = new List<Data.Models.KhachHangModel>(); }" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten - @x.v.Sdt</button>
                                                 }
                                             }
                                         </div>
@@ -146,7 +146,7 @@
                                                     <div class="position-absolute list-group w-100" id="voucher-list" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                     @if (VouchersThoaMan != null && VouchersThoaMan.Any())
                                                     {
-                                                            @foreach (var x in VouchersThoaMan.Select((v, i) => (i, v)))
+                                                            @foreach (var x in VouchersThoaMan.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
                                                             {
                                                                 if (x.i < 5)
                                                                 {
@@ -169,11 +169,11 @@
                                                 <span class="fa fa-credit-card" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="() =>{ HinhThucThanhToans = HoaDons[index].HinhThucThanhToans.ToList(); }"></span>
                                                 @if (HoaDons[index].HinhThucThanhToans.Count() > 1)
                                                 {
-                                                    <input type="text" class="border-top-0 border-end-0 border-start-0 text-sm text-end" disabled style="outline: 0; width: 40%; background: none" value="@Helper.FormatMoney(HoaDons[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan))">
+                                                    <input  type="text" class="border-top-0 border-end-0 border-start-0 text-sm text-end" disabled style="outline: 0; width: 40%; background: none" value="@Helper.FormatMoney(HoaDons[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan))">
                                                 }
                                                 else
                                                 {
-                                                    <input type="text" class="border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0; width: 40%" value="@string.Format("{0:0,0}", HoaDons[index].HinhThucThanhToans[0].TongTienThanhToan)"
+                                                    <input onchange="if(/^[0-9.]+$/.test(this.value) == false){ this.value = this.value.replace(/[^\d.]/g,'') }" type="text" class="border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0; width: 40%" value="@string.Format("{0:0,0}", HoaDons[index].HinhThucThanhToans[0].TongTienThanhToan)"
                                                    @oninput='(e) => HoaDons[index].HinhThucThanhToans[0].TongTienThanhToan = float.Parse(e.Value?.ToString() ?? "")'>
                                                 }
                                             </div>
@@ -205,7 +205,7 @@
                                                         <div class="position-absolute list-group w-100" id="voucher-list-2" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                             @if (VouchersThoaMan != null && VouchersThoaMan.Any())
                                                             {
-                                                                @foreach (var x in VouchersThoaMan.Select((v, i) => (i, v)))
+                                                                @foreach (var x in VouchersThoaMan.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
                                                                 {
                                                                     if (x.i < 5)
                                                                     {
@@ -222,7 +222,7 @@
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Số Điện Thoại <span class="text-danger">*</span></label>
-                                                    <input type="text" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
+                                                    <input type="number" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Địa Chỉ <span class="text-danger">*</span></label>
@@ -257,7 +257,7 @@
                                                         <div class="position-absolute list-group w-100" id="voucher-list-3" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                             @if (VouchersThoaMan != null && VouchersThoaMan.Any())
                                                             {
-                                                                @foreach (var x in VouchersThoaMan.Select((v, i) => (i, v)))
+                                                                @foreach (var x in VouchersThoaMan.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
                                                                 {
                                                                     if (x.i < 5)
                                                                     {
@@ -274,7 +274,7 @@
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Số Điện Thoại <span class="text-danger">*</span></label>
-                                                    <input type="text" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
+                                                    <input type="number" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Địa Chỉ <span class="text-danger">*</span></label>
@@ -282,7 +282,7 @@
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Tiền Ship <span class="text-danger">*</span></label>
-                                                    <input type="text" value="@string.Format("{0:0,0}", HoaDons[index].TienShip)" @oninput='async e =>{ HoaDons[index].TienShip = float.Parse(e.Value?.ToString() ?? ""); await CapNhatTongTien(); }' class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
+                                                    <input onchange="if(/^[0-9.]+$/.test(this.value) == false){ this.value = this.value.replace(/[^\d.]/g,'') }" type="text" value="@string.Format("{0:0,0}", HoaDons[index].TienShip)" @oninput='async e =>{ HoaDons[index].TienShip = float.Parse(e.Value?.ToString() ?? ""); await CapNhatTongTien(); }' class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center">
                                                     <label class="text-xs">Khách Cần Trả</label>
@@ -357,7 +357,7 @@
                             }
                             <div class="col-12 d-flex justify-content-between align-items-center">
                                 <label class="text-sm">Khách Thanh Toán</label>
-                                <span class="text-xs text-secondary">@string.Join(", ", HinhThucThanhToans?.Sum(c => c.TongTienThanhToan))</span>
+                                <span class="text-sm text-secondary">@string.Join(", ", HinhThucThanhToans?.Sum(c => c.TongTienThanhToan))</span>
                             </div>
                         </div>
                     }
