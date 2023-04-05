@@ -426,7 +426,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValue(0f);
 
                     b.Property<string>("GhiChu")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("IdBienThe")

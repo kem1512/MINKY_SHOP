@@ -1,4 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
+@inject Blazored.SessionStorage.ISessionStorageService Session
+@inject NavigationManager NavigationManager
 
 <header class="version_1">
 	<div class="layer"></div><!-- Mobile menu overlay mask -->
@@ -177,20 +179,32 @@
 							<div class="dropdown dropdown-access">
 								<a href="account.html" class="access_link"><span>Account</span></a>
 								<div class="dropdown-menu">
-									<a href="account.html" class="btn_1">Sign In or Sign Up</a>
+									@if (!isLogin)
+									{
+										<a href="account.html" class="btn_1">Sign In or Sign Up</a>
+									}
 									<ul>
 										<li>
 											<a href="track-order.html"><i class="ti-truck"></i>Track your Order</a>
 										</li>
 										<li>
-											<a href="account.html"><i class="ti-package"></i>My Orders</a>
+											<NavLink href="/trackorder"><i class="ti-package"></i>My Orders</NavLink>
 										</li>
-										<li>
-											<a href="account.html"><i class="ti-user"></i>My Profile</a>
-										</li>
+										@if (isLogin)
+										{
+											<li>
+												<a href="account.html"><i class="ti-user"></i>My Profile</a>
+											</li>
+										}
 										<li>
 											<a href="help.html"><i class="ti-help-alt"></i>Help and Faq</a>
 										</li>
+										@if (isLogin)
+										{
+											<li>
+												<a @onclick="DangXuat"><i class="ti-help-alt"></i>Đăng xuất</a>
+											</li>
+										}
 									</ul>
 								</div>
 							</div>
@@ -225,5 +239,19 @@
 <!-- /header -->
 
 @code {
+	bool isLogin = false;
 
+	protected async override Task OnInitializedAsync()
+	{
+		if(await Session.GetItemAsStringAsync("khachHang") != null)
+		{
+			isLogin = true;
+		}
+	}
+
+	async Task DangXuat()
+	{
+		await Session.RemoveItemAsync("khachHang");
+		NavigationManager.NavigateTo("/account");
+	}
 }

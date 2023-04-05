@@ -12,7 +12,7 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    [Migration("20230403104942_MinkyShop")]
+    [Migration("20230404125720_MinkyShop")]
     partial class MinkyShop
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -428,7 +428,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValue(0f);
 
                     b.Property<string>("GhiChu")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("IdBienThe")

@@ -16,11 +16,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-3">
-                            <NavLink class="btn btn-primary btn-sm" href="admin/variant">Thêm Sản Phẩm</NavLink>
-                            @*<button class="btn btn-success btn-sm" @onclick="GenerateBarcode" data-bs-toggle="modal" data-bs-target="#exampleModal">Tạo Barcode</button>*@
-                        </div>
+                    <div class="row mb-3 justify-content-between">
                         <div class="col-3">
                             <select class="js-choice-nhom" @onchange='async e => { Filter.IdNhomSanPham = Guid.Parse(e.Value?.ToString() ?? ""); await Reload(); }'>
                                 @if (NhomSanPhams != null)
@@ -34,7 +30,10 @@
                             </select>
                         </div>
                         <div class="col-3">
-                            <input class="form-control" @oninput='async e => { Filter.Ten = e.Value?.ToString() ?? ""; }' @onchange="async() => await Reload()" />
+                            <input class="form-control" placeholder="Nhập tên hoặc mã sản phẩm" @oninput='async e => { Filter.Ten = e.Value?.ToString() ?? ""; }' @onchange="async() => await Reload()" />
+                        </div>
+                        <div class="col-3 text-end">
+                            <NavLink class="btn btn-primary btn-sm" href="admin/variant">Thêm Sản Phẩm</NavLink>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -44,17 +43,19 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-Ten" ? "+Ten" : "-Ten"; await Reload(); }'>
                                         <div class="d-flex justify-content-between">
                                             <span>Tên</span>
-                                            @if(Filter.Sort != "-Ten")
+                                            @if (Filter.Sort != "-Ten")
                                             {
                                                 <span class="fa fa-sort-down" style="font-size: 15px"></span>
-                                            }else{
+                                            }
+                                            else
+                                            {
                                                 <span class="fa fa-sort-up" style="font-size: 15px"></span>
                                             }
                                         </div>
                                     </th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhóm</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"
-                                    @onclick='() => {
+                                        @onclick='() => {
                                             SapXepGia = SapXepGia == true ? false : true;
                                             if(SanPhams != null && SapXepGia == true)
                                             {
@@ -64,9 +65,7 @@
                                                     SanPhams.Data.Content = SanPhams.Data.Content.OrderByDescending(c => c.BienThes.Min(c => c.GiaBan)).ToList();
                                                 }
                                             }
-                                        }'
-                                    
-                                    >
+                                        }'>
                                         Giá
                                     </th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã</th>
@@ -75,6 +74,19 @@
                                         <div class="d-flex justify-content-between">
                                             <span>Trạng Thái</span>
                                             @if (Filter.Sort != "-TrangThai")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-NgayTao" ? "+NgayTao" : "-NgayTao"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Ngày Tạo</span>
+                                            @if (Filter.Sort != "-NgayTao")
                                             {
                                                 <span class="fa fa-sort-down" style="font-size: 15px"></span>
                                             }
@@ -115,9 +127,28 @@
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan))</td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@x.Ma</td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">@x.BienThes?.Count() biến thể</td>
-                                                <td class="align-middle">
-                                                    <span class="badge badge-@(x.TrangThai == 0 ? "success" : "danger") badge-sm">@(x.TrangThai == 0 ? "Đang Bán" : "Ngừng Bán")</span>
+                                                <td class="align-middle text-center p-0">
+                                                    <div class="form-check form-switch justify-content-center">
+                                                        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(x.TrangThai == 0 ? new Dictionary<string, object>() { { "checked", "" } } : null)' @onchange='async() => {
+                                                            if (x.BienThes != null)
+                                                            {
+                                                                foreach (var x in x.BienThes)
+                                                                {
+                                                                    x.BienTheChiTiets = null;
+                                                                }
+                                                            }
+
+                                                            x.TrangThai = x.TrangThai == 0 ? 1 : 0;
+
+                                                            var result = await HttpClient.PutAsJsonAsync($"{Url}/{x.Id}", x);
+
+                                                            if (result.IsSuccessStatusCode)
+                                                                await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);
+                                                        }
+                                                        '>
+                                                    </div>
                                                 </td>
+                                                <td class="text-secondary text-xs font-weight-bold align-middle">@x.NgayTao</td>
                                                 <td class="text-secondary text-xs font-weight-bold align-middle">
                                                     <NavLink href="@($"admin/product/{@x.Id}")" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product">
                                                         <i class="fas fa-user-edit text-info" aria-hidden="true"></i>
@@ -194,7 +225,10 @@
 
     protected async override Task OnInitializedAsync()
     {
-        NhomSanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>("https://localhost:7053/api/nhomsanpham");
+        if (NhomSanPhams == null || !NhomSanPhams.Data.Content.Any())
+        {
+            NhomSanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>("https://localhost:7053/api/nhomsanpham");
+        }
     }
 
     protected async override Task OnParametersSetAsync()
