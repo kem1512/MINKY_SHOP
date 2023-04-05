@@ -1,12 +1,16 @@
 ﻿@page "/ketca"
 @using System.IdentityModel.Tokens.Jwt;
 @using MinkyShopProject.Business.Entities;
+@using Blazored.LocalStorage;
+@using MinkyShopProject.Data.Models;
 
 <div class="container-fluid py-4">
     <div class="row">
         <div class="card">
             <div class="card-header">
-                <h2>Báo Cáo Kết Ca</h2>
+                <div class="d-flex justify-content-center">
+                    <h2>Báo Cáo Kết Ca</h2>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -31,63 +35,44 @@
                                     }
                                     <tr>
                                         <td colspan="2" class="table-primary">Tổng kê khai cuối ca</td>
-                                        <td><input value="@string.Format("{0:0,0}",TongThanhTien)" class="form-control form-control-sm" /></td>
+                                        <td><input value="@string.Format("{0:0,0}",TongTienMat)" class="form-control form-control-sm" /></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
                     <div class="col">
                         <div>
-                            <div class="form-group">
-                                <span class="form-control-label">Thời gian vào ca: @(Ca.ThoiGianNhanCa.Hour):@(Ca.ThoiGianNhanCa.Minute) @(Ca.ThoiGianNhanCa.Day)/@(Ca.ThoiGianNhanCa.Month)/@(Ca.ThoiGianNhanCa.Year) </span>
-                            </div>
-                            <div class="form-group">
-                                <span class="form-control-label">Nhân viên trực ca: @(NhanVien.Ten)</span>
-                            </div>
                             <div class="form-group d-flex justify-content-between">
-                                <span class="form-control-label">Tiền mặt đầu ca</span>
-                                <input value="@string.Format("{0:0,0}",Ca.TienBanDau)" type="text" class="form-control-sm" disabled/>
+                                <span class="form-control-label">Thời gian vào ca: @Ca.ThoiGianNhanCa.ToShortTimeString() @(Ca.ThoiGianNhanCa.Day)/@(Ca.ThoiGianNhanCa.Month)/@(Ca.ThoiGianNhanCa.Year) </span>
+                                <span class="form-control-label">Thời gian hiện tại: @Time.ToShortTimeString() @(Time.Day)/@(Time.Month)/@(Time.Year)</span>
                             </div>
-                            <div class="form-group  d-flex justify-content-between">
-                                <span class="form-control-label">Tổng hóa đơn</span>
-                                <input type="text" class="form-control-sm" />
+                            <div class="form-group">
+                                <span class="form-control-label">Nhân viên trực ca: @(NhanVien.Ma) - @(NhanVien.Ten)</span>
                             </div>
-                            <div class="form-group  d-flex justify-content-between">
+                            <div class="form-group">
+                                <span class="form-control-label">Nhân viên bàn giao </span>
+                                <input type="text" class="form-control form-control-sm"/>
+                            </div>
+                            <div class="form-group">
+                                <span class="form-control-label">Tổng tiền trong ca </span>
+                                <input value="@(Helper.FormatMoney(Model.TongTienTrongCa))" type="text" class="form-control form-control-sm" disabled />
+                            </div>
+                            <div class="form-group">
+                                <span class="form-control-label">Tổng tiền mặt </span>
+                                <input value="@(Helper.FormatMoney(Model.TongTienMat))" type="text" class="form-control form-control-sm" disabled />
+                            </div>
+                            <div class="form-group">
                                 <span class="form-control-label">Tiền phát sinh</span>
-                                <input type="text" class="form-control-sm" />
+                                <input type="text" class="form-control form-control-sm" disabled/>
                             </div>
                             <div class="form-group">
                                 <span class="form-control-label">Lý do phát sinh</span>
                                 <textarea class="form-control"></textarea>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="col">
-                        <div>
                             <div class="form-group">
-                                <span class="form-control-label">Thời gian hiện tại </span>
-                            </div>
-                            <div class="form-group">
-                                <span class="form-control-label">Nhân viên bàn giao </span>
-                            </div>
-                            <div class="form-group  d-flex justify-content-between">
-                                <span class="form-control-label">Tổng tiền trong ca</span>
-                                <input type="text" class="form-control-sm" />
-                            </div>
-                            <div class="form-group  d-flex justify-content-between">
-                                <span class="form-control-label">Tổng tiền mặt</span>
-                                <input type="text" class="form-control-sm" />
-                            </div>
-                            <div class="form-group  d-flex justify-content-between">
                                 <span class="form-control-label">Tổng tiền khác</span>
-                                <input type="text" class="form-control-sm" />
-                            </div>
-                            <div class="form-group  d-flex justify-content-between">
-                                <span class="form-control-label">Tổng tiền mặt cuối ca</span>
-                                <input type="text" class="form-control-sm" />
+                                <input type="text" class="form-control form-control-sm" disabled />
                             </div>
                         </div>
                     </div>
@@ -102,7 +87,7 @@
 
 @code {
     [Inject]
-    public ISessionStorageService session { get; set; } = null!;
+    public ILocalStorageService local { get; set; } = null!;
 
     [Inject]
     public SweetAlertService Swal { get; set; } = null!;
@@ -130,7 +115,8 @@
         new Money(){Id = Guid.NewGuid(),MenhGia = 2000,SoLuong = 0,ThanhTien=0},
         new Money(){Id = Guid.NewGuid(),MenhGia = 1000,SoLuong = 0,ThanhTien=0},
     };
-    private float TongThanhTien = 0;
+
+    private float TongTienMat = 0;
 
     private DateTime Time = DateTime.Now;
 
@@ -138,14 +124,42 @@
 
     private NhanVien NhanVien = new();
 
+    private float DoanhThu = 0;
+
+    private List<HoaDon> HoaDons = new();
+
+    private GiaoCaModels.GiaoCaEditModel Model = new();
+
     protected async override Task OnInitializedAsync()
     {
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await session.GetItemAsStringAsync("Token"));
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
         var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
-        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={Time.ToString("yyyy-MM-dd h:m:s")}");
+        await GetCaHienTai(IdNhanVien,Time);
+        await GetNhanVien();
+        await GetHoaDonTrongCa();
+    }
+
+    private async Task GetCaHienTai(string IdNhanVien,DateTime Time)
+    {
+        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={Time}");
         Ca = result.Data;
-        var result2 = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"https://localhost:7053/api/NhanViens/{Ca.IdNhanVienTrongCa}");
-        NhanVien = result2.Data;
+        Model.TongTienTrongCa = Ca.TienBanDau + DoanhThu;
+    }
+
+    private async Task GetNhanVien()
+    {
+        var result = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"https://localhost:7053/api/NhanViens/{Ca.IdNhanVienTrongCa}");
+        NhanVien = result.Data;
+    }
+
+    private async Task GetHoaDonTrongCa()
+    {
+        var result = await HttpClient.GetFromJsonAsync<Response<List<HoaDon>>>($"https://localhost:7053/api/GiaoCas/HoaDonTrongCa?Id={Ca.IdNhanVienTrongCa}&ThoiGian={Time}");
+        HoaDons = result.Data;
+        foreach (var HoaDon in HoaDons)
+        {
+            DoanhThu = HoaDon.TongTien;
+        }
     }
 
     private async Task ChangeThanhtien(ChangeEventArgs e, Guid Id)
@@ -159,6 +173,7 @@
         {
             tongThanhTien += item.ThanhTien;
         }
-        TongThanhTien = tongThanhTien;
+        TongTienMat = tongThanhTien;
+        Model.TongTienMat = TongTienMat;
     }
 }

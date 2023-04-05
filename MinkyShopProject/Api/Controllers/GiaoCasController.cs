@@ -25,15 +25,15 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCaHienTai([FromQuery] Guid Id,DateTime Time)
+        public async Task<IActionResult> GetCaHienTai([FromQuery] Guid Id ,DateTime ThoiGian)
         {
-            return Helper.TransformData(await _Repositories.GetCaHienThai(Id, Time));
+            return Helper.TransformData(await _Repositories.GetCaHienThai(Id,ThoiGian));
         }
 
         [HttpGet("HoaDonTrongCa")]
-        public async Task<IActionResult> GetHoaDonCaHienTai([FromQuery] Guid Id, DateTime Time)
+        public async Task<IActionResult> GetHoaDonCaHienTai([FromQuery] Guid Id,DateTime ThoiGian)
         {
-            return Helper.TransformData(await _Repositories.GetHoaDonCa(Id, Time));
+            return Helper.TransformData(await _Repositories.GetHoaDonCa(Id,ThoiGian));
         }
     }
 }

@@ -29,7 +29,7 @@ namespace MinkyShopProject.Business.Entities
 
         public float? TienPhatSinh { get; set; }
 
-        public string GhiChuPhatSinh { get; set; } = null!;
+        public string? GhiChuPhatSinh { get; set; } = null!;
 
         public float? TongTienMatCaTruoc { get; set; }
 

@@ -1,4 +1,4 @@
-﻿@using Blazored.SessionStorage;
+﻿@using Blazored.LocalStorage;
 @using MinkyShopProject.Business.Entities;
 @using MinkyShopProject.Data.Models;
 @using System.IdentityModel.Tokens.Jwt;
@@ -69,7 +69,7 @@
 
 @code {
     [Inject]
-    public ISessionStorageService session { get; set; } = null!;
+    public ILocalStorageService local { get; set; } = null!;
 
     [Inject]
     public SweetAlertService Swal { get; set; } = null!;
@@ -81,8 +81,6 @@
 
     private GiaoCa Ca = new();
 
-
-
     private class Money
     {
         public Guid Id { get; set; }
@@ -90,6 +88,7 @@
         public float SoLuong { get; set; }
         public float ThanhTien { get; set; }
     }
+
     private List<Money> Moneys = new List<Money>()
     {
         new Money(){Id = Guid.NewGuid(),MenhGia = 500000,SoLuong = 0,ThanhTien=0},
@@ -102,14 +101,16 @@
         new Money(){Id = Guid.NewGuid(),MenhGia = 2000,SoLuong = 0,ThanhTien=0},
         new Money(){Id = Guid.NewGuid(),MenhGia = 1000,SoLuong = 0,ThanhTien=0},
     };
+
     private float TongThanhTien = 0;
+
     private DateTime ThoiGianNhanCa = DateTime.Now;
 
     protected async override Task OnInitializedAsync()
     {
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await session.GetItemAsStringAsync("Token"));
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
         var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
-        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={thoigian}");
+        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
         Ca = result.Data;
     }
 
@@ -129,7 +130,7 @@
 
     private async Task BatDau()
     {
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await session.GetItemAsStringAsync("Token"));
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
         var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
 
 
@@ -146,7 +147,7 @@
 
         if (result.IsSuccessStatusCode)
         {
-            var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&Time={thoigian}");
+            var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
             Ca = result2.Data;
             await Swal.FireAsync(new SweetAlertOptions()
             {
