@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MinkyShopProject.Business.Migrations
 {
-    public partial class @new : Migration
+    public partial class MinkyShop : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -144,7 +144,8 @@ namespace MinkyShopProject.Business.Migrations
                     Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: true, defaultValue: "https://reactnative-examples.com/wp-content/uploads/2022/02/default-loading-image.png"),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -163,7 +164,8 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdThuocTinh = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false)
+                    Ten = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    TrangThai = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -182,13 +184,13 @@ namespace MinkyShopProject.Business.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
                     IdViDiem = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Ma = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GioiTinh = table.Column<bool>(type: "bit", nullable: true),
                     NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Sdt = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SoLanMua = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
@@ -224,25 +226,6 @@ namespace MinkyShopProject.Business.Migrations
                     table.PrimaryKey("PK_BienThe", x => x.Id);
                     table.ForeignKey(
                         name: "FK_BienThe_SanPham_IdSanPham",
-                        column: x => x.IdSanPham,
-                        principalTable: "SanPham",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MoTa",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    IdSanPham = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MoTa", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MoTa_SanPham_IdSanPham",
                         column: x => x.IdSanPham,
                         principalTable: "SanPham",
                         principalColumn: "Id",
@@ -491,10 +474,7 @@ namespace MinkyShopProject.Business.Migrations
                     IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230404125720_MinkyShop.cs
                     GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true),
-========
->>>>>>>> 1c1c5c1a67c39b68d41fadc599632f6e0f0c1511:MinkyShopProject/Business/Migrations/20230402100254_new.cs
                     TrangThai = table.Column<int>(type: "int", nullable: false),
                     DonGia = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
                 },
@@ -651,17 +631,11 @@ namespace MinkyShopProject.Business.Migrations
                 filter: "[IdViDiem] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_KhachHang_Ma",
+                name: "IX_KhachHang_Sdt",
                 table: "KhachHang",
-                column: "Ma",
+                column: "Sdt",
                 unique: true,
-                filter: "[Ma] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MoTa_IdSanPham",
-                table: "MoTa",
-                column: "IdSanPham",
-                unique: true);
+                filter: "[Sdt] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NhanVien_Ma",
@@ -744,9 +718,6 @@ namespace MinkyShopProject.Business.Migrations
 
             migrationBuilder.DropTable(
                 name: "HoaDonChiTiet");
-
-            migrationBuilder.DropTable(
-                name: "MoTa");
 
             migrationBuilder.DropTable(
                 name: "VoucherKhachHang");

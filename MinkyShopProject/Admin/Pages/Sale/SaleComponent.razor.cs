@@ -8,13 +8,15 @@ using CurrieTechnologies.Razor.SweetAlert2;
 using MinkyShopProject.Data.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using MinkyShopProject.Business.Entities;
+using System.Net.NetworkInformation;
+using Blazored.LocalStorage;
 
 namespace MinkyShopProject.Admin.Pages.Sale
 {
     public partial class SaleComponent
     {
         [Inject]
-        ISessionStorageService Session { get; set; } = null!;
+        ILocalStorageService Session { get; set; } = null!;
 
         Guid Id = Guid.Empty;
 

@@ -1,7 +1,6 @@
 @page "/login"
 @using MinkyShopProject.Data.Models;
 @using Blazored.LocalStorage;
-
 @layout Shared.EmptyLayout
 
 <section style="background: white">
@@ -71,7 +70,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        if (await Session.GetItemAsStringAsync("Token") != null)
+        if (await local.GetItemAsStringAsync("Token") != null)
             navigation.NavigateTo("/admin");
     }
 
