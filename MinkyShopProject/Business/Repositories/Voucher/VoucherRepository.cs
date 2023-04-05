@@ -27,6 +27,7 @@ namespace MinkyShopProject.Business.Repositories.Voucher
                     return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
 
                 var voucher = _mapper.Map<VoucherCreateModel, Entities.Voucher>(obj);
+                voucher.NgayApDung = DateTime.Now;
 
                 await _context.Voucher.AddAsync(voucher);
 
@@ -115,6 +116,20 @@ namespace MinkyShopProject.Business.Repositories.Voucher
 
                 if (voucher == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
+
+                voucher.MoTa = obj.MoTa;
+
+                voucher.NgayKetThuc = obj.NgayKetThuc;
+
+                voucher.SoLuong = obj.SoLuong;
+
+                voucher.SoTienCan = obj.SoTienCan;
+
+                voucher.SoTienGiam = obj.SoTienGiam;
+
+                voucher.Ma = obj.Ma;
+
+                voucher.Ten = voucher.Ten;
 
                 voucher.TrangThai = obj.TrangThai;
 

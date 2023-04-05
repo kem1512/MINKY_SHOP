@@ -64,7 +64,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <textarea class="form-control" rows="3"></textarea>
+                                                        <textarea class="form-control" rows="3" @bind="SanPham.Data.MoTa"></textarea>
                                                     </div>
                                                     <div class="col-6 d-flex justify-content-around align-items-center">
                                                         <div class="form-check form-switch mb-3">
@@ -125,7 +125,7 @@
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>Giá Tiền</label>
-                                                        <input class="form-control" type="text" value="@string.Format("{0:0,0}", x.v.GiaBan)" @oninput='e => x.v.GiaBan = float.Parse(e.Value?.ToString() ?? "")'>
+                                                        <input class="form-control" type="text" onchange="if(/^[0-9.]+$/.test(this.value) == false){ this.value = this.value.replace(/[^\d.]/g,'') }" value="@string.Format("{0:0,0}", x.v.GiaBan)" @oninput='e => { x.v.GiaBan = float.Parse(e.Value?.ToString() ?? ""); }'>
                                                     </div>
                                                     <div class="col-12 col-sm-6 mb-3">
                                                         <label>SKU</label>

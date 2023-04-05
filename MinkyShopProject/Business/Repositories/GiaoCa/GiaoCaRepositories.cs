@@ -32,6 +32,7 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
                     ThoiGianNhanCa = model.ThoiGianNhanCa,
                     TienBanDau = model.TienBanDau,
                     TrangThai = model.TrangThai,
+                    GhiChuPhatSinh = ""
                 };
 
                 await _context.AddAsync(ca);

@@ -12,8 +12,13 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
+<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230402100254_new.Designer.cs
     [Migration("20230402100254_new")]
     partial class @new
+========
+    [Migration("20230403104942_MinkyShop")]
+    partial class MinkyShop
+>>>>>>>> 660b014acad972894bfafdaaf8ad5be030fe6161:MinkyShopProject/Business/Migrations/20230403104942_MinkyShop.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -160,6 +165,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValueSql("(NEWID())");
 
                     b.Property<string>("GhiChuPhatSinh")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("IdNhanVienCaTiepTheo")
@@ -222,6 +228,9 @@ namespace MinkyShopProject.Business.Migrations
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
+
+                    b.Property<bool>("TrangThai")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -423,6 +432,10 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("real")
                         .HasDefaultValue(0f);
 
+                    b.Property<string>("GhiChu")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("IdBienThe")
                         .HasColumnType("uniqueidentifier");
 
@@ -507,27 +520,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasFilter("[Ma] IS NOT NULL");
 
                     b.ToTable("KhachHang", (string)null);
-                });
-
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.MoTa", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(NEWID())");
-
-                    b.Property<string>("Anh")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("IdSanPham")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdSanPham")
-                        .IsUnique();
-
-                    b.ToTable("MoTa", (string)null);
                 });
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.NhanVien", b =>
@@ -631,6 +623,9 @@ namespace MinkyShopProject.Business.Migrations
 
                     b.Property<string>("Ma")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("MoTa")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
@@ -1029,17 +1024,6 @@ namespace MinkyShopProject.Business.Migrations
                     b.Navigation("ViDiem");
                 });
 
-            modelBuilder.Entity("MinkyShopProject.Business.Entities.MoTa", b =>
-                {
-                    b.HasOne("MinkyShopProject.Business.Entities.SanPham", "SanPham")
-                        .WithOne("MoTa")
-                        .HasForeignKey("MinkyShopProject.Business.Entities.MoTa", "IdSanPham")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SanPham");
-                });
-
             modelBuilder.Entity("MinkyShopProject.Business.Entities.NhomSanPham", b =>
                 {
                     b.HasOne("MinkyShopProject.Business.Entities.NhomSanPham", "NhomSanPhamEntity")
@@ -1176,9 +1160,6 @@ namespace MinkyShopProject.Business.Migrations
             modelBuilder.Entity("MinkyShopProject.Business.Entities.SanPham", b =>
                 {
                     b.Navigation("BienThes");
-
-                    b.Navigation("MoTa")
-                        .IsRequired();
 
                     b.Navigation("ThuocTinhSanPhams");
                 });

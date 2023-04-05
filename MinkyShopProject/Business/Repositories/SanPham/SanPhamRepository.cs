@@ -66,7 +66,7 @@ namespace MinkyShopProject.Business.Repositories.SanPham
         {
             try
             {
-                return new ResponsePagination<SanPhamModel>(_mapper.Map<Pagination<Entities.SanPham>, Pagination<SanPhamModel>>(await _context.SanPham.Include(c => c.NhomSanPham).ThenInclude(c => c.NhomSanPhamEntity).Include(c => c.BienThes).ThenInclude(c => c.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<SanPhamModel>(_mapper.Map<Pagination<Entities.SanPham>, Pagination<SanPhamModel>>(await _context.SanPham.Include(c => c.NhomSanPham).ThenInclude(c => c.NhomSanPhamEntity).Include(c => c.BienThes).ThenInclude(c => c.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().Where(c => c.IdNhomSanPham == obj.IdNhomSanPham || (c.Ten.Contains("") && obj.IdNhomSanPham == Guid.Empty)).Where(c => c.Ten.ToLower().Trim().Contains(obj.Ten ?? "")).AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {
@@ -90,6 +90,8 @@ namespace MinkyShopProject.Business.Repositories.SanPham
                 sanPham.Ten = obj.Ten;
 
                 sanPham.Anh = obj.Anh;
+
+                sanPham.MoTa = obj.MoTa;
 
                 sanPham.TrangThai = obj.TrangThai;
 

@@ -6,6 +6,8 @@ using MinkyShopProject.Data.Models;
 using MinkyShopProject.Common;
 using CurrieTechnologies.Razor.SweetAlert2;
 using MinkyShopProject.Data.Enums;
+using System.IdentityModel.Tokens.Jwt;
+using MinkyShopProject.Business.Entities;
 
 namespace MinkyShopProject.Admin.Pages.Sale
 {
@@ -180,6 +182,17 @@ namespace MinkyShopProject.Admin.Pages.Sale
         async Task Reload()
         {
             HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await Session.GetItemAsStringAsync("Token"));
+            var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+            if (IdNhanVien != null)
+            {
+                var result2 = await HttpClient.GetFromJsonAsync<Response<NhanVienModel.NhanVienCreateModel>>($"https://localhost:7053/api/NhanViens/{IdNhanVien}");
+                if (result2 != null)
+                {
+                    HoaDons[index].IdNhanVien = Guid.Parse(IdNhanVien);
+                    HoaDons[index].NhanVien = result2.Data;
+                }
+            }
         }
 
         async Task ThemHoaDonVaoCsdl()

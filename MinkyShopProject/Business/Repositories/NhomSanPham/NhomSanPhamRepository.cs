@@ -62,10 +62,8 @@ namespace MinkyShopProject.Business.Repositories.NhomSanPham
                 if (nhomSanPham == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                if (nhomSanPham.NhomSanPhams != null && nhomSanPham.NhomSanPhams.Any())
-                    _context.NhomSanPham.RemoveRange(nhomSanPham.NhomSanPhams);
-
-                _context.NhomSanPham.Remove(nhomSanPham);
+                nhomSanPham.TrangThai = nhomSanPham.TrangThai == 0 ? 1 : 0;
+                _context.NhomSanPham.Update(nhomSanPham);
 
                 var status = await _context.SaveChangesAsync();
 

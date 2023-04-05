@@ -1,4 +1,3 @@
-
 @page "/login"
 @using MinkyShopProject.Data.Models;
 @using Blazored.LocalStorage;
@@ -70,6 +69,12 @@
 
     private LoginModels.Login model = new LoginModels.Login();
 
+    protected async override Task OnInitializedAsync()
+    {
+        if (await Session.GetItemAsStringAsync("Token") != null)
+            navigation.NavigateTo("/admin");
+    }
+
     private async Task Login()
     {
         var result = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/NhanViens/Login", model);
@@ -81,11 +86,11 @@
 
             await Swal.FireAsync(new SweetAlertOptions
             {
-                    Title = response.Message.Split(",")[0],
+                    TitleText = response.Message.Split(",")[0],
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Success
             });
-            navigation.NavigateTo("employee/1");
+            navigation.NavigateTo("/admin");
         }
         else
         {

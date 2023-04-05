@@ -151,7 +151,7 @@
             Ca = result2.Data;
             await Swal.FireAsync(new SweetAlertOptions()
             {
-                    Title = response.Message,
+                    TitleText = response.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Success
             });
@@ -160,7 +160,7 @@
         {
             await Swal.FireAsync(new SweetAlertOptions
             {
-                    Title = response.Message,
+                    TitleText = response.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Error
             });

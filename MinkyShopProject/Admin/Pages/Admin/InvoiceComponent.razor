@@ -19,7 +19,7 @@
                                 <option value="2">Giao hàng</option>
                             </select>
                         </div>
-                        @if(Filter.LoaiHoaDon == 2)
+                        @if (Filter.LoaiHoaDon == 2)
                         {
                             <div class="col-4">
                                 <select class="select-trang-thai-giao-hang" @onchange='async (ui) =>{ Filter.TrangThaiGiaoHang = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
@@ -36,7 +36,7 @@
                             </div>
                         }
                         <div class="col-4">
-                            <input class="form-control" placeholder="Nhập mã hóa đơn hoặc tên khách hàng" @oninput='e => Filter.Ma = e.Value?.ToString() ?? ""' @onchange="async() => await Reload()"/>
+                            <input class="form-control" placeholder="Nhập mã hóa đơn hoặc tên khách hàng" @oninput='e => Filter.Ma = e.Value?.ToString() ?? ""' @onchange="async() => await Reload()" />
                         </div>
                     </div>
 
@@ -47,9 +47,10 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã hóa đơn</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày tạo</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Khách hàng</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Loại đơn hàng</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tổng tiền hàng</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Giảm giá</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Khách đã trả</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng thái</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -73,11 +74,33 @@
                                                 <td>
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.Ma</span>
                                                 </td>
-                                                <td style="width: 20%">
+                                                <td>
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayTao</span>
                                                 </td>
-                                                <td style="width: 20%">
+                                                <td>
                                                     <span class="text-secondary text-xs font-weight-bold">@(x.Value.KhachHang?.Ten ?? "Khách Lẻ")</span>
+                                                </td>
+                                                <td>
+                                                    <span class="text-secondary text-xs font-weight-bold">
+                                                        @{
+                                                            var loaiDonHang = "";
+                                                            switch (x.Value.LoaiDonHang)
+                                                            {
+                                                                case 0:
+                                                                    loaiDonHang = "Bán Tại Quầy";
+                                                                    break;
+                                                                case 1:
+                                                                    loaiDonHang = "Đặt Hàng";
+                                                                    break;
+                                                                case 2:
+                                                                    loaiDonHang = "Giao Hàng";
+                                                                    break;
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        }
+                                                        @loaiDonHang
+                                                    </span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
                                                     <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.TongTien)</span>
@@ -86,7 +109,80 @@
                                                     <span class="text-secondary text-xs font-weight-bold">@((x.Value.VoucherLogs != null && x.Value.VoucherLogs.Any()) ? Helper.FormatMoney(x.Value.VoucherLogs?[0].SoTienGiam) : 0)</span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.HinhThucThanhToans.Sum(c => c.TongTienThanhToan))</span>
+                                                    @{
+                                                        var trangThai = "";
+                                                        var badge = "";
+                                                        @if (x.Value.LoaiDonHang == 2)
+                                                        {
+                                                            switch (x.Value.TrangThaiGiaoHang)
+                                                            {
+                                                                case 0:
+                                                                    trangThai = "Chờ Xác Nhận";
+                                                                    badge = "warning";
+                                                                    break;
+                                                                case 1:
+                                                                    trangThai = "Chờ Lấy Hàng";
+                                                                    badge = "secondary";
+                                                                    break;
+                                                                case 2:
+                                                                    trangThai = "Đang Giao";
+                                                                    badge = "info";
+                                                                    break;
+                                                                case 3:
+                                                                    trangThai = "Đã Giao";
+                                                                    badge = "success";
+                                                                    break;
+                                                                case 4:
+                                                                    trangThai = "Đã Hủy";
+                                                                    badge = "danger";
+                                                                    break;
+                                                                case 5:
+                                                                    trangThai = "Nhận Một Phần";
+                                                                    badge = "success";
+                                                                    break;
+                                                                case 6:
+                                                                    trangThai = "Giao Thất Bại";
+                                                                    badge = "danger";
+                                                                    break;
+                                                                case 7:
+                                                                    trangThai = "Không Nghe Máy";
+                                                                    badge = "danger";
+                                                                    break;
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            switch (x.Value.TrangThai)
+                                                            {
+                                                                case Data.Enums.TrangThaiHoaDon.HoanThanh:
+                                                                    trangThai = "Hoàn Thành";
+                                                                    badge = "success";
+                                                                    break;
+                                                                case Data.Enums.TrangThaiHoaDon.DaHuy:
+                                                                    trangThai = "Đã Hủy";
+                                                                    badge = "danger";
+                                                                    break;
+                                                                case Data.Enums.TrangThaiHoaDon.Ship:
+                                                                    trangThai = "Ship";
+                                                                    break;
+                                                                case Data.Enums.TrangThaiHoaDon.ChoXacNhan:
+                                                                    trangThai = "Chờ Xác Nhận";
+                                                                    badge = "warning";
+                                                                    break;
+                                                                case Data.Enums.TrangThaiHoaDon.DaXacNhan:
+                                                                    trangThai = "Đã Xác Nhận";
+                                                                    badge = "primary";
+                                                                    break;
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        }
+                                                    }
+                                                    <span class="badge bg-gradient-@badge">
+                                                        @trangThai
+                                                    </span>
                                                 </td>
                                             </tr>
                                         }
@@ -114,30 +210,41 @@
     </div>
 </div>
 
-@code{
+@code {
     [Parameter]
     public int Page { get; set; }
 
     ResponsePagination<HoaDonModel>? HoaDons;
 
-    HoaDonQueryModel Filter = new HoaDonQueryModel() { Size = 5, };
+    HoaDonQueryModel Filter = new HoaDonQueryModel() { Size = 5 };
 
     HoaDonModel? HoaDon;
 
     Uri Url = new Uri("https://localhost:7053/api/hoadon");
 
+    Uri Url2 = new Uri("https://localhost:7053/api/hoadon/GetHoaDonChuaHoanThanhAsync");
+
+    protected async override Task OnInitializedAsync()
+    {
+        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url2.AddQuery("page", 1.ToString()).AddQuery("size", Filter.Size.ToString() ?? "").AddQuery("sort", "-NgayTao"));
+    }
+
     protected async override Task OnParametersSetAsync()
     {
-        await Reload();
+        if (Page == 0) Page = 1;
+        if(HoaDons != null && !HoaDons.Data.Content.Any())
+        {
+            await Reload();
+        }
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".select-loai-don-hang");
         }
-        else if(Filter.LoaiHoaDon == 2)
+        else if (Filter.LoaiHoaDon == 2)
         {
             await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".select-trang-thai-giao-hang");
         }
@@ -145,7 +252,6 @@
 
     async Task Reload()
     {
-        if (Page == 0) Page = 1;
         HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "").AddQuery("Ma", Filter.Ma?.ToString() ?? "").AddQuery("LoaiHoaDon", Filter.LoaiHoaDon.ToString() ?? "").AddQuery("TrangThaiGiaoHang", Filter.TrangThaiGiaoHang.ToString() ?? "").AddQuery("sort", "-NgayTao"));
     }
 }
