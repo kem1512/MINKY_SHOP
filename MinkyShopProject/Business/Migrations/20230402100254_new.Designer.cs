@@ -12,8 +12,8 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    [Migration("20230329082228_MinkyShop")]
-    partial class MinkyShop
+    [Migration("20230402100254_new")]
+    partial class @new
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -160,18 +160,13 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValueSql("(NEWID())");
 
                     b.Property<string>("GhiChuPhatSinh")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("IdNhanVienCaTiepTheo")
+                    b.Property<Guid?>("IdNhanVienCaTiepTheo")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("IdNhanVienTrongCa")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Ma")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("ThoiGianGiaoCa")
                         .HasColumnType("datetime2");
@@ -179,55 +174,36 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<DateTime>("ThoiGianNhanCa")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("ThoiGianReset")
+                    b.Property<DateTime?>("ThoiGianReset")
                         .HasColumnType("datetime2");
 
                     b.Property<float>("TienBanDau")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                        .HasColumnType("real");
 
-                    b.Property<float>("TienPhatSinh")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                    b.Property<float?>("TienPhatSinh")
+                        .HasColumnType("real");
 
-                    b.Property<float>("TongTienKhac")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                    b.Property<float?>("TongTienKhac")
+                        .HasColumnType("real");
 
-                    b.Property<float>("TongTienMat")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                    b.Property<float?>("TongTienMat")
+                        .HasColumnType("real");
 
-                    b.Property<float>("TongTienMatCaTruoc")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                    b.Property<float?>("TongTienMatCaTruoc")
+                        .HasColumnType("real");
 
-                    b.Property<float>("TongTienMatRut")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                    b.Property<float?>("TongTienMatRut")
+                        .HasColumnType("real");
 
-                    b.Property<float>("TongTienTrongCa")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("real")
-                        .HasDefaultValue(0f);
+                    b.Property<float?>("TongTienTrongCa")
+                        .HasColumnType("real");
 
                     b.Property<int>("TrangThai")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("IdNhanVienTrongCa");
-
-                    b.HasIndex("Ma")
-                        .IsUnique();
 
                     b.ToTable("GiaoCa", (string)null);
                 });

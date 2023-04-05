@@ -49,9 +49,9 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             }
         }
 
-        public async Task<Response> GetCaHienThai(Guid Id,DateTime Time)
+        public async Task<Response> GetCaHienThai(Guid Id, DateTime ThoiGian)
         {
-              var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa == Id && c.ThoiGianNhanCa.Day == Time.Day && c.ThoiGianNhanCa.Month == Time.Month && c.ThoiGianNhanCa.Year == Time.Year && c.TrangThai == 0);
+              var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa == Id && c.ThoiGianNhanCa.Day == ThoiGian.Day && c.ThoiGianNhanCa.Month == ThoiGian.Month && c.ThoiGianNhanCa.Year == ThoiGian.Year && c.ThoiGianNhanCa.Hour <= ThoiGian.Hour && c.TrangThai == 0);
               return new Response<Entities.GiaoCa>(Code.OK,Ca);
         }
 
@@ -96,17 +96,10 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             }
         }
 
-        public async Task<Response<int>> GetHoaDonCa(Guid IdNhanVien, DateTime Time)
+        public async Task<Response> GetHoaDonCa(Guid IdNhanVien,DateTime ThoiGian)
         {
-            var hoadon = await _context.HoaDon.Where(c => c.NgayTao.Day == Time.Day && c.NgayTao.Month == Time.Month && c.NgayTao.Year == Time.Year && c.IdNhanVien == IdNhanVien).ToListAsync();
-            if (hoadon.Count() == 0)
-            {
-                return new Response<int>(Code.BadRequest, 0);
-            }
-            else
-            {
-                return new Response<int>(Code.BadRequest, hoadon.Count());
-            }
+            var hoadons = await _context.HoaDon.Where(c => c.NgayTao.Day == ThoiGian.Day && c.NgayTao.Month == ThoiGian.Month && c.NgayTao.Year == ThoiGian.Year && c.NgayTao.Hour <= ThoiGian.Hour && c.IdNhanVien == IdNhanVien).ToListAsync();
+            return new Response<List<Entities.HoaDon>>(Code.OK, hoadons);
         }
     }
 }

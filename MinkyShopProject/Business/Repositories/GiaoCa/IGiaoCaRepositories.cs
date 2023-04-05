@@ -12,8 +12,8 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
     public interface IGiaoCaRepositories
     {
         Task<Response> KhaiBaoDauCa(GiaoCaModels.GiaoCaCreateModel model);
-        Task<Response> GetCaHienThai(Guid Id,DateTime Time);
+        Task<Response> GetCaHienThai(Guid Id,DateTime ThoiGian);
         Task<Response> KetCa(Guid Id,DateTime Time,GiaoCaModels.GiaoCaEditModel model);
-        Task<Response<int>> GetHoaDonCa(Guid IdNhanVien, DateTime Time);
+        Task<Response> GetHoaDonCa(Guid IdNhanVien,DateTime ThoiGian);
     }
 }
