@@ -17,10 +17,9 @@ namespace MinkyShopProject.Api.Controllers
         [Route("SeeddingData")]
         public async Task<string> SeeddingData()
         {
-            //await _seendingData.SeeddingKhachHang();
-            //await _seendingData.SeeddingNhanVien();
+            // await _seendingData.SeeddingKhachHang();
+            // await _seendingData.SeeddingNhanVien();
             await _seendingData.SeeddingHoaDon();
-
             return "Thành Công";
         }
     }

@@ -23,9 +23,9 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpGet, Route("ThongKeTongTienNgayTienThangNam")]
-        public async Task<IActionResult> ThongKeTongTienNgayTienThangNam()
+        public async Task<IActionResult> ThongKeTongTienNgayTienThangNam(string loaiThongKe)
         {
-            var result = await _IThongKeRepository.ThongKeTongTienNgayTienThangNam();
+            var result = await _IThongKeRepository.ThongKeTongTienNgayTienThangNam(loaiThongKe);
             return Helper.TransformData(result);
         }
 
@@ -33,6 +33,12 @@ namespace MinkyShopProject.Api.Controllers
         public async Task<IActionResult> ThongKeNhanVienBanDuocNhieuHoaDonvaTienNhat()
         {
             var result = await _IThongKeRepository.ThongKeNhanVienBanDuocNhieuHoaDonvaTienNhat();
+            return Helper.TransformData(result);
+        }
+        [HttpGet, Route("SanPhamBanNhieuNhat")]
+        public async Task<IActionResult> SanPhamBanNhieuNhat()
+        {
+            var result = await _IThongKeRepository.SanPhamBanNhieuNhat();
             return Helper.TransformData(result);
         }
     }

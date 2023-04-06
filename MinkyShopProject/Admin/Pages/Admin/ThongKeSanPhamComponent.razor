@@ -1,0 +1,101 @@
+﻿@page "/admin/thongke/sanphambanchay"
+@page "/admin/thongke/sanphambanchay/page/{page:int}"
+@using MinkyShopProject.Data.Models
+@inject SweetAlertService Swal;
+@inject HttpClient HttpClient;
+@inject IJSRuntime JSRuntime
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <h3 style="text-align: center">10 Sản phẩm bán chạy nhất</h3>
+                        @* <div class="col-3"> *@
+                        @*     <select class="js-choice-size" @onchange='async (ui) =>{ Filter.Size = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : 2; await Reload(); }'> *@
+                        @*         <option value="2">2 kết quả</option> *@
+                        @*         @for (int i = 1; i < 5; i++) *@
+                        @*         { *@
+                        @*             var index = i * 5; *@
+                        @*             <option value="@index">@index kết quả</option> *@
+                        @*         } *@
+                        @*     </select> *@
+                        @* </div> *@
+                        @* <div class="col-3"> *@
+                        @*     <input class="form-control" placeholder="Nhập tên khách hàng" @oninput='(ui) => Filter.Ten = ui.Value?.ToString() ?? ""' @onchange="async() => { Page = 1; await Reload(); }" /> *@
+                        @* </div> *@
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered align-middle text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tên sản phẩm</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lượng đã bán </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (SpBanNhieuNHat == null)
+                                {
+                                    <tr>
+                                        <td colspan="6">
+                                            <div class="spinner-grow text-primary" role="status">
+                                                <span class="sr-only">Loading...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    if (SpBanNhieuNHat.Data.Count > 0)
+                                    {
+                                        foreach (var x in SpBanNhieuNHat.Data)
+                                        {
+                                            <tr>
+                                                <td style="width: 5%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@(++stt)</span>
+                                                </td>
+                                                <td style="width: 50%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Ten</span>
+                                                </td>
+                                                <td style="width: 5%">
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.SoLuong</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="10" class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Không Có Dữ Liệu</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <MinkyShopProject.Admin.Shared.PaginationComponent Model="SpBanNhieuNHats" Url="/admin/thongke/sanphambanchay" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public int Page { get; set; }
+
+    Uri Url = new Uri("https://localhost:7053/api/ThongKe/SanPhamBanNhieuNhat");
+    int stt = 0;
+    ResponseObject<List<SpBanNhieuNHat>>? SpBanNhieuNHat;
+    ResponsePagination<SpBanNhieuNHat>? SpBanNhieuNHats;
+    protected async override Task OnInitializedAsync()
+    {
+        await Reload();
+    }
+
+    async Task Reload()
+    {
+        SpBanNhieuNHat = await HttpClient.GetFromJsonAsync<ResponseObject<List<SpBanNhieuNHat>>>(Url);
+    }
+}
