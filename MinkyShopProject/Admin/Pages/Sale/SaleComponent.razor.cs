@@ -49,7 +49,16 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         float soTienThanhToan = 0;
 
+        bool ShowScanBarcode = false;
+
+        string ma = "";
+
         List<HinhThucThanhToanModel>? HinhThucThanhToans;
+
+        private async Task ScanResult(string e)
+        {
+            await ThemTuMaSanPham(e);
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -74,11 +83,34 @@ namespace MinkyShopProject.Admin.Pages.Sale
             }
         }
 
+        async Task ThemTuMaSanPham(string value)
+        {
+            if (SanPhams != null)
+            {
+                var tonTai = false;
+                foreach (var x in SanPhams.Data.Content)
+                {
+                    if (x.BienThes != null)
+                    {
+                        foreach (var y in x.BienThes)
+                        {
+                            if (y.Sku.ToLower().Trim() == value.ToLower().Trim())
+                            {
+                                y.SoLuongTam = 1;
+                                await ThemSanPham(new List<BienTheModel>() { y });
+                                tonTai = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         async Task TimKiemSanPham(string value)
         {
             if (SanPhams != null)
             {
-                SanPhamsSearch = SanPhams.Data.Content.Where(c => c.Ma?.ToLower().Trim() == value.ToLower().Trim() || c.Ten.ToLower().Trim().Contains(value.ToLower().Trim())).ToList();
+                SanPhamsSearch = SanPhams.Data.Content.Where(c => c.Ten.ToLower().Trim().Contains(value.ToLower().Trim())).ToList();
             }
         }
 

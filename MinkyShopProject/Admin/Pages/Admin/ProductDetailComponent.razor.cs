@@ -85,14 +85,21 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         private List<IBrowserFile> loadedFiles = new();
 
+        private long maxFileSize = 1024 * 15;
+        private int maxAllowedFiles = 3;
+        private bool isLoading;
+
         private void LoadFiles(InputFileChangeEventArgs e)
         {
+            isLoading = true;
             loadedFiles.Clear();
 
-            foreach (var file in e.GetMultipleFiles())
+            foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
             {
-                loadedFiles.Add(e.File);
+                loadedFiles.Add(file);
             }
+
+            isLoading = false;
         }
     }
 }

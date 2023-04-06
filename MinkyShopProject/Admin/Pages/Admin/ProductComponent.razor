@@ -17,23 +17,24 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row mb-3 justify-content-between">
-                        <div class="col-3">
-                            <select class="js-choice-nhom" @onchange='async e => { Filter.IdNhomSanPham = Guid.Parse(e.Value?.ToString() ?? ""); await Reload(); }'>
-                                @if (NhomSanPhams != null)
-                                {
-                                    <option value="@Guid.Empty">Tất Cả</option>
-                                    @foreach (var x in NhomSanPhams.Data.Content)
+                        <div class="col-12 d-flex">
+                            <div class="w-25 me-2">
+                                <select class="js-choice-nhom" @onchange='async e => { Filter.IdNhomSanPham = Guid.Parse(e.Value?.ToString() ?? ""); await Reload(); }'>
+                                    @if (NhomSanPhams != null)
                                     {
-                                        <option value="@x.Id">@x.Ten</option>
+                                        <option value="@Guid.Empty">Tất Cả</option>
+                                        @foreach (var x in NhomSanPhams.Data.Content)
+                                        {
+                                            <option value="@x.Id">@x.Ten</option>
+                                        }
                                     }
-                                }
-                            </select>
-                        </div>
-                        <div class="col-3">
-                            <input class="form-control" placeholder="Nhập tên hoặc mã sản phẩm" @oninput='async e => { Filter.Ten = e.Value?.ToString() ?? ""; }' @onchange="async() => await Reload()" />
-                        </div>
-                        <div class="col-3 text-end">
-                            <NavLink class="btn btn-primary btn-sm" href="admin/variant">Thêm Sản Phẩm</NavLink>
+                                </select>
+                            </div>
+                            <input class="form-control me-2 w-25" placeholder="Nhập tên hoặc mã sản phẩm" @oninput='async e => { Filter.Ten = e.Value?.ToString() ?? ""; }' @onchange="async() => await Reload()" />
+                            <button class="btn btn-primary btn-xs me-2 mb-0" data-bs-toggle="modal" data-bs-target="#exampleModal123" @onclick="() => { if(Barcodes == null || !Barcodes.Any()){ 
+                            GenerateBarcode();
+                            }; }">Tạo QR</button>
+                            <NavLink href="admin/variant"><button class="btn btn-primary btn-sm mb-0">Thêm Sản Phẩm</button></NavLink>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -174,12 +175,12 @@
         </div>
     </div>
 </div>
-@*
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+<div class="modal fade" id="exampleModal123" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">QR Code</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -190,22 +191,26 @@
                     <div class="d-flex flex-wrap gap-3">
                         @foreach (var x in Barcodes)
                         {
-                            <div class="d-flex flex-column">
-                                <div id="barcode">@x.Barcode</div>
-                                <div id="barcode_text">@x.BarcodeText</div>
-                            </div>
+                            <span class="text-bolder">@x.Product</span>
+                            @foreach (var y in x.Barcodes)
+                            {
+                                <div class="d-flex flex-column">
+                                    <div id="barcode">@y.Barcode</div>
+                                    <div id="barcode_text">@y.BarcodeText</div>
+                                </div>
+                            }
                         }
                     </div>
                 }
             </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn bg-gradient-primary">Save changes</button>
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn bg-gradient-primary">Save changes</button>
             </div>
         </div>
-</div>*@
+    </div>
+</div>
 
 @code {
     [Parameter]
@@ -269,19 +274,21 @@
         SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>(Url.AddQuery("size", Filter.Size.ToString() ?? "5").AddQuery("page", Page.ToString()).AddQuery("sort", Filter.Sort).AddQuery("IdNhomSanPham", Filter.IdNhomSanPham.ToString()).AddQuery("Ten", Filter.Ten));
     }
 
-    //void GenerateBarcode()
-    //{
-    //    foreach (var x in SanPhams.Data.Content)
-    //    {
-    //        foreach (var y in x.BienThes)
-    //        {
-    //            BarcodeFonts bcf = new BarcodeFonts();
-    //            bcf.BarcodeType = BarcodeFonts.BarcodeEnum.Code39;
-    //            bcf.CheckDigit = BarcodeFonts.YesNoEnum.Yes;
-    //            bcf.Data = y.Sku;
-    //            bcf.encode();
-    //            Barcodes.Add(new BarcodeModel() { Barcode = bcf.EncodedData, BarcodeText = bcf.HumanText.Substring(1, bcf.HumanText.Length - 2) });
-    //        }
-    //    }
-    //}
+    void GenerateBarcode()
+    {
+        foreach (var x in SanPhams.Data.Content)
+        {
+            var barCodes = new List<BarcodeModelString>();
+            foreach (var y in x.BienThes)
+            {
+                BarcodeFonts bcf = new BarcodeFonts();
+                bcf.BarcodeType = BarcodeFonts.BarcodeEnum.Code128B;
+                bcf.CheckDigit = BarcodeFonts.YesNoEnum.Yes;
+                bcf.Data = y.Sku;
+                bcf.encode();
+                barCodes.Add(new BarcodeModelString() { Barcode = bcf.EncodedData, BarcodeText = bcf.HumanText });
+            }
+            Barcodes.Add(new BarcodeModel(){ Barcodes = barCodes, Product = x.Ten });
+        }
+    }
 }

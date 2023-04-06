@@ -36,6 +36,10 @@
                                 </ul>
                             </div>
                             <div class="col-6 text-end">
+                                @if (HoaDon.TrangThai == 0 && HoaDon.LoaiDonHang != 2 && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.TraHang)
+                                {
+                                    <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.TraHang; await CapNhatHoaDon(); } }">Trả hàng</button>
+                                }
                                 @if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh || HoaDon.TrangThaiGiaoHang == 3 || HoaDon.TrangThaiGiaoHang == 5)
                                 {
                                     <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()){ await CapNhatHoaDon(); } }">Cập Nhật</button>
@@ -170,7 +174,8 @@
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lượng</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Đơn giá</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thành tiền</th>
-                                                @if (HoaDon?.TrangThaiGiaoHang == 5)
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ghi chú</th>
+                                                @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0)
                                                 {
                                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                                                 }
@@ -204,7 +209,10 @@
                                                         <td class="align-middle text-center text-sm">
                                                             <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.DonGia * x.Value.SoLuong)</span>
                                                         </td>
-                                                        @if (HoaDon?.TrangThaiGiaoHang == 5)
+                                                        <td class="w-25">
+                                                            <input class="form-control" @bind="@x.Value.GhiChu">
+                                                        </td>
+                                                        @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0)
                                                         {
                                                             <td class="align-middle text-center text-sm">
                                                                 <div class="form-check d-flex justify-content-center">

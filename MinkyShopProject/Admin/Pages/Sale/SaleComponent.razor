@@ -7,7 +7,10 @@
             <div class="form-group mb-0 position-relative">
                 <div class="input-group input-group-alternative">
                     <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
-                    <input class="form-control h-0" placeholder="Nhập Mã Sản Phẩm Hoặc Tên" type="text" @oninput='e => TimKiemSanPham(e.Value?.ToString() ?? "")'>
+                    <input class="form-control h-0" placeholder="Nhập Mã Sản Phẩm Hoặc Tên" type="text" @onkeydown='async e => { if(e.Code == "Enter"){ await ThemTuMaSanPham(ma); } }' @oninput='e =>{
+                    ma = e.Value.ToString();
+                    TimKiemSanPham(e.Value?.ToString() ?? "");
+                }'>
                 </div>
                 @if (SanPhamsSearch != null && SanPhamsSearch.Any())
                 {
@@ -29,6 +32,7 @@
         <div class="col-5 px-0 d-flex">
             @if (HoaDons != null && HoaDons.Any())
             {
+                <span class="fa fa-barcode ms-2 me-2" style="color: white; font-size: 40px" @onclick="() => ShowScanBarcode = !ShowScanBarcode"></span>
                 <button class="btn text-light text-bold shadow-none m-0 d-none" id="left-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(-200, 0)'>&lt;</button>
                 <div class="d-flex flex-nowrap overflow-hidden" style="direction: rtl" id="myTab">
                     @foreach (var x in HoaDons.Select((v, i) => (i, v)).Reverse())
@@ -46,7 +50,7 @@
         </div>
     </div>
 </div>
-@if(HoaDons != null && HoaDons.Any())
+@if (HoaDons != null && HoaDons.Any())
 {
     <div class="container-fluid mt-1">
         <div class="row">
@@ -75,12 +79,16 @@
                         <div class="row gy-2">
                             <div class="col-12 position-relative">
                                 <input class="form-control" placeholder="Tìm kiếm khách hàng" value="@HoaDons[index].KhachHang?.Ten" @oninput='async e => { await TimKiemKhachHang(e.Value?.ToString() ?? ""); }' />
-                                @if(HoaDons[index].IdKhachHang == Guid.Empty || HoaDons[index].IdKhachHang == null)
+                                @if (HoaDons[index].IdKhachHang == Guid.Empty || HoaDons[index].IdKhachHang == null)
                                 {
                                     <button class="btn btn-xs shadow-none position-absolute top-50 end-4 translate-middle-y"><i class="fa fa-plus"></i></button>
-                                }else{
+                                }
+                                else
+                                {
                                     <button class="btn btn-xs shadow-none position-absolute top-50 end-4 translate-middle-y" @onclick='() => { HoaDons[index].IdKhachHang = null; HoaDons[index].KhachHang = null;
-                                    }'><i class="fa fa-times text-danger"></i></button>
+                                    }'>
+                                        <i class="fa fa-times text-danger"></i>
+                                    </button>
                                 }
                                 <div class="position-relative">
                                     @if (KhachHangsSeach != null)
@@ -100,10 +108,9 @@
                             <div class="col-12 d-flex justify-content-between">
                                 <div></div>
                                 <div class="form-check">
-                                    <input 
-                                        @attributes='@(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang ? 
+                                    <input @attributes='@(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang ?
                                         new Dictionary<string, object>(){ { "checked", "" }} : null)'
-                                        class="form-check-input" type="checkbox" id="giaoHang" @onchange="() => {
+                                           class="form-check-input" type="checkbox" id="giaoHang" @onchange="() => {
                                         if(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang){
                                         HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay;
                                         }else{ HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang; }
@@ -116,8 +123,10 @@
                             <div class="col-12">
                                 <ul class="nav nav-tabs text-sm">
                                     <li class="nav-item">
-                                        <button class="nav-link @(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay ? "active": "")" id="hoa_don" data-bs-toggle="tab" data-bs-target="#hoa-don-tab-pane" @onclick="() => { HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay; 
-                                            HoaDons[index].TenNguoiNhan = null; HoaDons[index].Sdt = null; HoaDons[index].DiaChi = null; HoaDons[index].GhiChuGiaoHang = null; }">Hóa Đơn</button>
+                                        <button class="nav-link @(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay ? "active": "")" id="hoa_don" data-bs-toggle="tab" data-bs-target="#hoa-don-tab-pane" @onclick="() => { HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.BanTaiQuay;
+                                            HoaDons[index].TenNguoiNhan = null; HoaDons[index].Sdt = null; HoaDons[index].DiaChi = null; HoaDons[index].GhiChuGiaoHang = null; }">
+                                            Hóa Đơn
+                                        </button>
                                     </li>
                                     <li class="nav-item">
                                         <button class="nav-link @(HoaDons[index].LoaiDonHang == (int)MinkyShopProject.Data.Enums.LoaiHoaDon.DatHang ? "active": "")" id="dat_hang" data-bs-toggle="tab" data-bs-target="#dat-hang-tab-pane" @onclick="() => { HoaDons[index].LoaiDonHang = (int)MinkyShopProject.Data.Enums.LoaiHoaDon.DatHang; HoaDons[index].TienShip = 0; }">Đặt Hàng</button>
@@ -144,8 +153,8 @@
                                                         <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
                                                     }
                                                     <div class="position-absolute list-group w-100" id="voucher-list" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
-                                                    @if (VouchersThoaMan != null && VouchersThoaMan.Any())
-                                                    {
+                                                        @if (VouchersThoaMan != null && VouchersThoaMan.Any())
+                                                        {
                                                             @foreach (var x in VouchersThoaMan.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
                                                             {
                                                                 if (x.i < 5)
@@ -153,7 +162,7 @@
                                                                     <button @onclick="() => ApDungVoucher(x.i)" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten</button>
                                                                 }
                                                             }
-                                                    }
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
@@ -169,7 +178,7 @@
                                                 <span class="fa fa-credit-card" data-bs-toggle="modal" data-bs-target="#exampleModal" @onclick="() =>{ HinhThucThanhToans = HoaDons[index].HinhThucThanhToans.ToList(); }"></span>
                                                 @if (HoaDons[index].HinhThucThanhToans.Count() > 1)
                                                 {
-                                                    <input  type="text" class="border-top-0 border-end-0 border-start-0 text-sm text-end" disabled style="outline: 0; width: 40%; background: none" value="@Helper.FormatMoney(HoaDons[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan))">
+                                                    <input type="text" class="border-top-0 border-end-0 border-start-0 text-sm text-end" disabled style="outline: 0; width: 40%; background: none" value="@Helper.FormatMoney(HoaDons[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan))">
                                                 }
                                                 else
                                                 {
@@ -298,7 +307,6 @@
                                 </div>
                             </div>
                             <div class="col-12" style="position: absolute; bottom: 0; left:0; right:0; overflow: hidden">
-                                <button class="btn btn-secondary">In</button>
                                 <button class="btn btn-success" @onclick="ThemHoaDonVaoCsdl">Thanh Toán</button>
                             </div>
                         </div>
@@ -369,4 +377,16 @@
             </div>
         </div>
     </div>
+
+    @if (ShowScanBarcode)
+    {
+        <ZXingBlazor.Components.BarcodeReader ScanResult="ScanResult"
+                                      Close="(()=>ShowScanBarcode=!ShowScanBarcode)"
+                                      ScanBtnTitle="Scan"
+                                      ResetBtnTitle="Reset"
+                                      CloseBtnTitle="Close"
+                                      DecodeAllFormats="true"
+                                      SelectDeviceBtnTitle="Select Device">
+        </ZXingBlazor.Components.BarcodeReader>
+    }
 }

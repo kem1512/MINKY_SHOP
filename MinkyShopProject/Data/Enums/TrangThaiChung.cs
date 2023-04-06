@@ -9,7 +9,7 @@ namespace MinkyShopProject.Data.Enums
 
     public enum TrangThaiHoaDon
     {
-        HoanThanh, DaHuy, Ship, ChoXacNhan, DaXacNhan
+        HoanThanh, DaHuy, Ship, ChoXacNhan, DaXacNhan, TraHang
     }
 
     public enum TrangThaiHoaDonChiTiet
