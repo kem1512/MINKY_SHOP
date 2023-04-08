@@ -8,12 +8,13 @@ using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Business.Pagination;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
-using MinkyShopProject.Data.Pagination;
 using System.Net.Http.Json;
 using PaginationRequest = MinkyShopProject.Business.Pagination.PaginationRequest;
 using System.Text;
 using Firebase.Auth;
 using Firebase.Storage;
+using System.IdentityModel.Tokens.Jwt;
+using Blazored.LocalStorage;
 
 namespace MinkyShopProject.Admin.Pages.Admin
 {
@@ -25,8 +26,16 @@ namespace MinkyShopProject.Admin.Pages.Admin
         private IJSRuntime JSRuntime { get; set; } = null!;
         [Inject]
         private SweetAlertService Swal { get; set; } = null!;
+
+        [Inject]
+        private ILocalStorageService local { get; set; } = null!;
+
+        [Inject]
+        public NavigationManager Navigation { get; set; } = null!;
+
         [Parameter]
         public int Page { get; set; }
+
         private PaginationRequest PaginationRequest = new PaginationRequest() { PerPage = 2 };
         private Response<PaginationResponse<NhanVien>> Response = new Response<PaginationResponse<NhanVien>>();
         private string url = "https://localhost:7053/api/NhanViens";
@@ -41,9 +50,21 @@ namespace MinkyShopProject.Admin.Pages.Admin
         private static string Bucket = "imagesangularapp.appspot.com";
         private static string AuthEmail = "truong@gmail.com";
         private static string AuthPassword = "123456";
+        private Guid IdNhanVienDangNhap = Guid.Empty;
+        private List<NhanVien> lstNhanVien = new();
 
         protected override async Task OnParametersSetAsync()
         {
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
+            var Role = jwt.Claims.FirstOrDefault(c => c.Type.Equals("VaiTro"))?.Value;
+            var Id = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+            IdNhanVienDangNhap = Guid.Parse(Id);
+            if (Role == "1")
+            {
+                Navigation.NavigateTo("/admin");
+                await Swal.FireAsync("Thông báo", "Bạn Không Có Quyền Truy Cập Vào Quản Lí Nhân Viên", SweetAlertIcon.Warning);
+            }
+
             PaginationRequest.CurrentPage = Page;
             await Get();
         }
@@ -63,6 +84,8 @@ namespace MinkyShopProject.Admin.Pages.Admin
             query = $"?PerPage={PaginationRequest.PerPage}&CurrentPage={PaginationRequest.CurrentPage}&Status={PaginationRequest.Status}&Role={PaginationRequest.Role}&Keyword={PaginationRequest.Keyword}";
 
             Response = await HttpClient.GetFromJsonAsync<Response<PaginationResponse<NhanVien>>>($"{url}{query}");
+
+            lstNhanVien = Response.Data.Data.Where(c => c.Id != IdNhanVienDangNhap).ToList();
         }
 
         async Task FilterWithStatus(ChangeEventArgs e)
@@ -95,7 +118,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         async Task Remove(Guid Id)
         {
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -151,6 +174,10 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 if (Create)
                 {
+                    var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+
+                    if (string.IsNullOrEmpty(confirm.Value)) return;
+
                     Model.TrangThai = 1;
                     var result = await HttpClient.PostAsJsonAsync(url, Model);
                     var response = await result.Content.ReadFromJsonAsync<Response>();
@@ -179,7 +206,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
                 }
                 else
                 {
-                    var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+                    var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
                     if (string.IsNullOrEmpty(confirm.Value)) return;
 
                     var result = await HttpClient.PutAsJsonAsync($"{url}/{IdNhanVien}", Model);

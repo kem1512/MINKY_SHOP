@@ -1,6 +1,7 @@
 ﻿@page "/admin/voucher"
 @page "/admin/voucher/page/{page:int}"
 @using MinkyShopProject.Data.Models;
+@using System.IdentityModel.Tokens.Jwt;
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
 @inject IJSRuntime JSRuntime
@@ -294,6 +295,12 @@
 
     VoucherCreateModel Voucher = new VoucherCreateModel();
 
+    [Inject]
+    private ILocalStorageService local { get; set; } = null!;
+
+    [Inject]
+    public NavigationManager Navigation { get; set; } = null!;
+
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
@@ -305,6 +312,13 @@
 
     protected async override Task OnParametersSetAsync()
     {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
+        var Role = jwt.Claims.FirstOrDefault(c => c.Type.Equals("VaiTro"))?.Value;
+        if (Role == "1")
+        {
+            Navigation.NavigateTo("/admin");
+            await Swal.FireAsync("Thông báo", "Bạn Không Có Quyền Truy Cập Quản Lí Voucher", SweetAlertIcon.Warning);
+        }
         await Reload();
     }
 

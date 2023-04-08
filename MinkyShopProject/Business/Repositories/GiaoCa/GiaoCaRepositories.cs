@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
+using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using System;
@@ -56,38 +57,29 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
               return new Response<Entities.GiaoCa>(Code.OK,Ca);
         }
 
-        public async Task<Response> KetCa(Guid Id, DateTime Time, GiaoCaModels.GiaoCaEditModel model)
+        public async Task<Response> KetCa(Guid Id,GiaoCaModels.GiaoCaEditModel model)
         {
             try
             {
-                var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa == Id && c.ThoiGianNhanCa.Day == Time.Day && c.ThoiGianNhanCa.Month == Time.Month && c.ThoiGianNhanCa.Year == Time.Year && c.TrangThai == 0);
-
-                var idCa = Ca.Id;
-
-                var CaUpdate = new Entities.GiaoCa()
-                {
-                    Id = idCa,
-                    ThoiGianGiaoCa = model.ThoiGianGiaoCa,
-                    IdNhanVienCaTiepTheo = model.IdNhanVienCaTiepTheo,
-                    TongTienTrongCa = model.TongTienTrongCa,
-                    TongTienMat = model.TongTienMat,
-                    TongTienKhac = model.TongTienKhac,
-                    TienPhatSinh = model.TienPhatSinh,
-                    GhiChuPhatSinh = model.GhiChuPhatSinh,
-                    TongTienMatCaTruoc = model.TongTienMatCaTruoc,
-                    ThoiGianReset = model.ThoiGianReset,
-                    TrangThai = 1,
-                };
-
-                _context.Update(CaUpdate);
+                var Ca = await _context.giaoCas.FirstOrDefaultAsync(c=>c.Id == Id);
+                Ca.ThoiGianGiaoCa = model.ThoiGianGiaoCa;
+                Ca.IdNhanVienCaTiepTheo = model.IdNhanVienCaTiepTheo;
+                Ca.TongTienTrongCa = model.TongTienTrongCa;
+                Ca.TongTienMat = model.TongTienMat;
+                Ca.TongTienKhac = model.TongTienKhac;
+                Ca.TienPhatSinh = model.TienPhatSinh;
+                Ca.GhiChuPhatSinh = model.GhiChuPhatSinh;
+                Ca.TongTienMatCaTruoc = model.TongTienMatCaTruoc;
+                Ca.ThoiGianReset = model.ThoiGianReset;
+                Ca.TrangThai = 1;
                 var result = await _context.SaveChangesAsync();
                 if (result > 0)
                 {
-                    return new Response(Code.OK, "Kết ca thành công");
+                    return new Response(Code.OK, "Hoàn thành báo cáo");
                 }
                 else
                 {
-                    return new ResponseError(Code.BadRequest, "Kết ca thất bại");
+                    return new ResponseError(Code.BadRequest, "Kết ca thất bại,vui lòng thử lại");
                 }
             }
             catch (Exception ex)
@@ -101,6 +93,12 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
         {
             var hoadons = await _context.HoaDon.Where(c => c.NgayTao.Day == ThoiGian.Day && c.NgayTao.Month == ThoiGian.Month && c.NgayTao.Year == ThoiGian.Year && c.NgayTao.Hour <= ThoiGian.Hour && c.IdNhanVien == IdNhanVien).ToListAsync();
             return new Response<List<Entities.HoaDon>>(Code.OK, hoadons);
+        }
+
+        public async Task<Response> GetTienMatHoaDon(Guid IdHoaDon)
+        {
+            var hinhthucthanhtoan = await _context.HinhThucThanhToan.Where(c => c.IdHoaDon == IdHoaDon && c.KieuThanhToan == 0).ToListAsync();
+            return new Response<List<HinhThucThanhToan>>(Code.OK, hinhthucthanhtoan);
         }
     }
 }

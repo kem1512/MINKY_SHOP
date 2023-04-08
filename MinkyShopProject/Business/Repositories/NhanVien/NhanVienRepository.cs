@@ -8,7 +8,6 @@ using MinkyShopProject.Business.Pagination;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Enums;
 using MinkyShopProject.Data.Models;
-using MinkyShopProject.Data.Pagination;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

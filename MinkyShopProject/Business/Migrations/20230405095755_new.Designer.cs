@@ -12,13 +12,8 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230402100254_new.Designer.cs
-    [Migration("20230402100254_new")]
+    [Migration("20230405095755_new")]
     partial class @new
-========
-    [Migration("20230403104942_MinkyShop")]
-    partial class MinkyShop
->>>>>>>> 660b014acad972894bfafdaaf8ad5be030fe6161:MinkyShopProject/Business/Migrations/20230403104942_MinkyShop.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -165,7 +160,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValueSql("(NEWID())");
 
                     b.Property<string>("GhiChuPhatSinh")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("IdNhanVienCaTiepTheo")
