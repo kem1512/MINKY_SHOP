@@ -1,6 +1,8 @@
 ﻿@page "/trackorder"
 @using MinkyShopProject.Data.Models
 @inject HttpClient HttpClient
+@inject Blazored.SessionStorage.ISessionStorageService Session
+@inject SweetAlertService Swal;
 
 <main class="bg_gray">
 	<div class="container margin_30">
@@ -13,7 +15,9 @@
 						<td>Ngày Đặt Hàng</td>
 						<td>Số Sản Phẩm</td>
 						<td>Trạng Thái</td>
-						<td></td>
+						<td>
+							<input class="form-control" @bind="GhiChuHuyDonHang" />
+						</td>
 					</tr>
 				</thead>
 				<tbody>
@@ -63,7 +67,10 @@
 								</td>
 								<td style="vertical-align: middle; width: 20%">
 									<button class="btn_1">Xem Chi Tiết</button>
-									<button class="btn_1" style="background: red">Hủy</button>
+									@if(x.TrangThaiGiaoHang == 0 || x.TrangThaiGiaoHang == 1)
+									{
+										<button @onclick="() => Huy(x)" class="btn_1" style="background: red">Hủy</button>
+									}
 								</td>
 							</tr>
 						}
@@ -78,8 +85,39 @@
 @code{
 	ResponseList<HoaDonModel>? HoaDon;
 
+	string GhiChuHuyDonHang = "";
+
+	Uri Url = new Uri("https://localhost:7053/api/hoadon");
+
 	protected async override Task OnInitializedAsync()
 	{
-		HoaDon = await HttpClient.GetFromJsonAsync<ResponseList<HoaDonModel>>("https://localhost:7053/api/HoaDon/khachhang/68AD5C67-81D8-4F1F-A596-5D7FD7EDA692");
+		var khachHang = await Session.GetItemAsync<KhachHangModel>("khachHang");
+		if(khachHang != null)
+			HoaDon = await HttpClient.GetFromJsonAsync<ResponseList<HoaDonModel>>("https://localhost:7053/api/HoaDon/khachhang/" + khachHang.Id);
+	}
+
+	async Task Huy(HoaDonModel hoaDon)
+	{
+		if(string.IsNullOrEmpty(GhiChuHuyDonHang)){ 
+			await Swal.FireAsync("", "Vui Lòng Nhập Lý Do Hủy", SweetAlertIcon.Error); 
+			return;
+		}
+
+		var confirm = await Swal.FireAsync(new SweetAlertOptions { TitleText = "Bạn Có Chắc Muốn Hủy Đơn Hàng", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+		if (string.IsNullOrEmpty(confirm.Value)) return;
+
+		hoaDon.NgayCapNhat = DateTime.Now;
+		hoaDon.TrangThaiGiaoHang = 4;
+		var status = await HttpClient.PutAsJsonAsync<HoaDonModel>(Url.AddQuery("id", hoaDon.Id.ToString()), hoaDon);
+        if (status.IsSuccessStatusCode)
+        {
+            await Swal.FireAsync("", "Cập Nhật Thành Công", SweetAlertIcon.Success);
+        }
+        else
+        {
+
+            await Swal.FireAsync("", "Cập Nhật Thất Bại", SweetAlertIcon.Error);
+        }
 	}
 }

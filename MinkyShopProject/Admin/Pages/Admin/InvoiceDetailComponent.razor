@@ -1,9 +1,12 @@
 ﻿@using Data.Models;
 @inject HttpClient HttpClient;
 @inject SweetAlertService Swal;
+@inject IJSRuntime JSRuntime;
 @inject NavigationManager NavigationManager;
-@inject ISessionStorageService Session;
+@inject ILocalStorageService Session;
+@using Blazored.LocalStorage;
 @using System.IdentityModel.Tokens.Jwt;
+@using Net.ConnectCode.BarcodeFontsStandard2D
 
 <div class="container-fluid mt--7" style="overflow-y: auto">
     @if (HoaDon != null)
@@ -33,6 +36,10 @@
                                 </ul>
                             </div>
                             <div class="col-6 text-end">
+                                @if (HoaDon.TrangThai == 0 && HoaDon.LoaiDonHang != 2 && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.TraHang)
+                                {
+                                    <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.TraHang; await CapNhatHoaDon(); } }">Trả hàng</button>
+                                }
                                 @if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh || HoaDon.TrangThaiGiaoHang == 3 || HoaDon.TrangThaiGiaoHang == 5)
                                 {
                                     <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()){ await CapNhatHoaDon(); } }">Cập Nhật</button>
@@ -51,7 +58,7 @@
                                         Hoàn thành
                                     </button>
                                 }
-                                <button class="btn btn-success me-2">In</button>
+                                <NavLink class="btn btn-success me-2" href="@($"print/{HoaDon?.Id}")">In</NavLink>
                                 @if (HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.DaHuy && HoaDon?.TrangThaiGiaoHang != 4 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 3 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 5)
                                 {
                                     <button class="btn btn-danger me-2" @onclick='async() => { if(string.IsNullOrEmpty(GhiChuCapNhat)){ await Swal.FireAsync("", "Vui Lòng Nhập Ghi Chú Cập Nhật", SweetAlertIcon.Error); return; } if(await Confirm()){ if(HoaDon.LoaiDonHang != 2) { HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaHuy; await CapNhatHoaDon(); }else{ HoaDon.TrangThaiGiaoHang = (int)Data.Enums.TrangThaiGiaoHang.DaHuy; await CapNhatHoaDon(); }} }'>Hủy</button>
@@ -167,7 +174,8 @@
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Số lượng</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Đơn giá</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thành tiền</th>
-                                                @if (HoaDon?.TrangThaiGiaoHang == 5)
+                                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ghi chú</th>
+                                                @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0)
                                                 {
                                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                                                 }
@@ -201,7 +209,10 @@
                                                         <td class="align-middle text-center text-sm">
                                                             <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.DonGia * x.Value.SoLuong)</span>
                                                         </td>
-                                                        @if (HoaDon?.TrangThaiGiaoHang == 5)
+                                                        <td class="w-25">
+                                                            <input class="form-control" @bind="@x.Value.GhiChu">
+                                                        </td>
+                                                        @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0)
                                                         {
                                                             <td class="align-middle text-center text-sm">
                                                                 <div class="form-check d-flex justify-content-center">
@@ -559,7 +570,19 @@
 
     string GhiChuCapNhat = "";
 
+    public string Message { get; set; }
+
     List<HinhThucThanhToanModel> HinhThucThanhToans = new List<HinhThucThanhToanModel>();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if(HoaDon != null)
+        {
+            QR qrCode = new QR(HoaDon.Ma, "M", 8);
+            string output = qrCode.Encode();
+            Message = output;
+        }
+    }
 
     async Task Cancel()
     {

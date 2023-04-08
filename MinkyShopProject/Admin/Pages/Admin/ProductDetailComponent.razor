@@ -171,8 +171,7 @@
             </div>
             <div class="modal-footer">
                 <div class="w-100 d-flex justify-content-between">
-                    <InputFile class="form-control w-25" OnChange='async e => { await JSRuntime.InvokeVoidAsync("uploadImages", e.File); }' multiple />
-                    @*                    <button type="button" class="btn btn-secondary m-0" @onclick='async() => await JSRuntime.InvokeVoidAsync("uploadImages", loadedFiles) '>Tải Ảnh Lên</button>*@
+                    <InputFile class="form-control w-25" OnChange='LoadFiles' multiple />
                     <button type="button" class="btn btn-secondary m-0" data-bs-dismiss="modal">Đóng</button>
                 </div>
             </div>

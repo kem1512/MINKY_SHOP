@@ -3,6 +3,7 @@
 @inject IJSRuntime JSRuntime
 @inject HttpClient HttpClient
 @inject SweetAlertService Swal
+@inject Blazored.SessionStorage.ISessionStorageService Session
 
 <main class="bg_gray">
     <div class="container margin_30">
@@ -163,11 +164,16 @@
 
     private HoaDonCreateModel HoaDon = new HoaDonCreateModel();
 
+
     string maVoucher = "";
 
     protected async override Task OnInitializedAsync()
     {
-        GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=68AD5C67-81D8-4F1F-A596-5D7FD7EDA692");
+        var khachHang = await Session.GetItemAsync<KhachHangModel>("khachHang");
+        if(khachHang != null)
+        {
+            GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=" + khachHang.Id);
+        }
     }
 
     async Task CapNhat()

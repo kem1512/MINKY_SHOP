@@ -3,6 +3,7 @@
 @using MinkyShopProject.Data.Models
 @inject HttpClient HttpClient
 @inject SweetAlertService Swal
+@inject Blazored.SessionStorage.ISessionStorageService Session
 
 @if (BienTheChiTiet != null)
 {
@@ -426,7 +427,15 @@
 
     protected async override Task OnInitializedAsync()
     {
-        GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=68AD5C67-81D8-4F1F-A596-5D7FD7EDA692");
+        var khachHang = await Session.GetItemAsync<KhachHangModel>("khachHang");
+        if(khachHang != null)
+        {
+            GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=" + khachHang.Id);
+            if(GioHangs?.Data.IdKhachHang == Guid.Empty)
+            {
+                GioHangs.Data.IdKhachHang = khachHang.Id;
+            }
+        }
         BienTheChiTiet = await HttpClient.GetFromJsonAsync<ResponseObject<BienTheChiTietModel>>($"https://localhost:7053/api/BienThe/{Id}");
         if (BienTheChiTiet?.Data.ThuocTinhs != null)
         {
@@ -450,16 +459,21 @@
 
     async Task ThemVaoGioHang()
     {
-        if(BienThe != null && GioHangs != null && GioHangs.Data.GioHangChiTiets != null && GioHangs.Data.GioHangChiTiets.Any())
+        if(BienThe != null && GioHangs != null)
         {
-            var gioHangChiTiet = GioHangs.Data.GioHangChiTiets.FirstOrDefault(c => c.IdBienThe == BienThe.Id);
-            if(gioHangChiTiet != null)
+            if (GioHangs.Data.GioHangChiTiets != null && GioHangs.Data.GioHangChiTiets.Any())
             {
-                gioHangChiTiet.SoLuong += BienThe.SoLuongTam;
+                var gioHangChiTiet = GioHangs.Data.GioHangChiTiets.FirstOrDefault(c => c.IdBienThe == BienThe.Id);
+                if (gioHangChiTiet != null)
+                {
+                    gioHangChiTiet.SoLuong += BienThe.SoLuongTam;
+                }   
+                Console.WriteLine(  123);
             }
             else
             {
-                GioHangs.Data.GioHangChiTiets.Add(new GioHangChiTietModel() { IdBienThe = BienThe.Id, SoLuong = BienThe.SoLuongTam, DonGia = BienThe.GiaBan });
+                GioHangs.Data.GioHangChiTiets = new List<GioHangChiTietModel>();
+                GioHangs.Data.GioHangChiTiets?.Add(new GioHangChiTietModel() { IdBienThe = BienThe.Id, SoLuong = BienThe.SoLuongTam, DonGia = BienThe.GiaBan });
             }
             var status = await HttpClient.PutAsJsonAsync<GioHangModel>("https://localhost:7053/api/GioHang", GioHangs.Data);
             if (status.IsSuccessStatusCode)

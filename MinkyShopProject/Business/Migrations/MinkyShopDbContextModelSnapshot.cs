@@ -425,7 +425,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValue(0f);
 
                     b.Property<string>("GhiChu")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("IdBienThe")
@@ -474,7 +473,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Ma")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatKhau")
                         .HasColumnType("nvarchar(max)");
@@ -486,7 +485,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Sdt")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("SoLanMua")
                         .ValueGeneratedOnAdd()
@@ -507,9 +506,9 @@ namespace MinkyShopProject.Business.Migrations
                         .IsUnique()
                         .HasFilter("[IdViDiem] IS NOT NULL");
 
-                    b.HasIndex("Ma")
+                    b.HasIndex("Sdt")
                         .IsUnique()
-                        .HasFilter("[Ma] IS NOT NULL");
+                        .HasFilter("[Sdt] IS NOT NULL");
 
                     b.ToTable("KhachHang", (string)null);
                 });

@@ -65,6 +65,63 @@ function overflow() {
     }
 }
 
+function drawChart(data) {
+    console.log(data);
+    let chartStatus = Chart.getChart("chart");
+    if (chartStatus != undefined) {
+        chartStatus.destroy();
+    }
+
+    var labels = [];
+    var values = [];
+
+    for (var i = 0; i < data.data.thongKeTheoNgayTienThangNam.length; i++) {
+        /*var label = data.data[i].ngay + "/" + data.data[i].thang + "/" + data.data[i].nam;*/
+        var label = data.data.thongKeTheoNgayTienThangNam[i].ngay;
+        var value = data.data.thongKeTheoNgayTienThangNam[i].tongTien;
+
+        //console.log(label)
+        //console.log(value)
+
+        labels.push(label);
+        values.push(value);
+    }
+
+    var ctx = document.getElementById("chart");
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tổng tiền',
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                }
+            }
+        }
+    });
+}
+
+window.drawChart = drawChart;
 window.storageImages = storageImages;
 window.uploadImages = uploadImages;
 window.choiceLoad = choiceLoad;

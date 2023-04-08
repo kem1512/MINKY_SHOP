@@ -9,10 +9,15 @@
     public class TongTienNgayTienThangNam
     {
         public float TongTien { get; set; }
-        public int Ngay { get; set; }
+        public int ngay { get; set; }
         public int thang { get; set; }
         public int nam { get; set; }
 
+    }
+    public class ThongKeTongTienResult
+    {
+        public float TongTienTatCa { get; set; }
+        public List<TongTienNgayTienThangNam> ThongKeTheoNgayTienThangNam { get; set; }
     }
     public class NhanVienBanHangNhieuNHat
     {
@@ -20,7 +25,44 @@
         public string Ten { get; set; }
         public int SoHoaDon { get; set; }
         public float TongTien { get; set; }
-        public int SoSanPhamBan { get; set; }
+        public string sdt { get; set; }
+        public DateTime ngayvaolam { get; set; }
+    }
+    public class NhanVienKhongBanHang
+    {
+        public string Ten { get; set; }
+        public int SoHoaDon { get; set; }
+        public string sdt { get; set; }
+        public float TongTien { get; set; }
+        public DateTime ngayvaolam { get; set; }
+    }
+    public class KhachHangMuaNhieuNhat
+    {
+        public string Ten { get; set; }
+        public string sdt { get; set; }
+        public int SoHoaDon { get; set; }
+        public float TongTien { get; set; }
+
+    }
+
+    public class KhachHangHuyHoaDon
+    {
+        public string Ten { get; set; }
+        public string sdt { get; set; }
+        public int SoHoaDon { get; set; }
+    }
+
+    public class SpBanNhieuNHatSoLuong
+    {
+        public string Ten { get; set; }
+        public int SoLuong { get; set; }
+
+    }
+
+    public class SpBanNhieuNHatTien
+    {
+        public string Ten { get; set; }
+        public float Tien { get; set; }
 
     }
 }

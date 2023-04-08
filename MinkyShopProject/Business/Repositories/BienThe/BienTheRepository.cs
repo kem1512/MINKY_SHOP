@@ -38,17 +38,25 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
-                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Helper.RandomString(5), IdNhomSanPham = obj.SanPham?.IdNhomSanPham, Ten = obj.SanPham?.Ten });
+                await _context.SanPham.AddAsync(new Entities.SanPham() { Id = idSanPham, Ma = "SP" + Helper.RandomString(5), NgayTao = DateTime.Now, IdNhomSanPham = obj.SanPham?.IdNhomSanPham, Ten = obj.SanPham?.Ten });
 
                 if (obj.ThuocTinhs != null)
                 {
                     obj.ThuocTinhs.OrderBy(c => c.Id);
                     foreach (var x in obj.ThuocTinhs)
                     {
-                        if (x.Id == Guid.Empty && _context.ThuocTinh.AsNoTracking().Any(c => c.Ten.ToLower().Trim().Contains(x.Ten.ToLower().Trim())))
+                        var thuocTinhTonTai = _context.ThuocTinh.AsNoTracking().FirstOrDefault(c => c.Ten.ToLower().Trim().Equals(x.Ten.ToLower().Trim()));
+                        if (thuocTinhTonTai != null)
                         {
-                            x.Id = Guid.NewGuid();
-                            await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten });
+                            x.Id = thuocTinhTonTai.Id;
+                        }
+                        else
+                        {
+                            if (x.Id == Guid.Empty)
+                            {
+                                x.Id = Guid.NewGuid();
+                                await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten });
+                            }
                         }
 
                         var thuocTinhSanPhamExist = await _context.ThuocTinhSanPham.FirstOrDefaultAsync(c => c.IdSanPham == idSanPham && c.IdThuocTinh == x.Id);
@@ -71,10 +79,18 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                         {
                             foreach (var y in x.GiaTris)
                             {
-                                if (y.Id == Guid.Empty && _context.GiaTri.AsNoTracking().Any(c => c.Ten.ToLower().Trim().Contains(y.Ten.ToLower().Trim())))
+                                var giaTriTonTai = _context.GiaTri.AsNoTracking().FirstOrDefault(c => c.Ten.ToLower().Trim().Contains(x.Ten.ToLower().Trim()));
+                                if (giaTriTonTai != null)
                                 {
-                                    y.Id = Guid.NewGuid();
-                                    await _context.GiaTri.AddAsync(new GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id });
+                                    y.Id = giaTriTonTai.Id;
+                                }
+                                else
+                                {
+                                    if (y.Id == Guid.Empty)
+                                    {
+                                        y.Id = Guid.NewGuid();
+                                        await _context.GiaTri.AddAsync(new GiaTri { Id = y.Id, Ten = y.Ten, IdThuocTinh = x.Id, TrangThai = true });
+                                    }
                                 }
 
                                 // Nếu Tên Thuộc Tính Có 2 Kí Tự Trở Lên Thì Lấy 2 Ký Tự Không Thì Chỉ Lấy Kí Tự Đầu Tiên

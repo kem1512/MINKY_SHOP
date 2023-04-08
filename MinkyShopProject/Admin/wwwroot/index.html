@@ -22,8 +22,15 @@
     <style TYPE="text/css" media="screen,print">
         @font-face {
             font-family: CCode39;
-            src: url("assets/fonts/ConnectCode39.woff") format('woff')
+            src: url("assets/fonts/ConnectCode128_S3_Trial.woff") format('woff')
         }
+
+        @font-face {
+            font-family: CCodeQR;
+            src: url("fonts/CCodeQR_Trial.eot");
+            src: local("CCodeQR_Trial"), url("fonts/CCodeQR_Trial.otf") format("opentype"), url("fonts/CCodeQR_Trial.woff") format("woff");
+        }
+
 
         #barcode {
             font-weight: normal;
@@ -41,6 +48,15 @@
             font-family: sans-serif;
             text-align: center;
             font-size: 24px
+        }
+
+
+        #barcodeFonts {
+            font-weight: normal;
+            font-style: normal;
+            line-height: normal;
+            font-family: 'CCodeQR', sans-serif;
+            font-size: 9px;
         }
     </style>
 </head>

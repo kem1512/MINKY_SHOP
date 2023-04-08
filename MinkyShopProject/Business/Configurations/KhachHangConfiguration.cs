@@ -10,25 +10,25 @@ using System.Threading.Tasks;
 
 namespace MinkyShopProject.Business.Configurations
 {
-    public class KhachHangConfiguration : IEntityTypeConfiguration<KhachHang>
-    {
-        public void Configure(EntityTypeBuilder<KhachHang> builder)
-        {
-            builder.ToTable("KhachHang");
+	public class KhachHangConfiguration : IEntityTypeConfiguration<KhachHang>
+	{
+		public void Configure(EntityTypeBuilder<KhachHang> builder)
+		{
+			builder.ToTable("KhachHang");
 
-            builder.HasKey(x => x.Id);
+			builder.HasKey(x => x.Id);
 
-            builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
+			builder.Property(c => c.Id).HasDefaultValueSql("(NEWID())");
 
-            builder.HasIndex(c => c.Ma).IsUnique();
+			builder.HasIndex(c => c.Sdt).IsUnique();
 
-            builder.Property(c => c.NgaySinh);
+			builder.Property(c => c.NgaySinh);
 
-            builder.Property(c => c.SoLanMua).HasDefaultValue(0);
+			builder.Property(c => c.SoLanMua).HasDefaultValue(0);
 
-            builder.Property(c => c.TrangThai).HasDefaultValue(0);
+			builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
-            builder.HasOne(c => c.ViDiem).WithOne(c => c.KhachHang).HasForeignKey<KhachHang>(c => c.IdViDiem).OnDelete(DeleteBehavior.Cascade);
-        }
-    }
+			builder.HasOne(c => c.ViDiem).WithOne(c => c.KhachHang).HasForeignKey<KhachHang>(c => c.IdViDiem).OnDelete(DeleteBehavior.Cascade);
+		}
+	}
 }

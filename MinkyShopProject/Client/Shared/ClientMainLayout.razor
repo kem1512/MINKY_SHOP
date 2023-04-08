@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime;
+@inject Blazored.SessionStorage.ISessionStorageService Session
+@inject NavigationManager NavigationManager
 
 <div id="page">
     <HeaderComponent></HeaderComponent>
@@ -13,5 +15,13 @@
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         await JSRuntime.InvokeVoidAsync("main");
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if(await Session.GetItemAsStringAsync("khachHang") == null)
+        {
+            NavigationManager.NavigateTo("/account");
+        }
     }
 }

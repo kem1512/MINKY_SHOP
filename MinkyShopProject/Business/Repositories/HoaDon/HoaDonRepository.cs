@@ -36,6 +36,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                 obj.Ma = "HD" + Helper.RandomString(5);
 
                 var hoaDon = _mapper.Map<HoaDonCreateModel, Entities.HoaDon>(obj);
+                hoaDon.IdNhanVien = _context.NhanVien.First().Id;
 
                 if (hoaDon.IdKhachHang != null && hoaDon.IdKhachHang != Guid.Empty)
                 {
@@ -103,9 +104,19 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).FirstOrDefaultAsync(c => c.Id == id);
+                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
                 if (result != null)
+                {
+                    foreach (var x in result.HoaDonChiTiets)
+                    {
+                        var sanPham = _context.SanPham.FirstOrDefault(c => c.Id == x.BienThe.IdSanPham);
+                        if (sanPham != null)
+                        {
+                            x.BienThe.SanPham = sanPham;
+                        }
+                    }
                     return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(result));
+                }
                 return new ResponseError(HttpStatusCode.InternalServerError, "Không Tìm Thấy");
             }
             catch (Exception e)
@@ -119,7 +130,19 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).Where(c => c.LoaiDonHang == obj.LoaiHoaDon || (c.LoaiDonHang < 5 && obj.LoaiHoaDon == null)).Where(c => c.TrangThaiGiaoHang == obj.TrangThaiGiaoHang || (c.TrangThaiGiaoHang < 20 && obj.TrangThaiGiaoHang == null)).Where(c => c.Ma == obj.Ma || c.TenNguoiNhan.ToLower().Trim().Contains(!string.IsNullOrEmpty(obj.Ma) ? obj.Ma.ToLower().Trim() : "")).Where(c => (obj.IdKhachHang != null && c.IdKhachHang == obj.IdKhachHang) || c.LoaiDonHang < 5).AsNoTracking().AsQueryable().GetPageAsync(obj)));
+                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().Where(c => c.LoaiDonHang == obj.LoaiHoaDon || (c.LoaiDonHang < 5 && obj.LoaiHoaDon == null)).Where(c => c.TrangThaiGiaoHang == obj.TrangThaiGiaoHang || (c.TrangThaiGiaoHang < 20 && obj.TrangThaiGiaoHang == null)).Where(c => c.Ma == obj.Ma || c.TenNguoiNhan.ToLower().Trim().Contains(!string.IsNullOrEmpty(obj.Ma) ? obj.Ma.ToLower().Trim() : "")).Where(c => (obj.IdKhachHang != null && c.IdKhachHang == obj.IdKhachHang) || c.LoaiDonHang < 5).AsQueryable().GetPageAsync(obj);
+                foreach (var x in result.Content)
+                {
+                    foreach (var y in x.HoaDonChiTiets)
+                    {
+                        var sanPham = _context.SanPham.FirstOrDefault(c => c.Id == y.BienThe.IdSanPham);
+                        if (sanPham != null)
+                        {
+                            y.BienThe.SanPham = sanPham;
+                        }
+                    }
+                }
+                return new ResponsePagination<HoaDonModel>(_mapper.Map<Pagination<Entities.HoaDon>, Pagination<HoaDonModel>>(result));
             }
             catch (Exception e)
             {

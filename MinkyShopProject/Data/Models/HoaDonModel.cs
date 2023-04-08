@@ -147,7 +147,7 @@ namespace MinkyShopProject.Data.Models
 
         public int SoLuong { get; set; }
 
-        public string GhiChu { get; set; } = null!;
+        public string? GhiChu { get; set; } = null!;
 
         public float DonGia { get; set; }
 

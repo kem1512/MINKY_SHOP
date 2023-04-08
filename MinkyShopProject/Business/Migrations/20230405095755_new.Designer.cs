@@ -12,8 +12,13 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
+<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230405095755_new.Designer.cs
     [Migration("20230405095755_new")]
     partial class @new
+========
+    [Migration("20230405100954_MinkyShop")]
+    partial class MinkyShop
+>>>>>>>> a47e61d81342420b852928c956e349d859d1269a:MinkyShopProject/Business/Migrations/20230405100954_MinkyShop.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -427,7 +432,6 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValue(0f);
 
                     b.Property<string>("GhiChu")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("IdBienThe")
@@ -476,7 +480,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Ma")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MatKhau")
                         .HasColumnType("nvarchar(max)");
@@ -488,7 +492,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Sdt")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("SoLanMua")
                         .ValueGeneratedOnAdd()
@@ -509,9 +513,9 @@ namespace MinkyShopProject.Business.Migrations
                         .IsUnique()
                         .HasFilter("[IdViDiem] IS NOT NULL");
 
-                    b.HasIndex("Ma")
+                    b.HasIndex("Sdt")
                         .IsUnique()
-                        .HasFilter("[Ma] IS NOT NULL");
+                        .HasFilter("[Sdt] IS NOT NULL");
 
                     b.ToTable("KhachHang", (string)null);
                 });
