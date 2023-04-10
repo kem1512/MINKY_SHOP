@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MinkyShopProject.Business.Migrations
 {
-    public partial class MinkyShop : Migration
+    public partial class @new : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -474,11 +474,7 @@ namespace MinkyShopProject.Business.Migrations
                     IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230405095755_new.cs
-                    GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: false),
-========
                     GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: true),
->>>>>>>> a47e61d81342420b852928c956e349d859d1269a:MinkyShopProject/Business/Migrations/20230405100954_MinkyShop.cs
                     TrangThai = table.Column<int>(type: "int", nullable: false),
                     DonGia = table.Column<float>(type: "real", nullable: false, defaultValue: 0f)
                 },
@@ -639,11 +635,7 @@ namespace MinkyShopProject.Business.Migrations
                 table: "KhachHang",
                 column: "Sdt",
                 unique: true,
-<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230405095755_new.cs
-                filter: "[Ma] IS NOT NULL");
-========
                 filter: "[Sdt] IS NOT NULL");
->>>>>>>> a47e61d81342420b852928c956e349d859d1269a:MinkyShopProject/Business/Migrations/20230405100954_MinkyShop.cs
 
             migrationBuilder.CreateIndex(
                 name: "IX_NhanVien_Ma",

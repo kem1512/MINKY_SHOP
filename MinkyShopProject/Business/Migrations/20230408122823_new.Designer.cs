@@ -12,13 +12,8 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230405095755_new.Designer.cs
-    [Migration("20230405095755_new")]
+    [Migration("20230408122823_new")]
     partial class @new
-========
-    [Migration("20230405100954_MinkyShop")]
-    partial class MinkyShop
->>>>>>>> a47e61d81342420b852928c956e349d859d1269a:MinkyShopProject/Business/Migrations/20230405100954_MinkyShop.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
