@@ -4,6 +4,7 @@
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager;
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -37,6 +38,9 @@
                         }
                         <div class="col-4">
                             <input class="form-control" placeholder="Nhập mã hóa đơn hoặc tên khách hàng" @oninput='e => Filter.Ma = e.Value?.ToString() ?? ""' @onchange="async() => await Reload()" />
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary mb-0 btn-sm" @onclick="() => ShowScanBarcode = !ShowScanBarcode">Quét mã hóa đơn</button>
                         </div>
                     </div>
 
@@ -175,6 +179,10 @@
                                                                     trangThai = "Đã Xác Nhận";
                                                                     badge = "primary";
                                                                     break;
+                                                                case Data.Enums.TrangThaiHoaDon.TraHang:
+                                                                    trangThai = "Trả Hàng";
+                                                                    badge = "danger";
+                                                                    break;
                                                                 default:
                                                                     break;
                                                             }
@@ -198,10 +206,10 @@
                         </table>
                     </div>
                     <MinkyShopProject.Admin.Shared.PaginationComponent Model="HoaDons" Url="admin/invoice" />
-                    <div class="offcanvas offcanvas-end w-100" tabindex="-1" id="offcanvasExample">
-                        @if (HoaDon != null)
+                    <div class="offcanvas offcanvas-end w-100 @(ShowSearch ? "show" : "") @(IsShowing ? "showing" : "")" tabindex="-1" id="offcanvasExample">
+                        @if ((HoaDon != null && !ShowSearch) || (HoaDon != null && ShowSearch))
                         {
-                            <InvoiceDetailComponent HoaDon="HoaDon"></InvoiceDetailComponent>
+                            <InvoiceDetailComponent HoaDon="HoaDon" CloseQr="CloseQr"></InvoiceDetailComponent>
                         }
                     </div>
                 </div>
@@ -209,10 +217,49 @@
         </div>
     </div>
 </div>
+@if (ShowScanBarcode)
+{
+    <ZXingBlazor.Components.BarcodeReader ScanResult="ScanResult"
+                                      Close="(()=>ShowScanBarcode=!ShowScanBarcode)"
+                                      ScanBtnTitle="Scan"
+                                      ResetBtnTitle="Reset"
+                                      CloseBtnTitle="Close"
+                                      DecodeAllFormats="true"
+                                      SelectDeviceBtnTitle="Select Device">
+    </ZXingBlazor.Components.BarcodeReader>
+}
 
 @code {
     [Parameter]
     public int Page { get; set; }
+
+    bool ShowScanBarcode = false;
+
+    bool ShowSearch = false;
+
+    bool IsShowing = false;
+
+    public void CloseQr()
+    {
+        ShowSearch = false;
+        IsShowing = true;
+        StateHasChanged();
+    }
+
+    private async Task ScanResult(string e)
+    {
+        var hoaDon = HoaDons?.Data.Content.FirstOrDefault(c => c.Ma == e);
+        if(hoaDon != null)
+        {
+            HoaDon = hoaDon;
+            ShowScanBarcode = false;
+            ShowSearch = true;
+        }
+        else
+        {
+            await Swal.FireAsync("", "Không tìm thấy hóa đơn", SweetAlertIcon.Error);
+        }
+    }
 
     ResponsePagination<HoaDonModel>? HoaDons;
 

@@ -22,6 +22,8 @@ namespace MinkyShopProject.Business.Configurations
 
 			builder.HasIndex(c => c.Sdt).IsUnique();
 
+			builder.HasIndex(c => c.Email).IsUnique();
+
 			builder.Property(c => c.NgaySinh);
 
 			builder.Property(c => c.SoLanMua).HasDefaultValue(0);

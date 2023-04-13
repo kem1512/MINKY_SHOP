@@ -61,6 +61,8 @@ namespace MinkyShopProject.Data.Models
 
         public string? MatKhau { get; set; } = null!;
 
+        public string? MatKhauNhapLai { get; set; } = null!;
+
         public int SoLanMua { get; set; }
     }
     public class KhachHangQueryModel : PaginationRequest

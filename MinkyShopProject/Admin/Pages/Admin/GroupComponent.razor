@@ -192,9 +192,6 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-sm">
-                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
-                                                        <i class="fas fa-eye text-info" aria-hidden="true"></i>
-                                                    </a>
                                                     <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => NhomSanPham = x.Value">
                                                         <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
                                                     </a>
@@ -328,7 +325,6 @@
 
             if (result.IsSuccessStatusCode)
             {
-                NhomSanPhamModel NhomSanPham = new NhomSanPhamModel() { Ten = "" };
                 await Reload();
                 await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
             }
@@ -345,5 +341,6 @@
         var s = Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? "").AddQuery("sort", Filter.Sort);
         NhomSanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>(Url + "/get2" + s.Query);
         TenNhomSanPham = "";
+        NhomSanPhamModel NhomSanPham = new NhomSanPhamModel() { Ten = "" };
     }
 }

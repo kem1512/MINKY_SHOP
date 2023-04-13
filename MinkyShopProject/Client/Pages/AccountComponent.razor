@@ -4,61 +4,81 @@
 @inject SweetAlertService Swal;
 @inject Blazored.SessionStorage.ISessionStorageService Session
 @inject NavigationManager NavigationManager
+@using System.Net.Mail
+@using System.Net
 
 <main class="bg_gray">
 
 	<div class="container margin_30">
-		<div class="page_header">
-			<div class="breadcrumbs">
-				<ul>
-					<li><a href="#">Home</a></li>
-					<li><a href="#">Category</a></li>
-					<li>Page active</li>
-				</ul>
-			</div>
-			<h1>Sign In or Create an Account</h1>
-		</div>
-		<!-- /page_header -->
+        <!-- /page_header -->
 		<div class="row justify-content-center">
 			<div class="col-xl-6 col-lg-6 col-md-8">
 				<div class="box_account">
-					<h3 class="client">Already Client</h3>
+					<h3 class="client">Đã Có Tài Khoản</h3>
 					<div class="form_container">
 						<div class="form-group">
-							<input type="email" class="form-control" @bind="KhachHangDangNhap.Sdt" id="email" placeholder="Số điện thoại">
+							<input type="email" class="form-control" @bind="KhachHangDangNhap.Sdt" id="email" placeholder="Nhập số điện thoại hoặc email">
 						</div>
 						<div class="form-group">
 							<input type="password" class="form-control" @bind="KhachHangDangNhap.MatKhau" id="password_in" placeholder="Mật khẩu">
 						</div>
 						<div class="clearfix add_bottom_15">
-							<div class="float-end"><a id="forgot" href="javascript:void(0);">Lost Password?</a></div>
+							<div class="float-end"><a id="forgot" href="javascript:void(0);" @onclick="QuenMatKhau">Quên Mật Khẩu?</a></div>
 						</div>
-						<div class="text-center"><input type="submit" value="Log In" @onclick="DangNhap" class="btn_1 full-width"></div>
-						<div id="forgot_pw">
-							<div class="form-group">
-								<input type="email" class="form-control" name="email_forgot" id="email_forgot" placeholder="Type your email">
-							</div>
-							<p>A new password will be sent shortly.</p>
-							<div class="text-center"><input type="submit" value="Reset Password" class="btn_1"></div>
-						</div>
-					</div>
+                        <div class="text-center"><input type="submit" value="Đăng Nhập" @onclick="DangNhap" class="btn_1 full-width"></div>
+                    </div>
 					<!-- /form_container -->
 				</div>
 				<!-- /row -->
 			</div>
 			<div class="col-xl-6 col-lg-6 col-md-8">
 				<div class="box_account">
-					<h3 class="new_client">New Client</h3> <small class="float-right pt-2">* Required Fields</small>
+					<h3 class="new_client">Khách Hàng Mới</h3> <small class="float-right pt-2">* Các Trường Cần Điền</small>
 					<div class="form_container">
 						<div class="form-group">
-							<input type="email" class="form-control" name="email" id="email_2" placeholder="Số điện thoại" @bind="KhachHangDangKy.Sdt">
+							<input type="email" class="form-control" name="email" id="email_2" placeholder="Email*" @bind="KhachHangDangKy.Email">
 						</div>
-						<div class="form-group">
-							<input type="password" class="form-control" id="password_in_2" placeholder="Password*" @bind="KhachHangDangKy.MatKhau">
-						</div>
-						<!-- /company -->
+                        <div class="form-group">
+							<input type="password" class="form-control" name="password_in_2" placeholder="Nhập mật khẩu*" @bind="KhachHangDangKy.MatKhau">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" name="password_in_2" placeholder="Nhập lại mật khẩu*" @bind="KhachHangDangKy.MatKhauNhapLai">
+                        </div>
 						<hr>
-						<div class="text-center"><input type="submit" value="Register" @onclick="ThemKhachHang" class="btn_1 full-width"></div>
+						<div class="form-group">
+							<label class="container_radio" style="display: inline-block; margin-right: 15px;">
+								Nam
+								<input type="radio" name="client_type" checked @onchange="() => KhachHangDangKy.GioiTinh = true">
+								<span class="checkmark"></span>
+							</label>
+							<label class="container_radio" style="display: inline-block;">
+								Nữ
+								<input type="radio" name="client_type" value="company" @onchange="() => KhachHangDangKy.GioiTinh = false">
+								<span class="checkmark"></span>
+							</label>
+						</div>
+						<div class="private box">
+							<div class="row no-gutters">
+                                <div class="col-6 pr-1">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Họ và tên*" @bind="KhachHangDangKy.Ten">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control" placeholder="Số điện thoại" @bind="KhachHangDangKy.Sdt">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Địa chỉ*" @bind="KhachHangDangKy.DiaChi">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /row -->
+
+                        </div>
+                        <div class="text-center"><input @onclick="ThemKhachHang" type="submit" value="Đăng ký" class="btn_1 full-width"></div>
 					</div>
 					<!-- /form_container -->
 				</div>
@@ -77,6 +97,8 @@
 
 	Uri Url = new Uri("https://localhost:7053/api/khachhang");
 
+    bool isSending = false;
+
 	protected async override Task OnInitializedAsync()
 	{
 		if(await Session.GetItemAsStringAsync("khachHang") != null)
@@ -87,37 +109,101 @@
 
 	async Task ThemKhachHang()
 	{
-		var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Đăng Ký", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
-
-		if (string.IsNullOrEmpty(confirm.Value)) return;
-
-		KhachHangDangKy.Ten = "Chưa Có";
-		KhachHangDangKy.NgaySinh = new DateTime(2002, 12, 15);
-
-		var s = Url.AddQuery("id", KhachHangDangKy.Id.ToString());
-		var result = await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", KhachHangDangKy);
-
-		if (result.IsSuccessStatusCode)
-		{
-			await Swal.FireAsync("", "Đăng Ký Thành Công", SweetAlertIcon.Success);
+		if (KhachHangDangKy.Sdt == null || string.IsNullOrEmpty(KhachHangDangKy.Sdt.Trim()))
+	    {
+	        await Swal.FireAsync("", "Vui lòng nhập số điện thoại", SweetAlertIcon.Error);
 		}
-		else
-		{
-			await Swal.FireAsync("", "Đăng Ký Thất Bại", SweetAlertIcon.Error);
+		else if (KhachHangDangKy.Email == null || string.IsNullOrEmpty(KhachHangDangKy.Email.Trim()))
+	    {
+	        await Swal.FireAsync("", "Vui lòng nhập email", SweetAlertIcon.Error);
 		}
+		else if (KhachHangDangKy.Ten == null || string.IsNullOrEmpty(KhachHangDangKy.Ten.Trim()))
+		{
+		    await Swal.FireAsync("", "Vui lòng nhập tên", SweetAlertIcon.Error);
+		}
+		else if (KhachHangDangKy.DiaChi == null || string.IsNullOrEmpty(KhachHangDangKy.DiaChi.Trim()))
+		{
+			await Swal.FireAsync("", "Vui lòng nhập địa chỉ", SweetAlertIcon.Error);
+		}
+		else if (KhachHangDangKy.MatKhau == null || string.IsNullOrEmpty(KhachHangDangKy.MatKhau.Trim()))
+	    {
+	        await Swal.FireAsync("", "Vui lòng nhập mật khẩu", SweetAlertIcon.Error);
+	    }else if (KhachHangDangKy.MatKhauNhapLai == null || KhachHangDangKy.MatKhauNhapLai.ToLower().Trim() != KhachHangDangKy.MatKhau.ToLower().Trim())
+	    {
+	        await Swal.FireAsync("", "Mật khẩu phải giống nhau", SweetAlertIcon.Error);
+	    }
+	    else
+	    {
+	        var confirm = await Swal.FireAsync(new SweetAlertOptions { TitleText = "Bạn Có Chắc Muốn Đăng Ký", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+	        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+	        KhachHangDangKy.Ten = "Chưa Có";
+	        KhachHangDangKy.NgaySinh = new DateTime(2002, 12, 15);
+
+	        var s = Url.AddQuery("id", KhachHangDangKy.Id.ToString());
+	        var result = await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", KhachHangDangKy);
+
+	        var message = await result.Content.ReadFromJsonAsync<Response>();
+
+	        if (result.IsSuccessStatusCode)
+	        {
+	            KhachHangDangKy = new KhachHangThemVaSuaModel();
+				await Swal.FireAsync("", message.Message, SweetAlertIcon.Success);
+	        }
+	        else
+	        {
+				await Swal.FireAsync("", message.Message, SweetAlertIcon.Error);
+	        }
+	        KhachHangDangKy = new KhachHangThemVaSuaModel();
+	    }
 	}
 
 	async Task DangNhap()
 	{
-		var result = await HttpClient.GetFromJsonAsync<ResponseObject<KhachHangModel>>(Url + "/Login?username=" + KhachHangDangNhap.Sdt + "&password=" + KhachHangDangNhap.MatKhau);
-		if(result != null)
+		if (KhachHangDangNhap.Sdt == null || string.IsNullOrEmpty(KhachHangDangNhap.Sdt))
 		{
-			await Session.SetItemAsync("khachHang", result.Data);
-			NavigationManager.NavigateTo("/admin");
+		    await Swal.FireAsync("", "Vui lòng nhập số điện thoại", SweetAlertIcon.Error);
+		}
+		else if (KhachHangDangNhap.MatKhau == null || string.IsNullOrEmpty(KhachHangDangNhap.MatKhau))
+		{
+			await Swal.FireAsync("", "Vui lòng nhập số điện thoại", SweetAlertIcon.Error);
 		}
 		else
 		{
-			await Swal.FireAsync("", "Đăng nhập thất bại", SweetAlertIcon.Error);
+		    var result = await HttpClient.GetFromJsonAsync<ResponseObject<KhachHangModel>>(Url + "/Login?username=" + KhachHangDangNhap.Sdt + "&password=" + KhachHangDangNhap.MatKhau);
+		    if(result != null)
+		    {
+		        await Session.SetItemAsync("khachHang", result.Data);
+		        NavigationManager.NavigateTo("/admin");
+		    }
+		    else
+		    {
+		        await Swal.FireAsync("", "Đăng nhập thất bại", SweetAlertIcon.Error);
+		    }
+		    KhachHangDangNhap = new KhachHangThemVaSuaModel();
 		}
 	}
+
+    private async Task QuenMatKhau()
+    {
+		if (KhachHangDangNhap.Sdt != null && !string.IsNullOrEmpty(KhachHangDangNhap.Sdt.Trim()))
+		{
+			var status = await HttpClient.PostAsync("https://localhost:7053/api/KhachHang/forgot?email=" + KhachHangDangNhap.Ten, null);
+		    var result = await status.Content.ReadFromJsonAsync<Response>();
+
+		    if (status.IsSuccessStatusCode)
+		    {
+		        await Swal.FireAsync("", result.Message, SweetAlertIcon.Success);
+		    }
+		    else
+		    {
+		        await Swal.FireAsync("", result.Message, SweetAlertIcon.Error);
+		    }
+		}
+		else
+		{
+		    await Swal.FireAsync("", "Vui lòng nhập email", SweetAlertIcon.Error);
+		}
+    }
 }

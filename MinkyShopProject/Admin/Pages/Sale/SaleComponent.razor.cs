@@ -334,10 +334,22 @@ namespace MinkyShopProject.Admin.Pages.Sale
                 }
                 else if (hoaDon != null)
                 {
-                    if (hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip < HoaDons[index].TongTien)
+                    var voucher = hoaDon.VoucherLogs != null && hoaDon.VoucherLogs.Any();
+                    if (!voucher)
                     {
-                        await Swal.FireAsync("", "Hóa Đơn Chưa Chưa Trả Đủ Tiền", SweetAlertIcon.Error);
-                        return false;
+                        if (hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip < HoaDons[index].TongTien)
+                        {
+                            await Swal.FireAsync("", "Hóa Đơn Chưa Chưa Trả Đủ Tiền", SweetAlertIcon.Error);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < hoaDon.VoucherLogs?[0].TienSauKhiGiam)
+                        {
+                            await Swal.FireAsync("", "Hóa Đơn Chưa Chưa Trả Đủ Tiền", SweetAlertIcon.Error);
+                            return false;
+                        }
                     }
                 }
             }

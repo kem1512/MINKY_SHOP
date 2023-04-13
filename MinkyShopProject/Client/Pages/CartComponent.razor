@@ -7,16 +7,6 @@
 
 <main class="bg_gray">
     <div class="container margin_30">
-        <div class="page_header">
-            <div class="breadcrumbs">
-                <ul>
-                    <li><NavLink href="/">Home</NavLink></li>
-                    <li><NavLink href="/">Category</NavLink></li>
-                    <li>Page active</li>
-                </ul>
-            </div>
-            <h1>Cart page</h1>
-        </div>
         <!-- /page_header -->
         <table class="table table-striped cart-list">
             <thead>
@@ -24,13 +14,13 @@
                     <th style="width: 40%">
                         Sản Phẩm
                     </th>
-                    <th>
+                    <th style="width: 20%">
                         Giá
                     </th>
-                    <th>
+                    <th style="width: 20%">
                         Số Lượng
                     </th>
-                    <th>
+                    <th style="width: 20%">
                         Tổng Tiền
                     </th>
                     <th>
@@ -79,12 +69,12 @@
 
         <div class="row add_top_30 flex-sm-row-reverse cart_actions">
             <div class="col-sm-4 text-right">
-                <button type="button" class="btn_1 gray" @onclick="CapNhat">Update Cart</button>
+                <button type="button" class="btn_1 gray" @onclick="CapNhat">Cập Nhật Giỏ Hàng</button>
             </div>
             <div class="col-sm-8">
                 <div class="apply-coupon">
                     <div class="form-group form-inline">
-                        <input type="text" name="coupon-code" value='@HoaDon.VoucherLogs?[0].Voucher?.Ten' @onchange='e => maVoucher = e.Value?.ToString() ?? ""' placeholder="Promo code" class="form-control"><button type="button" class="btn_1 outline" @onclick="ApDungVoucher">Apply Coupon</button>
+                        <input type="text" name="coupon-code" value='@HoaDon.VoucherLogs?[0].Voucher?.Ten' @onchange='e => maVoucher = e.Value?.ToString() ?? ""' placeholder="Promo code" class="form-control"><button type="button" class="btn_1 outline" @onclick="ApDungVoucher">Áp Dụng Mã Giảm Giá</button>
                         @if(HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any())
                         {
                             <button style="margin-left: 3px" class="btn_1" @onclick="() => HoaDon.VoucherLogs = null">Xóa</button>
@@ -103,7 +93,7 @@
             <div class="row justify-content-between">
                 <div class="col-lg-7 col-md-6" style="text-align: start">
                     <div class="step first">
-                        <h3>1. User Info and Billing address</h3>
+                        <h3>Thông Tin Cá Nhân</h3>
                         <div class="tab-content checkout">
                             <div>
                                 <div class="form-group">
@@ -150,7 +140,7 @@
                             }
                         </li>
                     </ul>
-                    <button class="btn_1 full-width cart" @onclick="ThemVaoGioHang">Proceed to Checkout</button>
+                    <button class="btn_1 full-width cart" @onclick="ThemVaoGioHang">Đặt Hàng</button>
                 </div>
             </div>
         </div>

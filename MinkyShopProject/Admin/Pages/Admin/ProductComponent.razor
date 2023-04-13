@@ -31,9 +31,13 @@
                                 </select>
                             </div>
                             <input class="form-control me-2 w-25" placeholder="Nhập tên hoặc mã sản phẩm" @oninput='async e => { Filter.Ten = e.Value?.ToString() ?? ""; }' @onchange="async() => await Reload()" />
-                            <button class="btn btn-primary btn-xs me-2 mb-0" data-bs-toggle="modal" data-bs-target="#exampleModal123" @onclick="() => { if(Barcodes == null || !Barcodes.Any()){ 
-                            GenerateBarcode();
-                            }; }">Tạo QR</button>
+                            <a>
+                                <button class="btn btn-primary btn-sm me-2 mb-0" data-bs-toggle="modal" data-bs-target="#exampleModal123" @onclick="() => { if(Barcodes == null || !Barcodes.Any()){
+    GenerateBarcode();
+}; }">
+                                    Xuất QR
+                                </button>
+                            </a>
                             <NavLink href="admin/variant"><button class="btn btn-primary btn-sm mb-0">Thêm Sản Phẩm</button></NavLink>
                         </div>
                     </div>
@@ -288,7 +292,7 @@
                 bcf.encode();
                 barCodes.Add(new BarcodeModelString() { Barcode = bcf.EncodedData, BarcodeText = bcf.HumanText });
             }
-            Barcodes.Add(new BarcodeModel(){ Barcodes = barCodes, Product = x.Ten });
+            Barcodes.Add(new BarcodeModel() { Barcodes = barCodes, Product = x.Ten });
         }
     }
 }

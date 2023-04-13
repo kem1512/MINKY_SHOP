@@ -46,7 +46,14 @@
         </div>
         <div class="col-2 d-flex align-items-center justify-content-end">
             <span class="me-1 text-light text-bolder text-sm">@HoaDons?[index].NhanVien?.Ten</span>
-            <button class="btn mb-0 text-bolder shadow-none text-light"><span class="fa fa-bars"></span></button>
+            <div class="dropup-center">
+                <button class="btn shadow-none mb-0 text-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><NavLink class="dropdown-item" href="/admin/invoice">Hóa Đơn</NavLink></li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -78,7 +85,7 @@
                     <div class="card-body">
                         <div class="row gy-2">
                             <div class="col-12 position-relative">
-                                <input class="form-control" placeholder="Tìm kiếm khách hàng" value="@HoaDons[index].KhachHang?.Ten" @oninput='async e => { await TimKiemKhachHang(e.Value?.ToString() ?? ""); }' />
+                                <input class="form-control" placeholder="Tìm kiếm khách hàng" value="@(HoaDons[index].KhachHang?.Sdt) @(!string.IsNullOrEmpty(HoaDons[index].KhachHang?.Ten) ? " - " + HoaDons[index].KhachHang?.Ten : "Nhập thông tin để tìm khách hàng")" @oninput='async e => { await TimKiemKhachHang(e.Value?.ToString() ?? ""); }' />
                                 @if (HoaDons[index].IdKhachHang == Guid.Empty || HoaDons[index].IdKhachHang == null)
                                 {
                                     <button class="btn btn-xs shadow-none position-absolute top-50 end-4 translate-middle-y"><i class="fa fa-plus"></i></button>
@@ -145,7 +152,7 @@
                                                 <label class="text-xs">Giảm Giá</label>
                                                 <div class="position-relative">
                                                     <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
-                                                           value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten"
+                                                           value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten @(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? " - " + Helper.FormatMoney(HoaDons[index].VoucherLogs[0].SoTienGiam) : "")"
                                                            onfocus="document.getElementById('voucher-list').style.display='block'"
                                                            onblur="setTimeout(() => { document.getElementById('voucher-list').style.display='none' }, 100)">
                                                     @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
@@ -188,7 +195,7 @@
                                             </div>
                                             <div class="col-12 d-flex justify-content-between align-items-center">
                                                 <label class="text-xs">Tiền Thừa Trả Khách</label>
-                                                <span class="text-sm">@(Helper.FormatMoney(HoaDons[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan) - HoaDons[index].TongTien))</span>
+                                                <span class="text-sm">@(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? Helper.FormatMoney(HoaDons[index].VoucherLogs[0].TienSauKhiGiam) : Helper.FormatMoney(HoaDons[index].HinhThucThanhToans.Sum(c => c.TongTienThanhToan) - HoaDons[index].TongTien))</span>
                                             </div>
                                             <div class="col-12 d-flex">
                                                 <span class="fa fa-edit"></span>
@@ -204,7 +211,7 @@
                                                     <label class="text-xs">Giảm Giá</label>
                                                     <div class="position-relative">
                                                         <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
-                                                               value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten"
+                                                               value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten @(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? " - " + Helper.FormatMoney(HoaDons[index].VoucherLogs[0].SoTienGiam) : "")"
                                                                onfocus="document.getElementById('voucher-list-2').style.display='block'"
                                                                onblur="setTimeout(() => { document.getElementById('voucher-list-2').style.display='none' }, 100)">
                                                         @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
@@ -256,7 +263,7 @@
                                                     <label class="text-xs">Giảm Giá</label>
                                                     <div class="position-relative">
                                                         <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
-                                                               value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten"
+                                                               value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten @(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? " - " + Helper.FormatMoney(HoaDons[index].VoucherLogs[0].SoTienGiam) : "")"
                                                                onfocus="document.getElementById('voucher-list-3').style.display='block'"
                                                                onblur="setTimeout(() => { document.getElementById('voucher-list-3').style.display='none' }, 100)">
                                                         @if (HoaDons[index].VoucherLogs?[0].Voucher != null)

@@ -37,6 +37,13 @@ namespace MinkyShopProject.Api.Controllers
 			return Helper.TransformData(result);
 		}
 
+		[HttpPost, Route("forgot")]
+		public async Task<IActionResult> Forgot(string email)
+		{
+			var result = await _IkhachHangRepository.ForgotPassword(email);
+			return Helper.TransformData(result);
+		}
+
 		[HttpPost, Route("Create")]
 		public async Task<IActionResult> ThemKhachHang([FromBody] KhachHangThemVaSuaModel model)
 		{
