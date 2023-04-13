@@ -142,6 +142,9 @@
             TrangThai = 0,
         };
 
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Bắt Đầu Ca Làm Việc", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
         var result = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/GiaoCas",model);
         var response = await result.Content.ReadFromJsonAsync<Response>();
 

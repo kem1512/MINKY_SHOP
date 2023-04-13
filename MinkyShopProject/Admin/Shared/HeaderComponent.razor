@@ -1,7 +1,7 @@
 ﻿@using Blazored.LocalStorage;
 @using MinkyShopProject.Business.Entities;
 @using System.IdentityModel.Tokens.Jwt;
-@inject ILocalStorageService Session;
+@inject ILocalStorageService local;
 @inject HttpClient HttpClient;
 @inject NavigationManager NavigationManager;
 
@@ -24,23 +24,29 @@
             <div class="ms-md-auto pe-md-3 d-flex align-items-center">
             </div>
             <ul class="navbar-nav  justify-content-end">
-                    <li class="nav-item px-3 d-flex align-items-center">
-                        <a class="nav-link text-white font-weight-bold px-0" data-bs-toggle="modal" data-bs-target="#exampleModal" style="cursor:pointer">
-                            <i class="fa fa-play"></i>
-                            <span class="d-sm-inline d-none">Bắt đầu ca</span>
-                        </a>
-                    </li>
-
+                <li class="nav-item px-3 d-flex align-items-center">
+                     <a class="nav-link text-white font-weight-bold px-0" data-bs-toggle="modal" data-bs-target="#exampleModal" style="cursor:pointer">
+                        <i class="fa fa-play"></i>
+                        <span class="d-sm-inline d-none">Bắt đầu ca</span>
+                     </a>
+                </li>
                 <li class="nav-item d-flex align-items-center">
-                    <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
-                        <i class="fa fa-user me-sm-1"></i>
-                        @if (!IsAuth)
-                        {
+                    @if (IsAuth)
+                    {
+                        <a href="javascript:;" class="nav-link text-white font-weight-bold px-0">
+                            <i class="fa fa-user me-sm-1"></i>
+                            <span class="d-sm-inline d-none">@Ten</span>
+                        </a>
+
+                    }
+                    else
+                    {
+                        <NavLink href="/login" class="nav-link text-white font-weight-bold px-0">
+                            <i class="fa fa-user me-sm-1"></i>
                             <span class="d-sm-inline d-none">Sign In</span>
-                        }else{
-                            <span class="d-sm-inline d-none">Xin Chào @Ten</span>
-                        }
-                    </a>
+                        </NavLink>
+                    }
+                    
                 </li>
                 @if (IsAuth)
                 {
@@ -61,21 +67,26 @@
 <BeginingModalComponent></BeginingModalComponent>
 
 @code{
-    bool IsAuth = false;
+    bool IsAuth = true;
 
     string Ten = "";
 
+    private GiaoCa Ca = new();
+
     protected async override Task OnInitializedAsync()
     {
-        if (await Session.GetItemAsStringAsync("Token") != null)
+        if (await local.GetItemAsStringAsync("Token") == null)
         {
-            IsAuth = true;
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await Session.GetItemAsStringAsync("Token"));
-            Ten = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Ten"))?.Value ?? "";
+            IsAuth = false;
         }
         else
         {
-            IsAuth = false;
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
+            Ten = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Ten"))?.Value ?? "";
+            var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+            IsAuth = true;
+            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={DateTime.Now}");
+            Ca = result.Data;
         }
     }
 }

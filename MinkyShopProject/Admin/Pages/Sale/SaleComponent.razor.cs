@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Blazored.SessionStorage;
+using Blazored.LocalStorage;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
 using MinkyShopProject.Data.Models;
@@ -17,6 +18,9 @@ namespace MinkyShopProject.Admin.Pages.Sale
     {
         [Inject]
         ILocalStorageService Session { get; set; } = null!;
+
+        [Inject]
+        ILocalStorageService local { get; set; } = null!;
 
         Guid Id = Guid.Empty;
 
@@ -216,7 +220,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
         async Task Reload()
         {
             HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await Session.GetItemAsStringAsync("Token"));
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             if (IdNhanVien != null)
             {

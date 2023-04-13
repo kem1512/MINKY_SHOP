@@ -13,7 +13,8 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
     {
         Task<Response> KhaiBaoDauCa(GiaoCaModels.GiaoCaCreateModel model);
         Task<Response> GetCaHienThai(Guid Id,DateTime ThoiGian);
-        Task<Response> KetCa(Guid Id,DateTime Time,GiaoCaModels.GiaoCaEditModel model);
+        Task<Response> KetCa(Guid Id,GiaoCaModels.GiaoCaEditModel model);
         Task<Response> GetHoaDonCa(Guid IdNhanVien,DateTime ThoiGian);
+        Task<Response> GetTienMatHoaDon(Guid IdHoaDon);
     }
 }

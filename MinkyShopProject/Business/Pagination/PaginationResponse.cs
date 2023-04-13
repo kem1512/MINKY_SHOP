@@ -6,7 +6,7 @@ using System.Runtime;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MinkyShopProject.Data.Pagination
+namespace MinkyShopProject.Business.Pagination
 {
     public class PaginationResponse<T>
     {
