@@ -29,13 +29,13 @@
                 </NavLink>
             </li>
             <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#applicationsExamples" class="nav-link" aria-controls="applicationsExamples" role="button" aria-expanded="true">
+                <a data-bs-toggle="collapse" href="#applicationsExamples1515" class="nav-link" aria-controls="applicationsExamples" role="button" aria-expanded="true">
                     <div class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center">
                         <i class="ni ni-ui-04 text-warning text-sm opacity-10"></i>
                     </div>
                     <span class="nav-link-text ms-1">Giao Ca</span>
                 </a>
-                <div class="collapse show" id="applicationsExamples" style="">
+                <div class="collapse show" id="applicationsExamples1515" style="">
                     <ul class="nav ms-4">
                         <li class="nav-item">
                             <NavLink class="nav-link " href="/admin/ketca">
@@ -107,34 +107,10 @@
                 </NavLink>
             </li>
             <li class="nav-item">
-                <NavLink class="nav-link" style="cursor:pointer" @onclick="DangXuat">
-                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
-                        <i class="ni ni-bold-right text-danger text-sm opacity-10"></i>
                 <a data-bs-toggle="collapse" href="#thong-ke" class="nav-link" aria-controls="applicationsExamples" role="button" aria-expanded="true">
                     <div class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center">
                         <i class="ni ni-ui-04 text-warning text-sm opacity-10"></i>
                     </div>
-                    <span class="nav-link-text ms-1">Đăng Xuất</span>
-                </NavLink>
-            </li>
-        </ul>
-    </div>
-</aside>
-
-
-@code{
-    [Inject]
-    public NavigationManager Navigation { get; set; } = null!;
-
-    [Inject]
-    public ILocalStorageService local { get; set; } = null!;
-
-    private async Task DangXuat()
-    {
-        await local.ClearAsync();
-        Navigation.NavigateTo("/login");
-    }
-}
                     <span class="nav-link-text ms-1">Thống kê</span>
                 </a>
                 <div class="collapse show" id="thong-ke" style="">
@@ -154,6 +130,29 @@
                     </ul>
                 </div>
             </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" style="cursor:pointer" @onclick="DangXuat">
+                    <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+                        <i class="ni ni-bold-right text-danger text-sm opacity-10"></i>
+                    </div>
+                    <span class="nav-link-text ms-1">Đăng Xuất</span>
+                </NavLink>
+            </li>
         </ul>
     </div>
 </aside>
+
+
+@code {
+    [Inject]
+    public NavigationManager Navigation { get; set; } = null!;
+
+    [Inject]
+    public ILocalStorageService local { get; set; } = null!;
+
+    private async Task DangXuat()
+    {
+        await local.ClearAsync();
+        Navigation.NavigateTo("/login");
+    }
+}

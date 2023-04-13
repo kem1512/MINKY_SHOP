@@ -246,7 +246,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     if (validate)
                     {
 
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -283,7 +283,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     var validate = await ValidateHoaDon();
                     if (validate)
                     {
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 

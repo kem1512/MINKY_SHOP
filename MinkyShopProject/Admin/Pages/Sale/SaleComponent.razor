@@ -8,8 +8,7 @@
                 <div class="input-group input-group-alternative">
                     <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
                     <input class="form-control h-0" placeholder="Nhập Mã Sản Phẩm Hoặc Tên" type="text" @onkeydown='async e => { if(e.Code == "Enter"){ await ThemTuMaSanPham(ma); } }' @oninput='e =>{
-                    ma = e.Value.ToString();
-                    TimKiemSanPham(e.Value?.ToString() ?? "");
+                    ma = e.Value.ToString(); TimKiemSanPham(e.Value?.ToString() ?? "");
                 }'>
                 </div>
                 @if (SanPhamsSearch != null && SanPhamsSearch.Any())
@@ -45,7 +44,7 @@
             }
         </div>
         <div class="col-2 d-flex align-items-center justify-content-end">
-            <span class="me-1 text-light text-bolder text-sm">@HoaDons?[index].NhanVien?.Ten</span>
+            <span class="me-1 text-light text-bolder text-sm">@HoaDons?[index]?.NhanVien?.Ten</span>
             <div class="dropup-center">
                 <button class="btn shadow-none mb-0 text-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="fa fa-bars"></span>
