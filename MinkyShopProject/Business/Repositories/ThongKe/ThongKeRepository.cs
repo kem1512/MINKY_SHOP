@@ -206,10 +206,18 @@ namespace MinkyShopProject.Business.Repositories.ThongKe
                     .ToListAsync();
 
                 var tongTienTatCa = result.Sum(x => x.TongTien);
+                var tongDonHuy = await _context.HoaDon.CountAsync(x => x.NgayTao >= start && x.NgayTao <= end && x.TrangThai == 1);
+                var tongDonBan = await _context.HoaDon.CountAsync(x => x.NgayTao >= start && x.NgayTao <= end && x.TrangThai == 0);
+                var tongDonQuay = await _context.HoaDon.CountAsync(x => x.NgayTao >= start && x.NgayTao <= end && x.LoaiDonHang == 0 && x.TrangThai == 0);
+                var tongDonOnline = await _context.HoaDon.CountAsync(x => x.NgayTao >= start && x.NgayTao <= end && x.LoaiDonHang == 1 && x.TrangThai == 0);
 
                 var thongKeTongTienResult = new ThongKeTongTienResult()
                 {
                     TongTienTatCa = tongTienTatCa,
+                    DonQuay = tongDonQuay,
+                    DonOnline = tongDonOnline,
+                    TongDonHuy = tongDonHuy,
+                    TongDonBan = tongDonBan,
                     ThongKeTheoNgayTienThangNam = result
                 };
 
