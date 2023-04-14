@@ -17,10 +17,20 @@
 								<h5 class="font-weight-bolder">
 									@ThongKeTongTienNgay.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
-								<p class="mb-0">
-									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) : -1)</span>
-									so với hôm qua
-								</p>
+                                <p class="mb-0">
+                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) : -1)</span>
+                                    so với hôm qua
+                                </p>
+                                <p class="mb-0">
+									<span class="text-sm mb-0 text-uppercase font-weight-bold">
+                                        Đã bán được @ThongKeTongTienNgay.Data.TongDonBan đơn hàng
+                                    </span>
+                                </p>
+                                <p>
+									<span class="text-sm mb-0 text-uppercase font-weight-bold">
+                                        Có @ThongKeTongTienNgay.Data.TongDonHuy đã bị hủy
+                                    </span>
+                                </p>
 							</div>
 						</div>
 						<div class="col-4 text-end">
@@ -43,8 +53,18 @@
 									@ThongKeTongTienTuan.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
                                 <p class="mb-0">
-									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa) : -1)</span>
+                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa) : -1)</span>
                                     so với tuần trước
+                                </p>
+                                <p class="mb-0">
+									<span class="text-sm mb-0 text-uppercase font-weight-bold">
+                                        Đã bán được @ThongKeTongTienTuan.Data.TongDonBan đơn hàng
+                                    </span>
+                                </p>
+                                <p>
+									<span class="text-sm mb-0 text-uppercase font-weight-bold">
+                                        Có @ThongKeTongTienTuanTruoc.Data.TongDonHuy đã bị hủy
+                                    </span>
                                 </p>
 							</div>
 						</div>
@@ -67,10 +87,20 @@
 								<h5 class="font-weight-bolder">
 									@ThongKeTongTienThang.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
-								<p class="mb-0">
-									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThangTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienThangTruoc.Data.TongTienTatCa, (long)ThongKeTongTienThang.Data.TongTienTatCa) : -1)</span>
-									so với tháng trước
-								</p>
+                                <p class="mb-0">
+                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThangTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienThangTruoc.Data.TongTienTatCa, (long)ThongKeTongTienThang.Data.TongTienTatCa) : -1)</span>
+                                    so với tháng trước
+                                </p>
+                                <p class="mb-0">
+									<span class="text-sm mb-0 text-uppercase font-weight-bold">
+                                        Đã bán được @ThongKeTongTienThang.Data.TongDonBan đơn hàng
+                                    </span>
+                                </p>
+                                <p>
+									<span class="text-sm mb-0 text-uppercase font-weight-bold">
+                                        Có @ThongKeTongTienThangTruoc.Data.TongDonHuy đã bị hủy
+                                    </span>
+                                </p>
 							</div>
 						</div>
 						<div class="col-4 text-end">
@@ -90,7 +120,7 @@
 							<div class="numbers">
 								<p class="text-sm mb-0 text-uppercase font-weight-bold">Số đơn trong ngày</p>
 								<h5 class="font-weight-bolder">
-									@ThongKeTongTienThang.Data.TongDonBan
+									@ThongKeTongTienNgay.Data.TongDonBan
 								</h5>
 								<p class="mb-0">
 									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongDonBan, (long)ThongKeTongTienNgay.Data.TongDonBan) : -1)</span>
