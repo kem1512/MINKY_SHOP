@@ -15,7 +15,7 @@
 							<div class="numbers">
 								<p class="text-sm mb-0 text-uppercase font-weight-bold">Tổng tiền ngày hôm nay</p>
 								<h5 class="font-weight-bolder">
-									@ThongKeTongTienNgay.Data.TongTienTatCa.ToString("N0")
+									@ThongKeTongTienNgay.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
 								<p class="mb-0">
 									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) : -1)</span>
@@ -40,12 +40,12 @@
 							<div class="numbers">
 								<p class="text-sm mb-0 text-uppercase font-weight-bold">Tổng tiền tuần này</p>
 								<h5 class="font-weight-bolder">
-									@ThongKeTongTienTuan.Data.TongTienTatCa.ToString("N0")
+									@ThongKeTongTienTuan.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
-								<p class="mb-0">
-									<span class="text-success text-sm font-weight-bolder">+3%</span>
-									since last week
-								</p>
+                                <p class="mb-0">
+									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa) : -1)</span>
+                                    so với tuần trước
+                                </p>
 							</div>
 						</div>
 						<div class="col-4 text-end">
@@ -65,7 +65,7 @@
 							<div class="numbers">
 								<p class="text-sm mb-0 text-uppercase font-weight-bold">Tổng tiền tháng này</p>
 								<h5 class="font-weight-bolder">
-									@ThongKeTongTienThang.Data.TongTienTatCa.ToString("N0")
+									@ThongKeTongTienThang.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
 								<p class="mb-0">
 									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThangTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienThangTruoc.Data.TongTienTatCa, (long)ThongKeTongTienThang.Data.TongTienTatCa) : -1)</span>
@@ -128,6 +128,7 @@
 	ResponseObject<ThongKeTongTienResult> ThongKeTongTienNgay;
 	ResponseObject<ThongKeTongTienResult> ThongKeTongTienThang;
 	ResponseObject<ThongKeTongTienResult> ThongKeTongTienTuan;
+	ResponseObject<ThongKeTongTienResult> ThongKeTongTienTuanTruoc;
 	ResponseObject<ThongKeTongTienResult> ThongKeTongTienHomQua;
 	ResponseObject<ThongKeTongTienResult> ThongKeTongTienThangTruoc;
 
@@ -143,5 +144,6 @@
 		ThongKeTongTienThang = await HttpClient.GetFromJsonAsync<ResponseObject<ThongKeTongTienResult>>("https://localhost:7053/api/ThongKe/ThongKeTongTienNgayTienThangNam?loaiThongKe=thangnay");
 		ThongKeTongTienThangTruoc = await HttpClient.GetFromJsonAsync<ResponseObject<ThongKeTongTienResult>>("https://localhost:7053/api/ThongKe/ThongKeTongTienNgayTienThangNam?loaiThongKe=thangtruoc");
 		ThongKeTongTienTuan = await HttpClient.GetFromJsonAsync<ResponseObject<ThongKeTongTienResult>>("https://localhost:7053/api/ThongKe/ThongKeTongTienNgayTienThangNam?loaiThongKe=7ngaytruoc");
+	    ThongKeTongTienTuanTruoc = await HttpClient.GetFromJsonAsync<ResponseObject<ThongKeTongTienResult>>("https://localhost:7053/api/ThongKe/ThongKeTongTienNgayTienThangNam?loaiThongKe=14ngaytruoc");
 	}
 } 

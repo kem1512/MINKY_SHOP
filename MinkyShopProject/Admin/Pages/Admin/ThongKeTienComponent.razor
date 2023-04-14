@@ -17,13 +17,7 @@
         @if (ThongKeTongTienResult != null)
         {
             <p class="text-sm mb-0">
-                Tổng tiền: @((ThongKeTongTienResult.Data.TongTienTatCa /
-            ((ThongKeTongTienResult.Data.TongTienTatCa >= 1000000000) ? 1000000000 :
-            (ThongKeTongTienResult.Data.TongTienTatCa >= 1000000) ? 1000000 : 1))
-            .ToString((ThongKeTongTienResult.Data.TongTienTatCa >= 1000000) ? "N2" : "N0"))
-                @((ThongKeTongTienResult.Data.TongTienTatCa >= 1000000000) ? "tỷ" :
-                    (ThongKeTongTienResult.Data.TongTienTatCa >= 1000000) ? "triệu" : "")
-                đồng
+                Tổng tiền: @ThongKeTongTienResult.Data.TongTienTatCa.ToString("N0") VND
             </p>
         }
     </div>
