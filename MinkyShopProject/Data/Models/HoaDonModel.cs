@@ -158,6 +158,8 @@ namespace MinkyShopProject.Data.Models
 
     public class HoaDonQueryModel : PaginationRequest
     {
+        public int? TrangThai { get; set; }
+
         public string? Ma { get; set; } = "";
 
         public int? TrangThaiGiaoHang { get; set; }
@@ -165,5 +167,7 @@ namespace MinkyShopProject.Data.Models
         public int? LoaiHoaDon { get; set; }
 
         public Guid? IdKhachHang { get; set; }
+
+        public DateTime? NgayTao { get; set; }
     }
 }

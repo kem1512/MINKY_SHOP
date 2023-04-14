@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Internal;
+using Bogus.DataSets;
 using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
@@ -130,7 +131,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().Where(c => c.LoaiDonHang == obj.LoaiHoaDon || (c.LoaiDonHang < 5 && obj.LoaiHoaDon == null)).Where(c => c.TrangThaiGiaoHang == obj.TrangThaiGiaoHang || (c.TrangThaiGiaoHang < 20 && obj.TrangThaiGiaoHang == null)).Where(c => c.Ma == obj.Ma || c.TenNguoiNhan.ToLower().Trim().Contains(!string.IsNullOrEmpty(obj.Ma) ? obj.Ma.ToLower().Trim() : "")).Where(c => (obj.IdKhachHang != null && c.IdKhachHang == obj.IdKhachHang) || c.LoaiDonHang < 5).AsQueryable().GetPageAsync(obj);
+                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().Where(c => c.LoaiDonHang == obj.LoaiHoaDon || (c.LoaiDonHang < 5 && obj.LoaiHoaDon == null)).Where(c => c.TrangThaiGiaoHang == obj.TrangThaiGiaoHang || (c.TrangThaiGiaoHang < 20 && obj.TrangThaiGiaoHang == null)).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThaiGiaoHang < 20 && obj.TrangThai == null)).Where(c => c.Ma == obj.Ma || c.TenNguoiNhan.ToLower().Trim().Contains(!string.IsNullOrEmpty(obj.Ma) ? obj.Ma.ToLower().Trim() : "")).Where(c => (obj.IdKhachHang != null && c.IdKhachHang == obj.IdKhachHang) || c.LoaiDonHang < 5).Where(c => c.NgayTao >= obj.NgayTao).AsQueryable().GetPageAsync(obj);
                 foreach (var x in result.Content)
                 {
                     foreach (var y in x.HoaDonChiTiets)

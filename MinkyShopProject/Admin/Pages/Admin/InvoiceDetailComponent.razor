@@ -6,7 +6,6 @@
 @inject ILocalStorageService Session;
 @using Blazored.LocalStorage;
 @using System.IdentityModel.Tokens.Jwt;
-@using KellermanSoftware.CompareNetObjects;
 @using Net.ConnectCode.BarcodeFontsStandard2D
 
 <div class="container-fluid mt--7" style="overflow-y: auto">
@@ -43,7 +42,7 @@
                                 }
                                 @if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh || HoaDon.TrangThaiGiaoHang == 3 || HoaDon.TrangThaiGiaoHang == 5 || HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.TraHang)
                                 {
-                                    <button class="btn btn-primary me-2" @onclick="async() => { Check(); if(await Confirm()){ await CapNhatHoaDon(); } }">Cập Nhật</button>
+                                    <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()){ await CapNhatHoaDon(); } }">Cập Nhật</button>
                                 }
                                 @if (HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon.TrangThaiGiaoHang != 3 && HoaDon.NgayXacNhan != null && HoaDon?.LoaiDonHang != 2 && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.TraHang)
                                 {
@@ -591,8 +590,6 @@
 </div>
 
 @code {
-    CompareLogic diffrent = new CompareLogic();
-
     Uri Url = new Uri("https://localhost:7053/api/hoadon");
 
     [Parameter]
@@ -600,8 +597,6 @@
 
     [Parameter]
     public HoaDonModel? HoaDon { get; set; }
-
-    public HoaDonModel? HoaDonGoc { get; set; }
 
     string Ma = "";
 
@@ -611,15 +606,6 @@
 
     List<HinhThucThanhToanModel> HinhThucThanhToans = new List<HinhThucThanhToanModel>();
 
-    public void Check()
-    {
-        var result = diffrent.Compare(HoaDon?.HoaDonChiTiets, HoaDonGoc?.HoaDonChiTiets);
-        if(!result.AreEqual)
-        {
-            Console.WriteLine(result.DifferencesString);
-        }
-    }
-
     protected async override Task OnParametersSetAsync()
     {
         if(HoaDon != null)
@@ -627,7 +613,6 @@
             QR qrCode = new QR(HoaDon.Ma, "M", 8);
             string output = qrCode.Encode();
             Message = output;
-            HoaDonGoc = Newtonsoft.Json.JsonConvert.DeserializeObject<HoaDonModel>(Newtonsoft.Json.JsonConvert.SerializeObject(HoaDon));
         }
     }
 

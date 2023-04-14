@@ -28,6 +28,20 @@ namespace MinkyShopProject.Common
             return result;
         }
 
+        public static double CalculateChange(long previous, long current)
+        {
+            if (previous == 0)
+                throw new InvalidOperationException();
+
+            var change = current - previous;
+            return (double)change / previous;
+        }
+
+        public static string DoubleToPercentageString(double d)
+        {
+            return (Math.Round(d, 2) * 100).ToString() + "%";
+        }
+
         public static T NewObject<T>(this T obj)
         {
             return obj;

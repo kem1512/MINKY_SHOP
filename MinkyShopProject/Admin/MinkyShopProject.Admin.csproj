@@ -14,7 +14,6 @@
 	<ItemGroup>
 		<PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.3.0" />
-		<PackageReference Include="CompareNETObjects" Version="4.79.0" />
 		<PackageReference Include="CurrieTechnologies.Razor.SweetAlert2" Version="5.4.0" />
 		<PackageReference Include="Firebase.Auth" Version="1.0.0" />
 		<PackageReference Include="FirebaseStorage.net" Version="1.0.3" />

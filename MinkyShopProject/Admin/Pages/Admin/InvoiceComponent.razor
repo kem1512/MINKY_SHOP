@@ -1,6 +1,7 @@
 ﻿@page "/admin/invoice"
 @page "/admin/invoice/page/{page:int}"
 @using MinkyShopProject.Data.Models
+@using System.Globalization;
 @inject SweetAlertService Swal;
 @inject HttpClient HttpClient;
 @inject IJSRuntime JSRuntime
@@ -11,8 +12,8 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row mb-2">
-                        <div class="col-4">
+                    <div class="row mb-2 gy-2">
+                        <div class="col-3">
                             <select class="select-loai-don-hang" @onchange='async (ui) =>{ Filter.LoaiHoaDon = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
                                 <option value="">Loại Hóa Đơn</option>
                                 <option value="0">Tại quầy</option>
@@ -20,11 +21,21 @@
                                 <option value="2">Giao hàng</option>
                             </select>
                         </div>
+                        <div class="col-3">
+                            <select class="select-trang-thai" @onchange='async (ui) =>{ Filter.TrangThai = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
+                                <option value="">Tất Cả Trạng Thái</option>
+                                <option value="0">Đã Hoàn Thành</option>
+                                <option value="1">Đã Hủy</option>
+                                <option value="3">Chờ Xác Nhận</option>
+                                <option value="4">Đã Xác Nhận</option>
+                                <option value="5">Trả Hàng</option>
+                            </select>
+                        </div>
                         @if (Filter.LoaiHoaDon == 2)
                         {
-                            <div class="col-4">
+                            <div class="col-3">
                                 <select class="select-trang-thai-giao-hang" @onchange='async (ui) =>{ Filter.TrangThaiGiaoHang = int.TryParse(ui.Value?.ToString(), out int numberLocal) ? int.Parse(ui.Value.ToString() ?? "") : null; await Reload(); }'>
-                                    <option value="">Trạng Thái Giao Hàng</option>
+                                    <option value="">Tất cả</option>
                                     <option value="0">Chờ Xác Nhận</option>
                                     <option value="1">Chờ Lấy Hàng</option>
                                     <option value="2">Đang Giao</option>
@@ -36,10 +47,13 @@
                                 </select>
                             </div>
                         }
-                        <div class="col-4">
+                        <div class="col-3">
                             <input class="form-control" placeholder="Nhập mã hóa đơn hoặc tên khách hàng" @oninput='e => Filter.Ma = e.Value?.ToString() ?? ""' @onchange="async() => await Reload()" />
                         </div>
-                        <div class="col-4">
+                        <div class="col-3">
+                            <input class="form-control" type="date" @onchange='async (e) => { var result = DateTime.Parse(e.Value?.ToString() ?? ""); Filter.NgayTao = new DateTime(result.Year, result.Month, result.Day); await Reload(); }' />
+                        </div>
+                        <div class="col-3">
                             <button class="btn btn-primary mb-0 btn-sm" @onclick="() => ShowScanBarcode = !ShowScanBarcode">Quét mã hóa đơn</button>
                         </div>
                     </div>
@@ -49,7 +63,19 @@
                             <thead>
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Mã hóa đơn</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày tạo</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-NgayTao" ? "+NgayTao" : "-NgayTao"; await Reload(); }'>
+                                        <div class="d-flex justify-content-between">
+                                            <span>Tên</span>
+                                            @if (Filter.Sort != "-NgayTao")
+                                            {
+                                                <span class="fa fa-sort-down" style="font-size: 15px"></span>
+                                            }
+                                            else
+                                            {
+                                                <span class="fa fa-sort-up" style="font-size: 15px"></span>
+                                            }
+                                        </div>
+                                    </th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Khách hàng</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Loại đơn hàng</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tổng tiền hàng</th>
@@ -263,7 +289,7 @@
 
     ResponsePagination<HoaDonModel>? HoaDons;
 
-    HoaDonQueryModel Filter = new HoaDonQueryModel() { Size = 5 };
+    HoaDonQueryModel Filter = new HoaDonQueryModel() { Size = 5, NgayTao = DateTime.Parse("2002/12/15"), Sort = "-NgayTao" };
 
     HoaDonModel? HoaDon;
 
@@ -290,6 +316,7 @@
         if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".select-loai-don-hang");
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".select-trang-thai");
         }
         else if (Filter.LoaiHoaDon == 2)
         {
@@ -299,6 +326,6 @@
 
     async Task Reload()
     {
-        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "").AddQuery("Ma", Filter.Ma?.ToString() ?? "").AddQuery("LoaiHoaDon", Filter.LoaiHoaDon.ToString() ?? "").AddQuery("TrangThaiGiaoHang", Filter.TrangThaiGiaoHang.ToString() ?? "").AddQuery("sort", "-NgayTao"));
+        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "").AddQuery("Ma", Filter.Ma?.ToString() ?? "").AddQuery("LoaiHoaDon", Filter.LoaiHoaDon.ToString() ?? "").AddQuery("TrangThaiGiaoHang", Filter.TrangThaiGiaoHang.ToString() ?? "").AddQuery("sort", Filter.Sort).AddQuery("TrangThai", Filter.TrangThai.ToString() ?? "").AddQuery("NgayTao", Filter.NgayTao.Value.ToString("yyyy/MM/dd") ?? DateTime.Now.ToString()));
     }
 }
