@@ -28,6 +28,25 @@ namespace MinkyShopProject.Common
             return result;
         }
 
+        public static double CalculateChange(long previous, long current)
+        {
+            if (previous == 0)
+                throw new InvalidOperationException();
+
+            var change = current - previous;
+            return (double)change / previous;
+        }
+
+        public static string DoubleToPercentageString(double d)
+        {
+            return (Math.Round(d, 2) * 100).ToString() + "%";
+        }
+
+        public static T NewObject<T>(this T obj)
+        {
+            return obj;
+        }
+
         public static string RemoveSpecialCharacters(this string str)
         {
             StringBuilder sb = new StringBuilder();
@@ -78,7 +97,7 @@ namespace MinkyShopProject.Common
 
         public static string FormatMoney(float? money)
         {
-            return string.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:c}", money);
+            return string.Format("{0:0,0}" + " ₫", money);
         }
 
         public static string LowerText(string text)

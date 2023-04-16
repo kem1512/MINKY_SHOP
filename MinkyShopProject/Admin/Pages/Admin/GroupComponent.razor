@@ -163,7 +163,7 @@
                                                                         </td>
                                                                         <td class="text-sm">
                                                                             <a href="javascript:;" @onclick='async() => {
-                                                                                var confirm = await Swal.FireAsync(new SweetAlertOptions { TitleText = "Bạn Có Chắc Muốn Đổi Trạng Thai", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                                                                                var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Đổi Trạng Thai", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
                                                                                 if (string.IsNullOrEmpty(confirm.Value)) return; 
                                                                                 y.TrangThai = y.TrangThai == 0 ? 1 : 0;
                                                                                 await DeleteAsync(y.Id); }' data-bs-toggle="tooltip" data-bs-original-title="Delete product">
@@ -192,9 +192,6 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-sm">
-                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
-                                                        <i class="fas fa-eye text-info" aria-hidden="true"></i>
-                                                    </a>
                                                     <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => NhomSanPham = x.Value">
                                                         <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
                                                     </a>
@@ -254,11 +251,11 @@
         if (result.IsSuccessStatusCode)
         {
             await Reload();
-            await Swal.FireAsync("Thông Báo", "Cập Nhật thành công", SweetAlertIcon.Success);
+            await Swal.FireAsync("", "Cập Nhật thành công", SweetAlertIcon.Success);
         }
         else
         {
-            await Swal.FireAsync("Thông Báo", "Cập Nhật Thất Bại", SweetAlertIcon.Success);
+            await Swal.FireAsync("", "Cập Nhật Thất Bại", SweetAlertIcon.Success);
         }
     }
 
@@ -272,11 +269,11 @@
         {
             NhomSanPhamModel NhomSanPham = new NhomSanPhamModel() { Ten = "" };
             await Reload();
-            await Swal.FireAsync("Thông Báo", "Sửa thành công", SweetAlertIcon.Success);
+            await Swal.FireAsync("", "Sửa thành công", SweetAlertIcon.Success);
         }
         else
         {
-            await Swal.FireAsync("Thông Báo", "Cập Nhật Thất Bại", SweetAlertIcon.Success);
+            await Swal.FireAsync("", "Cập Nhật Thất Bại", SweetAlertIcon.Success);
         }
     }
 
@@ -291,23 +288,23 @@
     {
         if (string.IsNullOrEmpty(NhomSanPham.Ten.Trim()))
         {
-            await Swal.FireAsync("Thông Báo", "Tên Thuộc Tính Không Thể Trống", SweetAlertIcon.Error);
+            await Swal.FireAsync("", "Tên Thuộc Tính Không Thể Trống", SweetAlertIcon.Error);
         }
         else if (NhomSanPham.Ten.Length < 3)
         {
-            await Swal.FireAsync("Thông Báo", "Tên Thuộc Tính Phải Có Ít Nhất 3 Ký Tự", SweetAlertIcon.Error);
+            await Swal.FireAsync("", "Tên Thuộc Tính Phải Có Ít Nhất 3 Ký Tự", SweetAlertIcon.Error);
         }
         else if (NhomSanPham.Ten.CheckCharacterSpecial())
         {
-            await Swal.FireAsync("Thông Báo", "Tên Thuộc Tính Không Thể Chứa Ký Tự Đặc Biệt", SweetAlertIcon.Error);
+            await Swal.FireAsync("", "Tên Thuộc Tính Không Thể Chứa Ký Tự Đặc Biệt", SweetAlertIcon.Error);
         }
         else if (NhomSanPham.Id == Guid.Empty && NhomSanPhams != null && NhomSanPhams.Data.Content.Any(c => c.Ten.ToTitleCase() == NhomSanPham.Ten.ToTitleCase()))
         {
-            await Swal.FireAsync("Thông Báo", "Thuộc Tính Này Đã Tồn Tại", SweetAlertIcon.Error);
+            await Swal.FireAsync("", "Thuộc Tính Này Đã Tồn Tại", SweetAlertIcon.Error);
         }
         else if (NhomSanPham.NhomSanPhams?.Count() <= 0)
         {
-            await Swal.FireAsync("Thông Báo", "Phải Có Ít Nhất Một Giá Trị", SweetAlertIcon.Error);
+            await Swal.FireAsync("", "Phải Có Ít Nhất Một Giá Trị", SweetAlertIcon.Error);
         }
         else
         {
@@ -315,12 +312,12 @@
             {
                 if (NhomSanPham.NhomSanPhams.Any(c => string.IsNullOrEmpty(c.Ten) || c.Ten.CheckCharacterSpecial()))
                 {
-                    await Swal.FireAsync("Thông Báo", "Vui Lòng Kiểm Tra Lại Các Giá Trị", SweetAlertIcon.Error);
+                    await Swal.FireAsync("", "Vui Lòng Kiểm Tra Lại Các Giá Trị", SweetAlertIcon.Error);
                     return;
                 }
             }
 
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -328,13 +325,12 @@
 
             if (result.IsSuccessStatusCode)
             {
-                NhomSanPhamModel NhomSanPham = new NhomSanPhamModel() { Ten = "" };
                 await Reload();
-                await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
+                await Swal.FireAsync("", "Thành công", SweetAlertIcon.Success);
             }
             else
             {
-                await Swal.FireAsync("Thông Báo", "Cập Nhật Thất Bại", SweetAlertIcon.Success);
+                await Swal.FireAsync("", "Cập Nhật Thất Bại", SweetAlertIcon.Success);
             }
         }
     }
@@ -345,5 +341,6 @@
         var s = Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? "").AddQuery("sort", Filter.Sort);
         NhomSanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<NhomSanPhamModel>>(Url + "/get2" + s.Query);
         TenNhomSanPham = "";
+        NhomSanPhamModel NhomSanPham = new NhomSanPhamModel() { Ten = "" };
     }
 }

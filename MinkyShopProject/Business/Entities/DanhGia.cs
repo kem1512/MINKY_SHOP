@@ -11,9 +11,9 @@ namespace MinkyShopProject.Business.Entities
     {
         public Guid Id { get; set; }
 
-        public Guid IdBienThe { get; set; }
-
         public Guid IdKhachHang { get; set; }
+
+        public Guid IdSanPham { get; set; }
 
         public Guid IdHoaDon { get; set; }
 
@@ -21,16 +21,14 @@ namespace MinkyShopProject.Business.Entities
 
         public DateTime NgayDanhGia { get; set; }
 
-        public string Anh { get; set; } = null!;
+        public string? Anh { get; set; } = null!;
 
         public string NoiDung { get; set; } = null!;
 
         public int TrangThai { get; set; }
 
-        public BienThe BienThe { get; set; } = null!;
+        public KhachHang? KhachHang { get; set; } = null!;
 
-        public KhachHang KhachHang { get; set; } = null!;
-
-        public HoaDon HoaDon { get; set; } = null!;
+        public HoaDon? HoaDon { get; set; } = null!;
     }
 }

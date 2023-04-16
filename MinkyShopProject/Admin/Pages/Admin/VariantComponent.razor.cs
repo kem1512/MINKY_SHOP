@@ -90,7 +90,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         {
             if (await Validate())
             {
-                var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "", TitleText = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                 if (string.IsNullOrEmpty(confirm.Value)) return;
 

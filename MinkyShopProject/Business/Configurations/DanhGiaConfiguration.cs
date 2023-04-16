@@ -25,8 +25,6 @@ namespace MinkyShopProject.Business.Configurations
 
             builder.Property(c => c.TrangThai).HasDefaultValue(0);
 
-            builder.HasOne(c => c.BienThe).WithMany(c => c.DanhGias).HasForeignKey(c => c.IdBienThe).OnDelete(DeleteBehavior.Cascade);
-
             builder.HasOne(c => c.KhachHang).WithMany(c => c.DanhGias).HasForeignKey(c => c.IdKhachHang).OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasOne(c => c.HoaDon).WithOne(c => c.DanhGia).HasForeignKey<DanhGia>(c => c.IdHoaDon);

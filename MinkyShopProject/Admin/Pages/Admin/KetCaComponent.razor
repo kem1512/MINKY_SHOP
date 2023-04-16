@@ -347,7 +347,7 @@
                 await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
                 Navigation.NavigateTo("/admin");
             }
-            await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Error);
+            await Swal.FireAsync("", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Error);
         }
     }
 

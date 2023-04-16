@@ -5,6 +5,8 @@ using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Common;
 using MinkyShopProject.Data.Models;
 using Serilog;
+using System.Net.Mail;
+using System.Net;
 using Code = System.Net.HttpStatusCode;
 
 namespace MinkyShopProject.Business.Repositories.KhachHang
@@ -158,7 +160,7 @@ namespace MinkyShopProject.Business.Repositories.KhachHang
 		{
 			try
 			{
-				var entity = await _Context.KhachHang.AsNoTracking().FirstAsync(c => c.Sdt == username && c.MatKhau == password);
+				var entity = await _Context.KhachHang.AsNoTracking().FirstAsync(c => (c.Sdt == username && c.MatKhau == password) || (c.Email == username && c.MatKhau == password));
 				if (entity == null)
 				{
 					return new ResponseError(Code.BadRequest, "Thất bại");
@@ -168,6 +170,44 @@ namespace MinkyShopProject.Business.Repositories.KhachHang
 			catch (Exception e)
 			{
 				Log.Error(e, string.Empty);
+				return new ResponseError(Code.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
+			}
+		}
+
+		public async Task<Response> ForgotPassword(string email)
+		{
+			try
+			{
+				var khachHang = _Context.KhachHang.FirstOrDefault(c => c.Email == email);
+				if (khachHang != null)
+				{
+					var pass = Guid.NewGuid().ToString();
+					using (MailMessage mail = new MailMessage())
+					{
+						mail.From = new MailAddress("minkyshop@fpt.edu.vn");
+						mail.To.Add(email);
+						mail.Subject = "Quên mật khẩu";
+						mail.Body = "Mật khẩu của bạn là: " + pass;
+
+						using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+						{
+							smtp.Credentials = new NetworkCredential("kem15122002@gmail.com", "ohefwclzhmgxstsd");
+							smtp.EnableSsl = true;
+							smtp.Send(mail);
+						}
+						khachHang.MatKhau = pass;
+						await _Context.SaveChangesAsync();
+					}
+				}
+				else
+				{
+					return new ResponseError(Code.NotFound, "Không tìm thấy");
+				}
+
+				return new Response(HttpStatusCode.OK, "Vui Lòng Check Mail Của Bạn");
+			}
+			catch (Exception e)
+			{
 				return new ResponseError(Code.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
 			}
 		}

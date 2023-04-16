@@ -22,6 +22,7 @@ using MinkyShopProject.Business.Repositories.ViDiem;
 using MinkyShopProject.Business.Repositories.Voucher;
 using System.Text;
 using System.Text.Json.Serialization;
+using MinkyShopProject.Business.Repositories.DanhGia;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,8 @@ builder.Services.AddScoped<IViDiemRepository, ViDiemRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 
 builder.Services.AddScoped<IVoucherRepository, MinkyShopProject.Business.Repositories.Voucher.VoucherRepository>();
+
+builder.Services.AddScoped<IDanhGiaRepository, DanhGiaRepository>();
 
 builder.Services.AddScoped<IThongKeRepository, ThongKeRepository>();
 

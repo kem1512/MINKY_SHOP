@@ -4,7 +4,7 @@ using MinkyShopProject.Data.Models;
 namespace MinkyShopProject.Business.Repositories.Voucher
 {
     public interface IVoucherRepository
-    {
+	{
         public Task<Response> GetAsync(VoucherQueryModel obj);
 
         public Task<Response> AddAsync(VoucherCreateModel obj);

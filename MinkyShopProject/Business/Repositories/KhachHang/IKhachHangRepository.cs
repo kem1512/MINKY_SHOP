@@ -11,5 +11,6 @@ namespace MinkyShopProject.Business.Repositories.KhachHang
 		Task<Response> GetbyIdKhachHang(Guid Id);
 		Task<Response> DeleteKhachHang(Guid Id);
 		Task<Response> Login(string username, string password);
+		Task<Response> ForgotPassword(string email);
 	}
 }

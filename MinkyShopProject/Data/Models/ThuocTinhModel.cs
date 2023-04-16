@@ -30,7 +30,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public bool TrangThai { get; set; }
+        public bool TrangThai { get; set; } = true;
 
         public string Ten { get; set; } = null!;
     }

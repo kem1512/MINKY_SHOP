@@ -98,6 +98,20 @@
             .blazor-error-boundary::after {
                 content: "An error has occurred."
             }
+   
+        @font-face {
+            font-family: CCodeQR;
+            src: url("fonts/CCodeQR_Trial.eot");
+            src: local("CCodeQR_Trial"), url("fonts/CCodeQR_Trial.otf") format("opentype"), url("fonts/CCodeQR_Trial.woff") format("woff");
+        }
+
+        #barcodeFonts {
+            font-weight: normal;
+            font-style: normal;
+            line-height: normal;
+            font-family: 'CCodeQR', sans-serif;
+            font-size: 4px;
+        }
     </style>
 </head>
 <body>

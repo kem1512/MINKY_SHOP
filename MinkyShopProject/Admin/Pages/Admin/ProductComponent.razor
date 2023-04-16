@@ -31,9 +31,13 @@
                                 </select>
                             </div>
                             <input class="form-control me-2 w-25" placeholder="Nhập tên hoặc mã sản phẩm" @oninput='async e => { Filter.Ten = e.Value?.ToString() ?? ""; }' @onchange="async() => await Reload()" />
-                            <button class="btn btn-primary btn-xs me-2 mb-0" data-bs-toggle="modal" data-bs-target="#exampleModal123" @onclick="() => { if(Barcodes == null || !Barcodes.Any()){ 
-                            GenerateBarcode();
-                            }; }">Tạo QR</button>
+                            <a>
+                                <button class="btn btn-primary btn-sm me-2 mb-0" data-bs-toggle="modal" data-bs-target="#exampleModal123" @onclick="() => { if(Barcodes == null || !Barcodes.Any()){
+    GenerateBarcode();
+}; }">
+                                    Xuất QR
+                                </button>
+                            </a>
                             <NavLink href="admin/variant"><button class="btn btn-primary btn-sm mb-0">Thêm Sản Phẩm</button></NavLink>
                         </div>
                     </div>
@@ -144,7 +148,7 @@
                                                             var result = await HttpClient.PutAsJsonAsync($"{Url}/{x.Id}", x);
 
                                                             if (result.IsSuccessStatusCode)
-                                                                await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);
+                                                                await Swal.FireAsync("", "Cập Nhật Thành Công", SweetAlertIcon.Success);
                                                         }
                                                         '>
                                                     </div>
@@ -256,7 +260,7 @@
 
     async Task Delete(Guid id)
     {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -288,7 +292,7 @@
                 bcf.encode();
                 barCodes.Add(new BarcodeModelString() { Barcode = bcf.EncodedData, BarcodeText = bcf.HumanText });
             }
-            Barcodes.Add(new BarcodeModel(){ Barcodes = barCodes, Product = x.Ten });
+            Barcodes.Add(new BarcodeModel() { Barcodes = barCodes, Product = x.Ten });
         }
     }
 }

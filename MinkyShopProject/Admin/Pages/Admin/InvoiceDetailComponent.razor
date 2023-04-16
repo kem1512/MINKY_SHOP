@@ -38,20 +38,20 @@
                             <div class="col-6 text-end">
                                 @if (HoaDon.TrangThai == 0 && HoaDon.LoaiDonHang != 2 && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.TraHang)
                                 {
-                                    <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.TraHang; await CapNhatHoaDon(); } }">Trả hàng</button>
+                                    <button class="btn btn-primary me-2" @onclick='async() => { if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.TraHang; await CapNhatHoaDon(); } }'>Trả hàng</button>
                                 }
-                                @if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh || HoaDon.TrangThaiGiaoHang == 3 || HoaDon.TrangThaiGiaoHang == 5)
+                                @if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh || HoaDon.TrangThaiGiaoHang == 3 || HoaDon.TrangThaiGiaoHang == 5 || HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.TraHang)
                                 {
                                     <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()){ await CapNhatHoaDon(); } }">Cập Nhật</button>
                                 }
-                                @if (HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon.TrangThaiGiaoHang != 3 && HoaDon.NgayXacNhan != null && HoaDon?.LoaiDonHang != 2)
+                                @if (HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon.TrangThaiGiaoHang != 3 && HoaDon.NgayXacNhan != null && HoaDon?.LoaiDonHang != 2 && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.TraHang)
                                 {
                                     <button class="btn btn-success me-2" @onclick='async() => {
                                 if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.DaHuy && string.IsNullOrEmpty(GhiChuCapNhat)){
                                     await Swal.FireAsync("", "Vui Lòng Nhập Ghi Chú Cập Nhật", SweetAlertIcon.Error);
                                     return;
                                 }
-                                if(HoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) > HoaDon.TongTien && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.ChoXacNhan){
+                                if(HoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) > (HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].TienSauKhiGiam : HoaDon.TongTien + HoaDon.TienShip) && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.ChoXacNhan){
                                 if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.HoanThanh;
                                     if(HoaDon?.NgayHoanThanh == null){ HoaDon.NgayHoanThanh = DateTime.Now; } await CapNhatHoaDon(); }
                                 }else{ await Swal.FireAsync("", "Hóa Đơn Phải Xác Nhận Và Thanh Toán Đủ Trước Khi Hoàn Thành", SweetAlertIcon.Error); }; }'>
@@ -63,11 +63,11 @@
                                 {
                                     <button class="btn btn-danger me-2" @onclick='async() => { if(string.IsNullOrEmpty(GhiChuCapNhat)){ await Swal.FireAsync("", "Vui Lòng Nhập Ghi Chú Cập Nhật", SweetAlertIcon.Error); return; } if(await Confirm()){ if(HoaDon.LoaiDonHang != 2) { HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaHuy; await CapNhatHoaDon(); }else{ HoaDon.TrangThaiGiaoHang = (int)Data.Enums.TrangThaiGiaoHang.DaHuy; await CapNhatHoaDon(); }} }'>Hủy</button>
                                 }
-                                @if (HoaDon?.LoaiDonHang != (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang && HoaDon?.NgayXacNhan == null && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh)
+                                @if (HoaDon?.LoaiDonHang != (int)MinkyShopProject.Data.Enums.LoaiHoaDon.GiaoHang && HoaDon?.NgayXacNhan == null && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.TraHang)
                                 {
-                                    <button class="btn btn-danger me-2" @onclick="async() => { if(await Confirm()) { if(HoaDon?.NgayXacNhan == null){ HoaDon.NgayXacNhan = DateTime.Now; HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaXacNhan; } await CapNhatHoaDon(); } }">Xác Nhận</button>
+                                    <button class="btn btn-primary me-2" @onclick="async() => { if(await Confirm()) { if(HoaDon?.NgayXacNhan == null){ HoaDon.NgayXacNhan = DateTime.Now; HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaXacNhan; } await CapNhatHoaDon(); } }">Xác Nhận</button>
                                 }
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="offcanvas">Đóng</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="offcanvas" @onmousedown="() => { CloseQr.Invoke(); }">Đóng</button>
                             </div>
                         </div>
                     </div>
@@ -119,7 +119,35 @@
                                         }
                                         else
                                         {
-                                            <span class="text-bolder text-sm">@HoaDon?.TrangThai</span>
+                                            <span class="text-bolder text-sm text-danger">
+                                                @{
+                                                    var trangThai = "";
+                                                    switch (HoaDon?.TrangThai)
+                                                    {
+                                                        case Data.Enums.TrangThaiHoaDon.HoanThanh:
+                                                            trangThai = "Hoàn Thành";
+                                                            break;
+                                                        case Data.Enums.TrangThaiHoaDon.DaHuy:
+                                                            trangThai = "Đã Hủy";
+                                                            break;
+                                                        case Data.Enums.TrangThaiHoaDon.Ship:
+                                                            trangThai = "Ship";
+                                                            break;
+                                                        case Data.Enums.TrangThaiHoaDon.ChoXacNhan:
+                                                            trangThai = "Chờ Xác Nhận";
+                                                            break;
+                                                        case Data.Enums.TrangThaiHoaDon.DaXacNhan:
+                                                            trangThai = "Đã Xác Nhận";
+                                                            break;
+                                                        case Data.Enums.TrangThaiHoaDon.TraHang:
+                                                            trangThai = "Trả Hàng";
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
+                                                }
+                                                @trangThai
+                                            </span>
                                         }
                                     </div>
                                     <div class="col-4">
@@ -175,7 +203,7 @@
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Đơn giá</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thành tiền</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ghi chú</th>
-                                                @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0)
+                                                @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0 || HoaDon?.TrangThai == Data.Enums.TrangThaiHoaDon.TraHang)
                                                 {
                                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                                                 }
@@ -212,7 +240,7 @@
                                                         <td class="w-25">
                                                             <input class="form-control" @bind="@x.Value.GhiChu">
                                                         </td>
-                                                        @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0)
+                                                        @if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == 0 || HoaDon?.TrangThai == Data.Enums.TrangThaiHoaDon.TraHang)
                                                         {
                                                             <td class="align-middle text-center text-sm">
                                                                 <div class="form-check d-flex justify-content-center">
@@ -242,6 +270,8 @@
                                             <button class="btn btn-primary mb-0 me-2" @onclick="async() => { if(await Confirm()){ await ThemSanPham(); }; }">Thêm SP</button>
                                             <input placeholder="Ghi Chú" class="form-control w-50" @bind="HoaDon.GhiChu" />
                                         </div>
+                                    }else{
+                                        <div class="col-8"></div>
                                     }
                                     <div class="col-4">
                                         <label class="col-form-label text-sm me-3 p-0 mb-2">Số lượng hàng hóa</label>
@@ -249,7 +279,7 @@
                                     </div>
                                     <div class="col-12">
                                         <label class="col-form-label text-sm me-3 p-0 mb-2">Tổng tiền hàng</label>
-                                        <span class="text-bolder text-sm">@(Helper.FormatMoney(HoaDon?.TongTien))</span>
+                                        <span class="text-bolder text-sm">@(Helper.FormatMoney(HoaDon?.TongTien + HoaDon?.TienShip))</span>
                                         @if (HoaDon?.LoaiDonHang == 2)
                                         {
                                             <span class="text-bolder text-sm">( @Helper.FormatMoney(HoaDon?.TienShip) tiền ship)</span>
@@ -285,7 +315,7 @@
                                     }
                                     <div class="col-6">
                                         <label class="col-form-label text-sm me-3 p-0 mb-2">Khách cần trả</label>
-                                        <span class="text-bolder text-sm">@(Helper.FormatMoney(HoaDon?.TongTien + HoaDon?.TienShip - (HoaDon?.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon?.VoucherLogs[0].SoTienGiam : 0)))</span>
+                                        <span class="text-bolder text-sm">@(Helper.FormatMoney((HoaDon?.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon?.VoucherLogs[0].TienSauKhiGiam + HoaDon?.TienShip : HoaDon?.TongTien - HoaDon?.TienShip)))</span>
                                     </div>
                                     @if (HoaDon.NgayXacNhan != null)
                                     {
@@ -560,8 +590,10 @@
 </div>
 
 @code {
-
     Uri Url = new Uri("https://localhost:7053/api/hoadon");
+
+    [Parameter]
+    public Action CloseQr { get; set; }
 
     [Parameter]
     public HoaDonModel? HoaDon { get; set; }
@@ -593,13 +625,13 @@
             var status = await HttpClient.PutAsJsonAsync<HoaDonModel>(Url.AddQuery("id", HoaDon.Id.ToString()), HoaDon);
             if (status.IsSuccessStatusCode)
             {
-                await Swal.FireAsync("Thông báo", "Hủy Thành Công", SweetAlertIcon.Success);
+                await Swal.FireAsync("", "Hủy Thành Công", SweetAlertIcon.Success);
                 return;
             }
         }
         else
         {
-            await Swal.FireAsync("Thông báo", "Không Thể Hủy Hóa Đơn Đã Hoàn Thành", SweetAlertIcon.Error);
+            await Swal.FireAsync("", "Không Thể Hủy Hóa Đơn Đã Hoàn Thành", SweetAlertIcon.Error);
         }
     }
 
@@ -611,7 +643,7 @@
             return false;
         }
 
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { TitleText = "Bạn Có Chắc Muốn Cập Nhật", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Cập Nhật", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return false;
         return true;
@@ -694,7 +726,7 @@
                 switch (val)
                 {
                     case 3:
-                        if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < HoaDon?.TongTien)
+                        if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < (HoaDon?.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].TienSauKhiGiam + HoaDon.TienShip : HoaDon?.TongTien + HoaDon?.TienShip))
                         {
                             await Swal.FireAsync("", "Phải Thanh Toán Đủ Trước Khi Nhận Hàng", SweetAlertIcon.Error);
                             return;
@@ -708,7 +740,7 @@
                         HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.KhachKhongNgheMay; await CapNhatHoaDon();
                         break;
                     case 5:
-                        if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < HoaDon?.TongTien)
+                        if (HoaDon?.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < (HoaDon?.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].TienSauKhiGiam + HoaDon.TienShip : HoaDon?.TongTien + HoaDon?.TienShip))
                         {
                             await Swal.FireAsync("", "Phải Thanh Toán Đủ Trước Khi Nhận Hàng", SweetAlertIcon.Error);
                             return;
@@ -758,7 +790,7 @@
 
     async Task ThayDoiTrangThaiSanPham(int index)
     {
-        if (HoaDon?.TrangThaiGiaoHang == 5)
+        if (HoaDon?.TrangThaiGiaoHang == 5 || HoaDon?.TrangThai == Data.Enums.TrangThaiHoaDon.TraHang)
         {
             var hoaDonChiTiet = HoaDon?.HoaDonChiTiets[index];
             if (hoaDonChiTiet != null)

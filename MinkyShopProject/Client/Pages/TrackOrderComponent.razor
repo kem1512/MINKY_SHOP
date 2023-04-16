@@ -23,53 +23,86 @@
 				<tbody>
 					@if(HoaDon != null)
 					{
-						foreach (var x in HoaDon.Data)
+						foreach (var x in HoaDon.Data.Select((v, i) => (i, v)))
 						{
 							<tr>
-								<td style="vertical-align: middle">1</td>
-								<td style="vertical-align: middle">@x.Ma</td>
-								<td style="vertical-align: middle">@x.NgayTao</td>
-								<td style="vertical-align: middle">@x.HoaDonChiTiets.Count()</td>
+								<td style="vertical-align: middle">@(x.i + 1)</td>
+								<td style="vertical-align: middle">@x.v.Ma</td>
+								<td style="vertical-align: middle">@x.v.NgayTao</td>
+								<td style="vertical-align: middle">@x.v.HoaDonChiTiets.Count()</td>
 								<td style="vertical-align: middle">
 									@{
 										var trangThaiGiaoHang = "";
-										@switch (x.TrangThaiGiaoHang)
+										if(x.v.LoaiDonHang == 2)
 										{
-											case 0:
-												trangThaiGiaoHang = "Chờ Xác Nhận";
-												break;
-											case 1:
-												trangThaiGiaoHang = "Chờ Lấy Hàng";
-												break;
-											case 2:
-												trangThaiGiaoHang = "Đang Giao";
-												break;
-											case 3:
-												trangThaiGiaoHang = "Đã Giao";
-												break;
-											case 4:
-												trangThaiGiaoHang = "Đã Hủy";
-												break;
-											case 5:
-												trangThaiGiaoHang = "Chỉ Nhận Một Phần";
-												break;
-											case 6:
-												trangThaiGiaoHang = "Giao Thất Bại";
-												break;
-											case 7:
-												trangThaiGiaoHang = "Không Nghe Máy";
-												break;
-											default:
-												break;
+											@switch (x.v.TrangThaiGiaoHang)
+											{
+												case 0:
+													trangThaiGiaoHang = "Chờ Xác Nhận";
+													break;
+												case 1:
+													trangThaiGiaoHang = "Chờ Lấy Hàng";
+													break;
+												case 2:
+													trangThaiGiaoHang = "Đang Giao";
+													break;
+												case 3:
+													trangThaiGiaoHang = "Đã Giao";
+													break;
+												case 4:
+													trangThaiGiaoHang = "Đã Hủy";
+													break;
+												case 5:
+													trangThaiGiaoHang = "Chỉ Nhận Một Phần";
+													break;
+												case 6:
+													trangThaiGiaoHang = "Giao Thất Bại";
+													break;
+												case 7:
+													trangThaiGiaoHang = "Không Nghe Máy";
+													break;
+												default:
+													break;
+											}
+										}
+										else
+										{
+											switch (x.v.TrangThai)
+											{
+												case Data.Enums.TrangThaiHoaDon.HoanThanh:
+													trangThaiGiaoHang = "Hoàn Thành";
+													break;
+												case Data.Enums.TrangThaiHoaDon.DaHuy:
+													trangThaiGiaoHang = "Đã Hủy";
+													break;
+												case Data.Enums.TrangThaiHoaDon.Ship:
+													trangThaiGiaoHang = "Ship";
+													break;
+												case Data.Enums.TrangThaiHoaDon.ChoXacNhan:
+													trangThaiGiaoHang = "Chờ Xác Nhận";
+													break;
+												case Data.Enums.TrangThaiHoaDon.DaXacNhan:
+													trangThaiGiaoHang = "Đã Xác Nhận";
+													break;
+												case Data.Enums.TrangThaiHoaDon.TraHang:
+													trangThaiGiaoHang = "Trả Hàng";
+													break;
+												default:
+													break;
+											}
 										}
 									}
 									@trangThaiGiaoHang
 								</td>
 								<td style="vertical-align: middle; width: 20%">
-									<button class="btn_1">Xem Chi Tiết</button>
-									@if(x.TrangThaiGiaoHang == 0 || x.TrangThaiGiaoHang == 1)
+									<NavLink class="btn_1" style="margin-right: 3px; margin-bottom: 3px" href="@($"/print/{x.v.Id}")">Xem Chi Tiết</NavLink>
+									@if((x.v.TrangThaiGiaoHang == 0 || x.v.TrangThaiGiaoHang == 1) && x.v.LoaiDonHang == 2)
 									{
-										<button @onclick="() => Huy(x)" class="btn_1" style="background: red">Hủy</button>
+										<button @onclick="() => Huy(x.v)" class="btn_1" style="background: red">Hủy</button>
+									}
+									@if ((x.v.TrangThaiGiaoHang == 3 || x.v.TrangThai == 0) && x.v.DanhGia == null)
+									{
+										<NavLink href="@($"/review/{x.v.Id}")" class="btn_1" style="background: green">Đánh giá</NavLink>
 									}
 								</td>
 							</tr>

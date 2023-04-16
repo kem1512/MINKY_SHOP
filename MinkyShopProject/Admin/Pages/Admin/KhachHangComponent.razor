@@ -278,7 +278,7 @@
 
     async Task DeleteAsync(Guid id)
     {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
         var result = await HttpClient.DeleteAsync(Url + "/" + id + "/Delete");
@@ -294,7 +294,7 @@
     {
         if (context.Validate())
         {
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 

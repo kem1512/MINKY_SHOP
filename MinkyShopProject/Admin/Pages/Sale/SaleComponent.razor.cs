@@ -247,7 +247,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     if (validate)
                     {
 
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "", TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -285,7 +285,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     var validate = await ValidateHoaDon();
                     if (validate)
                     {
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions {  Text = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -349,10 +349,22 @@ namespace MinkyShopProject.Admin.Pages.Sale
                 }
                 else if (hoaDon != null)
                 {
-                    if (hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip < HoaDons[index].TongTien)
+                    var voucher = hoaDon.VoucherLogs != null && hoaDon.VoucherLogs.Any();
+                    if (!voucher)
                     {
-                        await Swal.FireAsync("", "Hóa Đơn Chưa Chưa Trả Đủ Tiền", SweetAlertIcon.Error);
-                        return false;
+                        if (hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) + hoaDon.TienShip < HoaDons[index].TongTien)
+                        {
+                            await Swal.FireAsync("", "Hóa Đơn Chưa Chưa Trả Đủ Tiền", SweetAlertIcon.Error);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (hoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) < hoaDon.VoucherLogs?[0].TienSauKhiGiam)
+                        {
+                            await Swal.FireAsync("", "Hóa Đơn Chưa Chưa Trả Đủ Tiền", SweetAlertIcon.Error);
+                            return false;
+                        }
                     }
                 }
             }
@@ -383,7 +395,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         async Task TimKiemVoucher()
         {
-            VouchersThoaMan = Vouchers?.Data.Content.Where(c => c.SoTienCan <= HoaDons[index].TongTien).ToList();
+            VouchersThoaMan = Vouchers?.Data.Content.Where(c => c.SoTienCan <= HoaDons[index].TongTien && c.SoLuong > 0 && c.NgayKetThuc >= DateTime.Now).ToList();
         }
 
         async Task ApDungVoucher(int indexVoucher)

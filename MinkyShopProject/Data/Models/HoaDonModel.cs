@@ -48,6 +48,8 @@ namespace MinkyShopProject.Data.Models
 
         public float TongTien { get; set; }
 
+        public DanhGiaModel? DanhGia { get; set; }
+
         public int TrangThaiGiaoHang { get; set; } // 0 : Giao Thành Công, 1 : Giao Thất Bại
 
         public string? GhiChuGiaoHang { get; set; }
@@ -158,6 +160,8 @@ namespace MinkyShopProject.Data.Models
 
     public class HoaDonQueryModel : PaginationRequest
     {
+        public int? TrangThai { get; set; }
+
         public string? Ma { get; set; } = "";
 
         public int? TrangThaiGiaoHang { get; set; }
@@ -165,5 +169,7 @@ namespace MinkyShopProject.Data.Models
         public int? LoaiHoaDon { get; set; }
 
         public Guid? IdKhachHang { get; set; }
+
+        public DateTime? NgayTao { get; set; }
     }
 }

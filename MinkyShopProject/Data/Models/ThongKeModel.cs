@@ -17,6 +17,11 @@
     public class ThongKeTongTienResult
     {
         public float TongTienTatCa { get; set; }
+        public float SoSanh { get; set; }
+        public int TongDonHuy { get; set; }
+        public int TongDonBan { get; set; }
+        public int DonQuay { get; set; }
+        public int DonOnline { get; set; }
         public List<TongTienNgayTienThangNam> ThongKeTheoNgayTienThangNam { get; set; }
     }
     public class NhanVienBanHangNhieuNHat

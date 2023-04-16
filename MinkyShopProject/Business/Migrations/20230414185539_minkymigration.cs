@@ -5,7 +5,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MinkyShopProject.Business.Migrations
 {
+<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230414185539_minkymigration.cs
     public partial class minkymigration : Migration
+========
+    public partial class MinkyShop : Migration
+>>>>>>>> 952d1ce40dfc96b03cdbf4e0503fa7f678e4f36a:MinkyShopProject/Business/Migrations/20230416035749_MinkyShop.cs
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -193,7 +197,7 @@ namespace MinkyShopProject.Business.Migrations
                     NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Sdt = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SoLanMua = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
@@ -415,24 +419,24 @@ namespace MinkyShopProject.Business.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-                    IdBienThe = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdKhachHang = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdSanPham = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IdHoaDon = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoDanhGia = table.Column<int>(type: "int", nullable: false, defaultValue: 5),
                     NgayDanhGia = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NoiDung = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    BienTheId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DanhGia", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DanhGia_BienThe_IdBienThe",
-                        column: x => x.IdBienThe,
+                        name: "FK_DanhGia_BienThe_BienTheId",
+                        column: x => x.BienTheId,
                         principalTable: "BienThe",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_DanhGia_HoaDon_IdHoaDon",
                         column: x => x.IdHoaDon,
@@ -553,9 +557,9 @@ namespace MinkyShopProject.Business.Migrations
                 column: "IdThuocTinhSanPham");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DanhGia_IdBienThe",
+                name: "IX_DanhGia_BienTheId",
                 table: "DanhGia",
-                column: "IdBienThe");
+                column: "BienTheId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DanhGia_IdHoaDon",
@@ -624,6 +628,13 @@ namespace MinkyShopProject.Business.Migrations
                 name: "IX_HoaDonChiTiet_IdHoaDon",
                 table: "HoaDonChiTiet",
                 column: "IdHoaDon");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KhachHang_Email",
+                table: "KhachHang",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KhachHang_IdViDiem",

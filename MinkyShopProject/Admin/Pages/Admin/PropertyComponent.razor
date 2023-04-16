@@ -81,7 +81,7 @@
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">STT</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-NgayTao" ? "+NgayTao" : "-NgayTao"; await Reload(); }'>
                                         <div class="d-flex justify-content-between">
-                                            <span>Ngày Tạo</span>
+                                            <span>Tên</span>
                                             @if (Filter.Sort != "-NgayTao")
                                             {
                                                 <span class="fa fa-sort-down" style="font-size: 15px"></span>
@@ -100,7 +100,7 @@
                                         }}">Giá Trị</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7" @onclick='async() => { Filter.Sort = Filter.Sort == "-TrangThai" ? "+TrangThai" : "-TrangThai"; await Reload(); }'>
                                         <div class="d-flex justify-content-between">
-                                            <span>Trạng Thái</span>
+                                            <span>Ngày tạo</span>
                                                 @if (Filter.Sort != "-TrangThai")
                                                 {
                                                 <span class="fa fa-sort-down" style="font-size: 15px"></span>
@@ -111,7 +111,7 @@
                                                 }
                                         </div>
                                     </th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ngày Tạo</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng thái</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
                                 </tr>
                             </thead>
@@ -152,7 +152,7 @@
                                                                         </td>
                                                                         <td class="text-sm">
                                                                             <a href="javascript:;" @onclick='async() => { 
-                                                                                var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Đổi Trạng Thái", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                                                                                var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Đổi Trạng Thái", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
                                                                                 if (string.IsNullOrEmpty(confirm.Value)) return;
                                                                                 y.v.TrangThai = !y.v.TrangThai;
                                                                                 await DeleteAsync(y.v.Id);  y.v.TrangThai = !y.v.TrangThai; }' data-bs-toggle="tooltip" data-bs-original-title="Delete product">
@@ -181,9 +181,6 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-sm">
-                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Preview product">
-                                                        <i class="fas fa-eye text-info" aria-hidden="true"></i>
-                                                    </a>
                                                     <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => ThuocTinh = x.Value">
                                                         <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
                                                     </a>
@@ -261,8 +258,7 @@
         if (result.IsSuccessStatusCode)
         {
             await Reload();
-            ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
-            await Swal.FireAsync("Thông Báo", "Xóa thành công", SweetAlertIcon.Success);
+            await Swal.FireAsync("Thông Báo", "Cập nhật thành công", SweetAlertIcon.Success);
         }
         else
         {
@@ -310,7 +306,7 @@
                 }
             }
 
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = $"Bạn Có Chắc Muốn {(ThuocTinh.Id == Guid.Empty ? "Thêm" : "Sửa")}", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = $"Bạn Có Chắc Muốn {(ThuocTinh.Id == Guid.Empty ? "Thêm" : "Sửa")}", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -319,7 +315,6 @@
             if (result.IsSuccessStatusCode)
             {
                 await Reload();
-                ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
                 await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
             }
             else
@@ -332,6 +327,7 @@
     async Task Reload()
     {
         if (Page == 0) Page = 1;
+        ThuocTinh = new ThuocTinhModel() { Ten = "", GiaTris = new List<GiaTriModel>() };
         ThuocTinhs = await HttpClient.GetFromJsonAsync<ResponsePagination<ThuocTinhModel>>(Url.AddQuery("page", Page.ToString()).AddQuery("size", Filter.Size.ToString() ?? "2").AddQuery("trangthai", Filter.TrangThai.ToString() ?? "").AddQuery("ten", Filter.Ten ?? "").AddQuery("sort", Filter.Sort));
         TenGiaTri = "";
     }
