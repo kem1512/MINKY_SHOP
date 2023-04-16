@@ -37,6 +37,10 @@ namespace MinkyShopProject.Business.Entities
 
         public float? TongTienMatRut { get; set; }
 
+        public string? GhiChuRutTien { get; set; } = null!;
+
+        public float? TongTienMatCuoiCa { get; set; }
+
         public int TrangThai { get; set; }
 
         public NhanVien NhanVien { get; set; } = null!;

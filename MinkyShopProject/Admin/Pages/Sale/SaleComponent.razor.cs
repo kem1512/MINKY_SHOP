@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Blazored.SessionStorage;
 using Blazored.LocalStorage;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
@@ -10,15 +9,11 @@ using MinkyShopProject.Data.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using MinkyShopProject.Business.Entities;
 using System.Net.NetworkInformation;
-using Blazored.LocalStorage;
 
 namespace MinkyShopProject.Admin.Pages.Sale
 {
     public partial class SaleComponent
     {
-        [Inject]
-        ILocalStorageService Session { get; set; } = null!;
-
         [Inject]
         ILocalStorageService local { get; set; } = null!;
 
@@ -59,6 +54,8 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         List<HinhThucThanhToanModel>? HinhThucThanhToans;
 
+        private GiaoCa Ca = new();
+
         private async Task ScanResult(string e)
         {
             await ThemTuMaSanPham(e);
@@ -66,6 +63,10 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         protected override async Task OnInitializedAsync()
         {
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
+            var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={DateTime.Now}");
+            Ca = result.Data;
             SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>(Url + "sanpham");
             KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>(Url + "khachhang/get");
             Vouchers = await HttpClient.GetFromJsonAsync<ResponsePagination<VoucherModel>>(Url + "voucher");
@@ -262,6 +263,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                             hoaDon.VoucherLogs[0].Voucher = null;
                         }
 
+                        HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
                         var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
                         if (status.IsSuccessStatusCode)
                         {
@@ -306,9 +308,18 @@ namespace MinkyShopProject.Admin.Pages.Sale
                                 }
                             }
 
+                            HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
+
                             var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
                             if (status.IsSuccessStatusCode)
                             {
+                                foreach (var item in HoaDons[index].HinhThucThanhToans)
+                                {
+                                    if (item.KieuThanhToan == 0)
+                                    {
+                                         await HttpClient.GetFromJsonAsync<Response>($"https://localhost:7053/api/GiaoCas/UpdateTienMat?IdCa={Ca.Id}&TongTien={item.TongTienThanhToan}");
+                                    }
+                                }
                                 HoaDons.Remove(HoaDons[index]);
                                 await Swal.FireAsync("", "Thêm Thành Công", SweetAlertIcon.Success);
                             }

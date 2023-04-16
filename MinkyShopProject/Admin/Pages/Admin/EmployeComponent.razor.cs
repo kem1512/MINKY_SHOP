@@ -36,7 +36,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         [Parameter]
         public int Page { get; set; }
 
-        private PaginationRequest PaginationRequest = new PaginationRequest() { PerPage = 2 };
+        private PaginationRequest PaginationRequest = new PaginationRequest() { PerPage = 5 };
         private Response<PaginationResponse<NhanVien>> Response = new Response<PaginationResponse<NhanVien>>();
         private string url = "https://localhost:7053/api/NhanViens";
         private string query = "";

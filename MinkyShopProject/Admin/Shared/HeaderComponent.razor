@@ -1,6 +1,7 @@
 ﻿@using Blazored.LocalStorage;
 @using MinkyShopProject.Business.Entities;
 @using System.IdentityModel.Tokens.Jwt;
+@using MinkyShopProject.Data.Models;
 @inject ILocalStorageService local;
 @inject HttpClient HttpClient;
 
@@ -33,10 +34,10 @@
             </div>
             <ul class="navbar-nav  justify-content-end">
                 <li class="nav-item px-3 d-flex align-items-center">
-                     <a class="nav-link text-white font-weight-bold px-0" data-bs-toggle="modal" data-bs-target="#exampleModal" style="cursor:pointer">
-                        <i class="fa fa-play"></i>
-                        <span class="d-sm-inline d-none">Bắt đầu ca</span>
-                     </a>
+                    <a class="nav-link text-white font-weight-bold px-0" data-bs-toggle="@(Ca == null ? "modal" : "")" data-bs-target="@(Ca == null ? "#exampleModal" : "")" style="cursor:pointer">
+                        <i class="fa fa-@(Ca == null ? "play" : "pause")"></i>
+                        <span class="d-sm-inline d-none">@title @(title == "Bắt đầu" ? "" : $": {Helper.FormatMoney(Ca.TongTienMat)}")</span>
+                    </a>
                 </li>
                 <li class="nav-item d-flex align-items-center">
                     @if (IsAuth)
@@ -148,14 +149,108 @@
     </div>
 </nav>
 
-<BeginingModalComponent></BeginingModalComponent>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Khai báo tiền đầu ca</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3 d-flex justify-content-between">
+                    <div>
+                        <label class="form-control-label">Ngày nhận ca: Ngày @ThoiGianNhanCa.Day Tháng @ThoiGianNhanCa.Month Năm @ThoiGianNhanCa.Year</label>
+                    </div>
+                    <div>
+                        <label class="form-control-label">Thời gian nhận ca: @ThoiGianNhanCa.ToShortTimeString()</label>
+                    </div>
+                    @if(CaTruoc != null){
+                        <div>
+                            <label class="form-control-label">Tổng tiền mặt ca trước: @(CaTruoc.TongTienMat)</label>
+                        </div>
+                    }
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Mệnh giá</th>
+                                <th>Số lượng</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Moneys)
+                            {
+                                <tr>
+                                    <td><input value="@string.Format("{0:0,0}",item.MenhGia)" class="form-control form-control-sm" disabled /></td>
+                                    <td><input value="@(item.SoLuong == 0 ? "" : item.SoLuong)" type="number" class="form-control form-control-sm" @oninput="@(e => ChangeThanhtien(e,item.Id))" /></td>
+                                    <td><input value="@string.Format("{0:0,0}",item.ThanhTien)" class="form-control form-control-sm" /></td>
+                                </tr>
+                            }
+                            <tr>
+                                <td colspan="2" class="table-primary">Tổng tiền đầu ca</td>
+                                <td><input value="@string.Format("{0:0,0}",TongThanhTien)" class="form-control form-control-sm" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-outline-success text-success" data-bs-dismiss="modal" @onclick="BatDau">
+                    <i class="fa fa-check"></i> Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code{
+    [Inject]
+    public SweetAlertService Swal { get; set; } = null!;
+
     bool IsAuth = true;
 
     string Ten = "";
 
     private GiaoCa Ca = new();
+
+    private GiaoCa CaTruoc = new();
+
+    private float TongTienHoaDonTienMat = 0;
+
+    private string title = "Bắt đầu";
+
+    private DateTime thoigian = DateTime.Now;
+
+    private class Money
+    {
+        public Guid Id { get; set; }
+        public float MenhGia { get; set; }
+        public float SoLuong { get; set; }
+        public float ThanhTien { get; set; }
+    }
+
+    private List<Money> Moneys = new List<Money>()
+    {
+        new Money(){Id = Guid.NewGuid(),MenhGia = 500000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 200000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 100000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 50000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 20000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 10000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 5000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 2000,SoLuong = 0,ThanhTien=0},
+        new Money(){Id = Guid.NewGuid(),MenhGia = 1000,SoLuong = 0,ThanhTien=0},
+    };
+
+    private float TongThanhTien = 0;
+
+    private DateTime ThoiGianNhanCa = DateTime.Now;
 
     protected async override Task OnInitializedAsync()
     {
@@ -170,7 +265,72 @@
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             IsAuth = true;
             var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={DateTime.Now}");
+            var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas/GetCaTruoc?Id={Guid.Parse(IdNhanVien)}");
             Ca = result.Data;
+            CaTruoc = result2.Data;
+            title = Ca == null ? "Bắt đầu" : "Đang làm việc";
+        }
+    }
+
+    private async Task ChangeThanhtien(ChangeEventArgs e, Guid Id)
+    {
+        float tongThanhTien = 0;
+        var soLuong = e.Value?.ToString() == "" ? 0 : Convert.ToInt32(e.Value);
+        var Money = Moneys.FirstOrDefault(c => c.Id == Id);
+        Money.SoLuong = soLuong;
+        Money.ThanhTien = Money.MenhGia * soLuong;
+        foreach (var item in Moneys)
+        {
+            tongThanhTien += item.ThanhTien;
+        }
+        TongThanhTien = tongThanhTien;
+    }
+
+    private async Task BatDau()
+    {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
+        var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+
+
+        var model = new GiaoCaModels.GiaoCaCreateModel()
+        {
+                IdNhanVienTrongCa = Guid.Parse(IdNhanVien),
+                ThoiGianNhanCa = ThoiGianNhanCa,
+                TienBanDau = TongThanhTien,
+                TongTienMat = TongThanhTien,
+                TrangThai = 0,
+        };
+
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Muốn Bắt Đầu Ca Làm Việc", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        var result = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/GiaoCas", model);
+        var response = await result.Content.ReadFromJsonAsync<Response>();
+
+        if (result.IsSuccessStatusCode)
+        {
+            var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
+            if (CaTruoc != null)
+        {
+                await HttpClient.DeleteAsync($"https://localhost:7053/api/GiaoCas/NhanCa?Id={CaTruoc.Id}");
+            }
+            Ca = result2.Data;
+            await Swal.FireAsync(new SweetAlertOptions()
+            {
+                    TitleText = response.Message,
+                    ShowConfirmButton = true,
+                    Icon = SweetAlertIcon.Success
+            });
+            title = "Đang làm việc";
+        }
+        else
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+            {
+                    TitleText = response.Message,
+                    ShowConfirmButton = true,
+                    Icon = SweetAlertIcon.Error
+            });
         }
     }
 }

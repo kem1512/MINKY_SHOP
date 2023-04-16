@@ -160,6 +160,9 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<string>("GhiChuPhatSinh")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GhiChuRutTien")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("IdNhanVienCaTiepTheo")
                         .HasColumnType("uniqueidentifier");
 
@@ -188,6 +191,9 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("real");
 
                     b.Property<float?>("TongTienMatCaTruoc")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("TongTienMatCuoiCa")
                         .HasColumnType("real");
 
                     b.Property<float?>("TongTienMatRut")

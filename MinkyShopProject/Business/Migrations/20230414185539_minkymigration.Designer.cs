@@ -12,8 +12,8 @@ using MinkyShopProject.Business.Context;
 namespace MinkyShopProject.Business.Migrations
 {
     [DbContext(typeof(MinkyShopDbContext))]
-    [Migration("20230408122823_new")]
-    partial class @new
+    [Migration("20230414185539_minkymigration")]
+    partial class minkymigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -162,6 +162,9 @@ namespace MinkyShopProject.Business.Migrations
                     b.Property<string>("GhiChuPhatSinh")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GhiChuRutTien")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("IdNhanVienCaTiepTheo")
                         .HasColumnType("uniqueidentifier");
 
@@ -190,6 +193,9 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("real");
 
                     b.Property<float?>("TongTienMatCaTruoc")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("TongTienMatCuoiCa")
                         .HasColumnType("real");
 
                     b.Property<float?>("TongTienMatRut")
