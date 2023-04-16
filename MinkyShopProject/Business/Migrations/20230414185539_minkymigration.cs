@@ -5,7 +5,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace MinkyShopProject.Business.Migrations
 {
+<<<<<<<< HEAD:MinkyShopProject/Business/Migrations/20230414185539_minkymigration.cs
+    public partial class minkymigration : Migration
+========
     public partial class MinkyShop : Migration
+>>>>>>>> 952d1ce40dfc96b03cdbf4e0503fa7f678e4f36a:MinkyShopProject/Business/Migrations/20230416035749_MinkyShop.cs
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -121,6 +125,8 @@ namespace MinkyShopProject.Business.Migrations
                     TongTienMatCaTruoc = table.Column<float>(type: "real", nullable: true),
                     ThoiGianReset = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TongTienMatRut = table.Column<float>(type: "real", nullable: true),
+                    GhiChuRutTien = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TongTienMatCuoiCa = table.Column<float>(type: "real", nullable: true),
                     TrangThai = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

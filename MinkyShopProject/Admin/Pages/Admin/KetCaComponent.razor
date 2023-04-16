@@ -5,16 +5,23 @@
 @using MinkyShopProject.Business.Pagination;
 @using MinkyShopProject.Data.Models;
 @using PaginationRequest = MinkyShopProject.Business.Pagination.PaginationRequest;
+@using System.Net.Mail
 
 <div class="container-fluid py-4">
     <div class="row">
         <div class="card">
-            <div class="card-header">
-                <div class="d-flex justify-content-center">
-                    <h2>Báo Cáo Kết Ca</h2>
-                </div>
-            </div>
             <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="form-group">
+                        <label class="form-control-label">Nhân viên trực ca: @(NhanVien.Ma) - @(NhanVien.Ten)</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Thời gian vào ca: @Ca.ThoiGianNhanCa.ToShortTimeString() @(Ca.ThoiGianNhanCa.Day)/@(Ca.ThoiGianNhanCa.Month)/@(Ca.ThoiGianNhanCa.Year) </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-control-label">Thời gian hiện tại: @Time.ToShortTimeString() @(Time.Day)/@(Time.Month)/@(Time.Year)</label>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col">
                         <div class="table-responsive">
@@ -45,13 +52,6 @@
                     </div>
                     <div class="col">
                         <div>
-                            <div class="form-group d-flex justify-content-between">
-                                <label class="form-control-label">Thời gian vào ca: @Ca.ThoiGianNhanCa.ToShortTimeString() @(Ca.ThoiGianNhanCa.Day)/@(Ca.ThoiGianNhanCa.Month)/@(Ca.ThoiGianNhanCa.Year) </label>
-                                <label class="form-control-label">Thời gian hiện tại: @Time.ToShortTimeString() @(Time.Day)/@(Time.Month)/@(Time.Year)</label>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-control-label">Nhân viên trực ca: @(NhanVien.Ma) - @(NhanVien.Ten)</label>
-                            </div>
                             @if(CaCuoiNgay != true){
                                 <div class="form-group  position-relative">
                                     <div class="d-flex justify-content-between">
@@ -79,6 +79,14 @@
                                 </div>
                             }
                             <div class="form-group">
+                                <label class="form-control-label">Tổng tiền mặt đầu ca </label>
+                                <input value="@(Helper.FormatMoney(Ca.TienBanDau))" type="text" class="form-control form-control-sm" disabled />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-control-label">Hóa đơn trong ca</label>
+                                <input value="@(hoadons.Count())" type="text" class="form-control form-control-sm" disabled />
+                            </div>
+                            <div class="form-group">
                                 <label class="form-control-label">Tổng tiền trong ca </label>
                                 <input value="@(Helper.FormatMoney(Model.TongTienTrongCa))" type="text" class="form-control form-control-sm" disabled />
                             </div>
@@ -87,28 +95,34 @@
                                 <input value="@(Helper.FormatMoney(Model.TongTienMat))" type="text" class="form-control form-control-sm" disabled />
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label">Tổng tiền khác</label>
+                                <label class="form-control-label">Tổng tiền chuyển khoản</label>
                                 <input value="@(Helper.FormatMoney(Model.TongTienKhac))" type="text" class="form-control form-control-sm" disabled />
                             </div>
                             <div class="form-group">
                                 <label class="form-control-label">Tiền phát sinh</label>
                                 <input value="@(Helper.FormatMoney(Model.TienPhatSinh))" type="text" class="form-control form-control-sm" disabled />
                             </div>
-                            <div class="form-group">
-                                <div class="d-flex justify-content-between">
-                                    <label class="form-control-label">Nhân viên bàn giao </label>
-                                    <label class="form-control-label text-danger">@(ErrorGhiChu)</label>
-                                </div>
-                                <textarea @onchange="ChangeGhiChuPhatSinh" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <div class="d-flex justify-content-between">
+                                <label class="form-control-label">Ghi chú phát sinh </label>
+                                <label class="form-control-label text-danger">@(ErrorGhiChu)</label>
                             </div>
-                             <div class="form-check form-switch d-flex justify-content-between">
-                                    <div>
-                                         <label class="form-control-label">Kết Ca Cuối Ngày</label>
-                                    </div>
-                                    <div>
-                                         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="ChangeKetCa" />
-                                    </div>
-                             </div>
+                            <textarea @onchange="ChangeGhiChuPhatSinh" class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Tổng Tiền mặt Cuối Ca</label>
+                            <input value="@(Helper.FormatMoney(TongTienMatCuoiCa))" type="text" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-check form-switch d-flex justify-content-between">
+                            <div>
+                                <label class="form-control-label">Kết Ca Cuối Ngày</label>
+                            </div>
+                            <div>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="ChangeKetCa" />
+                            </div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
@@ -166,6 +180,8 @@
 
     private float DoanhThuTienMat = 0;
 
+    private float DoanhThuChuyenKhoan = 0;
+
     private List<HoaDon> HoaDons = new();
 
     private GiaoCaModels.GiaoCaEditModel Model = new GiaoCaModels.GiaoCaEditModel(){TienPhatSinh = 0,GhiChuPhatSinh = string.Empty,ThoiGianGiaoCa = DateTime.Now};
@@ -186,6 +202,8 @@
 
     private bool CaCuoiNgay = false;
 
+    private List<HoaDon> hoadons = new();
+
     protected async override Task OnInitializedAsync()
     {
         if (await local.GetItemAsStringAsync("Token") == null)
@@ -198,8 +216,6 @@
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             await GetCaHienTai(IdNhanVien, Time);
             await GetNhanVien();
-            await GetHoaDonTrongCa();
-            Model.IdNhanVienCaTiepTheo = Guid.Parse(IdNhanVien);
         }
     }
 
@@ -210,13 +226,14 @@
         if (Ca == null)
         {
             Navigation.NavigateTo("/admin");
-            await Swal.FireAsync("", "Bạn chưa bắt đầu ca làm việc của mình",SweetAlertIcon.Warning);
+            await Swal.FireAsync("Thông báo", "Bạn chưa bắt đầu ca làm việc",SweetAlertIcon.Warning);
         }
         else
         {
-            Model.TongTienTrongCa = Ca.TienBanDau + DoanhThu;
-            Model.TongTienMat = Ca.TienBanDau + DoanhThuTienMat;
-            Model.TongTienKhac = Model.TongTienTrongCa - Model.TongTienMat;
+            await GetHoaDonTrongCa();
+            Model.TongTienTrongCa = Ca.TongTienMat + DoanhThu;
+            Model.TongTienMat = Ca.TongTienMat + DoanhThuTienMat;
+            Model.TongTienKhac = DoanhThuChuyenKhoan;
             IdCa = Ca.Id;
         }
     }
@@ -231,18 +248,27 @@
     {
         float TongtienHoaDon = 0;
         float TienMatHoaDon = 0;
+        float TienChuyenKhoan = 0;
         var result = await HttpClient.GetFromJsonAsync<Response<List<HoaDon>>>($"https://localhost:7053/api/GiaoCas/HoaDonTrongCa?Id={Ca.IdNhanVienTrongCa}&ThoiGian={Time}");
+        hoadons = result.Data;
         foreach (var HoaDon in result.Data)
         {
             TongtienHoaDon += HoaDon.TongTien;
-            var result2 = await HttpClient.GetFromJsonAsync<Response<List<HinhThucThanhToan>>>($"https://localhost:7053/api/GiaoCas/TienMatHoaDonTrongCa?IdNhanVien={HoaDon.Id}");
+            var result2 = await HttpClient.GetFromJsonAsync<Response<List<HinhThucThanhToan>>>($"https://localhost:7053/api/GiaoCas/TienMatHoaDonTrongCa?IdHoaDon={HoaDon.Id}");
+            var result3 = await HttpClient.GetFromJsonAsync<Response<List<HinhThucThanhToan>>>($"https://localhost:7053/api/GiaoCas/TienChuyenKhoanHoaDonTrongCa?IdHoaDon={HoaDon.Id}");
             foreach (var hinhthucthanhtoan in result2.Data)
             {
                 TienMatHoaDon += hinhthucthanhtoan.TongTienThanhToan;
             }
+
+            foreach (var hinhthucthanhtoan in result3.Data)
+            {
+                TienChuyenKhoan += hinhthucthanhtoan.TongTienThanhToan;
+            }
         }
         DoanhThu = TongtienHoaDon;
         DoanhThuTienMat = TienMatHoaDon;
+        DoanhThuChuyenKhoan = TienChuyenKhoan;
     }
 
     private async Task ChangeThanhtien(ChangeEventArgs e, Guid Id)
@@ -258,6 +284,7 @@
             tongThanhTien += item.ThanhTien;
         }
         TongTienMatCuoiCa = tongThanhTien;
+        Model.TongTienMatCuoiCa = TongTienMatCuoiCa;
         Model.TienPhatSinh = Model.TongTienMat - tongThanhTien;
         if (Model.TienPhatSinh <= 0 || tongThanhTien == 0)
         {
@@ -305,7 +332,7 @@
         else
         {
 
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Kết Ca Ngay Bây Giờ", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Kết Ca", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -317,9 +344,8 @@
             var result = await HttpClient.PostAsJsonAsync($"https://localhost:7053/api/GiaoCas/KetCa/{IdCa}", Model);
             if (result.IsSuccessStatusCode)
             {
-                await Swal.FireAsync("", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
-                await local.ClearAsync();
-                Navigation.NavigateTo("/login");
+                await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
+                Navigation.NavigateTo("/admin");
             }
             await Swal.FireAsync("", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Error);
         }

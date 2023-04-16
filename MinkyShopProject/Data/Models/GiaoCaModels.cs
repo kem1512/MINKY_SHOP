@@ -17,6 +17,8 @@ namespace MinkyShopProject.Data.Models
 
             public float TienBanDau { get; set; }
 
+            public float? TongTienMat { get; set; }
+
             public int TrangThai { get; set; }
         }
 
@@ -38,7 +40,27 @@ namespace MinkyShopProject.Data.Models
 
             public float? TongTienMatCaTruoc { get; set; }
 
+            public float? TongTienMatCuoiCa { get; set; }
+
             public DateTime? ThoiGianReset { get; set; }
+        }
+
+        public class GiaoCaViewModel
+        {
+            public Guid Id { get; set; }
+            public string TenNhanVienTrongCa { get; set; } = null!;
+            public string TenNhanVienCaTiepTheo { get; set; } = null!;
+            public float? TongTienMat { get; set; }
+            public int TrangThai { get; set; }
+        }
+
+        public class ResetTienModel
+        {
+            public float TongTienMatRut { get; set; }
+
+            public DateTime ThoiGianReset { get; set; }
+
+            public string GhiChuRutTien { get; set; } = null!;
         }
     }
 }

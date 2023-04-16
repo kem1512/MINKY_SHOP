@@ -37,7 +37,6 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                 obj.Ma = "HD" + Helper.RandomString(5);
 
                 var hoaDon = _mapper.Map<HoaDonCreateModel, Entities.HoaDon>(obj);
-                hoaDon.IdNhanVien = _context.NhanVien.First().Id;
 
                 if (hoaDon.IdKhachHang != null && hoaDon.IdKhachHang != Guid.Empty)
                 {

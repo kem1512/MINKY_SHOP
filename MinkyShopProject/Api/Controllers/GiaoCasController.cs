@@ -33,7 +33,7 @@ namespace MinkyShopProject.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetCaHienTai([FromQuery] Guid Id ,DateTime ThoiGian)
         {
-            return Helper.TransformData(await _Repositories.GetCaHienThai(Id,ThoiGian));
+            return Helper.TransformData(await _Repositories.GetCaHienTai(Id,ThoiGian));
         }
 
         [HttpGet("HoaDonTrongCa")]
@@ -43,9 +43,63 @@ namespace MinkyShopProject.Api.Controllers
         }
 
         [HttpGet("TienMatHoaDonTrongCa")]
-        public async Task<IActionResult> GetHoaDonCaHienTai([FromQuery] Guid IdHoaDon)
+        public async Task<IActionResult> TienMatHoaDon([FromQuery] Guid IdHoaDon)
         {
             return Helper.TransformData(await _Repositories.GetTienMatHoaDon(IdHoaDon));
+        }
+
+        [HttpGet("TienChuyenKhoanHoaDonTrongCa")]
+        public async Task<IActionResult> TienChuyenKhoanHoaDon([FromQuery] Guid IdHoaDon)
+        {
+            return Helper.TransformData(await _Repositories.GetTienChuyenKhoanHoaDon(IdHoaDon));
+        }
+
+        [HttpGet("UpdateTienMat")]
+        public async Task<IActionResult> UpdateTiemMat([FromQuery] Guid IdCa,float TongTien)
+        {
+            return Helper.TransformData(await _Repositories.UpdateTiemMat(IdCa, TongTien));
+        }
+
+        [HttpGet("CaDangCho")]
+        public async Task<IActionResult> GetCaChoBanGiao()
+        {
+            return Helper.TransformData(await _Repositories.GetCaHienTaiChoBanGiao());
+        }
+
+        [HttpGet("CaDuocChon")]
+        public async Task<IActionResult> CaDuocChon([FromQuery] Guid Id)
+        {
+            return Helper.TransformData(await _Repositories.GetCaDuocChon(Id));
+        }
+
+        [HttpPut("resettienmat")]
+        public async Task<IActionResult> resettienmat([FromQuery] Guid Id,GiaoCaModels.ResetTienModel model)
+        {
+            return Helper.TransformData(await _Repositories.RutTien(Id,model));
+        }
+
+        [HttpPut("UpdateNhanVien")]
+        public async Task<IActionResult> UpdateNhanVien([FromQuery] Guid Id, GiaoCaModels.GiaoCaEditModel model)
+        {
+            return Helper.TransformData(await _Repositories.UpdateNhanVien(Id, model));
+        }
+
+        [HttpGet("GetCaTruoc")]
+        public async Task<IActionResult> GetCaTruoc([FromQuery] Guid Id)
+        {
+            return Helper.TransformData(await _Repositories.GetCaTruoc(Id));
+        }
+
+        [HttpDelete("NhanCa")]
+        public async Task<IActionResult> NhanCa([FromQuery] Guid Id)
+        {
+            return Helper.TransformData(await _Repositories.NhanCa(Id));
+        }
+
+        [HttpGet("GuiMail")]
+        public async Task<IActionResult> GuiMail()
+        {
+            return Helper.TransformData(await _Repositories.SendMail());
         }
     }
 }
