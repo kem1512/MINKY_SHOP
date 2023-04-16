@@ -273,6 +273,12 @@
 
     async Task ThemVaoGioHang()
     {
+        if(await Session.GetItemAsStringAsync("khachHang") == null)
+        {
+            await Swal.FireAsync("Thông Báo", "Vui lòng đăng nhập để mua hàng", SweetAlertIcon.Error);
+            return;
+        }
+
         if(BienThe != null && GioHangs != null)
         {
             if (GioHangs.Data.GioHangChiTiets != null && GioHangs.Data.GioHangChiTiets.Any())
@@ -282,7 +288,6 @@
                 {
                     gioHangChiTiet.SoLuong += BienThe.SoLuongTam;
                 }   
-                Console.WriteLine(  123);
             }
             else
             {
@@ -298,6 +303,10 @@
             {
                 await Swal.FireAsync("Thông Báo", "Thêm Thất Bại", SweetAlertIcon.Error);
             }
+        }
+        else
+        {
+            await Swal.FireAsync("Thông Báo", "Thêm Thất Bại", SweetAlertIcon.Error);
         }
     }
 }
