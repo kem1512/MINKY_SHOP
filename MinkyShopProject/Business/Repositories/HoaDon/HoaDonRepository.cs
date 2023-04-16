@@ -57,6 +57,13 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                         bienThe.SoLuong -= x.SoLuong;
                 }
 
+                if (hoaDon.VoucherLogs != null && hoaDon.VoucherLogs.Any())
+                {
+                    var voucher = _context.Voucher.FirstOrDefault(c => c.Id == hoaDon.VoucherLogs[0].IdVoucher);
+                    if (voucher != null)
+                        voucher.SoLuong -= 1;
+                }
+
                 var status = await _context.SaveChangesAsync();
 
                 if (status > 0)
@@ -105,7 +112,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).Include(c => c.DanhGia).AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
                 if (result != null)
                 {
                     foreach (var x in result.HoaDonChiTiets)
@@ -131,7 +138,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                var result = await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().Where(c => c.LoaiDonHang == obj.LoaiHoaDon || (c.LoaiDonHang < 5 && obj.LoaiHoaDon == null)).Where(c => c.TrangThaiGiaoHang == obj.TrangThaiGiaoHang || (c.TrangThaiGiaoHang < 20 && obj.TrangThaiGiaoHang == null)).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThaiGiaoHang < 20 && obj.TrangThai == null)).Where(c => c.Ma == obj.Ma || c.TenNguoiNhan.ToLower().Trim().Contains(!string.IsNullOrEmpty(obj.Ma) ? obj.Ma.ToLower().Trim() : "")).Where(c => (obj.IdKhachHang != null && c.IdKhachHang == obj.IdKhachHang) || c.LoaiDonHang < 5).Where(c => c.NgayTao >= obj.NgayTao).AsQueryable().GetPageAsync(obj);
+                var result = await _context.HoaDon.Include(c => c.DanhGia).Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().Where(c => c.LoaiDonHang == obj.LoaiHoaDon || (c.LoaiDonHang < 5 && obj.LoaiHoaDon == null)).Where(c => c.TrangThaiGiaoHang == obj.TrangThaiGiaoHang || (c.TrangThaiGiaoHang < 20 && obj.TrangThaiGiaoHang == null)).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThaiGiaoHang < 20 && obj.TrangThai == null)).Where(c => c.Ma == obj.Ma || c.TenNguoiNhan.ToLower().Trim().Contains(!string.IsNullOrEmpty(obj.Ma) ? obj.Ma.ToLower().Trim() : "")).Where(c => (obj.IdKhachHang != null && c.IdKhachHang == obj.IdKhachHang) || c.LoaiDonHang < 5).Where(c => c.NgayTao >= obj.NgayTao).AsQueryable().GetPageAsync(obj);
                 foreach (var x in result.Content)
                 {
                     foreach (var y in x.HoaDonChiTiets)
@@ -152,7 +159,20 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
             }
         }
 
-        public async Task<Response> GetHoaDonChuaHoanThanhAsync(HoaDonQueryModel obj)
+		public async Task<Response> GetHoaDonByMaAsync(string ma)
+		{
+			try
+			{
+				return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.DanhGia).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().FirstOrDefaultAsync(c => c.Ma == ma)));
+			}
+			catch (Exception e)
+			{
+				Log.Error(e, "Lấy dữ liệu thất bại");
+				return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+			}
+		}
+
+		public async Task<Response> GetHoaDonChuaHoanThanhAsync(HoaDonQueryModel obj)
         {
             try
             {
@@ -169,7 +189,7 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
         {
             try
             {
-                return new ResponseList<HoaDonModel>(_mapper.Map<List<Entities.HoaDon>, List<HoaDonModel>>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).Where(c => c.IdKhachHang == id).AsNoTracking().ToListAsync()));
+                return new ResponseList<HoaDonModel>(_mapper.Map<List<Entities.HoaDon>, List<HoaDonModel>>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.DanhGia).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).Where(c => c.IdKhachHang == id).AsNoTracking().ToListAsync()));
             }
             catch (Exception e)
             {

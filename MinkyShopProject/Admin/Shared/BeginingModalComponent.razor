@@ -142,7 +142,7 @@
             TrangThai = 0,
         };
 
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Bắt Đầu Ca Làm Việc", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Bắt Đầu Ca Làm Việc", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
         var result = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/GiaoCas",model);
@@ -154,7 +154,7 @@
             Ca = result2.Data;
             await Swal.FireAsync(new SweetAlertOptions()
             {
-                    TitleText = response.Message,
+                    Text = response.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Success
             });
@@ -163,7 +163,7 @@
         {
             await Swal.FireAsync(new SweetAlertOptions
             {
-                    TitleText = response.Message,
+                    Text = response.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Error
             });

@@ -152,7 +152,7 @@
                                                                         </td>
                                                                         <td class="text-sm">
                                                                             <a href="javascript:;" @onclick='async() => { 
-                                                                                var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Đổi Trạng Thái", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                                                                                var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Đổi Trạng Thái", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
                                                                                 if (string.IsNullOrEmpty(confirm.Value)) return;
                                                                                 y.v.TrangThai = !y.v.TrangThai;
                                                                                 await DeleteAsync(y.v.Id);  y.v.TrangThai = !y.v.TrangThai; }' data-bs-toggle="tooltip" data-bs-original-title="Delete product">
@@ -306,7 +306,7 @@
                 }
             }
 
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = $"Bạn Có Chắc Muốn {(ThuocTinh.Id == Guid.Empty ? "Thêm" : "Sửa")}", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = $"Bạn Có Chắc Muốn {(ThuocTinh.Id == Guid.Empty ? "Thêm" : "Sửa")}", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 

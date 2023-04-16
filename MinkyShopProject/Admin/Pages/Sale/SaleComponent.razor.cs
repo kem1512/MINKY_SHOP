@@ -246,7 +246,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     if (validate)
                     {
 
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "", TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "", TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -283,7 +283,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     var validate = await ValidateHoaDon();
                     if (validate)
                     {
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "",  TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions {  Text = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -384,7 +384,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         async Task TimKiemVoucher()
         {
-            VouchersThoaMan = Vouchers?.Data.Content.Where(c => c.SoTienCan <= HoaDons[index].TongTien).ToList();
+            VouchersThoaMan = Vouchers?.Data.Content.Where(c => c.SoTienCan <= HoaDons[index].TongTien && c.SoLuong > 0 && c.NgayKetThuc >= DateTime.Now).ToList();
         }
 
         async Task ApDungVoucher(int indexVoucher)

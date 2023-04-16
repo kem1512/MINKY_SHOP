@@ -6,37 +6,39 @@ using MinkyShopProject.Data.Models;
 using Serilog;
 using System.Net;
 
-namespace MinkyShopProject.Business.Repositories.Voucher
+namespace MinkyShopProject.Business.Repositories.DanhGia
 {
-    public class VoucherRepository : IVoucherRepository
-	{
+    public class DanhGiaRepository : IDanhGiaRepository
+    {
         private readonly MinkyShopDbContext _context;
         private readonly IMapper _mapper;
 
-        public VoucherRepository(MinkyShopDbContext context, IMapper mapper)
+        public DanhGiaRepository(MinkyShopDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
         }
 
-        public async Task<Response> AddAsync(VoucherCreateModel obj)
+        public async Task<Response> AddAsync(DanhGiaCreateModel obj)
         {
             try
             {
                 if (obj == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
 
-                var voucher = _mapper.Map<VoucherCreateModel, Entities.Voucher>(obj);
-                voucher.NgayApDung = DateTime.Now;
+                var danhGia = _mapper.Map<DanhGiaCreateModel, Entities.DanhGia>(obj);
 
-                await _context.Voucher.AddAsync(voucher);
+                danhGia.HoaDon = null;
+                danhGia.KhachHang = null;
+
+                await _context.DanhGia.AddAsync(danhGia);
 
                 var status = await _context.SaveChangesAsync();
 
                 if (status > 0)
                 {
-                    var data = _mapper.Map<Entities.Voucher, VoucherModel>(voucher);
-                    return new ResponseObject<VoucherModel>(data, "Thêm thành công");
+                    var data = _mapper.Map<Entities.DanhGia, DanhGiaModel>(danhGia);
+                    return new ResponseObject<DanhGiaModel>(data, "Thêm thành công");
                 }
 
                 return new ResponseError(HttpStatusCode.BadRequest, "Thêm Thất Bại");
@@ -52,12 +54,12 @@ namespace MinkyShopProject.Business.Repositories.Voucher
         {
             try
             {
-                var voucher = await _context.Voucher.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                var danhGia = await _context.DanhGia.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
 
-                if (voucher == null)
+                if (danhGia == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                _context.Voucher.Remove(voucher);
+                _context.DanhGia.Remove(danhGia);
 
                 var status = await _context.SaveChangesAsync();
 
@@ -75,14 +77,14 @@ namespace MinkyShopProject.Business.Repositories.Voucher
             }
         }
 
-        public async Task<Response> FindAsync(string id)
+        public async Task<Response> FindAsync(Guid id)
         {
             try
             {
-                var voucher = await _context.Voucher.FirstOrDefaultAsync(c => c.Ma.ToLower().Trim() == id.ToLower().Trim());
+                var danhGia = await _context.DanhGia.Include(c => c.HoaDon).ThenInclude(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe).ThenInclude(c => c.SanPham).Where(c => c.HoaDon.HoaDonChiTiets.Any(c => c.BienThe.SanPham.Id == id)).AsNoTracking().ToListAsync();
 
-                if (voucher != null)
-                    return new ResponseObject<VoucherModel>(_mapper.Map<Entities.Voucher, VoucherModel>(voucher));
+                if (danhGia != null)
+                    return new ResponseList<DanhGiaModel>(_mapper.Map<List<Entities.DanhGia>, List<DanhGiaModel>>(danhGia));
                 return new ResponseError(HttpStatusCode.NotFound, "Không tìm thấy");
             }
             catch (Exception e)
@@ -92,11 +94,11 @@ namespace MinkyShopProject.Business.Repositories.Voucher
             }
         }
 
-        public async Task<Response> GetAsync(VoucherQueryModel obj)
+        public async Task<Response> GetAsync(DanhGiaQueryModel obj)
         {
             try
             {
-                return new ResponsePagination<VoucherModel>(_mapper.Map<Pagination<Entities.Voucher>, Pagination<VoucherModel>>(await _context.Voucher.Where(c => c.Ten.Contains(obj.Ten ?? "")).Where(c => c.TrangThai == obj.TrangThai || (c.TrangThai < 2 && obj.TrangThai == null)).AsQueryable().GetPageAsync(obj)));
+                return new ResponsePagination<DanhGiaModel>(_mapper.Map<Pagination<Entities.DanhGia>, Pagination<DanhGiaModel>>(await _context.DanhGia.AsQueryable().GetPageAsync(obj)));
             }
             catch (Exception e)
             {
@@ -105,42 +107,40 @@ namespace MinkyShopProject.Business.Repositories.Voucher
             }
         }
 
-        public async Task<Response> UpdateAsync(Guid id, VoucherCreateModel obj)
+        public async Task<Response> UpdateAsync(Guid id, DanhGiaCreateModel obj)
         {
             try
             {
                 if (obj == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Lỗi rồi");
 
-                var voucher = _context.Voucher.AsNoTracking().FirstOrDefault(c => c.Id == id);
+                var danhGia = _context.DanhGia.AsNoTracking().FirstOrDefault(c => c.Id == id);
 
-                if (voucher == null)
+                if (danhGia == null)
                     return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
 
-                voucher.MoTa = obj.MoTa;
+                danhGia.Anh = obj.Anh;
 
-                voucher.NgayKetThuc = obj.NgayKetThuc;
+                danhGia.SoDanhGia = obj.SoDanhGia;
 
-                voucher.SoLuong = obj.SoLuong;
+                danhGia.NgayDanhGia = obj.NgayDanhGia;
 
-                voucher.SoTienCan = obj.SoTienCan;
+                danhGia.IdKhachHang = obj.IdKhachHang;
 
-                voucher.SoTienGiam = obj.SoTienGiam;
+                danhGia.IdHoaDon = obj.IdHoaDon;
 
-                voucher.Ma = obj.Ma;
+                danhGia.NoiDung = obj.NoiDung;
 
-                voucher.Ten = voucher.Ten;
+                danhGia.TrangThai = obj.TrangThai;
 
-                voucher.TrangThai = obj.TrangThai;
-
-                _context.Voucher.Update(_mapper.Map<VoucherCreateModel, Entities.Voucher>(obj));
+                _context.DanhGia.Update(_mapper.Map<DanhGiaCreateModel, Entities.DanhGia>(obj));
 
                 var status = await _context.SaveChangesAsync();
 
                 if (status > 0)
                 {
-                    var data = _mapper.Map<Entities.Voucher, VoucherModel>(voucher);
-                    return new ResponseObject<VoucherModel>(data, "Cập nhật thành công");
+                    var data = _mapper.Map<Entities.DanhGia, DanhGiaModel>(danhGia);
+                    return new ResponseObject<DanhGiaModel>(data, "Cập nhật thành công");
                 }
                 return new ResponseError(HttpStatusCode.BadRequest, "Không tìm thấy giá trị");
             }

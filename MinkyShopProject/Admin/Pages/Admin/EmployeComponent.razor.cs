@@ -118,7 +118,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         async Task Remove(Guid Id)
         {
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Xóa Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -141,7 +141,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
-                    Title = response.Message,
+                    Text = response.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Error
                 });
@@ -174,7 +174,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 if (Create)
                 {
-                    var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+                    var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
 
                     if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -186,7 +186,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
                     {
                         await Swal.FireAsync(new SweetAlertOptions
                         {
-                            Title = response.Message,
+                            Text = response.Message,   
                             ShowConfirmButton = true,
                             Icon = SweetAlertIcon.Success
                         });
@@ -198,7 +198,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
                     {
                         await Swal.FireAsync(new SweetAlertOptions
                         {
-                            Title = response.Message,
+                            Text = response.Message,
                             ShowConfirmButton = true,
                             Icon = SweetAlertIcon.Error
                         });
@@ -229,7 +229,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
                     {
                         await Swal.FireAsync(new SweetAlertOptions
                         {
-                            Title = response.Message,
+                            Text = response.Message,
                             ShowConfirmButton = true,
                             Icon = SweetAlertIcon.Error
                         });
@@ -289,7 +289,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
-                    Title = ex.Message,
+                    Text = ex.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Error
                 });
@@ -308,7 +308,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
-                    Title = response.Message,
+                    Text = response.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Success
                 });
@@ -318,7 +318,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 await Swal.FireAsync(new SweetAlertOptions
                 {
-                    Title = response.Message,
+                    Text = response.Message,
                     ShowConfirmButton = true,
                     Icon = SweetAlertIcon.Error
                 });

@@ -4,6 +4,7 @@
 @inject HttpClient HttpClient
 @inject SweetAlertService Swal
 @inject Blazored.SessionStorage.ISessionStorageService Session
+@inject NavigationManager NavigationManager;
 
 <main class="bg_gray">
     <div class="container margin_30">
@@ -109,6 +110,10 @@
                                 <div class="form-group">
                                     <input type="text" class="form-control" placeholder="Ghi Chú" @bind="HoaDon.GhiChuGiaoHang">
                                 </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"id="fcustomCheck1" @onchange='async e => { GetChecked = Boolean.Parse(e.Value?.ToString() ?? ""); await GetData(); }'>
+                                    <label class="custom-control-label" for="customCheck1">Sử dụng dữ liệu của tài khoản @GetChecked</label>
+                                </div>
                             </div>
                             <!-- /tab_1 -->
                         </div>
@@ -154,8 +159,28 @@
 
     private HoaDonCreateModel HoaDon = new HoaDonCreateModel();
 
+    bool GetChecked = false;
 
     string maVoucher = "";
+
+    async Task GetData()
+    {
+        if(GetChecked){
+            var khachHang = await Session.GetItemAsync<KhachHangModel>("khachHang");
+            if (khachHang != null)
+            {
+                HoaDon.DiaChi = khachHang.DiaChi;
+                HoaDon.Sdt = khachHang.Sdt;
+                HoaDon.TenNguoiNhan = khachHang.Ten;
+            }
+        }
+        else
+        {
+            HoaDon.DiaChi = "";
+            HoaDon.Sdt = "";
+            HoaDon.TenNguoiNhan = "";
+        }
+    }
 
     protected async override Task OnInitializedAsync()
     {
@@ -171,17 +196,23 @@
         var status = await HttpClient.PutAsJsonAsync<GioHangModel>("https://localhost:7053/api/GioHang", GioHangs.Data);
         if (status.IsSuccessStatusCode)
         {
-            await Swal.FireAsync("Thông Báo", "Thêm Thành Công", SweetAlertIcon.Success);
+            await Swal.FireAsync("", "Cập Nhật Thành Công", SweetAlertIcon.Success);
         }
         else
         {
-            await Swal.FireAsync("Thông Báo", "Thêm Thất Bại", SweetAlertIcon.Error);
+            await Swal.FireAsync("", "Cập Nhật Thất Bại", SweetAlertIcon.Error);
         }
     }
 
     async Task ThemVaoGioHang()
     {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+        if (HoaDon.TenNguoiNhan == null || string.IsNullOrEmpty(HoaDon.TenNguoiNhan) || HoaDon.DiaChi == null || string.IsNullOrEmpty(HoaDon.DiaChi) || HoaDon.Sdt == null || string.IsNullOrEmpty(HoaDon.Sdt))
+        {
+            await Swal.FireAsync("", "Vui Lòng Nhập Đủ Các Trường", SweetAlertIcon.Error);
+            return;
+        }
+
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "", TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -205,7 +236,7 @@
                 HoaDon.TongTien = HoaDon.HoaDonChiTiets.Sum(c => c.SoLuong * c.DonGia);
             }
             var status = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/HoaDon", HoaDon);
-            await HttpClient.DeleteAsync("https://localhost:7053/api/GioHang/" + HoaDon.IdKhachHang);
+            await HttpClient.DeleteAsync("https://localhost:7053/api/GioHang?id=" + HoaDon.IdKhachHang);
             if (status.IsSuccessStatusCode)
             {
                 await Swal.FireAsync("", "Tạo Hóa Đơn Thành Công", SweetAlertIcon.Success);
@@ -237,21 +268,35 @@
 
     async Task ApDungVoucher()
     {
-        var voucher = await HttpClient.GetFromJsonAsync<ResponseObject<VoucherModel>>("https://localhost:7053/api/Voucher/" + maVoucher);
-        if(voucher != null && voucher.Data.Id != Guid.Empty)
+        try
         {
-            if (voucher.Data.HinhThucGiamGia == 1)
+            var voucher = await HttpClient.GetFromJsonAsync<ResponseObject<VoucherModel>>("https://localhost:7053/api/Voucher/" + maVoucher);
+            if (voucher != null && voucher.Data.Id != Guid.Empty)
             {
-                HoaDon.TongTien = GioHangs.Data.GioHangChiTiets.Sum(c => c.SoLuong * c.DonGia);
-                HoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() {  IdVoucher = voucher.Data.Id, SoTienGiam = voucher.Data.SoTienGiam, TienTruocKhiGiam = HoaDon.TongTien, TienSauKhiGiam = HoaDon.TongTien - voucher.Data.SoTienGiam, Voucher = voucher.Data } };
+                if(voucher.Data.NgayKetThuc < DateTime.Now || voucher.Data.SoLuong <= 0)
+                {
+                    await Swal.FireAsync("", "Voucher Hết Hạn Sử Dụng Hoặc Hết Lượt Sử Dụng", SweetAlertIcon.Error);
+                }
+                else
+                {
+                    if (voucher.Data.HinhThucGiamGia == 1)
+                    {
+                        HoaDon.TongTien = GioHangs.Data.GioHangChiTiets.Sum(c => c.SoLuong * c.DonGia);
+                        HoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Data.Id, SoTienGiam = voucher.Data.SoTienGiam, TienTruocKhiGiam = HoaDon.TongTien, TienSauKhiGiam = HoaDon.TongTien - voucher.Data.SoTienGiam, Voucher = voucher.Data } };
+                    }
+                    else
+                    {
+                        var after = HoaDon.TongTien - (HoaDon.TongTien * voucher.Data.SoTienGiam / 100);
+                        HoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Data.Id, SoTienGiam = HoaDon.TongTien - after, TienTruocKhiGiam = HoaDon.TongTien, TienSauKhiGiam = after, Voucher = voucher.Data } };
+                    }
+                }
             }
             else
             {
-                var after = HoaDon.TongTien - (HoaDon.TongTien * voucher.Data.SoTienGiam / 100);
-                HoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Data.Id, SoTienGiam = HoaDon.TongTien - after, TienTruocKhiGiam = HoaDon.TongTien, TienSauKhiGiam = after, Voucher = voucher.Data } };
+                await Swal.FireAsync("", "Voucher Không Tồn Tại", SweetAlertIcon.Error);
             }
         }
-        else
+        catch (Exception)
         {
             await Swal.FireAsync("", "Voucher Không Tồn Tại", SweetAlertIcon.Error);
         }

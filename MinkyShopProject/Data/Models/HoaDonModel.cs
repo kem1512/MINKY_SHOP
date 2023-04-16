@@ -48,6 +48,8 @@ namespace MinkyShopProject.Data.Models
 
         public float TongTien { get; set; }
 
+        public DanhGiaModel? DanhGia { get; set; }
+
         public int TrangThaiGiaoHang { get; set; } // 0 : Giao Thành Công, 1 : Giao Thất Bại
 
         public string? GhiChuGiaoHang { get; set; }

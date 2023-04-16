@@ -145,7 +145,7 @@
 				<div class="col-xl-3 col-lg-2 col-md-3">
 					<ul class="top_tools">
 						<li>
-                            <NavLink href="/cart" class="cart_bt"></NavLink>
+							<NavLink href="/cart"><a class="cart_bt"></a></NavLink>
 							<!-- /dropdown-cart-->
 						</li>
 						<li>
@@ -157,24 +157,21 @@
 								<div class="dropdown-menu">
 									@if (!isLogin)
 									{
-										<a href="account.html" class="btn_1">Sign In or Sign Up</a>
+										<NavLink href="/account" class="btn_1">Đăng nhập hoặc đăng ký</NavLink>
 									}
 									<ul>
 										<li>
-											<a href="track-order.html"><i class="ti-truck"></i>Track your Order</a>
-										</li>
-										<li>
-											<NavLink href="/trackorder"><i class="ti-package"></i>My Orders</NavLink>
+											<NavLink href="track"><i class="ti-truck"></i>Tìm kiếm đơn hàng</NavLink>
 										</li>
 										@if (isLogin)
 										{
 											<li>
-												<a href="account.html"><i class="ti-user"></i>My Profile</a>
+												<NavLink href="/trackorder"><i class="ti-package"></i>Đơn hàng của tôi</NavLink>
+											</li>
+											<li>
+												<a href="/account"><i class="ti-user"></i>Thông tin cá nhân</a>
 											</li>
 										}
-										<li>
-											<a href="help.html"><i class="ti-help-alt"></i>Help and Faq</a>
-										</li>
 										@if (isLogin)
 										{
 											<li>

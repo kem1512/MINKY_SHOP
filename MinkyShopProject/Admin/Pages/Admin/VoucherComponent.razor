@@ -88,7 +88,7 @@
                                     <label>Số tiền giảm</label>
                                     @if(Voucher.HinhThucGiamGia == 0)
                                     {
-                                        <input type="number" class="form-control"  @bind="Voucher.SoTienGiam" min="1" max="10">
+                                        <input type="number" class="form-control"  @bind="Voucher.SoTienGiam" min="1" max="100">
                                     }else{
                                         <input type="text" class="form-control" @oninput='e => Voucher.SoTienGiam = float.Parse(e.Value?.ToString() ?? "")' value="@string.Format("{0:0,0}", Voucher.SoTienGiam)">
                                     }
@@ -368,7 +368,7 @@
 
     async Task DeleteAsync(int index)
     {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 

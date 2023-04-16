@@ -2,59 +2,74 @@
 @layout Shared.EmptyLayout
 
 <div class="container-fluid bg-primary">
-    <div class="row py-1">
-        <div class="col-5">
-            <div class="form-group mb-0 position-relative">
-                <div class="input-group input-group-alternative">
-                    <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
-                    <input class="form-control h-0" placeholder="Nhập Mã Sản Phẩm Hoặc Tên" type="text" @onkeydown='async e => { if(e.Code == "Enter"){ await ThemTuMaSanPham(ma); } }' @oninput='e =>{
+    @if(HoaDons == null)
+    {
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <div class="spinner-grow text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row py-1">
+            <div class="col-5">
+                <div class="form-group mb-0 position-relative">
+                    <div class="input-group input-group-alternative">
+                        <span class="input-group-text"><i class="ni ni-zoom-split-in"></i></span>
+                        <input class="form-control h-0" placeholder="Nhập Mã Sản Phẩm Hoặc Tên" type="text" @onkeydown='async e => { if(e.Code == "Enter"){ await ThemTuMaSanPham(ma); } }' @oninput='e =>{
                     ma = e.Value.ToString(); TimKiemSanPham(e.Value?.ToString() ?? "");
                 }'>
-                </div>
-                @if (SanPhamsSearch != null && SanPhamsSearch.Any())
-                {
-                    <div class="position-absolute list-group" style="z-index: 1; left: 0; right: 0" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
-                        @foreach (var x in SanPhamsSearch.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
-                        {
-                            if (x.i < 5)
-                            {
-                                <button class="d-flex list-group-item list-group-item-action align-items-center">
-                                    <img src="@x.v.Anh" style="width: 20%" />
-                                    <span @onmousedown="() => { Id = x.v.Id; }" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" class="ms-3 text-sm">@x.v.Ten<br /><i class="text-danger">@x.v.BienThes?.Count() biến thể</i></span>
-                                </button>
-                            }
-                        }
                     </div>
-                }
-            </div>
-        </div>
-        <div class="col-5 px-0 d-flex">
-            @if (HoaDons != null && HoaDons.Any())
-            {
-                <span class="fa fa-barcode ms-2 me-2" style="color: white; font-size: 40px" @onclick="() => ShowScanBarcode = !ShowScanBarcode"></span>
-                <button class="btn text-light text-bold shadow-none m-0 d-none" id="left-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(-200, 0)'>&lt;</button>
-                <div class="d-flex flex-nowrap overflow-hidden" style="direction: rtl" id="myTab">
-                    @foreach (var x in HoaDons.Select((v, i) => (i, v)).Reverse())
+                    @if (SanPhamsSearch != null && SanPhamsSearch.Any())
                     {
-                        <button @onclick="() => index = x.i" class="btn @(x.i == index ? "btn-light" : "btn-outline-light") text-nowrap border mb-0 me-2"><span @onclick="() => XoaHoaDon(x.i)" class="fa fa-times text-danger ms-2"></span>Hóa Đơn @(x.i + 1)</button>
+                        <div class="position-absolute list-group" style="z-index: 1; left: 0; right: 0" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
+                            @foreach (var x in SanPhamsSearch.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
+                            {
+                                if (x.i < 5)
+                                {
+                                    <button class="d-flex list-group-item list-group-item-action align-items-center">
+                                        <img src="@x.v.Anh" style="width: 20%" />
+                                        <span @onmousedown="() => { Id = x.v.Id; }" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" class="ms-3 text-sm">@x.v.Ten<br /><i class="text-danger">@x.v.BienThes?.Count() biến thể</i></span>
+                                    </button>
+                                }
+                            }
+                        </div>
                     }
                 </div>
-                <button class="btn btn-info mb-0" @onclick="() => ThemHoaDon()"><i class="fa fa-plus text-xs"></i></button>
-                <button class="btn text-light text-bold shadow-none m-0 d-none" id="right-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(200, 0)'>></button>
-            }
-        </div>
-        <div class="col-2 d-flex align-items-center justify-content-end">
-            <span class="me-1 text-light text-bolder text-sm">@HoaDons?[index]?.NhanVien?.Ten</span>
-            <div class="dropup-center">
-                <button class="btn shadow-none mb-0 text-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="fa fa-bars"></span>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li><NavLink class="dropdown-item" href="/admin/invoice">Hóa Đơn</NavLink></li>
-                </ul>
+            </div>
+            <div class="col-5 px-0 d-flex">
+                @if (HoaDons != null && HoaDons.Any())
+                {
+                    <span class="fa fa-barcode ms-2 me-2" style="color: white; font-size: 40px" @onclick="() => ShowScanBarcode = !ShowScanBarcode"></span>
+                    <button class="btn text-light text-bold shadow-none m-0 d-none" id="left-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(-200, 0)'>&lt;</button>
+                    <div class="d-flex flex-nowrap overflow-hidden" style="direction: rtl" id="myTab">
+                        @foreach (var x in HoaDons.Select((v, i) => (i, v)).Reverse())
+                        {
+                            <button @onclick="() => index = x.i" class="btn @(x.i == index ? "btn-light" : "btn-outline-light") text-nowrap border mb-0 me-2"><span @onclick="() => XoaHoaDon(x.i)" class="fa fa-times text-danger ms-2"></span>Hóa Đơn @(x.i + 1)</button>
+                        }
+                    </div>
+                    <button class="btn btn-info mb-0" @onclick="() => ThemHoaDon()"><i class="fa fa-plus text-xs"></i></button>
+                    <button class="btn text-light text-bold shadow-none m-0 d-none" id="right-overflow" type="button" onclick='document.getElementById("myTab").scrollBy(200, 0)'>></button>
+                }
+            </div>
+            <div class="col-2 d-flex align-items-center justify-content-end">
+                <span class="me-1 text-light text-bolder text-sm">@HoaDons?[index]?.NhanVien?.Ten</span>
+                <div class="dropup-center">
+                    <button class="btn shadow-none mb-0 text-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="fa fa-bars"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><NavLink class="dropdown-item" href="/admin/invoice">Hóa Đơn</NavLink></li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 @if (HoaDons != null && HoaDons.Any())
 {
@@ -149,14 +164,15 @@
                                             </div>
                                             <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                 <label class="text-xs">Giảm Giá</label>
-                                                <div class="position-relative">
+                                                <div class="d-flex position-relative">
+                                                    <button class="btn btn-xs shadow-none me-2 mb-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
                                                     <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
                                                            value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten @(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? " - " + Helper.FormatMoney(HoaDons[index].VoucherLogs[0].SoTienGiam) : "")"
                                                            onfocus="document.getElementById('voucher-list').style.display='block'"
                                                            onblur="setTimeout(() => { document.getElementById('voucher-list').style.display='none' }, 100)">
                                                     @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
                                                     {
-                                                        <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
+@*                                                        <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>*@
                                                     }
                                                     <div class="position-absolute list-group w-100" id="voucher-list" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                         @if (VouchersThoaMan != null && VouchersThoaMan.Any())

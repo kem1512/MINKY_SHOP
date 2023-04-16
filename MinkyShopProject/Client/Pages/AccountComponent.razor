@@ -171,17 +171,24 @@
 		}
 		else
 		{
-		    var result = await HttpClient.GetFromJsonAsync<ResponseObject<KhachHangModel>>(Url + "/Login?username=" + KhachHangDangNhap.Sdt + "&password=" + KhachHangDangNhap.MatKhau);
-		    if(result != null)
-		    {
-		        await Session.SetItemAsync("khachHang", result.Data);
-		        NavigationManager.NavigateTo("/admin");
-		    }
-		    else
-		    {
-		        await Swal.FireAsync("", "Đăng nhập thất bại", SweetAlertIcon.Error);
-		    }
-		    KhachHangDangNhap = new KhachHangThemVaSuaModel();
+			try
+			{
+				var result = await HttpClient.GetFromJsonAsync<ResponseObject<KhachHangModel>>(Url + "/Login?username=" + KhachHangDangNhap.Sdt + "&password=" + KhachHangDangNhap.MatKhau);
+				if (result != null)
+				{
+					await Session.SetItemAsync("khachHang", result.Data);
+					NavigationManager.NavigateTo("/admin");
+				}
+				else
+				{
+					await Swal.FireAsync("", "Đăng nhập thất bại", SweetAlertIcon.Error);
+				}
+				KhachHangDangNhap = new KhachHangThemVaSuaModel();
+			}
+			catch (Exception)
+			{
+				await Swal.FireAsync("", "Đăng nhập thất bại", SweetAlertIcon.Error);
+			}
 		}
 	}
 

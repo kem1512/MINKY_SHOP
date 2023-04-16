@@ -109,16 +109,18 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValueSql("(NEWID())");
 
                     b.Property<string>("Anh")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("IdBienThe")
+                    b.Property<Guid?>("BienTheId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("IdHoaDon")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("IdKhachHang")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IdSanPham")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayDanhGia")
@@ -140,7 +142,7 @@ namespace MinkyShopProject.Business.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdBienThe");
+                    b.HasIndex("BienTheId");
 
                     b.HasIndex("IdHoaDon")
                         .IsUnique();
@@ -464,7 +466,7 @@ namespace MinkyShopProject.Business.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool?>("GioiTinh")
                         .HasColumnType("bit");
@@ -501,6 +503,10 @@ namespace MinkyShopProject.Business.Migrations
                         .HasDefaultValue(0);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("IdViDiem")
                         .IsUnique()
@@ -881,11 +887,9 @@ namespace MinkyShopProject.Business.Migrations
 
             modelBuilder.Entity("MinkyShopProject.Business.Entities.DanhGia", b =>
                 {
-                    b.HasOne("MinkyShopProject.Business.Entities.BienThe", "BienThe")
+                    b.HasOne("MinkyShopProject.Business.Entities.BienThe", null)
                         .WithMany("DanhGias")
-                        .HasForeignKey("IdBienThe")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BienTheId");
 
                     b.HasOne("MinkyShopProject.Business.Entities.HoaDon", "HoaDon")
                         .WithOne("DanhGia")
@@ -897,8 +901,6 @@ namespace MinkyShopProject.Business.Migrations
                         .WithMany("DanhGias")
                         .HasForeignKey("IdKhachHang")
                         .IsRequired();
-
-                    b.Navigation("BienThe");
 
                     b.Navigation("HoaDon");
 
