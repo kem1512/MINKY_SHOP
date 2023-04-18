@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div class="col-md-3 text-right">
-                <select class="form-control">
+                <select class="form-control w-50" @onchange='async e => { selectedOption = e.Value?.ToString() ?? ""; await Reload(); }'>
                     <option value="homnay">Hôm nay</option>
                     <option value="homqua">Hôm qua</option>
                     <option value="7ngaytruoc">7 ngày trước</option>
@@ -140,22 +140,33 @@
     [Parameter]
     public int Page { get; set; }
     private string selectedTable = "sanphamSoLuong";
+    private string selectedOption = "homnay";
+    Uri Url;
+    ResponseObject<List<SpBanNhieuNHatSoLuong>> SpBanNhieuNHatSoLuong;
+    ResponseObject<List<SpBanNhieuNHatTien>> SpBanNhieuNhatTien;
 
-    Uri Urlspsl = new Uri("https://localhost:7053/api/ThongKe/SanPhamBanNhieuNhatSoLuong");
-    Uri Urlspt = new Uri("https://localhost:7053/api/ThongKe/SanPhamBanNhieuNhatTien");
-
-    ResponseObject<List<SpBanNhieuNHatSoLuong>>? SpBanNhieuNHatSoLuong;
-    ResponseObject<List<SpBanNhieuNHatTien>>? SpBanNhieuNhatTien;
-    ResponsePagination<SpBanNhieuNHatSoLuong>? SpBanNhieuNHats;
-
-    protected async override Task OnInitializedAsync()
+    protected async override void OnInitialized()
     {
-        await Reload();
+        await LoadData();
+    }
+
+    async Task LoadData()
+    {
+        if (selectedTable == "sanphamSoLuong")
+        {
+            Url = new Uri($"https://localhost:7053/api/ThongKe/SanPhamBanNhieuNhatSoLuong?loaiThongKe={selectedOption}");
+            SpBanNhieuNHatSoLuong = await HttpClient.GetFromJsonAsync<ResponseObject<List<SpBanNhieuNHatSoLuong>>>(Url);
+        }
+        else if (selectedTable == "sanphamTien")
+        {
+            Url = new Uri($"https://localhost:7053/api/ThongKe/SanPhamBanNhieuNhatTien?loaiThongKe={selectedOption}");
+            SpBanNhieuNhatTien = await HttpClient.GetFromJsonAsync<ResponseObject<List<SpBanNhieuNHatTien>>>(Url);
+        }
     }
 
     async Task Reload()
     {
-        SpBanNhieuNHatSoLuong = await HttpClient.GetFromJsonAsync<ResponseObject<List<SpBanNhieuNHatSoLuong>>>(Urlspsl);
-        SpBanNhieuNhatTien = await HttpClient.GetFromJsonAsync<ResponseObject<List<SpBanNhieuNHatTien>>>(Urlspt);
+        await LoadData();
     }
+
 }

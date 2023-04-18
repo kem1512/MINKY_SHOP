@@ -76,8 +76,8 @@ function drawChart(data) {
     var values = [];
 
     for (var i = 0; i < data.data.thongKeTheoNgayTienThangNam.length; i++) {
-        /*var label = data.data[i].ngay + "/" + data.data[i].thang + "/" + data.data[i].nam;*/
-        var label = data.data.thongKeTheoNgayTienThangNam[i].ngay;
+        //var label = data.data[i].ngay + "/" + data.data[i].thang + "/" + data.data[i].nam;
+        var label = "Ngày " + data.data.thongKeTheoNgayTienThangNam[i].ngay;
         var value = data.data.thongKeTheoNgayTienThangNam[i].tongTien;
 
         //console.log(label)
