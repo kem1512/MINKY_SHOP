@@ -43,38 +43,38 @@ namespace MinkyShopProject.Business.Repositories.ThongKe
 		}
 
 
-		public async Task<Response> SanPhamBanNhieuNhatSoLuong()
+		public async Task<Response> SanPhamBanNhieuNhatSoLuong(string loaiThongKe)
 		{
-			// DateTime now = DateTime.Now.Date;
-			// DateTime start;
-			// DateTime end = now.AddDays(1).AddMilliseconds(-1);
-			// switch (loaiThongKe)
-			// {
-			//     case "homnay":
-			//         start = now;
-			//         break;
-			//     case "homqua":
-			//         start = now.AddDays(-1);
-			//         end = now.AddMilliseconds(-1);
-			//         break;
-			//     case "7ngaytruoc":
-			//         start = now.AddDays(-6);
-			//         break;
-			//     case "thangtruoc":
-			//         start = new DateTime(now.Year, now.Month, 1).AddMonths(-1);
-			//         end = new DateTime(now.Year, now.Month, 1).AddMilliseconds(-1);
-			//         break;
-			//     case "thangnay":
-			//         start = new DateTime(now.Year, now.Month, 1);
-			//         break;
-			//     default:
-			//         return new ResponseError(HttpStatusCode.BadRequest, "Lựa chọn không hợp lệ.");
-			// }
+			DateTime now = DateTime.Now.Date;
+			DateTime start;
+			DateTime end = now.AddDays(1).AddMilliseconds(-1);
+			switch (loaiThongKe)
+			{
+				case "homnay":
+					start = now;
+					break;
+				case "homqua":
+					start = now.AddDays(-1);
+					end = now.AddMilliseconds(-1);
+					break;
+				case "7ngaytruoc":
+					start = now.AddDays(-6);
+					break;
+				case "thangtruoc":
+					start = new DateTime(now.Year, now.Month, 1).AddMonths(-1);
+					end = new DateTime(now.Year, now.Month, 1).AddMilliseconds(-1);
+					break;
+				case "thangnay":
+					start = new DateTime(now.Year, now.Month, 1);
+					break;
+				default:
+					return new ResponseError(HttpStatusCode.BadRequest, "Lựa chọn không hợp lệ.");
+			}
 
 			try
 			{
 				var ListSanPham = _context.HoaDon
-					// .Where(x => x.NgayTao >= start && x.NgayTao <= end && x.TrangThai != 1)
+					 .Where(x => x.NgayTao >= start && x.NgayTao <= end && x.TrangThai == 0)
 					.Include(po => po.HoaDonChiTiets)
 					.ToList()
 					.SelectMany(po => po.HoaDonChiTiets)
@@ -198,8 +198,8 @@ namespace MinkyShopProject.Business.Repositories.ThongKe
 			try
 			{
 				var result = await _context.HoaDon
-					.Where(x => x.NgayTao >= start && x.NgayTao <= end && x.TrangThai != 1)
-					.GroupBy(x => new { x.NgayTao.Day, x.NgayTao.Month, x.NgayTao.Year })
+					.Where(x => x.NgayThanhToan >= start && x.NgayThanhToan <= end && x.TrangThai != 1)
+					.GroupBy(x => new { x.NgayThanhToan.Value.Day, x.NgayThanhToan.Value.Month, x.NgayThanhToan.Value.Year })
 					.Select(g => new TongTienNgayTienThangNam()
 					{
 						TongTien = g.Sum(x => x.TongTien),
