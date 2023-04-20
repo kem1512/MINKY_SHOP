@@ -295,20 +295,10 @@
 
     Uri Url = new Uri("https://localhost:7053/api/hoadon");
 
-    Uri Url2 = new Uri("https://localhost:7053/api/hoadon/GetHoaDonChuaHoanThanhAsync");
-
-    protected async override Task OnInitializedAsync()
-    {
-        HoaDons = await HttpClient.GetFromJsonAsync<ResponsePagination<HoaDonModel>>(Url2.AddQuery("page", 1.ToString()).AddQuery("size", Filter.Size.ToString() ?? "").AddQuery("sort", "-NgayTao"));
-    }
-
     protected async override Task OnParametersSetAsync()
     {
         if (Page == 0) Page = 1;
-        if(HoaDons != null && !HoaDons.Data.Content.Any())
-        {
-            await Reload();
-        }
+        await Reload();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstRender)

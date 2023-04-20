@@ -49,17 +49,6 @@
                     }
                     
                 </li>
-                @if (IsAuth)
-                {
-                    <li class="nav-item px-3 d-flex align-items-center">
-                       @* <a href="javascript:;" class="nav-link p-0 text-bolder text-danger" @onclick='async () => {
-                            await Session.RemoveItemAsync("Token");
-                            NavigationManager.NavigateTo("/login");
-                        }'>
-                            Đăng xuất
-                        </a>*@
-                    </li>
-                }
             </ul>
         </div>
     </div>
@@ -180,7 +169,8 @@
             Ten = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Ten"))?.Value ?? "";
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             IsAuth = true;
-            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={DateTime.Now}");
+            var datetime = DateTime.Now.ToString("yyyy/MM/dd");
+            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={datetime}");
             var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas/GetCaTruoc?Id={Guid.Parse(IdNhanVien)}");
             Ca = result.Data;
             CaTruoc = result2.Data;
