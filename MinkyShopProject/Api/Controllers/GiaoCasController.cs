@@ -60,10 +60,16 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _Repositories.UpdateTiemMat(IdCa, TongTien));
         }
 
-        [HttpGet("CaDangCho")]
-        public async Task<IActionResult> GetCaChoBanGiao()
+        [HttpGet("GetAllCa")]
+        public async Task<IActionResult> GetCaChoBanGiao([FromQuery] GiaoCaModels.GiaoCaQueryModel query)
         {
-            return Helper.TransformData(await _Repositories.GetCaHienTaiChoBanGiao());
+            return Helper.TransformData(await _Repositories.GetCa(query));
+        }
+
+        [HttpGet("CaDangCho")]
+        public async Task<IActionResult> CaDangCho()
+        {
+            return Helper.TransformData(await _Repositories.CaDangCho());
         }
 
         [HttpGet("CaDuocChon")]

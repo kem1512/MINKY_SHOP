@@ -24,60 +24,46 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <div class="table-responsive">
-                            <table class="table table-bordered">
-                                <thead class="table-primary">
-                                    <tr>
-                                        <th>Mệnh giá</th>
-                                        <th>Số lượng</th>
-                                        <th>Thành tiền</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Moneys)
+                        @if (CaCuoiNgay != true)
+                        {
+                            <div class="form-group position-relative">
+                                <div>
+                                    <label class="form-control-label">Nhân viên bàn giao </label>
+                                </div>
+                                <input value="@(InfoNhanVien)" type="text" class="form-control form-control-sm" @oninput="TimKiemNhanVien" />
+                                <div class="position-relative">
+                                    @if (lstNhanVien != null)
                                     {
-                                        <tr>
-                                            <td><input value="@string.Format("{0:0,0}",item.MenhGia)" class="form-control form-control-sm" disabled /></td>
-                                            <td><input value="@(item.SoLuong == 0 ? "" : item.SoLuong)" type="number" class="form-control form-control-sm" @oninput="@(e => ChangeThanhtien(e,item.Id))" /></td>
-                                            <td><input value="@string.Format("{0:0,0}",item.ThanhTien)" class="form-control form-control-sm" /></td>
-                                        </tr>
+                                        <div class="position-absolute list-group w-100" style="z-index: 1; right: 0;">
+                                            @foreach (var nhanvien in lstNhanVien)
+                                            {
+                                                <button class="d-flex list-group-item list-group-item-action align-items-center" @onclick="() => ChooseNhanVien(nhanvien.Id)">
+                                                    <div class="mx-auto d-flex justify-content-center">
+                                                        <img class="img-thumbnail" src="@(nhanvien.Anh)" style="width: 50px;border-radius: 50%;height: 50px;" />
+                                                        <p class="mt-auto mx-1">@(nhanvien.Ma)</p>
+                                                        <p class="mt-auto">@(nhanvien.Ten)</p>
+                                                    </div>
+                                                </button>
+                                            }
+                                        </div>
                                     }
-                                    <tr>
-                                        <td colspan="2" class="table-primary">Tổng kê khai tiền mặt cuối ca</td>
-                                        <td><input value="@string.Format("{0:0,0}",TongTienMatCuoiCa)" class="form-control form-control-sm" /></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label class="form-control-label">Tổng Tiền Kê Khai</label>
+                            <input value="@string.Format("{0:0,0}",TongKeKhai)" type="text" class="form-control form-control-sm" @oninput="ChangeKeKhai" />
                         </div>
+                        @if (KetCaVaReset)
+                        {
+                            <div class="form-group">
+                                <label class="form-control-label">Tiền Mặt Rút</label>
+                                <input value="@string.Format("{0:0,0}",Model.TongTienMatRut)" type="text" class="form-control form-control-sm" @oninput="ChangTienRut" />
+                            </div>
+                        }
                     </div>
                     <div class="col">
                         <div>
-                            @if(CaCuoiNgay != true){
-                                <div class="form-group  position-relative">
-                                    <div class="d-flex justify-content-between">
-                                        <label class="form-control-label">Nhân viên bàn giao </label>
-                                        <label class="form-control-label text-danger">@(ErrorNhanVien)</label>
-                                    </div>
-                                    <input value="@(InfoNhanVien)" type="text" class="form-control form-control-sm" @oninput="TimKiemNhanVien" />
-                                    <div class="position-relative">
-                                        @if (lstNhanVien != null)
-                                        {
-                                            <div class="position-absolute list-group w-100" style="z-index: 1; right: 0;">
-                                                @foreach (var nhanvien in lstNhanVien)
-                                                {
-                                                    <button class="d-flex list-group-item list-group-item-action align-items-center" @onclick="() => ChooseNhanVien(nhanvien.Id)">
-                                                        <div class="mx-auto d-flex justify-content-center">
-                                                            <img class="img-thumbnail" src="@(nhanvien.Anh)" style="width: 50px;border-radius: 50%;height: 50px;" />
-                                                            <p class="mt-auto mx-1">@(nhanvien.Ma)</p>
-                                                            <p class="mt-auto">@(nhanvien.Ten)</p>
-                                                        </div>
-                                                    </button>
-                                                }
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                            }
                             <div class="form-group">
                                 <label class="form-control-label">Tổng tiền mặt đầu ca </label>
                                 <input value="@(Helper.FormatMoney(Ca.TienBanDau))" type="text" class="form-control form-control-sm" disabled />
@@ -87,8 +73,8 @@
                                 <input value="@(hoadons.Count())" type="text" class="form-control form-control-sm" disabled />
                             </div>
                             <div class="form-group">
-                                <label class="form-control-label">Tổng tiền trong ca </label>
-                                <input value="@(Helper.FormatMoney(Model.TongTienTrongCa))" type="text" class="form-control form-control-sm" disabled />
+                                <label class="form-control-label">Tổng Tiền Mặt Đã Rút</label>
+                                <input value="@(Helper.FormatMoney(Ca.TongTienMatRut))" type="text" class="form-control form-control-sm" disabled />
                             </div>
                             <div class="form-group">
                                 <label class="form-control-label">Tổng tiền mặt trong ca</label>
@@ -98,35 +84,43 @@
                                 <label class="form-control-label">Tổng tiền chuyển khoản</label>
                                 <input value="@(Helper.FormatMoney(Model.TongTienKhac))" type="text" class="form-control form-control-sm" disabled />
                             </div>
-                            <div class="form-group">
-                                <label class="form-control-label">Tiền phát sinh</label>
-                                <input value="@(Helper.FormatMoney(Model.TienPhatSinh))" type="text" class="form-control form-control-sm" disabled />
-                            </div>
                         </div>
                     </div>
                     <div class="col">
                         <div class="form-group">
+                            <label class="form-control-label">Tổng Tiền mặt Cuối Ca</label>
+                            <input value="@(Helper.FormatMoney(Model.TongTienMatCuoiCa))" type="text" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Tiền Phát Sinh</label>
+                            <input value="@(Helper.FormatMoney(Model.TienPhatSinh))" type="text" class="form-control form-control-sm" disabled />
+                        </div>
+                        <div class="form-group">
                             <div class="d-flex justify-content-between">
-                                <label class="form-control-label">Ghi chú phát sinh </label>
+                                <label class="form-control-label">Ghi chú Phát Sinh </label>
                                 <label class="form-control-label text-danger">@(ErrorGhiChu)</label>
                             </div>
                             <textarea @onchange="ChangeGhiChuPhatSinh" class="form-control"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label class="form-control-label">Tổng Tiền mặt Cuối Ca</label>
-                            <input value="@(Helper.FormatMoney(TongTienMatCuoiCa))" type="text" class="form-control form-control-sm" disabled />
-                        </div>
-                        <div class="form-check form-switch d-flex justify-content-between">
+                        <div class="form-check form-switch d-flex justify-content-between px-0">
                             <div>
-                                <label class="form-control-label">Kết Ca Cuối Ngày</label>
+                                <label class="form-control-label">Ca Cuối Ngày</label>
                             </div>
                             <div>
                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="ChangeKetCa" />
                             </div>
                         </div>
+                        <div class="form-check form-switch d-flex justify-content-between px-0">
+                            <div>
+                                <label class="form-control-label">Kết Ca Và Reset</label>
+                            </div>
+                            <div>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="ChangeKetCaReset" />
+                            </div>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-center mt-3">
-                        <button class="btn btn-primary" @onclick="KetCa">Báo cáo kết ca</button>
+                        <button class="btn btn-primary" @onclick="KetCa">Báo Cáo Kết Ca</button>
                     </div>
                 </div>
             </div>
@@ -147,29 +141,6 @@
     [Inject]
     public NavigationManager Navigation { get; set; } = null!;
 
-    private class Money
-    {
-        public Guid Id { get; set; }
-        public float MenhGia { get; set; }
-        public float SoLuong { get; set; }
-        public float ThanhTien { get; set; }
-    }
-
-    private List<Money> Moneys = new List<Money>()
-    {
-        new Money(){Id = Guid.NewGuid(),MenhGia = 500000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 200000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 100000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 50000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 20000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 10000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 5000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 2000,SoLuong = 0,ThanhTien=0},
-        new Money(){Id = Guid.NewGuid(),MenhGia = 1000,SoLuong = 0,ThanhTien=0},
-    };
-
-    private float TongTienMatCuoiCa = 0;
-
     private DateTime Time = DateTime.Now;
 
     private GiaoCa Ca = new();
@@ -182,9 +153,11 @@
 
     private float DoanhThuChuyenKhoan = 0;
 
+    private float TongKeKhai = 0;
+
     private List<HoaDon> HoaDons = new();
 
-    private GiaoCaModels.GiaoCaEditModel Model = new GiaoCaModels.GiaoCaEditModel(){TienPhatSinh = 0,GhiChuPhatSinh = string.Empty,ThoiGianGiaoCa = DateTime.Now};
+    private GiaoCaModels.GiaoCaEditModel Model = new GiaoCaModels.GiaoCaEditModel(){TienPhatSinh = 0,GhiChuPhatSinh = string.Empty,ThoiGianGiaoCa = DateTime.Now,TongTienMatRut = 0};
 
     private Response<PaginationResponse<NhanVien>> Response = new Response<PaginationResponse<NhanVien>>();
 
@@ -204,6 +177,8 @@
 
     private List<HoaDon> hoadons = new();
 
+    private bool KetCaVaReset = false;
+
     protected async override Task OnInitializedAsync()
     {
         if (await local.GetItemAsStringAsync("Token") == null)
@@ -216,6 +191,7 @@
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             await GetCaHienTai(IdNhanVien, Time);
             await GetNhanVien();
+            Model.TongTienMatCuoiCa = 0;
         }
     }
 
@@ -226,13 +202,13 @@
         if (Ca == null)
         {
             Navigation.NavigateTo("/admin");
-            await Swal.FireAsync("Thông báo", "Bạn chưa bắt đầu ca làm việc",SweetAlertIcon.Warning);
+            await Swal.FireAsync("Thông báo", "Vui Lòng Bắt Đầu Ca Làm Việc",SweetAlertIcon.Warning);
         }
         else
         {
             await GetHoaDonTrongCa();
             Model.TongTienTrongCa = Ca.TongTienMat + DoanhThu;
-            Model.TongTienMat = Ca.TongTienMat + DoanhThuTienMat;
+            Model.TongTienMat = Ca.TongTienMat;
             Model.TongTienKhac = DoanhThuChuyenKhoan;
             IdCa = Ca.Id;
         }
@@ -271,22 +247,21 @@
         DoanhThuChuyenKhoan = TienChuyenKhoan;
     }
 
-    private async Task ChangeThanhtien(ChangeEventArgs e, Guid Id)
+    private async Task ChangeKeKhai(ChangeEventArgs e)
     {
-        float tongThanhTien = 0;
-        float? tienpgatsinh = 0;
-        var soLuong = e.Value?.ToString() == "" ? 0 : Convert.ToInt32(e.Value);
-        var Money = Moneys.FirstOrDefault(c => c.Id == Id);
-        Money.SoLuong = soLuong;
-        Money.ThanhTien = Money.MenhGia * soLuong;
-        foreach (var item in Moneys)
+        TongKeKhai = float.Parse(e.Value.ToString());
+        Model.TienPhatSinh = Model.TongTienMat - float.Parse(e.Value.ToString());
+
+        if (Model.TongTienMatRut == 0)
         {
-            tongThanhTien += item.ThanhTien;
+            Model.TongTienMatCuoiCa = TongKeKhai;
         }
-        TongTienMatCuoiCa = tongThanhTien;
-        Model.TongTienMatCuoiCa = TongTienMatCuoiCa;
-        Model.TienPhatSinh = Model.TongTienMat - tongThanhTien;
-        if (Model.TienPhatSinh <= 0 || tongThanhTien == 0)
+        else
+        {
+            Model.TongTienMatCuoiCa = TongKeKhai - Model.TongTienMatRut;
+        }
+
+        if (Model.TienPhatSinh <= 0 || float.Parse(e.Value.ToString()) == 0)
         {
             Model.TienPhatSinh = 0;
         }
@@ -321,34 +296,26 @@
 
     private async Task KetCa()
     {
-        if (InfoNhanVien == string.Empty && CaCuoiNgay == false)
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Kết Ca", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+
+        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+        if (Model.TongTienMatRut != 0)
         {
-            ErrorNhanVien = "Nhân viên cho ca tiếp theo không được để trống!";
+            Model.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(Model.TongTienMatRut)} - Thời gian rút: {DateTime.Now.ToShortTimeString()}." ?? "";
         }
-        else if (Model.TienPhatSinh != 0 && Model.GhiChuPhatSinh == "")
+
+        var result = await HttpClient.PostAsJsonAsync($"https://localhost:7053/api/GiaoCas/KetCa/{IdCa}", Model);
+        if (result.IsSuccessStatusCode)
         {
-            ErrorGhiChu = "Ghi chú không được để trống!";
+            await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
+            Navigation.NavigateTo("/admin",true);
         }
         else
         {
-
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Kết Ca", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
-
-            if (string.IsNullOrEmpty(confirm.Value)) return;
-
-            if (CaCuoiNgay == true)
-            {
-                Model.ThoiGianReset = DateTime.Now;
-            }
-
-            var result = await HttpClient.PostAsJsonAsync($"https://localhost:7053/api/GiaoCas/KetCa/{IdCa}", Model);
-            if (result.IsSuccessStatusCode)
-            {
-                await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
-                Navigation.NavigateTo("/admin");
-            }
             await Swal.FireAsync("", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Error);
         }
+
     }
 
     private async Task ChangeGhiChuPhatSinh(ChangeEventArgs e)
@@ -365,6 +332,38 @@
         else
         {
             CaCuoiNgay = false;
+        }
+    }
+
+    private async Task ChangeKetCaReset(ChangeEventArgs e)
+    {
+        if (e.Value?.ToString() == "True")
+        {
+            KetCaVaReset = true;
+        }
+        else
+        {
+            KetCaVaReset = false;
+        }
+    }
+
+    private async Task ChangTienRut(ChangeEventArgs e)
+    {
+        Model.TongTienMatRut = float.Parse(e.Value.ToString());
+        if (TongKeKhai == 0)
+        {
+            await Swal.FireAsync("Thông Báo", "Bạn Chưa Kê Khai Tiền Cuối Ca", SweetAlertIcon.Warning);
+            Model.TongTienMatRut = 0;
+        }
+        else if(Model.TongTienMatRut >= Model.TongTienMatCuoiCa)
+        {
+            await Swal.FireAsync("Thông Báo", "Không Thể Đáp Ứng Số Tiền Muốn Rút", SweetAlertIcon.Warning);
+            Model.TongTienMatRut = 0;
+            Model.TongTienMatCuoiCa = TongKeKhai;
+        }
+        else
+        {
+            Model.TongTienMatCuoiCa = TongKeKhai - Model.TongTienMatRut;
         }
     }
 }

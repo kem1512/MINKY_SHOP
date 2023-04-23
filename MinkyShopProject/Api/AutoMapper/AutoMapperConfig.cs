@@ -89,6 +89,9 @@ namespace MinkyShopProject.Api.AutoMapper
 			CreateMap<DanhGiaCreateModel, DanhGia>().ForMember(c => c.HoaDon, c => c.Ignore()).ForMember(c => c.KhachHang, c => c.Ignore()).ReverseMap();
 
 			CreateMap<Pagination<DanhGia>, Pagination<DanhGiaModel>>().ReverseMap();
+
+            //Giao Ca
+            CreateMap<Pagination<GiaoCaModels.GiaoCaModel>, Pagination<GiaoCa>>().ReverseMap();
 		}
     }
 }
