@@ -89,6 +89,14 @@ namespace MinkyShopProject.Common
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
+        public static string RandomNumber(int length)
+        {
+            Random random = new Random();
+            const string chars = "0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
         public static bool CheckCharacterSpecial(this string value)
         {
             return value.Any(c => !char.IsLetterOrDigit(c) && !char.IsWhiteSpace(c) ? true : false);

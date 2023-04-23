@@ -20,7 +20,7 @@ namespace MinkyShopProject.Api.Controllers
             // await _seendingData.SeeddingKhachHang();
             // await _seendingData.SeeddingNhanVien();
             // await _seendingData.SeeddingSanPham();
-            // await _seendingData.SeeddingBienThe();
+            //await _seendingData.SeeddingBienThe();
             // await _seendingData.SeeddingThuocTinh();
             // await _seendingData.SeeddingGiaTri();
             // await _seendingData.SeeddingThuocTinhSanPham();

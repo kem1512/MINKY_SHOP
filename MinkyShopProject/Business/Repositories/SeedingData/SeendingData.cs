@@ -198,7 +198,7 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
             // _Context.RemoveRange(_Context.NhanVien);
             // _Context.RemoveRange(_Context.KhachHang);
             // _Context.RemoveRange(_Context.SanPham);
-            // await _Context.SaveChangesAsync();
+            await _Context.SaveChangesAsync();
             int soluong = 300;
             var ListId = ListGuid(soluong);
             var ListIdChiTiet = ListGuid(soluong * 10);

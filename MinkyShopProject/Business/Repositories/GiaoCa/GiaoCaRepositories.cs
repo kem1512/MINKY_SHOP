@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MinkyShopProject.Business.Context;
 using MinkyShopProject.Business.Entities;
 using MinkyShopProject.Common;
@@ -17,6 +16,8 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MinkyShopProject.Business.Pagination;
 using AutoMapper;
+using System.Net.Mail;
+using SmtpClient = System.Net.Mail.SmtpClient;
 
 namespace MinkyShopProject.Business.Repositories.GiaoCa
 {
@@ -109,11 +110,14 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
 
         public async Task<Response> GetHoaDonCa(Guid IdNhanVien,DateTime ThoiGian)
         {
+            var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa == IdNhanVien && c.ThoiGianNhanCa.Day == ThoiGian.Day && c.ThoiGianNhanCa.Month == ThoiGian.Month && c.ThoiGianNhanCa.Year == ThoiGian.Year && c.ThoiGianNhanCa.Hour <= ThoiGian.Hour && c.TrangThai == 0);
             var hoadons = await _context.HoaDon.Where(c => c.NgayTao.Day == ThoiGian.Day 
                                                         && c.NgayTao.Month == ThoiGian.Month 
                                                         && c.NgayTao.Year == ThoiGian.Year 
                                                         && c.IdNhanVien == IdNhanVien 
-                                                        && c.TrangThai == 0).ToListAsync();
+                                                        && c.TrangThai == 0 
+                                                        && c.NgayTao.Hour >= Ca.ThoiGianNhanCa.Hour
+                                                        && c.NgayTao.Minute >= Ca.ThoiGianNhanCa.Minute).ToListAsync();
             return new Response<List<Entities.HoaDon>>(Code.OK, hoadons);
         }
 
@@ -151,7 +155,7 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             }
         }
 
-        public async Task<Response> GetCa([FromQuery] GiaoCaModels.GiaoCaQueryModel query)
+        public async Task<Response> GetCa(GiaoCaModels.GiaoCaQueryModel query)
         {
             try
             {
@@ -308,60 +312,73 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             }
         }
 
-        public async Task<Response> SendMail()
+        public async Task<Response> SendMail(Guid IdCa)
         {
-            var Body = "<div class='card'>";
-            Body += "<div>";
-            Body += "<div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Nhân viên vàn giao: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Nhân viên chận ca: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Thời gian nhận ca: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Thời gian giao ca: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Tiền đầu ca: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Tổng tiền mặt trong ca: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Tổng tiền chuyển khoản trong ca: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Tiền Phát sinh : </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Ghi chú: </label>";
-            Body += "</div>";
-            Body += "<div>";
-            Body += "<label class='form-control-label'>Tổng tiền mặt cuối ca: </label>";
-            Body += "</div>";
-            Body += "</div>";
-            Body += "</div>";
-            Body += "</div>";
+            try
+            {
+                var ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.Id == IdCa);
+                var nhanvienbangiao = await _context.NhanVien.FirstOrDefaultAsync(c => c.Id == ca.IdNhanVienTrongCa);
+                var nhanviennhanca = await _context.NhanVien.FirstOrDefaultAsync(c => c.Id == ca.IdNhanVienCaTiepTheo);
 
-            var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse("txuantruong400@gmail.com"));
-            email.To.Add(MailboxAddress.Parse("truongapro342002@gmail.com"));
-            email.Subject = "Báo Cáo Kết Ca";
-            email.Body = new TextPart(TextFormat.Html) { Text = Body };
+                var Body = "<div class='card'>";
+                Body += "<div>";
+                Body += "<div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Nhân viên bàn giao: {nhanvienbangiao.Ma} - {nhanvienbangiao.Ten}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Nhân viên chận ca: {nhanviennhanca.Ma} - {nhanviennhanca.Ten}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Thời gian nhận ca: {ca.ThoiGianNhanCa}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Thời gian giao ca: {ca.ThoiGianGiaoCa}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Tiền đầu ca: {ca.TienBanDau}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Tổng tiền mặt trong ca: {ca.TongTienMat}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Tổng tiền mặt rút trong ca: {ca.TongTienMatRut}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Tiền Phát sinh : {ca.TienPhatSinh}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Ghi chú: {ca.GhiChuPhatSinh}</label>";
+                Body += "</div>";
+                Body += "<div>";
+                Body += $"<label class='form-control-label'>Tổng tiền mặt cuối ca: {ca.TongTienMatCuoiCa}</label>";
+                Body += "</div>";
+                Body += "</div>";
+                Body += "</div>";
+                Body += "</div>";
 
+                using (MailMessage mail = new MailMessage())
+                {
+                    mail.From = new MailAddress("minkyshop@fpt.edu.vn");
+                    mail.To.Add("txuantruong400@gmail.com");
+                    mail.Subject = $"BÁO CÁO KẾT CA - NHÂN VIÊN: {nhanvienbangiao.Ma} - {nhanvienbangiao.Ten}";
+                    mail.Body = Body;
+                    mail.IsBodyHtml = true;
 
-            using var smtp = new SmtpClient();
-            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-            smtp.Authenticate("txuantruong400@gmail.com", "truong290122");
-            smtp.Send(email);
-            smtp.Disconnect(true);
+                    using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                    {
+                        smtp.Credentials = new NetworkCredential("kem15122002@gmail.com", "ohefwclzhmgxstsd");
+                        smtp.EnableSsl = true;
+                        smtp.Send(mail);
+                    }
+                }
 
-            return new Response(Code.OK, "Gửi Thành Công");
- 
+                return new Response(HttpStatusCode.OK, "Vui Lòng Check Mail Của Bạn");
+            }
+            catch (Exception e)
+            {
+                return new ResponseError(Code.InternalServerError, "Có lỗi trong quá trình xử lý: " + e.Message);
+            }
         }
 
         public async Task<Response> CaDangCho()

@@ -59,6 +59,8 @@ namespace MinkyShopProject.Admin.Pages.Sale
         [Inject]
         public NavigationManager Navigation { get; set; } = null!;
 
+        private string Time = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
         private async Task ScanResult(string e)
         {
             await ThemTuMaSanPham(e);
