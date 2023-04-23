@@ -1,4 +1,4 @@
-﻿@page "/cart"
+﻿@page "/cartguest"
 @using MinkyShopProject.Data.Models;
 @inject IJSRuntime JSRuntime
 @inject HttpClient HttpClient
@@ -30,9 +30,9 @@
                 </tr>
             </thead>
             <tbody>
-                @if(GioHangs != null && GioHangs.Data.GioHangChiTiets != null)
+                @if (HoaDon != null && HoaDon.HoaDonChiTiets != null)
                 {
-                    @foreach (var x in GioHangs.Data.GioHangChiTiets.Select((v, i) => (i, v)))
+                    @foreach (var x in HoaDon.HoaDonChiTiets.Select((v, i) => (i, v)))
                     {
                         <tr>
                             <td>
@@ -122,11 +122,6 @@
                                 </div>
                                 <div style="display: flex; justify-content: space-between">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="customCheck1" @onchange='async e => { GetChecked = Boolean.Parse(e.Value?.ToString() ?? ""); await GetData(); }'>
-                                        <label class="custom-control-label" for="customCheck1">Sử dụng dữ liệu của tài khoản</label>
-                                    </div>
-
-                                    <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="customCheck1" @onchange='async e => { HoaDon.LoaiDonHang = HoaDon.LoaiDonHang == 1 ? 0 : 1; HoaDon.TienShip = HoaDon.TienShip == 10000 ? 0 : 10000; }'>
                                         <label class="custom-control-label" for="customCheck1">Nhận tại cửa hàng</label>
                                     </div>
@@ -140,7 +135,7 @@
                 <div class="col-xl-4 col-lg-4 col-md-6">
                     <ul>
                         <li>
-                            <span>Tổng Tiền (@GioHangs?.Data.GioHangChiTiets?.Count())</span> @Helper.FormatMoney(GioHangs?.Data.GioHangChiTiets?.Sum(c => c.DonGia * c.SoLuong))
+                            <span>Tổng Tiền (@HoaDon.HoaDonChiTiets?.Count())</span> @Helper.FormatMoney(HoaDon.HoaDonChiTiets?.Sum(c => c.DonGia * c.SoLuong))
                         </li>
                         <li>
                             <span>Tiền Ship</span> @Helper.FormatMoney(HoaDon.TienShip)
@@ -158,7 +153,7 @@
                             }
                             else
                             {
-                                <span>Khách Phải Trả</span> @Helper.FormatMoney(GioHangs?.Data.GioHangChiTiets?.Sum(c => c.DonGia * c.SoLuong) + HoaDon.TienShip + HoaDon.LoaiDonHang == 1 ? 0 : 10000)
+                                <span>Khách Phải Trả</span> @Helper.FormatMoney(HoaDon.HoaDonChiTiets?.Sum(c => c.DonGia * c.SoLuong) + HoaDon.TienShip + HoaDon.LoaiDonHang == 1 ? 0 : 10000)
                             }
                         </li>
                     </ul>
@@ -172,59 +167,31 @@
 </main>
 
 @code{
-    private ResponseObject<GioHangModel>? GioHangs;
-
     private HoaDonCreateModel HoaDon = new HoaDonCreateModel();
 
-    bool GetChecked = false;
+    KhachHangModel KhachHang = new KhachHangModel() { Id = Guid.NewGuid() };
 
     string maVoucher = "";
 
-    async Task GetData()
-    {
-        if(GetChecked){
-            var khachHang = await Session.GetItemAsync<KhachHangModel>("khachHang");
-            if (khachHang != null)
-            {
-                HoaDon.DiaChi = khachHang.DiaChi;
-                HoaDon.Sdt = khachHang.Sdt;
-                HoaDon.TenNguoiNhan = khachHang.Ten;
-            }
-        }
-        else
-        {
-            HoaDon.DiaChi = "";
-            HoaDon.Sdt = "";
-            HoaDon.TenNguoiNhan = "";
-        }
-    }
-
     protected async override Task OnInitializedAsync()
     {
-        HoaDon.LoaiDonHang = 2;
         HoaDon.TienShip = 10000;
-        var khachHang = await Session.GetItemAsync<KhachHangModel>("khachHang");
-        if(khachHang != null)
+        HoaDon.LoaiDonHang = 1;
+        var result = await Session.GetItemAsync<HoaDonCreateModel>("cart");
+        if(result != null)
         {
-            GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=" + khachHang.Id);
+            HoaDon = result;
         }
         else
         {
-            NavigationManager.NavigateTo("/account");
+            HoaDon = new HoaDonCreateModel();
         }
     }
 
     async Task CapNhat()
     {
-        var status = await HttpClient.PutAsJsonAsync<GioHangModel>("https://localhost:7053/api/GioHang", GioHangs.Data);
-        if (status.IsSuccessStatusCode)
-        {
-            await Swal.FireAsync("", "Cập Nhật Thành Công", SweetAlertIcon.Success);
-        }
-        else
-        {
-            await Swal.FireAsync("", "Cập Nhật Thất Bại", SweetAlertIcon.Error);
-        }
+        await Session.SetItemAsync<HoaDonCreateModel>("cart", HoaDon);
+        await Swal.FireAsync("", "Cập Nhật Thành Công", SweetAlertIcon.Success);
     }
 
     async Task ThemVaoGioHang()
@@ -239,28 +206,24 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        if (GioHangs != null && GioHangs.Data.GioHangChiTiets != null && GioHangs.Data.GioHangChiTiets.Any(c => c.SoLuong > c.SoLuongLucDau))
+        if (HoaDon != null && HoaDon.HoaDonChiTiets != null && HoaDon.HoaDonChiTiets.Any(c => c.SoLuong > c.SoLuongGoc))
         {
             await Swal.FireAsync("", "Số Lượng Không Được Vượt Quá Số Lượng Sản Phẩm", SweetAlertIcon.Error);
         }
         else
         {
-            if (GioHangs != null && GioHangs.Data.GioHangChiTiets != null)
+            if (HoaDon != null && HoaDon.HoaDonChiTiets != null)
             {
-                HoaDon.HoaDonChiTiets = new List<HoaDonChiTietModel>();
+                HoaDon.LoaiDonHang = 2;
                 HoaDon.TrangThaiGiaoHang = 0;
                 HoaDon.TienShip = 10000;
-                HoaDon.IdKhachHang = GioHangs.Data.IdKhachHang;
-                foreach (var x in GioHangs.Data.GioHangChiTiets)
-                {
-                    HoaDon.HoaDonChiTiets.Add(new HoaDonChiTietModel() { IdBienThe = x.IdBienThe, DonGia = x.DonGia, SoLuong = x.SoLuong });
-                }
                 HoaDon.TongTien = HoaDon.HoaDonChiTiets.Sum(c => c.SoLuong * c.DonGia);
             }
             var status = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/HoaDon", HoaDon);
-            await HttpClient.DeleteAsync("https://localhost:7053/api/GioHang?id=" + HoaDon.IdKhachHang);
+
             if (status.IsSuccessStatusCode)
             {
+                await Session.RemoveItemAsync("cart");
                 await Swal.FireAsync("", "Tạo Hóa Đơn Thành Công", SweetAlertIcon.Success);
             }
             else
@@ -276,16 +239,11 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var status = await HttpClient.DeleteAsync("https://localhost:7053/api/GioHang/?id=" + GioHangs.Data.GioHangChiTiets[index].IdBienThe);
-        if (status.IsSuccessStatusCode)
-        {
-            GioHangs.Data.GioHangChiTiets.RemoveAt(index);
-            await Swal.FireAsync("", "Xóa Thành Công", SweetAlertIcon.Success);
-        }
-        else
-        {
-            await Swal.FireAsync("", "Xóa Thất Bại", SweetAlertIcon.Error);
-        }
+        HoaDon.HoaDonChiTiets.RemoveAt(index);
+
+        await Session.SetItemAsync<HoaDonCreateModel>("cart", HoaDon);
+
+        await Swal.FireAsync("", "Xóa Thành Công", SweetAlertIcon.Success);
     }
 
     async Task ApDungVoucher()
@@ -295,7 +253,7 @@
             var voucher = await HttpClient.GetFromJsonAsync<ResponseObject<VoucherModel>>("https://localhost:7053/api/Voucher/" + maVoucher);
             if (voucher != null && voucher.Data.Id != Guid.Empty)
             {
-                if(voucher.Data.NgayKetThuc < DateTime.Now || voucher.Data.SoLuong <= 0 || GioHangs.Data.GioHangChiTiets.Sum(c => c.SoLuong * c.DonGia) < voucher.Data.SoTienCan)
+                if (voucher.Data.NgayKetThuc < DateTime.Now || voucher.Data.SoLuong <= 0 || HoaDon.HoaDonChiTiets.Sum(c => c.SoLuong * c.DonGia) < voucher.Data.SoTienCan)
                 {
                     await Swal.FireAsync("", "Voucher Hết Hạn Sử Dụng Hoặc Hết Lượt Sử Dụng Hoặc Không Đủ Điều Kiện", SweetAlertIcon.Error);
                 }
@@ -303,12 +261,12 @@
                 {
                     if (voucher.Data.HinhThucGiamGia == 1)
                     {
-                        HoaDon.TongTien = GioHangs.Data.GioHangChiTiets.Sum(c => c.SoLuong * c.DonGia);
+                        HoaDon.TongTien = HoaDon.HoaDonChiTiets.Sum(c => c.SoLuong * c.DonGia);
                         HoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Data.Id, SoTienGiam = voucher.Data.SoTienGiam, TienTruocKhiGiam = HoaDon.TongTien, TienSauKhiGiam = HoaDon.TongTien - voucher.Data.SoTienGiam, Voucher = voucher.Data } };
                     }
                     else
                     {
-                        HoaDon.TongTien = GioHangs.Data.GioHangChiTiets.Sum(c => c.SoLuong * c.DonGia);
+                        HoaDon.TongTien = HoaDon.HoaDonChiTiets.Sum(c => c.SoLuong * c.DonGia);
                         var after = HoaDon.TongTien - (HoaDon.TongTien * voucher.Data.SoTienGiam / 100);
                         HoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Data.Id, SoTienGiam = HoaDon.TongTien - after, TienTruocKhiGiam = HoaDon.TongTien, TienSauKhiGiam = after, Voucher = voucher.Data } };
                     }

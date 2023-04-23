@@ -299,14 +299,21 @@
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
-            var s = Url.AddQuery("id", khachhang.Id.ToString());
-            var result = khachhang.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", khachhang) : await HttpClient.PutAsJsonAsync<KhachHangThemVaSuaModel>(new Uri(Url + "/Update" + s.Query), khachhang);
-
-            if (result.IsSuccessStatusCode)
+            try
             {
-                await Reload();
-                khachhang = new KhachHangThemVaSuaModel();
-                await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
+                var s = Url.AddQuery("id", khachhang.Id.ToString());
+                var result = khachhang.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", khachhang) : await HttpClient.PutAsJsonAsync<KhachHangThemVaSuaModel>(new Uri(Url + "/Update" + s.Query), khachhang);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    await Reload();
+                    khachhang = new KhachHangThemVaSuaModel();
+                    await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
+                }
+            }
+            catch (Exception)
+            {
+                await Swal.FireAsync("", "Khách Hàng Đã Tồn Tại", SweetAlertIcon.Error);
             }
         }
         else

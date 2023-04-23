@@ -201,7 +201,7 @@
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thành tiền</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Ghi chú</th>
                                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
-                                                @if (HoaDon?.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh || HoaDon?.TrangThaiGiaoHang == 3)
+                                                @if ((HoaDon?.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh && (HoaDon?.LoaiDonHang == 0 || HoaDon?.LoaiDonHang == 1)) || (HoaDon?.TrangThaiGiaoHang == 3 && HoaDon?.LoaiDonHang == 2))
                                                 {
                                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                                                 }
@@ -252,7 +252,7 @@
                                                                 }
                                                             </span>
                                                         </td>
-                                                        @if (HoaDon?.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh || HoaDon?.TrangThaiGiaoHang == 3)
+                                                        @if ((HoaDon?.TrangThai == Data.Enums.TrangThaiHoaDon.HoanThanh && (HoaDon?.LoaiDonHang == 0 || HoaDon?.LoaiDonHang == 1)) || (HoaDon?.TrangThaiGiaoHang == 3 && HoaDon?.LoaiDonHang == 2))
                                                         {
                                                             <td class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                                                 @if(x.Value.First().TrangThai == 0){

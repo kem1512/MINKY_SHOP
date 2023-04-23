@@ -19,9 +19,11 @@
 									@ThongKeTongTienNgay.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
                                 <p class="mb-0">
-                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) : -1)</span>
-                                    so với hôm qua
-                                </p>
+									@if (ThongKeTongTienHomQua.Data.TongTienTatCa > 0 && ThongKeTongTienNgay.Data.TongTienTatCa > 0)
+									{
+										<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) : -1) so với hôm qua</span>
+									}
+								</p>
                                 <p class="mb-0">
 									<span class="text-sm mb-0 text-uppercase font-weight-bold">
                                         Đã bán được @ThongKeTongTienNgay.Data.TongDonBan đơn hàng
@@ -90,8 +92,11 @@
 								</h5>
                                 <p class="mb-0">
 									@{
-										var result = Helper.CalculateChange((long)ThongKeTongTienThangTruoc.Data.TongTienTatCa, (long)ThongKeTongTienThang.Data.TongTienTatCa);
-										<span class="@(result > 0 ? "text-success" : "text-danger") text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThang.Data.TongTienTatCa > 0 ? result : -1)</span>
+										@if(ThongKeTongTienThangTruoc.Data.TongTienTatCa > 0 && ThongKeTongTienThang.Data.TongTienTatCa > 0)
+										{
+											var result = Helper.CalculateChange(ThongKeTongTienThangTruoc.Data.TongTienTatCa > 0 ? (long)ThongKeTongTienThangTruoc.Data.TongTienTatCa : 0, ThongKeTongTienThang.Data.TongTienTatCa > 0 ? (long)ThongKeTongTienThang.Data.TongTienTatCa : 0);
+											<span class="@(result > 0 ? "text-success" : "text-danger") text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThang.Data.TongTienTatCa > 0 ? result : -1)</span>
+										}
 									}
                                     so với tháng trước
                                 </p>
