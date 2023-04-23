@@ -42,16 +42,16 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(result);
         }
         [HttpGet, Route("SanPhamBanNhieuNhatSoLuong")]
-        public async Task<IActionResult> SanPhamBanNhieuNhatSoLuong()
+        public async Task<IActionResult> SanPhamBanNhieuNhatSoLuong(string loaiThongKe)
         {
-            var result = await _IThongKeRepository.SanPhamBanNhieuNhatSoLuong();
+            var result = await _IThongKeRepository.SanPhamBanNhieuNhatSoLuong(loaiThongKe);
             return Helper.TransformData(result);
         }
 
         [HttpGet, Route("SanPhamBanNhieuNhatTien")]
-        public async Task<IActionResult> SanPhamBanNhieuNhatTien()
+        public async Task<IActionResult> SanPhamBanNhieuNhatTien(string loaiThongKe)
         {
-            var result = await _IThongKeRepository.SanPhamBanNhieuNhatTien();
+            var result = await _IThongKeRepository.SanPhamBanNhieuNhatTien(loaiThongKe);
             return Helper.TransformData(result);
         }
 
