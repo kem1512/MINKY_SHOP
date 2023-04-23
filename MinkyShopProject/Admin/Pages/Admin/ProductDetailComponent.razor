@@ -1,4 +1,5 @@
 ﻿@page "/admin/product/{idsanpham:guid}"
+<PageTitle>Sản Phẩm Chi Tiết</PageTitle>
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -56,22 +57,29 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-6 mb-3">
+                                                    <div class="col-6">
                                                         <label>&nbsp;</label>
                                                         <div class="form-check form-switch">
-                                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(SanPham.Data.TrangThai == 1 ? new Dictionary<string, object>() { { "checked", "" } } : null)' @onchange="async() => { SanPham.Data.TrangThai = SanPham.Data.TrangThai == 1 ? 0 : 1; }">
+                                                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @attributes='@(SanPham.Data.TrangThai == 0 ? new Dictionary<string, object>() { { "checked", "" } } : null)' @onchange="async() => { SanPham.Data.TrangThai = SanPham.Data.TrangThai == 1 ? 0 : 1; }">
                                                             <label class="form-check-label" for="flexSwitchCheckDefault">Trạng Thái</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <textarea class="form-control" rows="3" @bind="SanPham.Data.MoTa"></textarea>
                                                     </div>
-                                                    <div class="col-6 d-flex justify-content-around align-items-center">
+                                                    <div class="col-6 d-flex justify-content-around align-items-center mb-3">
                                                         <div class="form-check form-switch mb-3">
                                                             <input class="form-check-input" type="checkbox" id="show-all" @onchange="() => { showAll = !showAll; }">
                                                             <label class="form-check-label text-bolder" for="show-all">Hiển thị tất cả</label>
                                                         </div>
                                                         <button class="btn btn-primary btn-sm" @onclick="UpdateSanPhamAsync">Sửa</button>
+                                                    </div>
+                                                    <div class="col-12 mt-3 d-flex justify-content-between">
+                                                        <button class="btn btn-primary mb-0 btn-sm">Thêm sản phẩm cùng loại</button>
+                                                        <div class="d-flex w-50">
+                                                            <input type="text" class="form-control mx-2" @oninput='(e) => GiaChung = float.Parse(e.Value?.ToString() ?? "")' value="@string.Format("{0:0,0}", GiaChung)" onchange="if(/^[0-9.]+$/.test(this.value) == false){ this.value = this.value.replace(/[^\d.]/g,'') }">
+                                                            <button class="btn btn-primary mb-0 w-25 btn-xs" @onclick="() => ApDungGiaChung()">Áp dụng</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

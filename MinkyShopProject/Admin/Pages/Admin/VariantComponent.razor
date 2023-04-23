@@ -1,4 +1,5 @@
 ﻿@page "/admin/variant"
+<PageTitle>Sản Phẩm</PageTitle>
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -25,7 +26,7 @@
                             <div class="form-group mb-3">
                                 <label for="example-text-input" class="form-control-label">Nhóm Sản Phẩm</label>
                                 <div class="position-relative">
-                                    <input class="form-control" type="text" value="@(SanPham.NhomSanPham?.NhomSanPhamEntity?.Ten + " / " + SanPham.NhomSanPham?.Ten)" @oninput='e => { if(NhomSanPhamModels != null && NhomSanPhamModelsParent != null){ NhomSanPhamModels.Data.Content = NhomSanPhamModelsParent.FindAll(c => Helper.LowerText(c.Ten).Contains(Helper.LowerText(e.Value?.ToString() ?? ""))); } }' @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false">
+                                    <input class="form-control" type="text" value="@(SanPham.NhomSanPham?.NhomSanPhamEntity?.Ten + " / " + SanPham.NhomSanPham?.Ten)" @oninput='e => { if(NhomSanPhamModels != null && NhomSanPhamModelsParent != null){ NhomSanPhamModels.Data.Content = NhomSanPhamModelsParent.FindAll(c => Helper.LowerText(c.Ten).Contains(Helper.LowerText(e.Value?.ToString() ?? "")) || Helper.LowerText(c.NhomSanPhamEntity.Ten).Contains(Helper.LowerText(e.Value?.ToString() ?? ""))); } }' @onfocus="() => showNhomSanPham = true" @onfocusout="() => showNhomSanPham = false">
                                     <NavLink href="admin/group">
                                         <i class="fa fa-plus position-absolute top-50 end-0 translate-middle-y"></i>
                                     </NavLink>

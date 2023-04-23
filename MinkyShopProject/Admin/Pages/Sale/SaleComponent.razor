@@ -58,7 +58,7 @@
                 }
             </div>
             <div class="col-2 d-flex align-items-center justify-content-end">
-                <span class="me-1 text-light text-bolder text-sm">@HoaDons?[index]?.NhanVien?.Ten</span>
+                @*<span class="me-1 text-light text-bolder text-sm">@HoaDons?[index]?.NhanVien?.Ten</span>*@
                 <div class="dropup-center">
                     <button class="btn shadow-none mb-0 text-light" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="fa fa-bars"></span>
@@ -165,15 +165,14 @@
                                             <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                 <label class="text-xs">Giảm Giá</label>
                                                 <div class="d-flex position-relative">
-                                                    <button class="btn btn-xs shadow-none me-2 mb-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
+                                                    @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
+                                                    {
+                                                        <button class="btn btn-xs shadow-none me-2 mb-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
+                                                    }
                                                     <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
                                                            value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten @(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? " - " + Helper.FormatMoney(HoaDons[index].VoucherLogs[0].SoTienGiam) : "")"
                                                            onfocus="document.getElementById('voucher-list').style.display='block'"
                                                            onblur="setTimeout(() => { document.getElementById('voucher-list').style.display='none' }, 100)">
-                                                    @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
-                                                    {
-@*                                                        <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>*@
-                                                    }
                                                     <div class="position-absolute list-group w-100" id="voucher-list" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                         @if (VouchersThoaMan != null && VouchersThoaMan.Any())
                                                         {

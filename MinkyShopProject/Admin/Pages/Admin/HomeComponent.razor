@@ -3,6 +3,7 @@
 @inject SweetAlertService Swal
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
+<PageTitle>Trang Chủ</PageTitle>
 
 <!-- End Navbar -->
 <div class="container-fluid py-4">
@@ -26,7 +27,7 @@
                                         Đã bán được @ThongKeTongTienNgay.Data.TongDonBan đơn hàng
                                     </span>
                                 </p>
-                                <p>
+                                <p class="mb-0">
 									<span class="text-sm mb-0 text-uppercase font-weight-bold">
                                         Có @ThongKeTongTienNgay.Data.TongDonHuy đã bị hủy
                                     </span>
@@ -53,7 +54,7 @@
 									@ThongKeTongTienTuan.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
                                 <p class="mb-0">
-                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa) : -1)</span>
+                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuan.Data.TongTienTatCa) : -1)</span>
                                     so với tuần trước
                                 </p>
                                 <p class="mb-0">
@@ -61,7 +62,7 @@
                                         Đã bán được @ThongKeTongTienTuan.Data.TongDonBan đơn hàng
                                     </span>
                                 </p>
-                                <p>
+                                <p class="mb-0">
 									<span class="text-sm mb-0 text-uppercase font-weight-bold">
                                         Có @ThongKeTongTienTuanTruoc.Data.TongDonHuy đã bị hủy
                                     </span>
@@ -88,7 +89,10 @@
 									@ThongKeTongTienThang.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
                                 <p class="mb-0">
-                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThangTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienThangTruoc.Data.TongTienTatCa, (long)ThongKeTongTienThang.Data.TongTienTatCa) : -1)</span>
+									@{
+										var result = Helper.CalculateChange((long)ThongKeTongTienThangTruoc.Data.TongTienTatCa, (long)ThongKeTongTienThang.Data.TongTienTatCa);
+										<span class="@(result > 0 ? "text-success" : "text-danger") text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThang.Data.TongTienTatCa > 0 ? result : -1)</span>
+									}
                                     so với tháng trước
                                 </p>
                                 <p class="mb-0">
@@ -96,7 +100,7 @@
                                         Đã bán được @ThongKeTongTienThang.Data.TongDonBan đơn hàng
                                     </span>
                                 </p>
-                                <p>
+                                <p class="mb-0">
 									<span class="text-sm mb-0 text-uppercase font-weight-bold">
                                         Có @ThongKeTongTienThangTruoc.Data.TongDonHuy đã bị hủy
                                     </span>
@@ -144,7 +148,7 @@
 			<ThongKeTienComponent></ThongKeTienComponent>
 		</div>
 		<div class="col-lg-5">
-			<ThongKeSanPhamComponent></ThongKeSanPhamComponent>
+			 <ThongKeSanPhamComponent></ThongKeSanPhamComponent> 
 		</div>
 	</div>
 	<div class="row mt-4">

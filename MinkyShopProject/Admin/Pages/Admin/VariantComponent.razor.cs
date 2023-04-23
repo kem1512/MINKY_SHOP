@@ -22,6 +22,9 @@ namespace MinkyShopProject.Admin.Pages.Admin
         [Inject]
         SweetAlertService Swal { get; set; } = null!;
 
+        [Inject]
+        NavigationManager NavigationManager { get; set; } = null!;
+
         List<ThuocTinh> ThuocTinhs = new List<ThuocTinh>();
 
         string GiaTri = "";
@@ -90,7 +93,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         {
             if (await Validate())
             {
-                var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "", TitleText = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                 if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -107,12 +110,14 @@ namespace MinkyShopProject.Admin.Pages.Admin
                         }
                     }
 
+                    SanPham.Id = Guid.NewGuid();
+
                     var result = await HttpClient.PostAsJsonAsync($"{Url}/BienThe", new BienTheCreateModel() { ThuocTinhs = thuocTinhs, SanPham = SanPham });
 
                     if (result.IsSuccessStatusCode)
                     {
                         ThuocTinhModelsTemplate = new List<ThuocTinhModel>();
-                        await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
+                        NavigationManager.NavigateTo("/admin/product/" + SanPham.Id);
                     }
                     else
                     {

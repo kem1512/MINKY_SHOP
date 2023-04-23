@@ -1,6 +1,7 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject Blazored.SessionStorage.ISessionStorageService Session
 @inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
 
 <header class="version_1">
 	<div class="layer"></div><!-- Mobile menu overlay mask -->
@@ -74,62 +75,24 @@
 								</span>
 								<div id="menu">
 									<ul>
-										<li>
-											<span><a href="#0">Collections</a></span>
-											<ul>
-												<li><a href="listing-grid-1-full.html">Trending</a></li>
-												<li><a href="listing-grid-2-full.html">Life style</a></li>
-												<li><a href="listing-grid-3.html">Running</a></li>
-												<li><a href="listing-grid-4-sidebar-left.html">Training</a></li>
-												<li><a href="listing-grid-5-sidebar-right.html">View all Collections</a></li>
-											</ul>
-										</li>
-										<li>
-											<span><a href="#">Men</a></span>
-											<ul>
-												<li><a href="listing-grid-6-sidebar-left.html">Offers</a></li>
-												<li><a href="listing-grid-7-sidebar-right.html">Shoes</a></li>
-												<li><a href="listing-row-1-sidebar-left.html">Clothing</a></li>
-												<li><a href="listing-row-3-sidebar-left.html">Accessories</a></li>
-												<li><a href="listing-row-4-sidebar-extended.html">Equipment</a></li>
-											</ul>
-										</li>
-										<li>
-											<span><a href="#">Women</a></span>
-											<ul>
-												<li><a href="listing-grid-1-full.html">Best Sellers</a></li>
-												<li><a href="listing-grid-2-full.html">Clothing</a></li>
-												<li><a href="listing-grid-3.html">Accessories</a></li>
-												<li><a href="listing-grid-4-sidebar-left.html">Shoes</a></li>
-											</ul>
-										</li>
-										<li>
-											<span><a href="#">Boys</a></span>
-											<ul>
-												<li><a href="listing-grid-6-sidebar-left.html">Easy On Shoes</a></li>
-												<li><a href="listing-grid-7-sidebar-right.html">Clothing</a></li>
-												<li><a href="listing-row-3-sidebar-left.html">Must Have</a></li>
-												<li><a href="listing-row-4-sidebar-extended.html">All Boys</a></li>
-											</ul>
-										</li>
-										<li>
-											<span><a href="#">Girls</a></span>
-											<ul>
-												<li><a href="listing-grid-1-full.html">New Releases</a></li>
-												<li><a href="listing-grid-2-full.html">Clothing</a></li>
-												<li><a href="listing-grid-3.html">Sale</a></li>
-												<li><a href="listing-grid-4-sidebar-left.html">Best Sellers</a></li>
-											</ul>
-										</li>
-										<li>
-											<span><a href="#">Customize</a></span>
-											<ul>
-												<li><a href="listing-row-1-sidebar-left.html">For Men</a></li>
-												<li><a href="listing-row-2-sidebar-right.html">For Women</a></li>
-												<li><a href="listing-row-4-sidebar-extended.html">For Boys</a></li>
-												<li><a href="listing-grid-1-full.html">For Girls</a></li>
-											</ul>
-										</li>
+										@if(NhomSanPhams != null)
+										{
+											@foreach (var x in NhomSanPhams)
+											{
+												<li>
+													<span><a href="#0">@x.Ten</a></span>
+													<ul>
+														@if(x.NhomSanPhams != null)
+														{
+															@foreach (var y in x.NhomSanPhams)
+															{
+																<li><NavLink href="listing-grid-1-full.html">@y.Ten</NavLink></li>
+															}
+														}
+													</ul>
+												</li>
+											}
+										}
 									</ul>
 								</div>
 							</li>
@@ -145,7 +108,7 @@
 				<div class="col-xl-3 col-lg-2 col-md-3">
 					<ul class="top_tools">
 						<li>
-							<NavLink href="/cart"><a class="cart_bt"></a></NavLink>
+							<NavLink href="/cart" class="cart_bt" @onclick='async() => { if(await Session.GetItemAsync<MinkyShopProject.Data.Models.KhachHangModel>(" khachHang") != null){ NavigationManager.NavigateTo("/guest"); } }'></NavLink>
 							<!-- /dropdown-cart-->
 						</li>
 						<li>
@@ -153,7 +116,7 @@
 						</li>
 						<li>
 							<div class="dropdown dropdown-access">
-								<a href="account.html" class="access_link"><span>Account</span></a>
+								<a class="access_link" style="cursor: pointer"><span>Tài Khoản</span></a>
 								<div class="dropdown-menu">
 									@if (!isLogin)
 									{
@@ -169,7 +132,7 @@
 												<NavLink href="/trackorder"><i class="ti-package"></i>Đơn hàng của tôi</NavLink>
 											</li>
 											<li>
-												<a href="/account"><i class="ti-user"></i>Thông tin cá nhân</a>
+												<a href="/profile"><i class="ti-user"></i>Thông tin cá nhân</a>
 											</li>
 										}
 										@if (isLogin)
@@ -214,8 +177,16 @@
 @code {
 	bool isLogin = false;
 
+	List<MinkyShopProject.Data.Models.NhomSanPhamModel>? NhomSanPhams;
+
 	protected async override Task OnInitializedAsync()
 	{
+		var result = await HttpClient.GetFromJsonAsync<ResponsePagination<MinkyShopProject.Data.Models.NhomSanPhamModel>>("https://localhost:7053/api/NhomSanPham/Get2");
+		if(result != null)
+		{
+			NhomSanPhams = result.Data.Content;
+		}
+
 		if(await Session.GetItemAsStringAsync("khachHang") != null)
 		{
 			isLogin = true;

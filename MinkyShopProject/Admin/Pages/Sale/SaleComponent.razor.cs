@@ -255,7 +255,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     if (validate)
                     {
 
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "", TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -272,6 +272,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                         }
 
                         HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
+
                         var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
                         if (status.IsSuccessStatusCode)
                         {
@@ -316,6 +317,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                                 }
                             }
 
+                            //HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
                             HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
 
                             var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
