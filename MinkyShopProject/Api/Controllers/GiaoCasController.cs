@@ -102,10 +102,10 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _Repositories.NhanCa(Id));
         }
 
-        [HttpGet("GuiMail")]
-        public async Task<IActionResult> GuiMail()
+        [HttpGet("GuiMail/{IdCa}")]
+        public async Task<IActionResult> GuiMail(Guid IdCa)
         {
-            return Helper.TransformData(await _Repositories.SendMail());
+            return Helper.TransformData(await _Repositories.SendMail(IdCa));
         }
     }
 }

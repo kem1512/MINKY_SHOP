@@ -42,7 +42,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         private string query = "";
         private bool viewform = false;
         private bool Create = true;
-        private NhanVienModel.NhanVienCreateModel Model = new NhanVienModel.NhanVienCreateModel();
+        private NhanVienModel.NhanVienFormModel Model = new NhanVienModel.NhanVienFormModel();
         private Guid IdNhanVien = Guid.Empty;
         private int maxAllowFiles = int.MaxValue;
         private long maxSizeFile = long.MaxValue;
@@ -58,6 +58,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
             var Role = jwt.Claims.FirstOrDefault(c => c.Type.Equals("VaiTro"))?.Value;
             var Id = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+            Model.Ma = $"NV{Helper.RandomNumber(5)}";
             IdNhanVienDangNhap = Guid.Parse(Id);
             if (Role == "1")
             {
@@ -165,7 +166,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         async Task ResetModel()
         {
-            Model = new NhanVienModel.NhanVienCreateModel();
+            Model = new NhanVienModel.NhanVienFormModel();
         }
 
         async Task Submit(EditContext editContext)
@@ -186,7 +187,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
                     {
                         await Swal.FireAsync(new SweetAlertOptions
                         {
-                            Text = response.Message,   
+                            Text = response.Message,
                             ShowConfirmButton = true,
                             Icon = SweetAlertIcon.Success
                         });
@@ -242,7 +243,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         {
             var response = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"{url}/{Id}");
             var nhanvien = response.Data;
-            Model = new NhanVienModel.NhanVienCreateModel()
+            Model = new NhanVienModel.NhanVienFormModel()
             {
                 Anh = nhanvien.Anh,
                 DiaChi = nhanvien.DiaChi,

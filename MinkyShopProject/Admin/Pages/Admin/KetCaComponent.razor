@@ -19,9 +19,6 @@
                     <div class="form-group">
                         <label class="form-control-label">Thời gian vào ca: @Ca.ThoiGianNhanCa.ToShortTimeString() @(Ca.ThoiGianNhanCa.Day)/@(Ca.ThoiGianNhanCa.Month)/@(Ca.ThoiGianNhanCa.Year) </label>
                     </div>
-                    <div class="form-group">
-                        <label class="form-control-label">Thời gian hiện tại: @Time.ToShortTimeString() @(Time.Day)/@(Time.Month)/@(Time.Year)</label>
-                    </div>
                 </div>
                 <div class="row">
                     <div class="col">
@@ -142,7 +139,7 @@
     [Inject]
     public NavigationManager Navigation { get; set; } = null!;
 
-    private DateTime Time = DateTime.Now;
+    private string Time = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
 
     private GiaoCa Ca = new();
 
@@ -196,7 +193,7 @@
         }
     }
 
-    private async Task GetCaHienTai(string IdNhanVien,DateTime Time)
+    private async Task GetCaHienTai(string IdNhanVien,string Time)
     {
         var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={Time}");
         Ca = result.Data;
@@ -297,26 +294,37 @@
 
     private async Task KetCa()
     {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Kết Ca", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
-
-        if (string.IsNullOrEmpty(confirm.Value)) return;
-
-        if (Model.TongTienMatRut != 0)
+        if (Model.IdNhanVienCaTiepTheo == null && CaCuoiNgay == false)
         {
-            Model.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(Model.TongTienMatRut)} - Thời gian rút: {DateTime.Now.ToShortTimeString()}." ?? "";
+            await Swal.FireAsync("Thông báo","Mời Chọn Nhân Viên Nhận Bàn Giao", SweetAlertIcon.Warning);
         }
-
-        var result = await HttpClient.PostAsJsonAsync($"https://localhost:7053/api/GiaoCas/KetCa/{IdCa}", Model);
-        if (result.IsSuccessStatusCode)
+        else if (Model.TienPhatSinh != 0 && string.IsNullOrEmpty(Model.GhiChuPhatSinh))
         {
-            await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
-            Navigation.NavigateTo("/admin",true);
+            await Swal.FireAsync("Thông báo", "Vui Lòng Ghi Chú Các Khoản Phát Sinh", SweetAlertIcon.Warning);
         }
         else
         {
-            await Swal.FireAsync("", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Error);
-        }
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Kết Ca", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
 
+            if (string.IsNullOrEmpty(confirm.Value)) return;
+
+            if (Model.TongTienMatRut != 0)
+            {
+                Model.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(Model.TongTienMatRut)} - Thời gian rút: {DateTime.Now.ToShortTimeString()}." ?? "";
+            }
+
+            var result = await HttpClient.PostAsJsonAsync($"https://localhost:7053/api/GiaoCas/KetCa/{IdCa}", Model);
+            if (result.IsSuccessStatusCode)
+            {
+                await HttpClient.GetFromJsonAsync<Response>($"https://localhost:7053/api/GiaoCas/GuiMail/{IdCa}");
+                await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
+                Navigation.NavigateTo("/admin", true);
+            }
+            else
+            {
+                await Swal.FireAsync("", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Error);
+            }
+        } 
     }
 
     private async Task ChangeGhiChuPhatSinh(ChangeEventArgs e)

@@ -23,7 +23,7 @@
                                             <ValidationMessage class="form-control-label text-danger" For="() => Model.Ma"></ValidationMessage>
                                         </div>
                                         <div>
-                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Ma">
+                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Ma" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -50,7 +50,7 @@
                                             <ValidationMessage class="form-control-label text-danger" For="() => Model.Email"></ValidationMessage>
                                         </div>
                                         <div>
-                                            <input type="email" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Email">
+                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Email">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -228,7 +228,7 @@
                 </div>
                     <div class="d-flex justify-content-center">
                         <nav aria-label="Page navigation example">
-                            <ul class="pagination">
+                            <ul class="pagination pagination-primary">
                                 @for(int i = 1;i <= Response.Data.Pages;i++){
                                     <li class="page-item"><a class="page-link" href="/admin/employee/@(i)">@(i)</a></li>
                                 }

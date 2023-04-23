@@ -59,6 +59,8 @@ namespace MinkyShopProject.Admin.Pages.Sale
         [Inject]
         public NavigationManager Navigation { get; set; } = null!;
 
+        private string Time = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
         private async Task ScanResult(string e)
         {
             await ThemTuMaSanPham(e);
@@ -68,7 +70,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
         {
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
-            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={DateTime.Now}");
+            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={Time}");
             Ca = result.Data;
             if (Ca == null)
             {

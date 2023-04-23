@@ -122,7 +122,7 @@
 
     private string title = "Bắt đầu";
 
-    private DateTime thoigian = DateTime.Now;
+    private string thoigian = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
 
     private float TongThanhTien = 0;
 
@@ -140,10 +140,9 @@
         {
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
             Ten = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Ten"))?.Value ?? "";
-            var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+            var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;  
             IsAuth = true;
-            var datetime = DateTime.Now.ToString("yyyy/MM/dd");
-            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={datetime}");
+            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
             var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas/GetCaTruoc?Id={Guid.Parse(IdNhanVien)}");
             var result3 = await HttpClient.GetFromJsonAsync<Response<List<GiaoCa>>>("https://localhost:7053/api/GiaoCas/CaDangCho");
             Ca = result.Data;
