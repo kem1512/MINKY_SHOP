@@ -28,7 +28,7 @@
                 <li class="nav-item px-3 d-flex align-items-center">
                     <a class="nav-link text-white font-weight-bold px-0" data-bs-toggle="@(Ca == null ? "modal" : "")" data-bs-target="@(Ca == null ? "#exampleModal" : "")" style="cursor:pointer">
                         <i class="fa fa-@(Ca == null ? "play" : "pause")"></i>
-                        <span class="d-sm-inline d-none">@title @(title == "Bắt đầu" ? "" : $": {Helper.FormatMoney(Ca.TongTienMat)}")</span>
+                        <span class="d-sm-inline d-none">@title @(title == "Bắt đầu" ? "" : $": {Helper.FormatMoney(Ca?.TongTienMat)}")</span>
                     </a>
                 </li>
                 <li class="nav-item d-flex align-items-center">
@@ -215,7 +215,7 @@
 
         if (result.IsSuccessStatusCode)
         {
-            var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
+            var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian.ToString("yyyy/MM/dd")}");
             if (CaTruoc != null)
         {
                 await HttpClient.DeleteAsync($"https://localhost:7053/api/GiaoCas/NhanCa?Id={CaTruoc.Id}");

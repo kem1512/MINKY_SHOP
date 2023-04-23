@@ -1,4 +1,4 @@
-﻿namespace MinkyShopProject.Admin.Shared
+﻿namespace MinkyShopProject.Data.Models
 {
     public class UploadResult
     {

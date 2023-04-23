@@ -16,7 +16,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         int maxAllowedFiles = int.MaxValue;
         long maxFileSize = long.MaxValue;
         List<string> fileNames = new List<string>();
-        List<UploadResult> uploadResults = new List<UploadResult>();
+        List<MinkyShopProject.Data.Models.UploadResult> uploadResults = new List<MinkyShopProject.Data.Models.UploadResult>();
 
         [Inject]
         HttpClient HttpClient { get; set; } = null!;
@@ -50,8 +50,22 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         private ElementReference previewImageElem;
 
+        float GiaChung = 0;
+
         private async Task ShowPreview() => await JSRuntime.InvokeVoidAsync(
         "previewImage", inputFile!.Element, previewImageElem);
+
+        void ApDungGiaChung()
+        {
+            if(SanPham?.Data.BienThes != null)
+            {
+                foreach (var x in SanPham.Data.BienThes)
+                {
+                    x.GiaBan = GiaChung;
+                }
+                GiaChung = 0;
+            }
+        }
 
         protected override async Task OnInitializedAsync()
         {

@@ -6,6 +6,7 @@ using System.Net;
 using MinkyShopProject.Admin.Shared;
 using System.Text;
 using System.IO;
+using MinkyShopProject.Data.Models;
 
 namespace MinkyShopProject.Api.Controllers
 {

@@ -1,4 +1,5 @@
 ﻿@page "/admin/product/{idsanpham:guid}"
+<PageTitle>Sản Phẩm Chi Tiết</PageTitle>
 
 <div class="container-fluid py-4">
     <div class="row">
@@ -73,8 +74,12 @@
                                                         </div>
                                                         <button class="btn btn-primary btn-sm" @onclick="UpdateSanPhamAsync">Sửa</button>
                                                     </div>
-                                                    <div class="col-4 mt-3">
+                                                    <div class="col-12 mt-3 d-flex justify-content-between">
                                                         <button class="btn btn-primary mb-0 btn-sm">Thêm sản phẩm cùng loại</button>
+                                                        <div class="d-flex w-50">
+                                                            <input type="text" class="form-control mx-2" @oninput='(e) => GiaChung = float.Parse(e.Value?.ToString() ?? "")' value="@string.Format("{0:0,0}", GiaChung)" onchange="if(/^[0-9.]+$/.test(this.value) == false){ this.value = this.value.replace(/[^\d.]/g,'') }">
+                                                            <button class="btn btn-primary mb-0 w-25 btn-xs" @onclick="() => ApDungGiaChung()">Áp dụng</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

@@ -3,6 +3,7 @@
 @inject SweetAlertService Swal
 @inject HttpClient HttpClient
 @inject IJSRuntime JSRuntime
+<PageTitle>Trang Chủ</PageTitle>
 
 <!-- End Navbar -->
 <div class="container-fluid py-4">
@@ -53,7 +54,7 @@
 									@ThongKeTongTienTuan.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
                                 <p class="mb-0">
-                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa) : -1)</span>
+                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuan.Data.TongTienTatCa) : -1)</span>
                                     so với tuần trước
                                 </p>
                                 <p class="mb-0">
@@ -88,7 +89,10 @@
 									@ThongKeTongTienThang.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
                                 <p class="mb-0">
-									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThang.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienThang.Data.TongTienTatCa, (long)ThongKeTongTienThangTruoc.Data.TongTienTatCa) : -1)</span>
+									@{
+										var result = Helper.CalculateChange((long)ThongKeTongTienThangTruoc.Data.TongTienTatCa, (long)ThongKeTongTienThang.Data.TongTienTatCa);
+										<span class="@(result > 0 ? "text-success" : "text-danger") text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienThang.Data.TongTienTatCa > 0 ? result : -1)</span>
+									}
                                     so với tháng trước
                                 </p>
                                 <p class="mb-0">

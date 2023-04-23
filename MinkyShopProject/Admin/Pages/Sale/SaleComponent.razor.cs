@@ -67,7 +67,10 @@ namespace MinkyShopProject.Admin.Pages.Sale
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             var date = DateTime.Now.ToString("yyyy/MM/dd");
             var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={date}");
-            Ca = result.Data;
+            if(result != null)
+            {
+                Ca = result.Data;
+            }
             SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>(Url + "sanpham");
             KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>(Url + "khachhang/get");
             Vouchers = await HttpClient.GetFromJsonAsync<ResponsePagination<VoucherModel>>(Url + "voucher");
@@ -310,6 +313,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                                 }
                             }
 
+                            //HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
                             HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
 
                             var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
