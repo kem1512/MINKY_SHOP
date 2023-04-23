@@ -19,13 +19,13 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
         Task<Response> GetTienMatHoaDon(Guid IdHoaDon);
         Task<Response> GetTienChuyenKhoanHoaDon(Guid IdHoaDon);
         Task<Response> UpdateTiemMat(Guid IdCa,float TongTien);
-        Task<Response> GetCaHienTaiChoBanGiao();
+        Task<Response> GetCa(GiaoCaModels.GiaoCaQueryModel query);
         Task<Response> GetCaDuocChon(Guid Id);
         Task<Response> RutTien(Guid Id, GiaoCaModels.ResetTienModel model);
         Task<Response> UpdateNhanVien(Guid Id,GiaoCaModels.GiaoCaEditModel model);
         Task<Response> GetCaTruoc(Guid IdNhanVien);
         Task<Response> NhanCa(Guid Id);
-
+        Task<Response> CaDangCho();
         Task<Response> SendMail();
     }
 }

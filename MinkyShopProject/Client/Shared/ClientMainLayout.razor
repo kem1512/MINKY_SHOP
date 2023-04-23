@@ -19,7 +19,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        if(await Session.GetItemAsStringAsync("khachHang") == null)
+        if(await Session.GetItemAsStringAsync("khachHang") == null && !NavigationManager.Uri.Contains("product"))
         {
             NavigationManager.NavigateTo("/account");
         }

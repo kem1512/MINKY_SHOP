@@ -7,11 +7,17 @@ using MinkyShopProject.Data.Models;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using MinkyShopProject.Admin.Shared;
 
 namespace MinkyShopProject.Admin.Pages.Admin
 {
     public partial class ProductDetailComponent
     {
+        int maxAllowedFiles = int.MaxValue;
+        long maxFileSize = long.MaxValue;
+        List<string> fileNames = new List<string>();
+        List<MinkyShopProject.Data.Models.UploadResult> uploadResults = new List<MinkyShopProject.Data.Models.UploadResult>();
+
         [Inject]
         HttpClient HttpClient { get; set; } = null!;
 
@@ -40,6 +46,27 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         string Url = "https://localhost:7053/api";
 
+        private InputFile? inputFile;
+
+        private ElementReference previewImageElem;
+
+        float GiaChung = 0;
+
+        private async Task ShowPreview() => await JSRuntime.InvokeVoidAsync(
+        "previewImage", inputFile!.Element, previewImageElem);
+
+        void ApDungGiaChung()
+        {
+            if(SanPham?.Data.BienThes != null)
+            {
+                foreach (var x in SanPham.Data.BienThes)
+                {
+                    x.GiaBan = GiaChung;
+                }
+                GiaChung = 0;
+            }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             SanPham = await HttpClient.GetFromJsonAsync<ResponseObject<SanPhamModel>>($"{Url}/SanPham/{IdSanPham}");
@@ -48,7 +75,18 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 NhomSanPhamModelsParent = NhomSanPhamModels.Data.Content;
             }
-            ModelImage = await JSRuntime.InvokeAsync<List<string>>("storageImages");
+            try
+            {
+                var result = await HttpClient.GetFromJsonAsync<List<string>>("https://localhost:7053/api/Image");
+                if (result != null)
+                {
+                    ModelImage = result;
+                }
+            }
+            catch (Exception)
+            {
+                ModelImage = new List<string>();
+            }
         }
 
         async Task DeleteAsync(Guid id)
@@ -83,23 +121,24 @@ namespace MinkyShopProject.Admin.Pages.Admin
                 await Swal.FireAsync("Thông Báo", "Cập Nhật Thành Công", SweetAlertIcon.Success);
         }
 
-        private List<IBrowserFile> loadedFiles = new();
-
-        private long maxFileSize = 1024 * 15;
-        private int maxAllowedFiles = 3;
-        private bool isLoading;
-
-        private void LoadFiles(InputFileChangeEventArgs e)
+        private async void LoadFiles(InputFileChangeEventArgs e)
         {
-            isLoading = true;
-            loadedFiles.Clear();
+            using var content = new MultipartFormDataContent();
 
             foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
             {
-                loadedFiles.Add(file);
+                var fileContent = new StreamContent(file.OpenReadStream(maxFileSize));
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                fileNames.Add(file.Name);
+                content.Add(content: fileContent, name: "\"files\"", fileName: file.Name);
             }
 
-            isLoading = false;
+            var responose = await HttpClient.PostAsync(Url + "/image", content);
+
+            if(responose.IsSuccessStatusCode)
+            {
+                ModelImage = await HttpClient.GetFromJsonAsync<List<string>>("https://localhost:7053/api/Image");
+            }
         }
     }
 }

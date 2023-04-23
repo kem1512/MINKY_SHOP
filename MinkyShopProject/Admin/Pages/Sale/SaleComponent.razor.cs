@@ -56,6 +56,9 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         private GiaoCa Ca = new();
 
+        [Inject]
+        public NavigationManager Navigation { get; set; } = null!;
+
         private async Task ScanResult(string e)
         {
             await ThemTuMaSanPham(e);
@@ -67,6 +70,11 @@ namespace MinkyShopProject.Admin.Pages.Sale
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={DateTime.Now}");
             Ca = result.Data;
+            if (Ca == null)
+            {
+                await Swal.FireAsync("Thông Báo", "Vui Lòng Bắt Đầu Ca Làm Việc", SweetAlertIcon.Warning);
+                Navigation.NavigateTo("/admin");
+            }
             SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<SanPhamModel>>(Url + "sanpham");
             KhachHangs = await HttpClient.GetFromJsonAsync<ResponsePagination<KhachHangModel>>(Url + "khachhang/get");
             Vouchers = await HttpClient.GetFromJsonAsync<ResponsePagination<VoucherModel>>(Url + "voucher");
@@ -264,6 +272,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                         }
 
                         HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
+
                         var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
                         if (status.IsSuccessStatusCode)
                         {
@@ -308,6 +317,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                                 }
                             }
 
+                            //HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
                             HoaDons[index].IdNhanVien = Ca.IdNhanVienTrongCa;
 
                             var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
@@ -317,7 +327,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
                                 {
                                     if (item.KieuThanhToan == 0)
                                     {
-                                         await HttpClient.GetFromJsonAsync<Response>($"https://localhost:7053/api/GiaoCas/UpdateTienMat?IdCa={Ca.Id}&TongTien={item.TongTienThanhToan}");
+                                        await HttpClient.GetFromJsonAsync<Response>($"https://localhost:7053/api/GiaoCas/UpdateTienMat?IdCa={Ca.Id}&TongTien={item.TongTienThanhToan}");
                                     }
                                 }
                                 HoaDons.Remove(HoaDons[index]);

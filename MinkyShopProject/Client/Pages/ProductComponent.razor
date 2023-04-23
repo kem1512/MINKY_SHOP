@@ -1,7 +1,10 @@
 ﻿@page "/product"
+@page "/product/{ten}"
 @inject IJSRuntime JSRuntime
 @using Data.Models;
 @inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+@inject SweetAlertService Swal
 
 <main class="container margin_30">
     <div class="row">
@@ -20,7 +23,7 @@
                                     {
                                         <li>
                                             <label class="container_check">
-                                                @y.Ten <small>12</small>
+                                                @y.Ten
                                                 <input type="checkbox" @onclick="() => { var giaTri =  GiaTris.FindIndex(c => c == y.Id); if(giaTri != -1){ GiaTris.RemoveAt(giaTri); }else{ GiaTris.Add(y.Id); } }">
                                                 <span class="checkmark"></span>
                                             </label>
@@ -33,8 +36,11 @@
                     }
                 }
                 <!-- /filter_type -->
+                <div class="custom-search-input">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm" style="width: 100%; border: none; padding: 10px; border-radius: 5px; margin-bottom: 15px" @bind="Ten">
+                </div>
                 <div class="buttons">
-                    <a class="btn_1" @onclick="LocGiaTri">Filter</a> <a @onclick="() => SanPhamsSauKhiLoc = new List<SanPhamModel>()" class="btn_1 gray">Reset</a>
+                    <a class="btn_1" @onclick="LocGiaTri">Lọc</a> <a @onclick='() => SanPhamsSauKhiLoc = new List<SanPhamModel>()' class="btn_1 gray">Làm mới</a>
                 </div>
             </div>
         </aside>
@@ -42,16 +48,6 @@
         <div class="col-lg-9">
             <div class="top_banner">
                 <div class="opacity-mask d-flex align-items-center" data-opacity-mask="rgba(0, 0, 0, 0.3)">
-                    <div class="container pl-lg-5">
-                        <div class="breadcrumbs">
-                            <ul>
-                                <li><a href="#">Home</a></li>
-                                <li><a href="#">Category</a></li>
-                                <li>Page active</li>
-                            </ul>
-                        </div>
-                        <h1>Shoes - Grid listing</h1>
-                    </div>
                 </div>
                 <img src="img/bg_cat_shoes.jpg" class="img-fluid" alt="">
             </div>
@@ -71,15 +67,6 @@
                                 </select>
                             </div>
                         </li>
-                        <li>
-                            <a href="#0"><i class="ti-view-grid"></i></a>
-                            <a href="listing-row-1-sidebar-left.html"><i class="ti-view-list"></i></a>
-                        </li>
-                        <li>
-                            <a href="#0" class="open_filters">
-                                <i class="ti-filter"></i><span>Filters</span>
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -93,7 +80,6 @@
                         {
                             <div class="col-6 col-md-4">
                                 <div class="grid_item">
-                                    <span class="ribbon off">-30%</span>
                                     <figure>
                                         <NavLink href="@($"/product/{x.Id}")">
                                             <img class="img-fluid lazy loaded" src="@x.Anh" data-src="@x.Anh" alt="" data-was-processed="true">
@@ -105,11 +91,6 @@
                                     <div class="price_box">
                                         <span class="new_price">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan)) - @Helper.FormatMoney( x.BienThes?.Max(c => c.GiaBan))</span>
                                     </div>
-                                    <ul>
-                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to favorites"><i class="ti-heart"></i><span>Add to favorites</span></a></li>
-                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to compare"><i class="ti-control-shuffle"></i><span>Add to compare</span></a></li>
-                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to cart"><i class="ti-shopping-cart"></i><span>Add to cart</span></a></li>
-                                    </ul>
                                 </div>
                                 <!-- /grid_item -->
                             </div>
@@ -121,7 +102,6 @@
                         {
                             <div class="col-6 col-md-4">
                                 <div class="grid_item">
-                                    <span class="ribbon off">-30%</span>
                                     <figure>
                                         <NavLink href="@($"/product/{x.Id}")">
                                             <img class="img-fluid lazy loaded" src="@x.Anh" data-src="@x.Anh" alt="" data-was-processed="true">
@@ -133,11 +113,6 @@
                                     <div class="price_box">
                                         <span class="new_price">@Helper.FormatMoney(x.BienThes?.Min(c => c.GiaBan)) - @Helper.FormatMoney( x.BienThes?.Max(c => c.GiaBan))</span>
                                     </div>
-                                    <ul>
-                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to favorites"><i class="ti-heart"></i><span>Add to favorites</span></a></li>
-                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to compare"><i class="ti-control-shuffle"></i><span>Add to compare</span></a></li>
-                                        <li><a href="#0" class="tooltip-1" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Add to cart"><i class="ti-shopping-cart"></i><span>Add to cart</span></a></li>
-                                    </ul>
                                 </div>
                                 <!-- /grid_item -->
                             </div>
@@ -173,6 +148,9 @@
 <!-- /container -->
 
 @code {
+    [Parameter]
+    public string Ten { get; set; } = "";
+
     ResponsePagination<SanPhamModel>? SanPhams;
 
     List<SanPhamModel> SanPhamsSauKhiLoc = new List<SanPhamModel>();
@@ -180,6 +158,14 @@
     ResponsePagination<ThuocTinhModel>? ThuocTinhs;
 
     List<Guid> GiaTris = new List<Guid>();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(Ten))
+        {
+            await LocGiaTri();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -191,6 +177,7 @@
     {
         if(SanPhams != null)
         {
+            SanPhamsSauKhiLoc = new List<SanPhamModel>();
             foreach (var x in SanPhams.Data.Content)
             {
                 @if(x.BienThes != null)
@@ -203,10 +190,25 @@
                             {
                                 if(GiaTris.Any(c => c == z.GiaTri?.Id))
                                 {
-                                    if(!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id))
+                                    if(Ten == null){ Ten = ""; }
+                                    if (!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id) && (x.Ten != null && x.Ten.ToLower().Trim().Contains(Ten.ToLower().Trim())))
                                     {
                                         SanPhamsSauKhiLoc.Add(x); 
-                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    if (!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id) && (x.Ten != null && x.Ten.ToLower().Trim().Contains(Ten.ToLower().Trim())))
+                                    {
+                                        SanPhamsSauKhiLoc.Add(x);
+                                    }
+                                    else
+                                    {
+                                        if(!SanPhamsSauKhiLoc.Any())
+                                        {
+                                            await Swal.FireAsync("", "Không tìm thấy sản phẩm phù hợp", SweetAlertIcon.Error);
+                                            return;
+                                        }
                                     }
                                 }
                             }

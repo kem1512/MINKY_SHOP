@@ -1,8 +1,9 @@
-﻿@page "/admin/lichsugiaoca"
+﻿@page "/admin/lichsugiaoca/{Page:int}"
 @using System.IdentityModel.Tokens.Jwt;
 @using MinkyShopProject.Business.Entities;
 @using MinkyShopProject.Business.Pagination;
 @using MinkyShopProject.Data.Models;
+<PageTitle>Lịch Sử Giao Ca</PageTitle>
 
 <div class="container-fluid py-4">
       <div class="row">
@@ -11,6 +12,28 @@
                     <h5>Ca Làm Việc Trong Ngày</h5>
                 </div>
                 <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-4">
+                            <select class="js-choice" @onchange="FilterWithStatus">
+                                <option value="">Tất Cả trạng thái</option>
+                                <option value="0">Đang Làm Việc</option>
+                                <option value="1">Chờ Bàn Giao</option>
+                                <option value="2">Đã Bàn Giao</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                        <select class="js-choice-size" @onchange="ChangePerPage">
+                                @for (int i = 1; i < 5; i++)
+                                {
+                                    var index = i * 5;
+                                    <option value="@index">@index kết quả</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <input class="form-control" placeholder="Nhập tên,mã hoặc địa chỉ nhân viên..." @onchange="Search"/>
+                        </div>
+                    </div>
                     <div>
                         @if(!ViewFormReset){
                             <div class="form-group">
@@ -30,7 +53,7 @@
                         }
 
                         @if(!ShowFormEditNhanVien){
-                            <div class="form-group  position-relative">
+                            <div class="form-group  position-relative mt-2">
                                 <div class="d-flex justify-content-between">
                                     <label class="form-control-label">Nhân Viên Nhận Ca</label>
                                 </div>
@@ -70,7 +93,9 @@
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhân Viên Trực Ca</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nhân Viên Nhận Ca</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tổng Tiền Mặt Trong Ca</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tiền Mặt Ban Đầu</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tiền Mặt Trong Ca</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tiền Mặt Cuối Ca</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Trạng Thái</th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Thao Tác</th>
                                 </tr>
@@ -81,22 +106,31 @@
                                     <tr>
                                         <td class="text-secondary text-xs font-weight-bold align-middle">@(Ca.TenNhanVienTrongCa)</td>
                                         <td class="text-secondary text-xs font-weight-bold align-middle">@(Ca.TenNhanVienCaTiepTheo)</td>
-                                        <td class="text-secondary text-xs font-weight-bold align-middle">@(Helper.FormatMoney(Ca.TongTienMat))</td>
+                                        <td class="text-secondary text-xs font-weight-bold align-middle">@(Helper.FormatMoney(Ca.TienBanDau))</td>
+                                        <td class="text-secondary text-xs font-weight-bold align-middle">@(Helper.FormatMoney(Ca.TienMatTrongCa))</td>
+                                        <td class="text-secondary text-xs font-weight-bold align-middle">@(Helper.FormatMoney(Ca.TienMatCuoiCa == null ? 0 : Ca.TienMatCuoiCa))</td>
                                         <td class="text-secondary text-xs font-weight-bold align-middle">@(Ca.TrangThai == 0 ? "Đang Làm Việc" : Ca.TrangThai == 1 ? "Chờ Bàn Giao" : "Đã Bàn Giao")</td>
                                         <td class="text-secondary text-xs font-weight-bold align-middle">
-                                            @if (Ca.TrangThai == 0 || Ca.TrangThai == 1)
-                                            {
+                                        @if (Ca.TrangThai == 1 || Ca.TrangThai == 0)
+                                        {
                                                 if (Role == 0)
                                                 {
                                                     <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2" @onclick="() => ShowFormReset(Ca.Id)">
                                                         <i class="fa-solid fa-hand-holding-dollar text-success"></i>
                                                 </a>
                                             }
-                                                <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2" @onclick="() => ShowFormNhanVien(Ca.Id)">
-                                                    <i class="fa-solid fa-rotate-right text-warning"></i>
-                                                </a>
+
+                                            if (Ca.IdNhanVienTrongCa == NhanVien.Id || Role == 0)
+                                            {
+                                                if (Ca.TrangThai == 1)
+                                                {
+                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2" @onclick="() => ShowFormNhanVien(Ca.Id)">
+                                                        <i class="fa-solid fa-rotate-right text-warning"></i>
+                                                    </a>
+                                                }
+                                            }
                                         }
-                                        <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2" @onclick="() => ShowLichSu(Ca.Id)">
+                                            <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" class="mx-2" @onclick="() => ShowLichSu(Ca.Id)">
                                                 <i class="fa fa-eye text-primary" aria-hidden="true"></i>
                                             </a>
                                         </td>
@@ -104,6 +138,19 @@
                                 }
                             </tbody>
                         </table>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <div class="d-flex justify-content-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                @for (int i = 1; i <= ResGiaoCa.Data.Pages; i++)
+                                {
+                                    <li class="page-item"><a class="page-link" href="/admin/lichsugiaoca/@(i)">@(i)</a></li>
+                                }
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -123,10 +170,14 @@
                 </div>
                 <div class="card-body">
                     @if(StrArray != null){
-                        @foreach (var str in StrArray)
-                        {
-                            <p>@(str)</p>
-                        }
+                        <div class="row">
+                            @foreach (var str in StrArray)
+                            {
+                                <div class="col mb-3">
+                                    <span class="badge bg-gradient-success">@(str)</span>
+                                </div>
+                            }
+                        </div>
                     }
                 </div>
            </div>
@@ -134,11 +185,17 @@
     }
 </div>
 @code {
+    [Parameter]
+    public int Page { get; set; }
+
     [Inject]
     private SweetAlertService Swal { get; set; } = null!;
 
     [Inject]
     private ILocalStorageService local { get; set; } = null!;
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; } = null!;
 
     [Inject]
     private HttpClient HttpClient { get; set; } = null!;
@@ -174,25 +231,39 @@
 
     private Response<PaginationResponse<NhanVien>> Response = new Response<PaginationResponse<NhanVien>>();
 
-    private Business.Pagination.PaginationRequest Request = new Business.Pagination.PaginationRequest() { PerPage = 3, CurrentPage = 1 };
+    private Business.Pagination.PaginationRequest Request = new Business.Pagination.PaginationRequest() { PerPage = 5, CurrentPage = 1 };
 
     private List<NhanVien> lstNhanVien = new();
 
     private GiaoCaModels.GiaoCaEditModel giaoCaEditModel = new();
 
-    protected async override Task OnInitializedAsync()
+    private GiaoCaModels.GiaoCaQueryModel query = new GiaoCaModels.GiaoCaQueryModel(){PerPage = 5,CurrentPage = 1};
+
+    private Response<PaginationResponse<GiaoCa>> ResGiaoCa = new();
+
+    protected override async Task OnParametersSetAsync()
     {
         var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
         var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
         await GetNhanVien(Guid.Parse(IdNhanVien));
+        query.CurrentPage = Page;
         await Reload();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice");
+            await JSRuntime.InvokeVoidAsync("choiceLoad", "{'searchEnabled': false}", ".js-choice-size");
+        }
     }
 
     private async Task Reload()
     {
         ViewModel.Clear();
-        var result = await HttpClient.GetFromJsonAsync<Response<List<GiaoCa>>>("https://localhost:7053/api/GiaoCas/CaDangCho");
-        Cas = result.Data;
+        ResGiaoCa = await HttpClient.GetFromJsonAsync<Response<PaginationResponse<GiaoCa>>>($"https://localhost:7053/api/GiaoCas/GetAllCa?PerPage={query.PerPage}&CurrentPage={query.CurrentPage}&Status={query.Status}&Keyword={query.Keyword}");
+        Cas = ResGiaoCa.Data.Data;
         foreach (var Ca in Cas)
         {
             var TenNhanVienTrongCa = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"https://localhost:7053/api/NhanViens/{Ca.IdNhanVienTrongCa}");
@@ -200,9 +271,12 @@
             model = new GiaoCaModels.GiaoCaViewModel()
             {
                     Id = Ca.Id,
+                    IdNhanVienTrongCa = Ca.IdNhanVienTrongCa,
                     TenNhanVienCaTiepTheo = TenNhanVienCaTiepTheo.Data.Ten,
                     TenNhanVienTrongCa = TenNhanVienTrongCa.Data.Ten,
-                    TongTienMat = Ca.TongTienMat,
+                    TienMatTrongCa = Ca.TongTienMat,
+                    TienMatCuoiCa = Ca.TongTienMatCuoiCa,
+                    TienBanDau = Ca.TienBanDau,
                     TrangThai = Ca.TrangThai,
             };
             ViewModel.Add(model);
@@ -249,7 +323,7 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        ResetModel.GhiChuRutTien = $"Mã nhân viên: {NhanVien.Ma} - họ và tên: {NhanVien.Ten} - số tiền rút: {Helper.FormatMoney(ResetModel.TongTienMatRut)} - thời gian rút: {ResetModel.ThoiGianReset.ToShortTimeString()}.";
+        ResetModel.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(ResetModel.TongTienMatRut)} - Thời gian rút: {ResetModel.ThoiGianReset.ToShortTimeString()}.";
         var result = await HttpClient.PutAsJsonAsync($"https://localhost:7053/api/GiaoCas/resettienmat?Id={CaDuocChon.Id}", ResetModel);
         var response = await result.Content.ReadFromJsonAsync<Response>();
         if (result.IsSuccessStatusCode)
@@ -258,6 +332,7 @@
             ResetModel = new();
             ViewFormReset = true;
             CaDuocChon = new();
+            ShowDetail = false;
             await Reload();
         }
         else
@@ -338,6 +413,24 @@
         {
             await Swal.FireAsync("Thông Báo", response.Message, SweetAlertIcon.Warning);
         }
+    }
+
+    private async Task FilterWithStatus(ChangeEventArgs e)
+    {
+        query.Status = e.Value.ToString() == "" ? null : int.Parse(e.Value.ToString());
+        await Reload();
+    }
+    
+    private async Task ChangePerPage(ChangeEventArgs e)
+    {
+        query.PerPage = int.Parse(e.Value.ToString());
+        await Reload();
+    }
+
+    private async Task Search(ChangeEventArgs e)
+    {
+        query.Keyword = e.Value.ToString();
+        await Reload();
     }
     
 }

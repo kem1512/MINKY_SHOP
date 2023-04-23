@@ -4,32 +4,32 @@
 
 namespace MinkyShopProject.Business.Migrations
 {
-	public partial class MinkyShop : Migration
-	{
-		protected override void Up(MigrationBuilder migrationBuilder)
-		{
-			migrationBuilder.CreateTable(
-				name: "NhanVien",
-				columns: table => new
-				{
-					Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
-					Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
-					Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					GioiTinh = table.Column<bool>(type: "bit", nullable: false),
-					NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: true),
-					NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
-					DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: true),
-					VaiTro = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
-					TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_NhanVien", x => x.Id);
-				});
+    public partial class MinkyShop : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "NhanVien",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(NEWID())"),
+                    Ma = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Ten = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Anh = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    GioiTinh = table.Column<bool>(type: "bit", nullable: false),
+                    NgaySinh = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Sdt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MatKhau = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VaiTro = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    TrangThai = table.Column<int>(type: "int", nullable: false, defaultValue: 0)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NhanVien", x => x.Id);
+                });
 
 			migrationBuilder.CreateTable(
 				name: "NhomSanPham",

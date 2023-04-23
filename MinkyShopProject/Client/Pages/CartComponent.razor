@@ -65,6 +65,12 @@
                         </tr>
                     }
                 }
+                else
+                {
+                    <tr style="text-align: center; font-weight: bold">
+                        <td colspan="4">Chưa có sản phẩm</td>
+                    </tr>
+                }
             </tbody>
         </table>
 
@@ -75,7 +81,11 @@
             <div class="col-sm-8">
                 <div class="apply-coupon">
                     <div class="form-group form-inline">
-                        <input type="text" name="coupon-code" value='@HoaDon.VoucherLogs?[0].Voucher?.Ten' @onchange='e => maVoucher = e.Value?.ToString() ?? ""' placeholder="Promo code" class="form-control"><button type="button" class="btn_1 outline" @onclick="ApDungVoucher">Áp Dụng Mã Giảm Giá</button>
+                        <input type="text" name="coupon-code" value='@HoaDon.VoucherLogs?[0].Voucher?.Ten' @onchange='e => maVoucher = e.Value?.ToString() ?? ""' placeholder="Mã giảm giá" class="form-control">
+                        @if(HoaDon.VoucherLogs == null)
+                        {
+                            <button type="button" class="btn_1 outline" @onclick="ApDungVoucher">Áp Dụng Mã Giảm Giá</button>
+                        }
                         @if(HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any())
                         {
                             <button style="margin-left: 3px" class="btn_1" @onclick="() => HoaDon.VoucherLogs = null">Xóa</button>
@@ -110,9 +120,16 @@
                                 <div class="form-group">
                                     <input type="text" class="form-control" placeholder="Ghi Chú" @bind="HoaDon.GhiChuGiaoHang">
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox"id="fcustomCheck1" @onchange='async e => { GetChecked = Boolean.Parse(e.Value?.ToString() ?? ""); await GetData(); }'>
-                                    <label class="custom-control-label" for="customCheck1">Sử dụng dữ liệu của tài khoản @GetChecked</label>
+                                <div style="display: flex; justify-content: space-between">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="customCheck1" @onchange='async e => { GetChecked = Boolean.Parse(e.Value?.ToString() ?? ""); await GetData(); }'>
+                                        <label class="custom-control-label" for="customCheck1">Sử dụng dữ liệu của tài khoản</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="customCheck1" @onchange='async e => { HoaDon.LoaiDonHang = HoaDon.LoaiDonHang == 1 ? 0 : 1; HoaDon.TienShip = HoaDon.TienShip == 10000 ? 0 : 10000; }'>
+                                        <label class="custom-control-label" for="customCheck1">Nhận tại cửa hàng</label>
+                                    </div>
                                 </div>
                             </div>
                             <!-- /tab_1 -->
@@ -126,7 +143,7 @@
                             <span>Tổng Tiền (@GioHangs?.Data.GioHangChiTiets?.Count())</span> @Helper.FormatMoney(GioHangs?.Data.GioHangChiTiets?.Sum(c => c.DonGia * c.SoLuong))
                         </li>
                         <li>
-                            <span>Tiền Ship</span> @Helper.FormatMoney(10000)
+                            <span>Tiền Ship</span> @Helper.FormatMoney(HoaDon.TienShip)
                         </li>
                         @if(HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any())
                         {
@@ -137,11 +154,11 @@
                         <li style="font-size: 1rem">
                             @if(HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any())
                             {
-                                <span>Khách Phải Trả</span> @Helper.FormatMoney(HoaDon.VoucherLogs[0].TienSauKhiGiam)
+                                <span>Khách Phải Trả</span> @Helper.FormatMoney(HoaDon.VoucherLogs[0].TienSauKhiGiam + HoaDon.TienShip)
                             }
                             else
                             {
-                                <span>Khách Phải Trả</span> @Helper.FormatMoney(GioHangs?.Data.GioHangChiTiets?.Sum(c => c.DonGia * c.SoLuong) - 10000)
+                                <span>Khách Phải Trả</span> @Helper.FormatMoney(GioHangs?.Data.GioHangChiTiets?.Sum(c => c.DonGia * c.SoLuong) + HoaDon.TienShip + HoaDon.LoaiDonHang == 1 ? 0 : 10000)
                             }
                         </li>
                     </ul>
@@ -184,10 +201,15 @@
 
     protected async override Task OnInitializedAsync()
     {
+        HoaDon.TienShip = 10000;
         var khachHang = await Session.GetItemAsync<KhachHangModel>("khachHang");
         if(khachHang != null)
         {
             GioHangs = await HttpClient.GetFromJsonAsync<ResponseObject<GioHangModel>>("https://localhost:7053/api/GioHang?id=" + khachHang.Id);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/account");
         }
     }
 
@@ -212,7 +234,7 @@
             return;
         }
 
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "", TitleText = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
@@ -250,14 +272,14 @@
 
     async Task XoaSanPham(int index)
     {
-        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Xóa", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        var status = await HttpClient.DeleteAsync("https://localhost:7053/api/GioHang/?id=" + HoaDon.HoaDonChiTiets[index].IdBienThe);
+        var status = await HttpClient.DeleteAsync("https://localhost:7053/api/GioHang/?id=" + GioHangs.Data.GioHangChiTiets[index].IdBienThe);
         if (status.IsSuccessStatusCode)
         {
-            HoaDon.HoaDonChiTiets.RemoveAt(index);
+            GioHangs.Data.GioHangChiTiets.RemoveAt(index);
             await Swal.FireAsync("", "Xóa Thành Công", SweetAlertIcon.Success);
         }
         else
@@ -273,9 +295,9 @@
             var voucher = await HttpClient.GetFromJsonAsync<ResponseObject<VoucherModel>>("https://localhost:7053/api/Voucher/" + maVoucher);
             if (voucher != null && voucher.Data.Id != Guid.Empty)
             {
-                if(voucher.Data.NgayKetThuc < DateTime.Now || voucher.Data.SoLuong <= 0)
+                if(voucher.Data.NgayKetThuc < DateTime.Now || voucher.Data.SoLuong <= 0 || GioHangs.Data.GioHangChiTiets.Sum(c => c.SoLuong * c.DonGia) < voucher.Data.SoTienCan)
                 {
-                    await Swal.FireAsync("", "Voucher Hết Hạn Sử Dụng Hoặc Hết Lượt Sử Dụng", SweetAlertIcon.Error);
+                    await Swal.FireAsync("", "Voucher Hết Hạn Sử Dụng Hoặc Hết Lượt Sử Dụng Hoặc Không Đủ Điều Kiện", SweetAlertIcon.Error);
                 }
                 else
                 {
@@ -286,6 +308,7 @@
                     }
                     else
                     {
+                        HoaDon.TongTien = GioHangs.Data.GioHangChiTiets.Sum(c => c.SoLuong * c.DonGia);
                         var after = HoaDon.TongTien - (HoaDon.TongTien * voucher.Data.SoTienGiam / 100);
                         HoaDon.VoucherLogs = new List<VoucherLogModel>() { new VoucherLogModel() { IdVoucher = voucher.Data.Id, SoTienGiam = HoaDon.TongTien - after, TienTruocKhiGiam = HoaDon.TongTien, TienSauKhiGiam = after, Voucher = voucher.Data } };
                     }

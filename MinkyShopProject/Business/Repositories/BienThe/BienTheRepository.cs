@@ -34,7 +34,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
 
                 var idBienThe = Guid.NewGuid();
 
-                var idSanPham = Guid.NewGuid();
+                var idSanPham = obj.SanPham.Id;
 
                 var idThuocTinhSanPham = Guid.NewGuid();
 
@@ -79,7 +79,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                         {
                             foreach (var y in x.GiaTris)
                             {
-                                var giaTriTonTai = _context.GiaTri.AsNoTracking().FirstOrDefault(c => c.Ten.ToLower().Trim().Contains(x.Ten.ToLower().Trim()));
+                                var giaTriTonTai = _context.GiaTri.AsNoTracking().FirstOrDefault(c => c.Ten.ToLower().Trim().Contains(y.Ten.ToLower().Trim()));
                                 if (giaTriTonTai != null)
                                 {
                                     y.Id = giaTriTonTai.Id;

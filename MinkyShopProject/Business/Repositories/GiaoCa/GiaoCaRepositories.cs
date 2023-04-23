@@ -15,6 +15,8 @@ using MimeKit;
 using MimeKit.Text;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using MinkyShopProject.Business.Pagination;
+using AutoMapper;
 
 namespace MinkyShopProject.Business.Repositories.GiaoCa
 {
@@ -78,15 +80,24 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
                 Ca.GhiChuPhatSinh = model.GhiChuPhatSinh;
                 Ca.TongTienMatCaTruoc = model.TongTienMatCaTruoc;
                 Ca.TongTienMatCuoiCa = model.TongTienMatCuoiCa;
+                if (Ca.TongTienMatRut == null)
+                {
+                    Ca.TongTienMatRut = model.TongTienMatRut;
+                }
+                else
+                {
+                    Ca.TongTienMatRut += model.TongTienMatRut;
+                }
+                Ca.GhiChuRutTien += model.GhiChuRutTien;
                 Ca.TrangThai = 1;
                 var result = await _context.SaveChangesAsync();
                 if (result > 0)
                 {
-                    return new Response(Code.OK, "Hoàn thành báo cáo");
+                    return new Response(Code.OK, "Hoàn Thành Báo Cáo");
                 }
                 else
                 {
-                    return new ResponseError(Code.BadRequest, "Kết ca thất bại,vui lòng thử lại");
+                    return new ResponseError(Code.BadRequest, "Kết Ca Thất Bại,Vui Lòng Thử Lại");
                 }
             }
             catch (Exception ex)
@@ -98,7 +109,11 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
 
         public async Task<Response> GetHoaDonCa(Guid IdNhanVien,DateTime ThoiGian)
         {
-            var hoadons = await _context.HoaDon.Where(c => c.NgayTao.Day == ThoiGian.Day && c.NgayTao.Month == ThoiGian.Month && c.NgayTao.Year == ThoiGian.Year && c.IdNhanVien == IdNhanVien && c.TrangThai == 0).ToListAsync();
+            var hoadons = await _context.HoaDon.Where(c => c.NgayTao.Day == ThoiGian.Day 
+                                                        && c.NgayTao.Month == ThoiGian.Month 
+                                                        && c.NgayTao.Year == ThoiGian.Year 
+                                                        && c.IdNhanVien == IdNhanVien 
+                                                        && c.TrangThai == 0).ToListAsync();
             return new Response<List<Entities.HoaDon>>(Code.OK, hoadons);
         }
 
@@ -136,12 +151,72 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             }
         }
 
-        public async Task<Response> GetCaHienTaiChoBanGiao()
+        public async Task<Response> GetCa([FromQuery] GiaoCaModels.GiaoCaQueryModel query)
         {
-            var Cas = await _context.giaoCas.Where(a => a.ThoiGianNhanCa.Day == DateTime.Now.Day && a.ThoiGianNhanCa.Month == DateTime.Now.Month && a.ThoiGianNhanCa.Year == DateTime.Now.Year).ToListAsync();
+            try
+            {
+                var Cas = new List<Entities.GiaoCa>();
+                var pageResult = Convert.ToSingle(query.PerPage);
+                double pageCount = 0;
+
+                if (query.Status == null && query.Keyword == null)
+                {
+                    pageCount = Math.Ceiling(_context.giaoCas.Count() / pageResult);
+
+                    Cas = _context.giaoCas
+                       .Skip((query.CurrentPage - 1) * (int)pageResult)
+                       .Take((int)pageResult)
+                       .OrderByDescending(c=>c.ThoiGianNhanCa)
+                       .ToList();
+                }
+                else if (query.Status == null && query.Keyword != null)
+                {
+                    pageCount = Math.Ceiling(_context.giaoCas.Where(c=>c.NhanVien.Ten.Contains(query.Keyword)).Count() / pageResult);
+
+                    Cas = _context.giaoCas
+                       .Where(c => c.NhanVien.Ten.Contains(query.Keyword))
+                       .Skip((query.CurrentPage - 1) * (int)pageResult)
+                       .Take((int)pageResult)
+                       .OrderByDescending(c => c.ThoiGianNhanCa)
+                       .ToList();
+                }
+                else if (query.Status != null && query.Keyword == null)
+                {
+                    pageCount = Math.Ceiling(_context.giaoCas.Where(c=>c.TrangThai == query.Status).Count() / pageResult);
+
+                    Cas = _context.giaoCas
+                       .Where(c => c.TrangThai == query.Status)
+                       .Skip((query.CurrentPage - 1) * (int)pageResult)
+                       .Take((int)pageResult)
+                       .OrderByDescending(c => c.ThoiGianNhanCa)
+                       .ToList();
+                }
+                else
+                {
+                    pageCount = Math.Ceiling(_context.giaoCas.Where(c => c.TrangThai == query.Status && c.NhanVien.Ten.Contains(query.Keyword)).Count() / pageResult);
+
+                    Cas = _context.giaoCas
+                       .Where(c => c.TrangThai == query.Status)
+                       .Skip((query.CurrentPage - 1) * (int)pageResult)
+                       .Take((int)pageResult)
+                       .OrderByDescending(c => c.ThoiGianNhanCa)
+                       .ToList();
+                }
 
 
-            return new Response<List<Entities.GiaoCa>>(Code.OK, Cas);
+                var Response = new PaginationResponse<Entities.GiaoCa>()
+                {
+                    Data = Cas,
+                    CurrentPage = query.CurrentPage,
+                    Pages = (int)pageCount,
+                };
+
+                return new ResponseObject<PaginationResponse<Entities.GiaoCa>>(Response, "Lấy dữ liệu thành công");
+            }
+            catch (Exception exception)
+            {
+                return new ResponseError(Code.InternalServerError, exception.ToString());
+            }
         }
 
         public async Task<Response> GetCaDuocChon(Guid Id)
@@ -156,8 +231,15 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             {
                 var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.Id == Id);
                 Ca.ThoiGianReset = model.ThoiGianReset;
-                Ca.TongTienMatRut = Ca.TongTienMatRut + model.TongTienMatRut;
-                Ca.GhiChuRutTien = Ca.GhiChuRutTien + model.GhiChuRutTien;
+                if (Ca.TongTienMatRut == null)
+                {
+                    Ca.TongTienMatRut = model.TongTienMatRut;
+                }
+                else
+                {
+                    Ca.TongTienMatRut += model.TongTienMatRut;
+                }
+                Ca.GhiChuRutTien += model.GhiChuRutTien;
                 Ca.TongTienMat = Ca.TongTienMat - model.TongTienMatRut;
                 var result = await _context.SaveChangesAsync();
 
@@ -209,7 +291,7 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
             try
             {
                 var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.Id == Id);
-                Ca.TrangThai = 3;
+                Ca.TrangThai = 2;
                 var result = await _context.SaveChangesAsync();
                 if (result > 0)
                 {
@@ -280,6 +362,12 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
 
             return new Response(Code.OK, "Gửi Thành Công");
  
+        }
+
+        public async Task<Response> CaDangCho()
+        {
+            var Cas = await _context.giaoCas.Where(a => a.ThoiGianNhanCa.Day == DateTime.Now.Day && a.ThoiGianNhanCa.Month == DateTime.Now.Month && a.ThoiGianNhanCa.Year == DateTime.Now.Year).ToListAsync();
+            return new Response<List<Entities.GiaoCa>>(Code.OK, Cas);
         }
     }
 }

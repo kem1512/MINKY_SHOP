@@ -14,7 +14,7 @@ namespace MinkyShopProject.Data.Enums
 
     public enum TrangThaiHoaDonChiTiet
     {
-        Done, Unfinished, Cancelled,
+        HoanThanh, TraHang
     }
 
     public enum TrangThaiGiaoHang
