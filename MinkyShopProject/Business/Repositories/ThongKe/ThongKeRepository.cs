@@ -61,8 +61,8 @@ namespace MinkyShopProject.Business.Repositories.ThongKe
                     start = now.AddDays(-6);
                     break;
                 case "14ngaytruoc":
-                    start = now.AddDays(-7);
-                    end = now.AddMilliseconds(-1).AddDays(-7);
+                    start = now.AddDays(-14);
+                    end = start.AddDays(7).AddMilliseconds(-1);
                     break;
                 case "thangtruoc":
                     start = new DateTime(now.Year, now.Month, 1).AddMonths(-1);
