@@ -16,9 +16,9 @@
                         <div class="all">
                             <div class="slider">
                                 <div class="owl-carousel owl-theme main">
-                                    @foreach (var x in BienTheChiTiet.Data.SanPham.BienThes)
+                                    @foreach (var x in BienTheChiTiet.Data.SanPham.BienThes.Select(c => c.Anh).Distinct())
                                     {
-                                        <div style="background-image: url(@x.Anh);" class="item-box"></div>
+                                        <div style="background-image: url(@x);" class="item-box"></div>
                                     }
                                 </div>
                                 <div class="left nonl"><i class="ti-angle-left"></i></div>
@@ -26,9 +26,9 @@
                             </div>
                             <div class="slider-two">
                                 <div class="owl-carousel owl-theme thumbs">
-                                    @foreach (var x in BienTheChiTiet.Data.SanPham.BienThes)
+                                    @foreach (var x in BienTheChiTiet.Data.SanPham.BienThes.Select(c => c.Anh).Distinct())
                                     {
-                                        <div style="background-image: url(@x.Anh);" class="item"></div>
+                                        <div style="background-image: url(@x);" class="item"></div>
                                     }
                                 </div>
                                 <div class="left-t nonl-t"></div>

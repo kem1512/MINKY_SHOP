@@ -55,7 +55,7 @@ namespace MinkyShopProject.Data.Models
             public string DiaChi { get; set; } = null!;
 
             [Required(ErrorMessage = "Số điện thoại không được để trống")]
-            [RegularExpression("^[0-9]", ErrorMessage = "Số điện thoại phải là số")]
+            [RegularExpression("^[0-9]+$", ErrorMessage = "Số điện thoại phải là số")]
             public string Sdt { get; set; } = null!;
 
             [Required(ErrorMessage = "Email nhân viên không được để trống")]

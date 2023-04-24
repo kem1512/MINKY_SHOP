@@ -57,13 +57,21 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         void ApDungGiaChung()
         {
-            if(SanPham?.Data.BienThes != null)
+            if (SanPham?.Data.BienThes != null)
             {
                 foreach (var x in SanPham.Data.BienThes)
                 {
                     x.GiaBan = GiaChung;
                 }
                 GiaChung = 0;
+            }
+        }
+
+        void ApDungAnh()
+        {
+            foreach (var x in SanPham.Data.BienThes)
+            {
+                x.Anh = SanPham.Data.Anh;
             }
         }
 
@@ -139,7 +147,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
             var responose = await HttpClient.PostAsync(Url + "/image", content);
 
-            if(responose.IsSuccessStatusCode)
+            if (responose.IsSuccessStatusCode)
             {
                 await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
                 ModelImage = await HttpClient.GetFromJsonAsync<List<string>>("https://localhost:7053/api/Image");

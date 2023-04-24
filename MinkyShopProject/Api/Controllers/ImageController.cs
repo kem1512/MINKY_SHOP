@@ -46,15 +46,10 @@ namespace MinkyShopProject.Api.Controllers
                 {
                     if (file.Length == 0)
                     {
-                        logger.LogInformation("{FileName} length is 0 (Err: 1)",
-                            trustedFileNameForDisplay);
                         uploadResult.ErrorCode = 1;
                     }
                     else if (file.Length > maxFileSize)
                     {
-                        logger.LogInformation("{FileName} of {Length} bytes is " +
-                            "larger than the limit of {Limit} bytes (Err: 2)",
-                            trustedFileNameForDisplay, file.Length, maxFileSize);
                         uploadResult.ErrorCode = 2;
                     }
                     else
@@ -65,7 +60,7 @@ namespace MinkyShopProject.Api.Controllers
                             var path = Path.Combine(env.ContentRootPath, "wwwroot/images/",
                                 trustedFileNameForFileStorage);
 
-                            if(!Directory.Exists(env.ContentRootPath + "wwwroot/images/"))
+                            if (!Directory.Exists(env.ContentRootPath + "wwwroot/images/"))
                             {
                                 Directory.CreateDirectory(env.ContentRootPath + "wwwroot/images/");
                             }
@@ -73,8 +68,6 @@ namespace MinkyShopProject.Api.Controllers
                             await using FileStream fs = new(path, FileMode.Create);
                             await file.CopyToAsync(fs);
 
-                            logger.LogInformation("{FileName} saved at {Path}",
-                                trustedFileNameForDisplay, path);
                             uploadResult.Uploaded = true;
                             uploadResult.StoredFileName = trustedFileNameForFileStorage;
                         }

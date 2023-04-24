@@ -176,7 +176,7 @@
                                                     <div class="position-absolute list-group w-100" id="voucher-list" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                         @if (VouchersThoaMan != null && VouchersThoaMan.Any())
                                                         {
-                                                            @foreach (var x in VouchersThoaMan.Where(c => c.TrangThai == 0).Select((v, i) => (i, v)))
+                                                            @foreach (var x in VouchersThoaMan.Where(c => c.TrangThai == 0 && c.SoLuong > 0 && c.NgayKetThuc > DateTime.Now).Select((v, i) => (i, v)))
                                                             {
                                                                 if (x.i < 5)
                                                                 {

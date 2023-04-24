@@ -56,7 +56,7 @@
                                     </button>
                                 }
                                 <NavLink class="btn btn-success me-2" href="@($"print/{HoaDon?.Id}")">In</NavLink>
-                                @if (HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.DaHuy && HoaDon?.TrangThaiGiaoHang != 4 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 3 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 5)
+                                @if (HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.DaHuy && HoaDon?.TrangThaiGiaoHang != 4 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 3 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 5 && HoaDon.TrangThaiGiaoHang != 2)
                                 {
                                     <button class="btn btn-danger me-2" @onclick='async() => { if(string.IsNullOrEmpty(GhiChuCapNhat)){ await Swal.FireAsync("", "Vui Lòng Nhập Ghi Chú Cập Nhật", SweetAlertIcon.Error); return; } if(await Confirm()){ if(HoaDon.LoaiDonHang != 2) { HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.DaHuy; await CapNhatHoaDon(); }else{ HoaDon.TrangThaiGiaoHang = (int)Data.Enums.TrangThaiGiaoHang.DaHuy; await CapNhatHoaDon(); }} }'>Hủy</button>
                                 }

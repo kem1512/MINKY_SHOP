@@ -35,7 +35,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
             _configuration = configuration;
         }
 
-        public async Task<Response> ChangeStatus(Guid Id,int status)
+        public async Task<Response> ChangeStatus(Guid Id, int status)
         {
             try
             {
@@ -75,17 +75,17 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                 }
 
                 _context.NhanVien.Remove(nhanvien);
-                var result  = _context.SaveChanges();
+                var result = _context.SaveChanges();
                 if (result > 0)
                 {
-                    return new Response(Code.OK,"Xóa thành công");
+                    return new Response(Code.OK, "Xóa thành công");
                 }
 
                 return new ResponseError(Code.BadRequest, "Xóa không thành công");
             }
             catch (Exception exeption)
             {
-                return new ResponseError(Code.InternalServerError,exeption.ToString());
+                return new ResponseError(Code.InternalServerError, exeption.ToString());
             }
         }
 
@@ -111,7 +111,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                     pageCount = Math.Ceiling(_context.NhanVien.Where(c => c.TrangThai == paginationRequest.Status).Count() / pageResult);
 
                     NhanViens = await _context.NhanVien
-                        .Where(c=>c.TrangThai == paginationRequest.Status)
+                        .Where(c => c.TrangThai == paginationRequest.Status)
                         .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                         .Take((int)pageResult)
                         .ToListAsync();
@@ -206,9 +206,10 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
 
                 if (nv != null)
                 {
-                    return new ResponseError(Code.BadRequest,"Mã nhân viên đã tồn tại");
+                    return new ResponseError(Code.BadRequest, "Mã nhân viên đã tồn tại");
                 }
 
+                NhanVien.NgayTao = DateTime.Now;
                 _context.NhanVien.Add(NhanVien);
                 var result = _context.SaveChanges();
 
@@ -221,7 +222,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
             }
             catch (Exception exception)
             {
-                return new ResponseError(Code.InternalServerError,exception.ToString());
+                return new ResponseError(Code.InternalServerError, exception.ToString());
             }
         }
 
@@ -291,11 +292,11 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                     return new ResponseError(Code.BadRequest, "Đăng nhập thất bại");
                 }
 
-                
+
             }
             catch (Exception ex)
             {
-                return new Response(Code.InternalServerError,ex.ToString());
+                return new Response(Code.InternalServerError, ex.ToString());
             }
         }
     }
