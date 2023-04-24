@@ -55,7 +55,7 @@ namespace MinkyShopProject.Business.Repositories.BienThe
                             if (x.Id == Guid.Empty)
                             {
                                 x.Id = Guid.NewGuid();
-                                await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten });
+                                await _context.ThuocTinh.AddAsync(new Entities.ThuocTinh { Id = x.Id, Ten = x.Ten, NgayTao = DateTime.Now });
                             }
                         }
 

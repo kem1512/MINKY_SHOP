@@ -133,10 +133,15 @@ namespace MinkyShopProject.Admin.Pages.Admin
                 content.Add(content: fileContent, name: "\"files\"", fileName: file.Name);
             }
 
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Muốn Tải Ảnh Lên Không", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+            if (string.IsNullOrEmpty(confirm.Value)) return;
+
             var responose = await HttpClient.PostAsync(Url + "/image", content);
 
             if(responose.IsSuccessStatusCode)
             {
+                await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
                 ModelImage = await HttpClient.GetFromJsonAsync<List<string>>("https://localhost:7053/api/Image");
             }
         }

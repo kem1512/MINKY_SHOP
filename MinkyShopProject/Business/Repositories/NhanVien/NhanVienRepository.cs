@@ -253,7 +253,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
 
                 if (NhanVien == null)
                 {
-                    return new ResponseError(Code.NotFound, "Tên đăng nhập hoặc mật khẩ không chính xác");
+                    return new ResponseError(Code.NotFound, "Tên đăng nhập hoặc mật khẩu không chính xác");
                 }
                 else if (NhanVien.TrangThai == 0)
                 {

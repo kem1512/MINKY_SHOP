@@ -26,6 +26,6 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
         Task<Response> GetCaTruoc(Guid IdNhanVien);
         Task<Response> NhanCa(Guid Id);
         Task<Response> CaDangCho();
-        Task<Response> SendMail();
+        Task<Response> SendMail(Guid IdCa);
     }
 }

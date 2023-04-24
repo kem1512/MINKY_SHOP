@@ -47,7 +47,6 @@ namespace MinkyShopProject.Data.Models
 
         public bool GioiTinh { get; set; } = true;
 
-        [CheckAge(ErrorMessage = "Khách phải 16 tuổi trở lên")]
         public DateTime NgaySinh { get; set; } = DateTime.Now;
 
         public DateTime NgayTao { get; set; } = DateTime.Now;

@@ -119,7 +119,7 @@
                                             {
                                                 if (x.i < 5)
                                                 {
-                                                    <button @onmousedown="() => { HoaDons[index].IdKhachHang = x.v.Id; HoaDons[index].KhachHang = x.v; KhachHangsSeach = new List<Data.Models.KhachHangModel>(); }" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten - @x.v.Sdt</button>
+                                                    <button @onmousedown="() => { HoaDons[index].IdKhachHang = x.v.Id; HoaDons[index].KhachHang = x.v; KhachHangsSeach = new List<Data.Models.KhachHangModel>(); HoaDons[index].TenNguoiNhan = x.v.Ten; HoaDons[index].Sdt = x.v.Sdt; HoaDons[index].DiaChi = x.v.DiaChi; }" class="d-flex list-group-item list-group-item-action align-items-center text-sm">@x.v.Ten - @x.v.Sdt</button>
                                                 }
                                             }
                                         </div>
@@ -223,15 +223,15 @@
                                             <div class="row gy-3">
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Giảm Giá</label>
-                                                    <div class="position-relative">
+                                                    <div class="d-flex position-relative">
+                                                        @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
+                                                        {
+                                                            <button class="btn btn-xs shadow-none me-2 mb-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
+                                                        }
                                                         <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
                                                                value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten @(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? " - " + Helper.FormatMoney(HoaDons[index].VoucherLogs[0].SoTienGiam) : "")"
                                                                onfocus="document.getElementById('voucher-list-2').style.display='block'"
                                                                onblur="setTimeout(() => { document.getElementById('voucher-list-2').style.display='none' }, 100)">
-                                                        @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
-                                                        {
-                                                            <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
-                                                        }
                                                         <div class="position-absolute list-group w-100" id="voucher-list-2" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                             @if (VouchersThoaMan != null && VouchersThoaMan.Any())
                                                             {
@@ -252,7 +252,7 @@
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Số Điện Thoại <span class="text-danger">*</span></label>
-                                                    <input type="number" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
+                                                    <input type="text" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Địa Chỉ <span class="text-danger">*</span></label>
@@ -275,15 +275,15 @@
                                             <div class="row gy-3">
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Giảm Giá</label>
-                                                    <div class="position-relative">
+                                                    <div class="d-flex position-relative">
+                                                        @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
+                                                        {
+                                                            <button class="btn btn-xs shadow-none me-2 mb-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
+                                                        }
                                                         <input type="text" class="w-100 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0"
                                                                value="@HoaDons[index].VoucherLogs?[0].Voucher?.Ten @(HoaDons[index].VoucherLogs != null && HoaDons[index].VoucherLogs.Any() ? " - " + Helper.FormatMoney(HoaDons[index].VoucherLogs[0].SoTienGiam) : "")"
                                                                onfocus="document.getElementById('voucher-list-3').style.display='block'"
                                                                onblur="setTimeout(() => { document.getElementById('voucher-list-3').style.display='none' }, 100)">
-                                                        @if (HoaDons[index].VoucherLogs?[0].Voucher != null)
-                                                        {
-                                                            <button class="btn btn-xs shadow-none position-absolute top-50 start-1 translate-middle-y px-0" @onclick="async() => { HoaDons[index].VoucherLogs = null; await CapNhatTongTien(); await TimKiemVoucher(); }"><i class="fa fa-times"></i></button>
-                                                        }
                                                         <div class="position-absolute list-group w-100" id="voucher-list-3" style="z-index: 1; right: 0; display: none" @onfocusout="() => SanPhamsSearch = new List<Data.Models.SanPhamModel>()">
                                                             @if (VouchersThoaMan != null && VouchersThoaMan.Any())
                                                             {
@@ -304,7 +304,7 @@
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Số Điện Thoại <span class="text-danger">*</span></label>
-                                                    <input type="number" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
+                                                    <input type="text" @bind="HoaDons[index].Sdt" class="w-50 border-top-0 border-end-0 border-start-0 text-sm text-end" style="outline: 0">
                                                 </div>
                                                 <div class="col-12 d-flex justify-content-between align-items-center position-relative">
                                                     <label class="text-xs">Địa Chỉ <span class="text-danger">*</span></label>
