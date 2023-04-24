@@ -189,16 +189,16 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
 
         public async Task SeeddingHoaDon()
         {
-            // _Context.RemoveRange(_Context.HoaDon);
+            //_Context.RemoveRange(_Context.HoaDon);
             // _Context.RemoveRange(_Context.ThuocTinh);
             // _Context.RemoveRange(_Context.ThuocTinhSanPham);
-            // _Context.RemoveRange(_Context.HoaDonChiTiet);
+            //_Context.RemoveRange(_Context.HoaDonChiTiet);
             // _Context.RemoveRange(_Context.BienThe);
             // _Context.RemoveRange(_Context.BienTheChiTiet);
             // _Context.RemoveRange(_Context.NhanVien);
             // _Context.RemoveRange(_Context.KhachHang);
-            // _Context.RemoveRange(_Context.SanPham);
-            await _Context.SaveChangesAsync();
+            //_Context.RemoveRange(_Context.SanPham);
+            // await _Context.SaveChangesAsync();
             int soluong = 300;
             var ListId = ListGuid(soluong);
             var ListIdChiTiet = ListGuid(soluong * 10);
@@ -224,6 +224,7 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
                     NgayNhan = faker.Date.Between(DateTime.Today.AddMonths(-1), DateTime.Now),
                     NgayGiaoHang = faker.Date.Between(DateTime.Today.AddMonths(-1), DateTime.Now),
                     NgayThanhToan = faker.Date.Between(DateTime.Today.AddMonths(-1), DateTime.Now),
+                    NgayHoanThanh = faker.Date.Between(DateTime.Today.AddMonths(-1), DateTime.Now),
                     GhiChu = faker.Lorem.Sentence(),
                     TienShip = TienShip,
                     TongTien = faker.Random.Float(min: 10000f, max: 5000000f) + TienShip,
@@ -244,9 +245,7 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
                         DonGia = faker.Random.Float(min: 2000f, max: 1000f),
                         TrangThai = 0
                     });
-
                 }
-
             }
             await _Context.SaveChangesAsync();
         }
