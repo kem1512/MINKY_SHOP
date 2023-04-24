@@ -182,7 +182,7 @@
 
             if (result.IsSuccessStatusCode)
             {
-                var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian.ToString("yyyy/MM/dd")}");
+                var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
                 if (CaTruoc != null)
                 {
                     await HttpClient.DeleteAsync($"https://localhost:7053/api/GiaoCas/NhanCa?Id={CaTruoc.Id}");

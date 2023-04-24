@@ -241,10 +241,10 @@
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.NgayKetThuc</span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.SoTienCan</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.SoTienCan)</span>
                                                 </td>
                                                 <td class="align-middle text-center text-sm">
-                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.SoTienGiam</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">@(x.Value.HinhThucGiamGia == 0 ? x.Value.SoTienGiam : Helper.FormatMoney(x.Value.SoTienGiam))</span>
                                                 </td>
                                                 <td class="align-middle text-center p-0" style="width: 16%">
                                                     <div class="form-check form-switch justify-content-center">
@@ -254,9 +254,6 @@
                                                 <td class="text-sm">
                                                     <a href="javascript:;" class="me-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => { Voucher = Helper.ConvertJson<VoucherCreateModel>(x.Value); Show = true; }">
                                                         <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
-                                                    </a>
-                                                    <a href="javascript:;" data-bs-toggle="tooltip" data-bs-original-title="Delete product" @onclick="() => DeleteAsync(x.Index)">
-                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                                                     </a>
                                                 </td>
                                             </tr>

@@ -210,7 +210,7 @@
                                         <tbody>
                                             @if (HoaDon?.HoaDonChiTiets.Count() > 0)
                                             {
-                                                foreach (var x in HoaDon.HoaDonChiTiets.Where(c => c.SoLuong > 0).GroupBy(c => c.IdBienThe).Select((Value, Index) => (Index, Value)))
+                                                foreach (var x in HoaDon.HoaDonChiTiets.OrderByDescending(c => c.SoLuong).Where(c => c.SoLuong > 0).GroupBy(c => c.IdBienThe).Select((Value, Index) => (Index, Value)))
                                                 {
                                                     <tr>
                                                         <td>
