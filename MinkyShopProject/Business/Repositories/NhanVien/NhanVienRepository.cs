@@ -104,6 +104,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                     NhanViens = await _context.NhanVien
                         .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                         .Take((int)pageResult)
+                        .OrderByDescending(c=>c.NgayTao)
                         .ToListAsync();
                 }
                 else if (paginationRequest.Status != null && paginationRequest.Role == null && paginationRequest.Keyword == null)
@@ -114,6 +115,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                         .Where(c=>c.TrangThai == paginationRequest.Status)
                         .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                         .Take((int)pageResult)
+                        .OrderByDescending(c => c.NgayTao)
                         .ToListAsync();
                 }
                 else if (paginationRequest.Status == null && paginationRequest.Role != null && paginationRequest.Keyword == null)
@@ -124,6 +126,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                        .Where(c => c.VaiTro == paginationRequest.Role)
                        .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                        .Take((int)pageResult)
+                       .OrderByDescending(c => c.NgayTao)
                        .ToListAsync();
                 }
                 else if (paginationRequest.Status == null && paginationRequest.Role == null && paginationRequest.Keyword != null)
@@ -134,6 +137,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                        .Where(c => c.Ten.Contains(paginationRequest.Keyword) || c.DiaChi.Contains(paginationRequest.Keyword) || c.Ma.Contains(paginationRequest.Keyword))
                        .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                        .Take((int)pageResult)
+                       .OrderByDescending(c => c.NgayTao)
                        .ToListAsync();
                 }
                 else if (paginationRequest.Status != null && paginationRequest.Role != null && paginationRequest.Keyword == null)
@@ -144,6 +148,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                        .Where(c => c.TrangThai == paginationRequest.Status && c.VaiTro == paginationRequest.Role)
                        .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                        .Take((int)pageResult)
+                       .OrderByDescending(c => c.NgayTao)
                        .ToListAsync();
                 }
                 else if (paginationRequest.Status == null && paginationRequest.Role != null && paginationRequest.Keyword != null)
@@ -154,6 +159,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                        .Where(c => c.VaiTro == paginationRequest.Role && c.Ten.Contains(paginationRequest.Keyword))
                        .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                        .Take((int)pageResult)
+                       .OrderByDescending(c => c.NgayTao)
                        .ToListAsync();
                 }
                 else if (paginationRequest.Status != null && paginationRequest.Role == null && paginationRequest.Keyword != null)
@@ -164,6 +170,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                        .Where(c => c.TrangThai == paginationRequest.Status && c.Ten.Contains(paginationRequest.Keyword))
                        .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                        .Take((int)pageResult)
+                       .OrderByDescending(c => c.NgayTao)
                        .ToListAsync();
                 }
                 else
@@ -174,6 +181,7 @@ namespace MinkyShopProject.Business.Repositories.NhanVien
                        .Where(c => c.TrangThai == paginationRequest.Status && c.Ten.Contains(paginationRequest.Keyword) && c.VaiTro == paginationRequest.Role)
                        .Skip((paginationRequest.CurrentPage - 1) * (int)pageResult)
                        .Take((int)pageResult)
+                       .OrderByDescending(c => c.NgayTao)
                        .ToListAsync();
                 }
 

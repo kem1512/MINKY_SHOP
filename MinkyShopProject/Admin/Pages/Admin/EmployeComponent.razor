@@ -9,7 +9,6 @@
                 <div class="card">
                     <div class="card-body">
                         <EditForm Model="Model" OnValidSubmit="Submit">
-                            <DataAnnotationsValidator />
                             <div class="row">
                                 @if(Model.Anh != null){
                                     <div class="col-md-12 d-flex justify-content-center mb-3">
@@ -20,7 +19,6 @@
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between">
                                             <label>Mã nhân viên (<strong class="text-danger">*</strong>)</label>
-                                            <ValidationMessage class="form-control-label text-danger" For="() => Model.Ma"></ValidationMessage>
                                         </div>
                                         <div>
                                             <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Ma" disabled>
@@ -28,38 +26,38 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between">
-                                            <label>Tên nhân viên (<strong class="text-danger">*</strong>)</label>
-                                            <ValidationMessage class="form-control-label text-danger" For="() => Model.Ten"></ValidationMessage>
+                                            <label class="form-control-label">Tên nhân viên (<strong class="text-danger">*</strong>)</label>
+                                            <label class="form-control-label text-danger">@(ErrorName)</label>
                                         </div>
                                         <div>
-                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Ten">
+                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Ten" @oninput="ValidateTen">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between">
-                                            <label>Số điện thoại (<strong class="text-danger">*</strong>)</label>
-                                            <ValidationMessage class="form-control-label text-danger" For="() => Model.Sdt"></ValidationMessage>
+                                            <label class="form-control-label">Số điện thoại (<strong class="text-danger">*</strong>)</label>
+                                            <label class="form-control-label text-danger">@(ErrorSdt)</label>
                                         </div>
                                         <div>
-                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Sdt">
+                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Sdt" @oninput="ValidateSdt">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between">
-                                            <label>Email (<strong class="text-danger">*</strong>)</label>
-                                            <ValidationMessage class="form-control-label text-danger" For="() => Model.Email"></ValidationMessage>
+                                            <label class="form-control-label">Email (<strong class="text-danger">*</strong>)</label>
+                                            <label class="form-control-label text-danger">@(ErrorEmail)</label>
                                         </div>
                                         <div>
-                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Email">
+                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.Email" @oninput="ValidateEmail">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between">
-                                            <label>Mật khẩu (<strong class="text-danger">*</strong>)</label>
-                                            <ValidationMessage class="form-control-label text-danger" For="() => Model.Sdt"></ValidationMessage>
+                                            <label class="form-control-label">Mật khẩu (<strong class="text-danger">*</strong>)</label>
+                                            <label class="form-control-label text-danger">@(ErrorPass)</label>
                                         </div>
                                         <div>
-                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.MatKhau">
+                                            <input type="text" class="form-control" id="exampleFormControlInput1" @bind-value="Model.MatKhau" @oninput="ValidatePass">
                                         </div>
                                     </div>
                                 </div>
@@ -67,8 +65,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="d-flex justify-content-between">
-                                            <label>Ảnh nhân viên (<strong class="text-danger">*</strong>)</label>
-                                            <ValidationMessage class="form-control-label text-danger" For="() => Model.Anh"></ValidationMessage>
+                                            <label class="form-control-label">Ảnh nhân viên (<strong class="text-danger">*</strong>)</label>
+                                            <label class="form-control-label text-danger">@(ErrorAnh)</label>
                                         </div>
                                         <div>
                                             <InputFile class="form-control" id="exampleFormControlInput1" OnChange="UploadImage" multiple></InputFile>
@@ -92,11 +90,12 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <div>
-                                            <label>Ngày sinh (<strong class="text-danger">*</strong>)</label>
+                                        <div class="d-flex justify-content-between">
+                                            <label class="form-control-label">Ngày sinh (<strong class="text-danger">*</strong>)</label>
+                                            <label class="form-control-label text-danger">@(ErrorDate)</label>
                                         </div>
                                         <div>
-                                            <input type="date" class="form-control" id="exampleFormControlInput1" @bind-value="Model.NgaySinh">
+                                            <input type="date" class="form-control" id="exampleFormControlInput1" @onchange="ValidateDate">
                                         </div>
                                     </div>
                                     <div class="form-group">

@@ -15,6 +15,8 @@ using Firebase.Auth;
 using Firebase.Storage;
 using System.IdentityModel.Tokens.Jwt;
 using Blazored.LocalStorage;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace MinkyShopProject.Admin.Pages.Admin
 {
@@ -35,7 +37,6 @@ namespace MinkyShopProject.Admin.Pages.Admin
 
         [Parameter]
         public int Page { get; set; }
-
         private PaginationRequest PaginationRequest = new PaginationRequest() { PerPage = 5 };
         private Response<PaginationResponse<NhanVien>> Response = new Response<PaginationResponse<NhanVien>>();
         private string url = "https://localhost:7053/api/NhanViens";
@@ -152,6 +153,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
         async Task ViewForm()
         {
             viewform = true;
+            Model.Ma = $"NV{Helper.RandomNumber(5)}";
         }
 
         async Task CancelForm()
@@ -175,65 +177,125 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 if (Create)
                 {
-                    var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
-
-                    if (string.IsNullOrEmpty(confirm.Value)) return;
-
-                    Model.TrangThai = 1;
-                    var result = await HttpClient.PostAsJsonAsync(url, Model);
-                    var response = await result.Content.ReadFromJsonAsync<Response>();
-
-                    if (result.IsSuccessStatusCode)
+                    if (ErrorAnh != string.Empty ||
+                        ErrorName != string.Empty ||
+                        ErrorPass != string.Empty ||
+                        ErrorEmail != string.Empty ||
+                        ErrorDate != string.Empty ||
+                        ErrorSdt != string.Empty)
                     {
                         await Swal.FireAsync(new SweetAlertOptions
                         {
-                            Text = response.Message,
+                            Text = "Vui lòng kiểm tra lại thông tin",
                             ShowConfirmButton = true,
-                            Icon = SweetAlertIcon.Success
+                            Icon = SweetAlertIcon.Warning
                         });
-                        await Get();
-                        await ResetModel();
-                        viewform = false;
+                    }
+                    else if (string.IsNullOrEmpty(Model.DiaChi) 
+                        || string.IsNullOrEmpty(Model.Email) 
+                        || string.IsNullOrEmpty(Model.MatKhau)
+                        || string.IsNullOrEmpty(Model.Sdt)
+                        || string.IsNullOrEmpty(Model.Ten))
+                    {
+                        await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Text = "Vui lòng kiểm tra lại thông tin",
+                            ShowConfirmButton = true,
+                            Icon = SweetAlertIcon.Warning
+                        });
                     }
                     else
                     {
-                        await Swal.FireAsync(new SweetAlertOptions
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+
+                        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+                        Model.TrangThai = 1;
+                        var result = await HttpClient.PostAsJsonAsync(url, Model);
+                        var response = await result.Content.ReadFromJsonAsync<Response>();
+
+                        if (result.IsSuccessStatusCode)
                         {
-                            Text = response.Message,
-                            ShowConfirmButton = true,
-                            Icon = SweetAlertIcon.Error
-                        });
+                            await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Text = response.Message,
+                                ShowConfirmButton = true,
+                                Icon = SweetAlertIcon.Success
+                            });
+                            await Get();
+                            await ResetModel();
+                            viewform = false;
+                        }
+                        else
+                        {
+                            await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Text = response.Message,
+                                ShowConfirmButton = true,
+                                Icon = SweetAlertIcon.Error
+                            });
+                        }
                     }
                 }
                 else
                 {
-                    var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
-                    if (string.IsNullOrEmpty(confirm.Value)) return;
-
-                    var result = await HttpClient.PutAsJsonAsync($"{url}/{IdNhanVien}", Model);
-                    var response = await result.Content.ReadFromJsonAsync<Response>();
-
-                    if (result.IsSuccessStatusCode)
+                    if (ErrorAnh != string.Empty ||
+                       ErrorName != string.Empty ||
+                       ErrorPass != string.Empty ||
+                       ErrorEmail != string.Empty ||
+                       ErrorDate != string.Empty ||
+                       ErrorSdt != string.Empty)
                     {
                         await Swal.FireAsync(new SweetAlertOptions
                         {
-                            Title = response.Message,
+                            Text = "Vui lòng kiểm tra lại thông tin",
                             ShowConfirmButton = true,
-                            Icon = SweetAlertIcon.Success
+                            Icon = SweetAlertIcon.Warning
                         });
-                        await Get();
-                        await ResetModel();
-                        viewform = false;
-                        Create = true;
+                    }
+                    else if (string.IsNullOrEmpty(Model.DiaChi)
+                        || string.IsNullOrEmpty(Model.Email)
+                        || string.IsNullOrEmpty(Model.MatKhau)
+                        || string.IsNullOrEmpty(Model.Sdt)
+                        || string.IsNullOrEmpty(Model.Ten))
+                    {
+                        await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            Text = "Vui lòng kiểm tra lại thông tin",
+                            ShowConfirmButton = true,
+                            Icon = SweetAlertIcon.Warning
+                        });
                     }
                     else
                     {
-                        await Swal.FireAsync(new SweetAlertOptions
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Có Chắc Muốn Sửa Nhân Viên Này", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+                        if (string.IsNullOrEmpty(confirm.Value)) return;
+
+                        var result = await HttpClient.PutAsJsonAsync($"{url}/{IdNhanVien}", Model);
+                        var response = await result.Content.ReadFromJsonAsync<Response>();
+
+                        if (result.IsSuccessStatusCode)
                         {
-                            Text = response.Message,
-                            ShowConfirmButton = true,
-                            Icon = SweetAlertIcon.Error
-                        });
+                            await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Title = response.Message,
+                                ShowConfirmButton = true,
+                                Icon = SweetAlertIcon.Success
+                            });
+                            await Get();
+                            await ResetModel();
+                            viewform = false;
+                            Create = true;
+                        }
+                        else
+                        {
+                            await Swal.FireAsync(new SweetAlertOptions
+                            {
+                                Text = response.Message,
+                                ShowConfirmButton = true,
+                                Icon = SweetAlertIcon.Error
+                            });
+                        }
                     }
                 }
             }
@@ -251,7 +313,7 @@ namespace MinkyShopProject.Admin.Pages.Admin
                 GioiTinh = nhanvien.GioiTinh,
                 Ma = nhanvien.Ma,
                 MatKhau = nhanvien.MatKhau,
-                NgaySinh = nhanvien.NgaySinh ?? DateTime.Now,
+                NgaySinh = nhanvien.NgaySinh,
                 Sdt = nhanvien.Sdt,
                 Ten = nhanvien.Ten,
                 TrangThai = nhanvien.TrangThai,
@@ -262,29 +324,41 @@ namespace MinkyShopProject.Admin.Pages.Admin
             IdNhanVien = nhanvien.Id;
         }
 
+        private string ErrorAnh = string.Empty;
         async Task UploadImage(InputFileChangeEventArgs e)
         {
-            var file = e.File;
-            var stream = file.OpenReadStream(maxSizeFile);
-            var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-            var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
-
-            var cancellation = new CancellationTokenSource();
-
-            var task = new FirebaseStorage(
-                Bucket,
-                new FirebaseStorageOptions
-                {
-                    AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
-                    ThrowOnCancel = true
-                })
-                .Child("images")
-                .Child(file.Name)
-                .PutAsync(stream, cancellation.Token);
-
             try
             {
-                Model.Anh = await task;
+                var file = e.File;
+                var stream = file.OpenReadStream(maxSizeFile);
+                var extension = Path.GetExtension(file.Name);
+
+                Console.WriteLine(extension);
+                if (extension != ".jpg" && extension != ".jpeg" && extension != ".png")
+                {
+                    ErrorAnh = "Vui lòng chọn file ảnh";
+                    Model.Anh = null;
+                }
+                else
+                {
+                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                    var a = await auth.SignInWithEmailAndPasswordAsync(AuthEmail, AuthPassword);
+
+                    var cancellation = new CancellationTokenSource();
+
+                    var task = new FirebaseStorage(
+                        Bucket,
+                        new FirebaseStorageOptions
+                        {
+                            AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
+                            ThrowOnCancel = true
+                        })
+                        .Child("images")
+                        .Child(file.Name)
+                        .PutAsync(stream, cancellation.Token);
+                    Model.Anh = await task;
+                    ErrorAnh = string.Empty;
+                }
             }
             catch (Exception ex)
             {
@@ -324,6 +398,138 @@ namespace MinkyShopProject.Admin.Pages.Admin
                     Icon = SweetAlertIcon.Error
                 });
                 await Get();
+            }
+        }
+
+        private string ErrorName = string.Empty;
+        private async Task ValidateTen(ChangeEventArgs e)
+        {
+            var Regex = new Regex(@"^[-+]?[0-9]*.?[0-9]+$");
+
+            var value = e.Value.ToString();
+            if (string.IsNullOrEmpty(value))
+            {
+                ErrorName = "Vui lòng nhập tên nhân viên";
+            }
+            else if (Regex.IsMatch(value))
+            {
+                ErrorName = "Vui lòng không nhập số";
+            }
+            else if (value.Length < 10)
+            {
+                ErrorName = "Tên nhân viên phải lớn hơn 10 ký tự";
+            }
+            else
+            {
+                ErrorName = string.Empty;
+            }
+        }
+
+        private string ErrorSdt = string.Empty;
+        private async Task ValidateSdt(ChangeEventArgs e)
+        {
+            var Regex = new Regex(@"^[-+]?[0-9]*.?[0-9]+$");
+
+            var value = e.Value.ToString();
+            if (string.IsNullOrEmpty(value))
+            {
+                ErrorSdt = "Vui lòng nhập số điện thoại";
+            }
+            else if (!Regex.IsMatch(value))
+            {
+                ErrorSdt = "Số điện thoại phải là số";
+            }
+            else if (int.Parse(value) < 0)
+            {
+                ErrorSdt = "Vui lòng không nhập giá trị âm";
+            }
+            else if (value.Length < 10)
+            {
+                ErrorSdt = "Số điện thoại không được nhỏ hơn 10 ký tự";
+            }
+            else
+            {
+                ErrorSdt = string.Empty;
+            }
+        }
+
+        private string ErrorEmail = string.Empty;
+        private async Task ValidateEmail(ChangeEventArgs e)
+        {
+            var Regex = new Regex(@"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z");
+
+            var value = e.Value.ToString();
+            if (string.IsNullOrEmpty(value))
+            {
+                ErrorEmail = "Vui lòng nhập Email";
+            }
+            else if (!Regex.IsMatch(value))
+            {
+                ErrorEmail = "Email sai định dạng";
+            }
+            else
+            {
+                ErrorEmail = string.Empty;
+            }
+        }
+
+        private string ErrorPass = string.Empty;
+        private async Task ValidatePass(ChangeEventArgs e)
+        {
+            var hasNumber = new Regex(@"[0-9]+");
+            var hasUpperChar = new Regex(@"[A-Z]+");
+            var hasLowerChar = new Regex(@"[a-z]+");
+            var hasSymbols = new Regex(@"[!@#$%^&*()_+=\[{\]};:<>|./?,-]");
+
+            var value = e.Value.ToString();
+            if (string.IsNullOrEmpty(value))
+            {
+                ErrorPass = "Vui lòng nhập mật khẩu";
+            }
+            else if (!hasNumber.IsMatch(value))
+            {
+                ErrorPass = "Mật khẩu phải có ký tự là số";
+            }
+            else if (!hasUpperChar.IsMatch(value))
+            {
+                ErrorPass = "Mật khẩu phải có ký tự là chữ in hoa";
+            }
+            else if (!hasLowerChar.IsMatch(value))
+            {
+                ErrorPass = "Mật khẩu phải có ký tự là chữ thường";
+            }
+            else if (!hasSymbols.IsMatch(value))
+            {
+                ErrorPass = "Mật khẩu phải có ký tự là ký tự đặc biệt";
+            }
+            else if (value.Length < 6 || value.Length > 20)
+            {
+                ErrorPass = "Mật khẩu phải lớn hơn 6 và nhỏ hơn 20 ký tự";
+            }
+            else
+            {
+                ErrorPass = string.Empty;
+            }
+        }
+
+        private string ErrorDate = string.Empty;
+        private async Task ValidateDate(ChangeEventArgs e)
+        {
+            var value = e.Value.ToString();
+            var year = int.Parse(value.Split("-")[0]);
+            var age = DateTime.Now.Year - int.Parse(value.Split("-")[0]);
+            if (year >= DateTime.Now.Year)
+            {
+                ErrorDate = "Vui lòng chọn năm sinh nhỏ hơn năm hiện tại";
+            }
+            else if (age < 18)
+            {
+                ErrorDate = "Nhân viên phải đủ 18 tuổi";
+            }
+            else
+            {
+                ErrorDate = string.Empty;
+                Model.NgaySinh = DateTime.Parse(value);
             }
         }
     }
