@@ -2,6 +2,7 @@
 @page "/home"
 @inject IJSRuntime JSRuntime
 @inject HttpClient HttpClient
+@inject SweetAlertService Swal
 
 <main>
 	<div id="carousel-home">
@@ -21,10 +22,10 @@
 									<div class="col-lg-6 static">
 										<div class="slide-text text-right white">
 											<h2 class="owl-slide-animated owl-slide-title">@x.Ten (Còn lại @x.SoLuong)</h2>
-											<p class="owl-slide-animated owl-slide-subtitle">
-												@x.MoTa
-											</p>
-											<div class="owl-slide-animated owl-slide-cta"><a class="btn_1" href="listing-grid-1-full.html" role="button">Áp dụng ngay</a></div>
+                                            <p class="owl-slide-animated owl-slide-subtitle">
+                                                @x.MoTa
+                                            </p>
+                                            <div class="owl-slide-animated owl-slide-cta"><a class="btn_1" role="button" @onclick='async () => await Swal.FireAsync("", "Mã của bạn là " + x.Ma, SweetAlertIcon.Success)'>Lấy mã</a></div>
 										</div>
 									</div>
 								</div>
@@ -127,6 +128,7 @@
 
 	protected async override Task OnInitializedAsync()
 	{
+
 		SanPhams = await HttpClient.GetFromJsonAsync<ResponsePagination<MinkyShopProject.Data.Models.SanPhamModel>>("https://localhost:7053/api/SanPham");
 
 		var result = await HttpClient.GetFromJsonAsync<ResponsePagination<MinkyShopProject.Data.Models.NhomSanPhamModel>>("https://localhost:7053/api/NhomSanPham/Get2");
@@ -140,5 +142,6 @@
 		{
 			Vouchers = result2.Data.Content;
 		}
+	    await JSRuntime.InvokeAsync<string>("sliderFunctions.startSlider", null);
 	}
 }

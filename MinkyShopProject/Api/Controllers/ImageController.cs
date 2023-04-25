@@ -35,6 +35,12 @@ namespace MinkyShopProject.Api.Controllers
 
             foreach (var file in files)
             {
+                var image = file.FileName.Split(".")[1];
+                if (image != "jpg" && image != "png" && image != "webp" && image != "jpeg")
+                {
+                    return new NotFoundResult();
+                }
+
                 var uploadResult = new UploadResult();
                 string trustedFileNameForFileStorage;
                 var untrustedFileName = file.FileName;
@@ -56,7 +62,7 @@ namespace MinkyShopProject.Api.Controllers
                     {
                         try
                         {
-                            trustedFileNameForFileStorage = Guid.NewGuid() + "." + file.ContentType.Split("/")[1];
+                            trustedFileNameForFileStorage = Guid.NewGuid() + "." + image;
                             var path = Path.Combine(env.ContentRootPath, "wwwroot/images/",
                                 trustedFileNameForFileStorage);
 
@@ -73,8 +79,6 @@ namespace MinkyShopProject.Api.Controllers
                         }
                         catch (IOException ex)
                         {
-                            logger.LogError("{FileName} error on upload (Err: 3): {Message}",
-                                trustedFileNameForDisplay, ex.Message);
                             uploadResult.ErrorCode = 3;
                         }
                     }
@@ -83,9 +87,6 @@ namespace MinkyShopProject.Api.Controllers
                 }
                 else
                 {
-                    logger.LogInformation("{FileName} not uploaded because the " +
-                        "request exceeded the allowed {Count} of files (Err: 4)",
-                        trustedFileNameForDisplay, maxAllowedFiles);
                     uploadResult.ErrorCode = 4;
                 }
 

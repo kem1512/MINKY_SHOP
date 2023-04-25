@@ -172,14 +172,14 @@
                                 if(GiaTris.Any(c => c == z.GiaTri?.Id))
                                 {
                                     if(Ten == null){ Ten = ""; }
-                                    if (!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id) && (x.Ten != null && x.Ten.ToLower().Trim().Contains(Ten.ToLower().Trim())))
+                                    if (!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id) && x.Ten != null && x.Ten.ToLower().Trim().Contains(Ten.ToLower().Trim()))
                                     {
                                         SanPhamsSauKhiLoc.Add(x); 
                                     }
                                 }
                                 else
                                 {
-                                    if (!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id) && (x.Ten != null && x.Ten.ToLower().Trim().Contains(Ten.ToLower().Trim())))
+                                    if (!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id) && x.Ten != null && x.Ten.ToLower().Trim().Contains(Ten.ToLower().Trim()))
                                     {
                                         SanPhamsSauKhiLoc.Add(x);
                                     }

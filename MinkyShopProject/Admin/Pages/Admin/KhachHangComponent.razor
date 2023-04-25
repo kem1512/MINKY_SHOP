@@ -307,6 +307,10 @@
                     khachhang = new KhachHangThemVaSuaModel();
                     await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
                 }
+                else
+                {
+                    await Swal.FireAsync("", "Khách Hàng Đã Tồn Tại", SweetAlertIcon.Error);
+                }
             }
             catch (Exception)
             {

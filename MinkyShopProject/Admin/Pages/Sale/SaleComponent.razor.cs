@@ -9,6 +9,7 @@ using MinkyShopProject.Data.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using MinkyShopProject.Business.Entities;
 using System.Net.NetworkInformation;
+using Blazored.SessionStorage;
 
 namespace MinkyShopProject.Admin.Pages.Sale
 {
@@ -24,6 +25,9 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         [Inject]
         IJSRuntime JSRuntime { get; set; } = null!;
+
+        [Inject]
+        ILocalStorageService Session { get; set; } = null!;
 
         [Inject]
         SweetAlertService Swal { get; set; } = null!;
@@ -64,6 +68,12 @@ namespace MinkyShopProject.Admin.Pages.Sale
         private async Task ScanResult(string e)
         {
             await ThemTuMaSanPham(e);
+        }
+
+        async Task LuuDuLieu()
+        {
+            await Session.SetItemAsync("invoice", HoaDons);
+            await Swal.FireAsync("", "Lưu thành công", SweetAlertIcon.Success);
         }
 
         protected override async Task OnInitializedAsync()
@@ -230,7 +240,14 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         async Task Reload()
         {
-            HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
+            if (Session.GetItemAsStringAsync("invoice") != null)
+            {
+                HoaDons = await Session.GetItemAsync<List<HoaDonCreateModel>>("invoice");
+            }
+            else
+            {
+                HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
+            }
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             if (IdNhanVien != null)
@@ -242,6 +259,14 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     HoaDons[index].NhanVien = result2.Data;
                 }
             }
+        }
+
+        async Task<bool> InHoaDon()
+        {
+            var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn In Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+
+            if (string.IsNullOrEmpty(confirm.Value)) return false;
+            return true;
         }
 
         async Task ThemHoaDonVaoCsdl()
@@ -296,17 +321,17 @@ namespace MinkyShopProject.Admin.Pages.Sale
                     var validate = await ValidateHoaDon();
                     if (validate)
                     {
-                        var confirm = await Swal.FireAsync(new SweetAlertOptions {  Text = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
+                        var confirm = await Swal.FireAsync(new SweetAlertOptions { Text = "Bạn Có Chắc Muốn Thêm Hóa Đơn", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Warning });
 
                         if (string.IsNullOrEmpty(confirm.Value)) return;
 
                         if (HoaDons != null && HoaDons.Any())
                         {
-
                             if (hoaDon != null)
                             {
                                 hoaDon.NgayCapNhat = DateTime.Now;
                                 hoaDon.NgayHoanThanh = DateTime.Now;
+                                hoaDon.Id = Guid.NewGuid();
 
                                 foreach (var x in hoaDon.HoaDonChiTiets)
                                 {
@@ -334,6 +359,10 @@ namespace MinkyShopProject.Admin.Pages.Sale
                                 }
                                 HoaDons.Remove(HoaDons[index]);
                                 await Swal.FireAsync("", "Thêm Thành Công", SweetAlertIcon.Success);
+                                if (await InHoaDon())
+                                {
+                                    Navigation.NavigateTo("print/" + hoaDon.Id);
+                                }
                             }
                             else
                             {

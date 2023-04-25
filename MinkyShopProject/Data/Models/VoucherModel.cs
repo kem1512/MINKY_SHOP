@@ -50,7 +50,7 @@ namespace MinkyShopProject.Data.Models
     {
         public Guid Id { get; set; }
 
-        public string? Ma { get; set; }
+        public string? Ma { get; set; } = "VC" + Helper.RandomString(3);
 
         [Required(ErrorMessage = "Voucher Phải Có Tên")]
         public string? Ten { get; set; }
