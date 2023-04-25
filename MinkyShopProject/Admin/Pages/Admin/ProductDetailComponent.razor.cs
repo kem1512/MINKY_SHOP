@@ -24,6 +24,8 @@ namespace MinkyShopProject.Admin.Pages.Admin
         [Inject]
         SweetAlertService Swal { get; set; } = null!;
 
+        private int SoLuongChung = 0;
+
         [Inject]
         IJSRuntime JSRuntime { get; set; } = null!;
 
@@ -64,6 +66,18 @@ namespace MinkyShopProject.Admin.Pages.Admin
                     x.GiaBan = GiaChung;
                 }
                 GiaChung = 0;
+            }
+        }
+
+        void ApDungSoLuongChung()
+        {
+            if (SanPham?.Data.BienThes != null)
+            {
+                foreach (var x in SanPham.Data.BienThes)
+                {
+                    x.SoLuong = SoLuongChung;
+                }
+                SoLuongChung = 0;
             }
         }
 
@@ -151,6 +165,10 @@ namespace MinkyShopProject.Admin.Pages.Admin
             {
                 await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
                 ModelImage = await HttpClient.GetFromJsonAsync<List<string>>("https://localhost:7053/api/Image");
+            }
+            else
+            {
+                await Swal.FireAsync("", "Không đúng định dạng", SweetAlertIcon.Error);
             }
         }
     }

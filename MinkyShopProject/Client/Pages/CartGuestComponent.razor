@@ -225,6 +225,7 @@
             {
                 await Session.RemoveItemAsync("cart");
                 await Swal.FireAsync("", "Tạo Hóa Đơn Thành Công", SweetAlertIcon.Success);
+                NavigationManager.NavigateTo("/");
             }
             else
             {

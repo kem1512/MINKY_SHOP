@@ -85,7 +85,7 @@
                                     <span class="text-sm text-bold" data-toggle="tooltip" data-placement="bottom" title="@x.v.BienThe?.SanPham?.Ten">@x.v.BienThe?.SanPham?.Ten?.BaCham(50)</span>
                                     <span class="text-sm text-bold text-secondary">@String.Join(" + ", x.v.BienThe?.BienTheChiTiets.Select(c => c.GiaTri.Ten))</span>
                                 </div>
-                                <input type="number" min="1" value="@x.v.SoLuong" @onchange='async e => { x.v.SoLuong = int.Parse(e.Value?.ToString() ?? ""); await CapNhatTongTien(); }' class="form-control w-10 text-center h-25" />
+                                <input type="number" min="1" value="@x.v.SoLuong" @onchange='async e => { x.v.SoLuong = int.Parse(e.Value?.ToString() ?? ""); await TimKiemVoucher(); await CapNhatTongTien(); }' class="form-control w-10 text-center h-25" />
                                 <span class="text-sm">@Helper.FormatMoney(x.v.DonGia)</span>
                                 <span class="text-sm text-primary text-bold">@Helper.FormatMoney(x.v.DonGia * x.v.SoLuong)</span>
                                 <button class="btn text-danger btn-xs m-0" @onclick="() => XoaSanPham(x.i)"><span class="fa fa-trash"></span></button>
@@ -329,6 +329,7 @@
                             </div>
                             <div class="col-12" style="position: absolute; bottom: 0; left:0; right:0; overflow: hidden">
                                 <button class="btn btn-success" @onclick="ThemHoaDonVaoCsdl">Thanh Toán</button>
+                                <button class="btn btn-success" @onclick="LuuDuLieu">Lưu Dữ Liệu</button>
                             </div>
                         </div>
                     </div>

@@ -6,6 +6,7 @@
 @inject ILocalStorageService Session;
 @using Blazored.LocalStorage;
 @using System.IdentityModel.Tokens.Jwt;
+@using MinkyShopProject.Data.Enums
 <PageTitle>Hóa Đơn Chi Tiết</PageTitle>
 @using Net.ConnectCode.BarcodeFontsStandard2D
 
@@ -273,19 +274,20 @@
                                                                         </div>
                                                                         <div class="modal-footer">
                                                                             <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Đóng</button>
-                                                                            <button type="submit" class="btn bg-gradient-primary" data-bs-dismiss="modal" @onclick='async() => {
-                                                                                if(soLuong > x.Value.First().SoLuong){
-                                                                                    await Swal.FireAsync("", "Không thể vượt số lượng sản phẩm", SweetAlertIcon.Error);
-                                                                                }else{
-                                                                                    x.Value.First().TrangThai = 1;
-                                                                                var hoaDonChiTiet = new HoaDonChiTietModel();
-                                                                                hoaDonChiTiet.BienThe = x.Value.First().BienThe;
-                                                                                hoaDonChiTiet.GhiChu = x.Value.First().GhiChu;
-                                                                                hoaDonChiTiet.IdBienThe = x.Value.First().IdBienThe;
-                                                                                hoaDonChiTiet.TrangThai = 1;
-                                                                                hoaDonChiTiet.IdHoaDon = x.Value.First().IdHoaDon;
-                                                                                hoaDonChiTiet.DonGia = x.Value.First().DonGia;
-                                                                                hoaDonChiTiet.SoLuong = soLuong;
+                                                                        <button type="submit" class="btn bg-gradient-primary" data-bs-dismiss="modal" @onclick='async() => {
+                                                                                                                                              if(soLuong > x.Value.First().SoLuong){
+                                                                                                                                                  await Swal.FireAsync("", "Không thể vượt số lượng sản phẩm", SweetAlertIcon.Error);
+                                                                                                                                              }else{
+                                                                                                                                                  x.Value.First().TrangThai = 1;
+                                                                                                                                                  var hoaDonChiTiet = new HoaDonChiTietModel();
+                                                                                                                                                  hoaDonChiTiet.BienThe = x.Value.First().BienThe;
+                                                                                                                                                  hoaDonChiTiet.GhiChu = x.Value.First().GhiChu;
+                                                                                                                                                  hoaDonChiTiet.IdBienThe = x.Value.First().IdBienThe;
+                                                                                                                                                  hoaDonChiTiet.TrangThai = 1;
+                                                                                                                                                  hoaDonChiTiet.IdHoaDon = x.Value.First().IdHoaDon;
+                                                                                                                                                  hoaDonChiTiet.DonGia = x.Value.First().DonGia;
+                                                                                                                                                  hoaDonChiTiet.SoLuong = soLuong;
+                                                                                                                                                  HoaDon.TrangThai = TrangThaiHoaDon.TraHang;
                                                                                 var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await Session.GetItemAsStringAsync("Token"));
                                                                                 var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
                                                                                 if (IdNhanVien != null)
@@ -324,15 +326,13 @@
                                 <div class="row align-items-center text-end mt-2">
                                     @if(HoaDon?.TrangThaiGiaoHang != 2)
                                     {
-                                        <div class="col-8 d-flex">
-                                            <input class="form-control w-25 me-2" @bind="Ma" />
-                                            <button class="btn btn-primary mb-0 me-2" @onclick="async() => { if(await Confirm()){ await ThemSanPham(); }; }">Thêm SP</button>
+                                        <div class="col-6">
                                             <input placeholder="Ghi Chú" class="form-control w-50" @bind="HoaDon.GhiChu" />
                                         </div>
                                     }else{
-                                        <div class="col-8"></div>
+                                        <div class="col-6"></div>
                                     }
-                                    <div class="col-4">
+                                    <div class="col-6">
                                         <label class="col-form-label text-sm me-3 p-0 mb-2">Số lượng hàng hóa</label>
                                         <span class="text-bolder text-sm">@HoaDon?.HoaDonChiTiets.GroupBy(c => c.IdBienThe).Count()</span>
                                     </div>

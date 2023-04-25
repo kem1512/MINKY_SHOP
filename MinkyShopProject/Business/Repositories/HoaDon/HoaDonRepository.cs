@@ -41,14 +41,14 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                 if (hoaDon.IdNhanVien == Guid.Empty)
                 {
                     var nv = _context.giaoCas.FirstOrDefault();
-                    if(nv != null)
+                    if (nv != null)
                     {
                         hoaDon.IdNhanVien = nv.IdNhanVienTrongCa;
                     }
                     else
                     {
                         var nv2 = _context.NhanVien.FirstOrDefault();
-                        if(nv2 != null)
+                        if (nv2 != null)
                         {
                             hoaDon.IdNhanVien = nv2.Id;
                         }
@@ -64,6 +64,15 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                     }
                 }
 
+
+                if (hoaDon.VoucherLogs != null && hoaDon.VoucherLogs.Any())
+                {
+                    hoaDon.VoucherLogs[0].Voucher = null;
+                    var voucher = _context.Voucher.FirstOrDefault(c => c.Id == hoaDon.VoucherLogs[0].IdVoucher);
+                    if (voucher != null)
+                        voucher.SoLuong -= 1;
+                }
+
                 await _context.HoaDon.AddAsync(hoaDon);
 
                 foreach (var x in obj.HoaDonChiTiets)
@@ -71,13 +80,6 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
                     var bienThe = _context.BienThe.FirstOrDefault(c => c.Id == x.IdBienThe);
                     if (bienThe != null)
                         bienThe.SoLuong -= x.SoLuong;
-                }
-
-                if (hoaDon.VoucherLogs != null && hoaDon.VoucherLogs.Any())
-                {
-                    var voucher = _context.Voucher.FirstOrDefault(c => c.Id == hoaDon.VoucherLogs[0].IdVoucher);
-                    if (voucher != null)
-                        voucher.SoLuong -= 1;
                 }
 
                 var status = await _context.SaveChangesAsync();
@@ -175,20 +177,20 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
             }
         }
 
-		public async Task<Response> GetHoaDonByMaAsync(string ma)
-		{
-			try
-			{
-				return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.DanhGia).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().FirstOrDefaultAsync(c => c.Ma == ma)));
-			}
-			catch (Exception e)
-			{
-				Log.Error(e, "Lấy dữ liệu thất bại");
-				return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
-			}
-		}
+        public async Task<Response> GetHoaDonByMaAsync(string ma)
+        {
+            try
+            {
+                return new ResponseObject<HoaDonModel>(_mapper.Map<Entities.HoaDon, HoaDonModel>(await _context.HoaDon.Include(c => c.VoucherLogs).ThenInclude(c => c.Voucher).Include(c => c.NhanVien).Include(c => c.KhachHang).Include(c => c.DanhGia).Include(c => c.HinhThucThanhToans).Include(c => c.HoaDonChiTiets).ThenInclude(c => c.BienThe.BienTheChiTiets).ThenInclude(c => c.GiaTri).AsNoTracking().FirstOrDefaultAsync(c => c.Ma == ma)));
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Lấy dữ liệu thất bại");
+                return new ResponseError(HttpStatusCode.InternalServerError, "Có lỗi trong quá trình xử lý : " + e.Message);
+            }
+        }
 
-		public async Task<Response> GetHoaDonChuaHoanThanhAsync(HoaDonQueryModel obj)
+        public async Task<Response> GetHoaDonChuaHoanThanhAsync(HoaDonQueryModel obj)
         {
             try
             {

@@ -123,23 +123,27 @@
                                         <tbody>
                                             @if (HoaDon?.HoaDonChiTiets.Count() > 0)
                                             {
-                                                foreach (var x in HoaDon.HoaDonChiTiets.Where(c => c.SoLuong > 0).Select((Value, Index) => (Index, Value)))
+                                                foreach (var x in HoaDon.HoaDonChiTiets.OrderByDescending(c => c.SoLuong).Where(c => c.SoLuong > 0).GroupBy(c => c.IdBienThe).Select((Value, Index) => (Index, Value)))
                                                 {
                                                     <tr>
                                                         <td>
-                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.BienThe?.Sku</span>
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.First().BienThe?.Sku</span>
                                                         </td>
                                                         <td>
-                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.BienThe?.SanPham?.Ten (@string.Join(" ", x.Value.BienThe?.BienTheChiTiets?.Select(c => c.GiaTri?.Ten)))</span>
+                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.First().BienThe?.SanPham?.Ten (@string.Join(" ", x.Value.First().BienThe?.BienTheChiTiets?.Select(c => c.GiaTri?.Ten)))</span>
                                                         </td>
-                                                        <td>
-                                                            <span class="text-secondary text-xs font-weight-bold">@x.Value.SoLuong</span>
+                                                        <td class="w-10 text-center">
+                                                            @{
+                                                                var hd = @x.Value.ToList();
+                                                                <span class="text-secondary text-xs font-weight-bold">@hd[0].SoLuong</span>
+                                                                <span class="text-danger text-xs font-weight-bold">@(hd.Count > 1 ? $"(-{hd[1].SoLuong})" : "")</span>
+                                                            }
                                                         </td>
                                                         <td class="align-middle text-center text-sm">
-                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.DonGia)</span>
+                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.First().DonGia)</span>
                                                         </td>
                                                         <td class="align-middle text-center text-sm">
-                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.DonGia * x.Value.SoLuong)</span>
+                                                            <span class="text-secondary text-xs font-weight-bold">@Helper.FormatMoney(x.Value.GroupBy(c => c.IdBienThe).Sum(c => c.First().DonGia * (c.Count() > 1 ? c.ToList()[0].SoLuong - c.ToList()[1].SoLuong : c.First().SoLuong)))</span>
                                                         </td>
                                                     </tr>
                                                 }

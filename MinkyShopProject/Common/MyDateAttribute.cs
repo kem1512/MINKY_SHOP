@@ -21,7 +21,7 @@ namespace MinkyShopProject.Common
         public override bool IsValid(object value)// Return a boolean value: true == IsValid, false != IsValid
         {
             DateTime d = Convert.ToDateTime(value);
-            return DateTime.Now.Year - d.Year > 16; //Dates Greater than or equal to today are valid (true)
+            return DateTime.Now.Year - d.Year > 16 && DateTime.Now.Year - d.Year < 100; //Dates Greater than or equal to today are valid (true)
         }
     }
 }

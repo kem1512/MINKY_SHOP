@@ -47,6 +47,7 @@ namespace MinkyShopProject.Data.Models
 
         public bool GioiTinh { get; set; } = true;
 
+        [CheckAge(ErrorMessage = "Ngày sinh không hợp lệ")]
         public DateTime NgaySinh { get; set; } = DateTime.Now;
 
         public DateTime NgayTao { get; set; } = DateTime.Now;

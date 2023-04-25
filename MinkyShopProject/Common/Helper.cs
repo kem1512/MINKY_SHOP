@@ -39,7 +39,7 @@ namespace MinkyShopProject.Common
 
         public static string DoubleToPercentageString(double d)
         {
-            return (Math.Round(d, 2) * 100).ToString() + "%";
+            return (Math.Round(d, 2) * 100) + "%";
         }
 
         public static T NewObject<T>(this T obj)

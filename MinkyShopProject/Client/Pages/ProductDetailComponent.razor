@@ -272,15 +272,22 @@
     {
         if(BienThe != null)
         {
+            if (BienThe.SoLuongTam <= 0)
+            {
+                await Swal.FireAsync("", "Vui lòng nhập số lượng", SweetAlertIcon.Error);
+                return;
+            }
+
+            if (BienThe.SoLuongTam > BienThe.SoLuong)
+            {
+                await Swal.FireAsync("", "Không đủ tồn kho", SweetAlertIcon.Error);
+                return;
+            }
+
             if (await Session.GetItemAsStringAsync("cart") == null)
             {
                 HoaDonCreateModel cart = new HoaDonCreateModel();
                 cart.HoaDonChiTiets.Add(new HoaDonChiTietModel() { IdBienThe = BienThe.Id, SoLuong = BienThe.SoLuongTam, DonGia = BienThe.GiaBan, SoLuongGoc = BienThe.SoLuong, BienThe = BienThe });
-                //await Session.SetItemAsync<HoaDonCreateModel>("cart", Newtonsoft.Json.JsonConvert.DeserializeObject<HoaDonCreateModel>(Newtonsoft.Json.JsonConvert.SerializeObject(cart), new Newtonsoft.Json.JsonSerializerSettings()
-                //    {
-                //        Formatting = Newtonsoft.Json.Formatting.Indented,
-                //        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize
-                //}));
                 await Session.SetItemAsync<HoaDonCreateModel>("cart", cart);
                 await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
             }
@@ -338,6 +345,12 @@
             if(BienThe.SoLuongTam <= 0)
             {
                 await Swal.FireAsync("", "Vui lòng nhập số lượng", SweetAlertIcon.Error);
+                return;
+            }
+
+            if (BienThe.SoLuongTam > BienThe.SoLuong)
+            {
+                await Swal.FireAsync("", "Không đủ tồn kho", SweetAlertIcon.Error);
                 return;
             }
 
