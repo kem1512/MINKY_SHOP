@@ -2,6 +2,7 @@
 @using MinkyShopProject.Business.Entities;
 @using System.IdentityModel.Tokens.Jwt;
 @using MinkyShopProject.Data.Models;
+@using System.Text.RegularExpressions;
 @inject ILocalStorageService local;
 @inject HttpClient HttpClient;
 @inject NavigationManager NavigationManager;
@@ -88,7 +89,10 @@
                             <input value="@(Helper.FormatMoney(CaTruoc.TongTienMatCuoiCa))" class="form-control form-control-sm" disabled />
                         }
                         <div>
-                            <label class="form-control-label">Tổng Tiền Mặt</label>
+                            <div class="d-flex justify-content-between">
+                                <label class="form-control-label">Tổng Tiền Mặt</label>
+                                <label class="form-control-label text-danger">@(ErrorMoney)</label>
+                            </div>
                             <input value="@string.Format("{0:0,0}",TongThanhTien)" class="form-control form-control-sm" @oninput="ChangeThanhTien" />
                         </div>
                     </div>
@@ -96,7 +100,7 @@
 
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-outline-success text-success" data-bs-dismiss="modal" @onclick="BatDau">
-                        <i class="fa fa-check"></i> Bắt Đầu
+                        <i class="fa fa-check"></i> @(CaTruoc == null ? "Bắt Đầu Ngày Làm Việc" : "Nhận Ca")
                     </button>
                 </div>
             }
@@ -155,62 +159,81 @@
 
     private async Task BatDau()
     {
-        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
-        var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
-
-
-        var model = new GiaoCaModels.GiaoCaCreateModel()
+        if (ErrorMoney == string.Empty)
         {
-                IdNhanVienTrongCa = Guid.Parse(IdNhanVien),
-                ThoiGianNhanCa = ThoiGianNhanCa,
-                TienBanDau = TongThanhTien,
-                TongTienMat = TongThanhTien,
-                TrangThai = 0,
-        };
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
+            var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
 
-        if (CaTruoc != null && TongThanhTien != CaTruoc.TongTienMatCuoiCa)
-        {
-            await Swal.FireAsync("Thông Báo", "Số Tiền Khác Với Ca Trươc Vui Lòng Kiểm Tra Lại", SweetAlertIcon.Warning);
-        }
-        else
-        {
-            var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Muốn Bắt Đầu Ca Làm Việc", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
-            if (string.IsNullOrEmpty(confirm.Value)) return;
 
-            var result = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/GiaoCas", model);
-            var response = await result.Content.ReadFromJsonAsync<Response>();
-
-            if (result.IsSuccessStatusCode)
+            var model = new GiaoCaModels.GiaoCaCreateModel()
             {
-                var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
-                if (CaTruoc != null)
-                {
-                    await HttpClient.DeleteAsync($"https://localhost:7053/api/GiaoCas/NhanCa?Id={CaTruoc.Id}");
-                }
-                Ca = result2.Data;
-                await Swal.FireAsync(new SweetAlertOptions()
-                {
-                        TitleText = response.Message,
-                        ShowConfirmButton = true,
-                        Icon = SweetAlertIcon.Success
-                });
-                title = "Đang làm việc";
+                    IdNhanVienTrongCa = Guid.Parse(IdNhanVien),
+                    ThoiGianNhanCa = ThoiGianNhanCa,
+                    TienBanDau = TongThanhTien,
+                    TongTienMat = TongThanhTien,
+                    TrangThai = 0,
+            };
+
+            if (CaTruoc != null && TongThanhTien != CaTruoc.TongTienMatCuoiCa)
+            {
+                await Swal.FireAsync("Thông Báo", "Số Tiền Khác Với Ca Trươc Vui Lòng Kiểm Tra Lại", SweetAlertIcon.Warning);
             }
             else
             {
-                await Swal.FireAsync(new SweetAlertOptions
+                var confirm = await Swal.FireAsync(new SweetAlertOptions { Title = "Bạn Muốn Bắt Đầu Ca Làm Việc", ShowConfirmButton = true, ShowCancelButton = true, Icon = SweetAlertIcon.Question });
+                if (string.IsNullOrEmpty(confirm.Value)) return;
+
+                var result = await HttpClient.PostAsJsonAsync("https://localhost:7053/api/GiaoCas", model);
+                var response = await result.Content.ReadFromJsonAsync<Response>();
+
+                if (result.IsSuccessStatusCode)
                 {
-                        TitleText = response.Message,
-                        ShowConfirmButton = true,
-                        Icon = SweetAlertIcon.Error
-                });
+                    var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
+                    if (CaTruoc != null)
+                    {
+                        await HttpClient.DeleteAsync($"https://localhost:7053/api/GiaoCas/NhanCa?Id={CaTruoc.Id}");
+                    }
+                    Ca = result2.Data;
+                    await Swal.FireAsync(new SweetAlertOptions()
+                        {
+                            TitleText = response.Message,
+                            ShowConfirmButton = true,
+                            Icon = SweetAlertIcon.Success
+                        });
+                    title = "Đang làm việc";
+                }
+                else
+                {
+                    await Swal.FireAsync(new SweetAlertOptions
+                        {
+                            TitleText = response.Message,
+                            ShowConfirmButton = true,
+                            Icon = SweetAlertIcon.Error
+                        });
+                }
             }
         }
     }
 
+
+    private string ErrorMoney = string.Empty;
     private async Task ChangeThanhTien(ChangeEventArgs e)
     {
-        TongThanhTien = float.Parse(e.Value.ToString());
+        if (float.Parse(e.Value.ToString()) < 0)
+        {
+            await Swal.FireAsync(new SweetAlertOptions
+            {
+                    TitleText = "Tiền Mặt Không Được Âm",
+                    ShowConfirmButton = true,
+                    Icon = SweetAlertIcon.Warning,
+            });
+            TongThanhTien = 0;
+        }
+        else
+        {
+            TongThanhTien = float.Parse(e.Value.ToString());
+            ErrorMoney = string.Empty;
+        }
     }
 }
 

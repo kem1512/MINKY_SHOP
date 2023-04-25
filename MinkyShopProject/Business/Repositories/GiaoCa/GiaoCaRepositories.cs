@@ -90,10 +90,11 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
                     Ca.TongTienMatRut += model.TongTienMatRut;
                 }
                 Ca.GhiChuRutTien += model.GhiChuRutTien;
-                Ca.TrangThai = 1;
+                Ca.TrangThai = model.IdNhanVienCaTiepTheo == null ? 3 : 1;
                 var result = await _context.SaveChangesAsync();
                 if (result > 0)
                 {
+                    await SendMail(Id);
                     return new Response(Code.OK, "Hoàn Thành Báo Cáo");
                 }
                 else
@@ -326,9 +327,12 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
                 Body += "<div>";
                 Body += $"<label class='form-control-label'>Nhân viên bàn giao: {nhanvienbangiao.Ma} - {nhanvienbangiao.Ten}</label>";
                 Body += "</div>";
-                Body += "<div>";
-                Body += $"<label class='form-control-label'>Nhân viên chận ca: {nhanviennhanca.Ma} - {nhanviennhanca.Ten}</label>";
-                Body += "</div>";
+                if (nhanviennhanca != null)
+                {
+                    Body += "<div>";
+                    Body += $"<label class='form-control-label'>Nhân viên chận ca: {nhanviennhanca.Ma} - {nhanviennhanca.Ten}</label>";
+                    Body += "</div>";
+                }
                 Body += "<div>";
                 Body += $"<label class='form-control-label'>Thời gian nhận ca: {ca.ThoiGianNhanCa}</label>";
                 Body += "</div>";
@@ -373,7 +377,7 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
                     }
                 }
 
-                return new Response(HttpStatusCode.OK, "Vui Lòng Check Mail Của Bạn");
+                return new Response(Code.OK, "Vui Lòng Check Mail Của Bạn");
             }
             catch (Exception e)
             {

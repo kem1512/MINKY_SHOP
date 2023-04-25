@@ -6,6 +6,7 @@
 @using MinkyShopProject.Data.Models;
 @using PaginationRequest = MinkyShopProject.Business.Pagination.PaginationRequest;
 @using System.Net.Mail
+@using System.Text.RegularExpressions;
 <PageTitle>Kết Ca</PageTitle>
 
 <div class="container-fluid py-4">
@@ -56,7 +57,7 @@
                         {
                             <div class="form-group">
                                 <label class="form-control-label">Tiền Mặt Rút</label>
-                                <input value="@string.Format("{0:0,0}",Model.TongTienMatRut)" type="text" class="form-control form-control-sm" @oninput="ChangTienRut" />
+                                <input value="@string.Format("{0:0,0}",Model.TongTienMatRut)" type="TE" class="form-control form-control-sm" @oninput="ChangTienRut" />
                             </div>
                         }
                     </div>
@@ -102,18 +103,18 @@
                         </div>
                         <div class="form-check form-switch d-flex justify-content-between px-0">
                             <div>
-                                <label class="form-control-label">Ca Cuối Ngày</label>
-                            </div>
-                            <div>
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="ChangeKetCa" />
-                            </div>
-                        </div>
-                        <div class="form-check form-switch d-flex justify-content-between px-0">
-                            <div>
                                 <label class="form-control-label">Kết Ca Và Reset</label>
                             </div>
                             <div>
                                 <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="ChangeKetCaReset" />
+                            </div>
+                        </div>
+                        <div class="form-check form-switch d-flex justify-content-between px-0">
+                            <div>
+                                <label class="form-control-label">Ca Cuối Ngày</label>
+                            </div>
+                            <div>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" @onchange="ChangeKetCa" />
                             </div>
                         </div>
                     </div>
@@ -176,6 +177,8 @@
     private List<HoaDon> hoadons = new();
 
     private bool KetCaVaReset = false;
+
+    private Regex Regex = new Regex(@"^[-+]?[0-9]*.?[0-9]+$");
 
     protected async override Task OnInitializedAsync()
     {
@@ -247,40 +250,47 @@
 
     private async Task ChangeKeKhai(ChangeEventArgs e)
     {
-        TongKeKhai = float.Parse(e.Value.ToString());
-        Model.TienPhatSinh = Model.TongTienMat - float.Parse(e.Value.ToString());
 
-        if (Model.TongTienMatRut == 0)
+        if (!Regex.IsMatch(e.Value.ToString()))
         {
-            Model.TongTienMatCuoiCa = TongKeKhai;
+            TongKeKhai = 0;
+            await Swal.FireAsync("Thông báo", "Tiền Phải Là Số Vui Lòng Nhập Lại", SweetAlertIcon.Warning);
         }
         else
         {
-            Model.TongTienMatCuoiCa = TongKeKhai - Model.TongTienMatRut;
-        }
+            if (float.Parse(e.Value.ToString()) < 0)
+            {
+                await Swal.FireAsync("Thông báo", "Tổng Tiền Kê Khai Không Được Âm", SweetAlertIcon.Warning);
+            }
+            else
+            {
+                TongKeKhai = float.Parse(e.Value.ToString());
+                Model.TienPhatSinh = Model.TongTienMat - float.Parse(e.Value.ToString());
 
-        if (Model.TienPhatSinh <= 0 || float.Parse(e.Value.ToString()) == 0)
-        {
-            Model.TienPhatSinh = 0;
+                if (Model.TongTienMatRut == 0)
+                {
+                    Model.TongTienMatCuoiCa = TongKeKhai;
+                }
+                else
+                {
+                    Model.TongTienMatCuoiCa = TongKeKhai - Model.TongTienMatRut;
+                }
+
+                if (Model.TienPhatSinh <= 0 || float.Parse(e.Value.ToString()) == 0)
+                {
+                    Model.TienPhatSinh = 0;
+                }
+            }
         }
     }
 
     private async Task TimKiemNhanVien(ChangeEventArgs e)
     {
-        if(e.Value?.ToString().Length == 0)
-        {
-            lstNhanVien = new();
-            InfoNhanVien = string.Empty;
-            ErrorNhanVien = "Nhân viên cho ca tiếp theo không được để trống!";
-        }
-        else
-        {
-            Request.Keyword = e.Value?.ToString();
-            Response = await HttpClient.GetFromJsonAsync<Response<PaginationResponse<NhanVien>>>($"https://localhost:7053/api/NhanViens?PerPage={Request.PerPage}&CurrentPage={Request.CurrentPage}&Keyword={Request.Keyword}");
-            lstNhanVien = Response.Data.Data.Where(c => c.Id != Ca.IdNhanVienTrongCa).ToList();
-            InfoNhanVien = string.Empty;
-            ErrorNhanVien = "";
-        }
+        Request.Keyword = e.Value?.ToString();
+        Response = await HttpClient.GetFromJsonAsync<Response<PaginationResponse<NhanVien>>>($"https://localhost:7053/api/NhanViens?PerPage={Request.PerPage}&CurrentPage={Request.CurrentPage}&Keyword={Request.Keyword}");
+        lstNhanVien = Response.Data.Data.Where(c => c.Id != Ca.IdNhanVienTrongCa && c.VaiTro != 0).ToList();
+        InfoNhanVien = string.Empty;
+        ErrorNhanVien = "";
     }
 
     private async Task ChooseNhanVien(Guid Id)
@@ -310,13 +320,12 @@
 
             if (Model.TongTienMatRut != 0)
             {
-                Model.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(Model.TongTienMatRut)} - Thời gian rút: {DateTime.Now.ToShortTimeString()}." ?? "";
+                Model.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(Model.TongTienMatRut)} - Thời gian rút: {DateTime.Now.ToShortTimeString()}," ?? "";
             }
 
             var result = await HttpClient.PostAsJsonAsync($"https://localhost:7053/api/GiaoCas/KetCa/{IdCa}", Model);
             if (result.IsSuccessStatusCode)
             {
-                await HttpClient.GetFromJsonAsync<Response>($"https://localhost:7053/api/GiaoCas/GuiMail/{IdCa}");
                 await Swal.FireAsync("Thông báo", result.Content.ReadFromJsonAsync<Response>().Result.Message, SweetAlertIcon.Success);
                 Navigation.NavigateTo("/admin", true);
             }
@@ -337,10 +346,14 @@
         if (e.Value?.ToString() == "True")
         {
             CaCuoiNgay = true;
+            KetCaVaReset = true;
         }
         else
         {
             CaCuoiNgay = false;
+            KetCaVaReset = false;
+            Model.TongTienMatRut = 0;
+            Model.TongTienMatCuoiCa = TongKeKhai;
         }
     }
 
@@ -353,26 +366,54 @@
         else
         {
             KetCaVaReset = false;
+            Model.TongTienMatRut = 0;
+            Model.TongTienMatCuoiCa = TongKeKhai;
         }
     }
 
     private async Task ChangTienRut(ChangeEventArgs e)
     {
-        Model.TongTienMatRut = float.Parse(e.Value.ToString());
-        if (TongKeKhai == 0)
+        if (!Regex.IsMatch(e.Value.ToString()))
         {
-            await Swal.FireAsync("Thông Báo", "Bạn Chưa Kê Khai Tiền Cuối Ca", SweetAlertIcon.Warning);
+            await Swal.FireAsync("Thông báo", "Tiền Phải Là Số Vui Lòng Nhập Lại", SweetAlertIcon.Warning);
             Model.TongTienMatRut = 0;
-        }
-        else if(Model.TongTienMatRut >= Model.TongTienMatCuoiCa)
-        {
-            await Swal.FireAsync("Thông Báo", "Không Thể Đáp Ứng Số Tiền Muốn Rút", SweetAlertIcon.Warning);
-            Model.TongTienMatRut = 0;
-            Model.TongTienMatCuoiCa = TongKeKhai;
         }
         else
         {
-            Model.TongTienMatCuoiCa = TongKeKhai - Model.TongTienMatRut;
+            if (float.Parse(e.Value.ToString()) < 0)
+            {
+                await Swal.FireAsync("Thông báo", "Tổng Tiền Kê Khai Không Được Âm", SweetAlertIcon.Warning);
+                Model.TongTienMatRut = 0;
+            }
+            else
+            {
+                if (float.Parse(e.Value.ToString()) < 0)
+                {
+                    await Swal.FireAsync("Thông báo", "Tiền Mặt Rút Không Được Âm", SweetAlertIcon.Warning);
+                }
+                else
+                {
+                    Model.TongTienMatRut = float.Parse(e.Value.ToString());
+                    if (TongKeKhai == 0)
+                    {
+                        await Swal.FireAsync("Thông Báo", "Bạn Chưa Kê Khai Tiền Cuối Ca", SweetAlertIcon.Warning);
+                        Model.TongTienMatRut = 0;
+                    }
+                    else if (Model.TongTienMatRut >= Model.TongTienMatCuoiCa && CaCuoiNgay != true)
+                    {
+                        await Swal.FireAsync("Thông Báo", "Không Thể Đáp Ứng Số Tiền Muốn Rút", SweetAlertIcon.Warning);
+                        Model.TongTienMatRut = 0;
+                        Model.TongTienMatCuoiCa = TongKeKhai;
+                    }
+                    else
+                    {
+                        Model.TongTienMatCuoiCa = TongKeKhai - Model.TongTienMatRut;
+                    }
+                }
+            }
         }
+
+       
+
     }
 }
