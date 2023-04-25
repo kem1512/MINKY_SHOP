@@ -21,7 +21,7 @@
                                 <p class="mb-0">
 									@if (ThongKeTongTienHomQua.Data.TongTienTatCa > 0 && ThongKeTongTienNgay.Data.TongTienTatCa > 0)
 									{
-										<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) : -1) so với hôm qua</span>
+										<span class="text-@(Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) > 0 ? "success" : "danger") text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongTienTatCa, (long)ThongKeTongTienNgay.Data.TongTienTatCa) : -1) so với hôm qua</span>
 									}
 								</p>
                                 <p class="mb-0">
@@ -56,7 +56,7 @@
 									@ThongKeTongTienTuan.Data.TongTienTatCa.ToString("N0") VND
 								</h5>
                                 <p class="mb-0">
-                                    <span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuan.Data.TongTienTatCa) : -1)</span>
+									<span class="text-@(Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuan.Data.TongTienTatCa) > 0 ? "success" : "danger") text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienTuanTruoc.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienTuanTruoc.Data.TongTienTatCa, (long)ThongKeTongTienTuan.Data.TongTienTatCa) : -1)</span>
                                     so với tuần trước
                                 </p>
                                 <p class="mb-0">
@@ -132,7 +132,7 @@
 									@ThongKeTongTienNgay.Data.TongDonBan
 								</h5>
 								<p class="mb-0">
-									<span class="text-danger text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongDonBan, (long)ThongKeTongTienNgay.Data.TongDonBan) : -1)</span>
+									<span class="text-@(Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongDonBan, (long)ThongKeTongTienNgay.Data.TongDonBan) > 0 ? "success" : "danger") text-sm font-weight-bolder">@Helper.DoubleToPercentageString(ThongKeTongTienHomQua.Data.TongTienTatCa > 0 ? Helper.CalculateChange((long)ThongKeTongTienHomQua.Data.TongDonBan, (long)ThongKeTongTienNgay.Data.TongDonBan) : -1)</span>
 									so với hôm qua
 								</p>
 							</div>

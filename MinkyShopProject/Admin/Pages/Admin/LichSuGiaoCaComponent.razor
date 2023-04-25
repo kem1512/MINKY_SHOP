@@ -171,12 +171,9 @@
                 <div class="card-body">
                     @if(StrArray != null){
                         <div class="row">
-                            @foreach (var str in StrArray)
-                            {
-                                <div class="col mb-3">
-                                    <span class="badge bg-gradient-success">@(str)</span>
-                                </div>
-                            }
+                            <div class="col mb-3">
+                                <span class="badge bg-gradient-success">@string.Join("", StrArray)</span>
+                            </div>
                         </div>
                     }
                 </div>

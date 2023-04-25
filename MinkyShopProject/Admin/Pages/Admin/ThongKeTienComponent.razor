@@ -17,7 +17,7 @@
         @if (ThongKeTongTienResult != null)
         {
             <p class="text-sm mb-0">
-                Tổng tiền: @ThongKeTongTienResult.Data.TongTienTatCa.ToString("N0") VND
+                Tổng tiền: @Helper.FormatMoney(ThongKeTongTienResult.Data.TongTienTatCa)
             </p>
         }
     </div>

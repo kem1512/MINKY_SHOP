@@ -240,14 +240,15 @@ namespace MinkyShopProject.Admin.Pages.Sale
 
         async Task Reload()
         {
-            if (Session.GetItemAsStringAsync("invoice") != null)
-            {
-                HoaDons = await Session.GetItemAsync<List<HoaDonCreateModel>>("invoice");
-            }
-            else
-            {
-                HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
-            }
+            //if (Session.GetItemAsStringAsync("invoice") != null)
+            //{
+            //    HoaDons = await Session.GetItemAsync<List<HoaDonCreateModel>>("invoice");
+            //}
+            //else
+            //{
+            //    HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
+            //}
+            HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
             if (IdNhanVien != null)
