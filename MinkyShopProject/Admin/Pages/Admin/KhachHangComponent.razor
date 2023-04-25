@@ -204,7 +204,7 @@
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.DiaChi</span>
                                                 </td>
                                                 <td>
-                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgaySinh</span>
+                                                    <span class="text-secondary text-xs font-weight-bold">@x.Value.NgaySinh.ToShortDateString()</span>
                                                 </td>
                                                 <td>
                                                     <span class="text-secondary text-xs font-weight-bold">@x.Value.Sdt</span>
@@ -224,9 +224,6 @@
                                                 <td class="text-sm">
                                                     <a href="javascript:;" class="mx-3" data-bs-toggle="tooltip" data-bs-original-title="Edit product" @onclick="() => { khachhang = Helper.ConvertJson<KhachHangThemVaSuaModel>(x.Value); Show = true; }">
                                                         <i class="fas fa-user-edit text-warning" aria-hidden="true"></i>
-                                                    </a>
-                                                    <a href="javascript:;" @onclick="() => DeleteAsync(x.Value.Id)" data-bs-toggle="tooltip" data-bs-original-title="Delete product">
-                                                        <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -299,14 +296,21 @@
 
             if (string.IsNullOrEmpty(confirm.Value)) return;
 
-            var s = Url.AddQuery("id", khachhang.Id.ToString());
-            var result = khachhang.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", khachhang) : await HttpClient.PutAsJsonAsync<KhachHangThemVaSuaModel>(new Uri(Url + "/Update" + s.Query), khachhang);
-
-            if (result.IsSuccessStatusCode)
+            try
             {
-                await Reload();
-                khachhang = new KhachHangThemVaSuaModel();
-                await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
+                var s = Url.AddQuery("id", khachhang.Id.ToString());
+                var result = khachhang.Id == Guid.Empty ? await HttpClient.PostAsJsonAsync<KhachHangThemVaSuaModel>(Url + "/Create", khachhang) : await HttpClient.PutAsJsonAsync<KhachHangThemVaSuaModel>(new Uri(Url + "/Update" + s.Query), khachhang);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    await Reload();
+                    khachhang = new KhachHangThemVaSuaModel();
+                    await Swal.FireAsync("Thông Báo", "Thành công", SweetAlertIcon.Success);
+                }
+            }
+            catch (Exception)
+            {
+                await Swal.FireAsync("", "Khách Hàng Đã Tồn Tại", SweetAlertIcon.Error);
             }
         }
         else

@@ -142,7 +142,8 @@
             Ten = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Ten"))?.Value ?? "";
             var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;  
             IsAuth = true;
-            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={thoigian}");
+            var datetime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+            var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={datetime}");
             var result2 = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas/GetCaTruoc?Id={Guid.Parse(IdNhanVien)}");
             var result3 = await HttpClient.GetFromJsonAsync<Response<List<GiaoCa>>>("https://localhost:7053/api/GiaoCas/CaDangCho");
             Ca = result.Data;

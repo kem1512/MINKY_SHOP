@@ -346,10 +346,10 @@ namespace MinkyShopProject.Business.Repositories.SeedingData
 
         public async Task SeeddingHoaDon()
         {
-            // _Context.RemoveRange(_Context.HoaDon);
+            //_Context.RemoveRange(_Context.HoaDon);
             // _Context.RemoveRange(_Context.ThuocTinh);
             // _Context.RemoveRange(_Context.ThuocTinhSanPham);
-            // _Context.RemoveRange(_Context.HoaDonChiTiet);
+            //_Context.RemoveRange(_Context.HoaDonChiTiet);
             // _Context.RemoveRange(_Context.BienThe);
             // _Context.RemoveRange(_Context.BienTheChiTiet);
             // _Context.RemoveRange(_Context.NhanVien);

@@ -208,8 +208,8 @@ namespace MinkyShopProject.Business.Repositories.ThongKe
             try
             {
                 var result = await _context.HoaDon
-                    .Where(x => x.NgayThanhToan >= start && x.NgayThanhToan <= end && x.TrangThai != 1)
-                    .GroupBy(x => new { x.NgayThanhToan.Value.Day, x.NgayThanhToan.Value.Month, x.NgayThanhToan.Value.Year })
+                    .Where(x => x.NgayHoanThanh >= start && x.NgayHoanThanh <= end && ((x.TrangThai == 0 && x.LoaiDonHang == 0 || x.LoaiDonHang == 1) || ((x.TrangThaiGiaoHang == 3 || x.TrangThaiGiaoHang == 5) && x.LoaiDonHang == 2)))
+                    .GroupBy(x => new { x.NgayHoanThanh.Value.Day, x.NgayHoanThanh.Value.Month, x.NgayHoanThanh.Value.Year })
                     .Select(g => new TongTienNgayTienThangNam()
                     {
                         TongTien = g.Sum(x => x.TongTien),

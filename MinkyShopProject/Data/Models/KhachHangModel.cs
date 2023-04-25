@@ -47,7 +47,6 @@ namespace MinkyShopProject.Data.Models
 
         public bool GioiTinh { get; set; } = true;
 
-        [CheckAge(ErrorMessage = "Khách phải 16 tuổi trở lên")]
         public DateTime NgaySinh { get; set; } = DateTime.Now;
 
         public DateTime NgayTao { get; set; } = DateTime.Now;
@@ -55,8 +54,10 @@ namespace MinkyShopProject.Data.Models
         public string? DiaChi { get; set; } = null!;
 
         [Required(ErrorMessage = "Số điện thoại không được bỏ trống")]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Số điện thoại phải là số")]
         public string? Sdt { get; set; } = null!;
 
+        [RegularExpression("^([\\w-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([\\w-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$", ErrorMessage = "Email không đúng định dạng")]
         public string? Email { get; set; } = null!;
 
         public string? MatKhau { get; set; } = null!;

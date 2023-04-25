@@ -11,10 +11,10 @@ using MinkyShopProject.Business.Context;
 
 namespace MinkyShopProject.Business.Migrations
 {
-
-    [Migration("20230416113606_minkyshopmigration")]
-    partial class minkyshopmigration
-    { 
+    [DbContext(typeof(MinkyShopDbContext))]
+    [Migration("20230423035701_MinkyShop")]
+    partial class MinkyShop
+    {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

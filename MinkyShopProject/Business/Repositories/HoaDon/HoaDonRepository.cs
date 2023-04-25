@@ -38,6 +38,23 @@ namespace MinkyShopProject.Business.Repositories.HoaDon
 
                 var hoaDon = _mapper.Map<HoaDonCreateModel, Entities.HoaDon>(obj);
 
+                if (hoaDon.IdNhanVien == Guid.Empty)
+                {
+                    var nv = _context.giaoCas.FirstOrDefault();
+                    if(nv != null)
+                    {
+                        hoaDon.IdNhanVien = nv.IdNhanVienTrongCa;
+                    }
+                    else
+                    {
+                        var nv2 = _context.NhanVien.FirstOrDefault();
+                        if(nv2 != null)
+                        {
+                            hoaDon.IdNhanVien = nv2.Id;
+                        }
+                    }
+                }
+
                 if (hoaDon.IdKhachHang != null && hoaDon.IdKhachHang != Guid.Empty)
                 {
                     var khachHang = _context.KhachHang.FirstOrDefault(c => c.Id == hoaDon.IdKhachHang);

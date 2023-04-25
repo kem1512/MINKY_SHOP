@@ -192,25 +192,26 @@
             <div class="modal-body">
                 @if (Barcodes.Any())
                 {
-                    <div class="d-flex flex-wrap gap-3">
+                    <div class="d-flex flex-wrap gap-3 flex-column">
                         @foreach (var x in Barcodes)
                         {
-                            <span class="text-bolder">@x.Product</span>
-                            @foreach (var y in x.Barcodes)
-                            {
-                                <div class="d-flex flex-column">
-                                    <div id="barcode">@y.Barcode</div>
-                                    <div id="barcode_text">@y.BarcodeText</div>
-                                </div>
-                            }
+                            <div class="d-flex flex-wrap">
+                                <span class="text-bolder me-3">@x.Product</span><br>
+                                @foreach (var y in x.Barcodes)
+                                {
+                                    <div class="d-flex flex-column me-5 mb-5">
+                                        <div id="barcode">@y.Barcode</div>
+                                        <div id="barcode_text">@y.BarcodeText</div>
+                                    </div>
+                                }
+                            </div>
                         }
                     </div>
                 }
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn bg-gradient-primary">Save changes</button>
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>

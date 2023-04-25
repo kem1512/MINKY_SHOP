@@ -119,17 +119,20 @@ x.Value.GiaTriTemplates?.Add(new Data.Models.GiaTriModel(){ Ten = GiaTri, TrangT
                                                     {
                                                         if (x.Value.GiaTris != null)
                                                         {
-                                                            @foreach (var y in x.Value.GiaTris.Where(c => c.TrangThai))
+                                                            @foreach (var y in x.Value.GiaTris.Where(c => c.TrangThai).Select((v, i) => (i, v)))
                                                             {
-                                                                if(x.Value.GiaTriParent != null)
+                                                                @if(y.i < 5)
                                                                 {
-                                                                    foreach (var z in x.Value.GiaTriParent)
+                                                                    if (x.Value.GiaTriParent != null)
                                                                     {
-                                                                        if (y.Id == z.Id && z.TrangThai)
+                                                                        foreach (var z in x.Value.GiaTriParent)
                                                                         {
-                                                                            <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => {  x.Value.GiaTriTemplates?.Add(y); x.Value.GiaTris.Remove(y); } ">
-                                                                                @y.Ten
-                                                                            </button>
+                                                                            if (y.v.Id == z.Id && z.TrangThai)
+                                                                            {
+                                                                                <button class="list-group-item list-group-item-action text-sm" aria-current="true" @onmousedown="() => {  x.Value.GiaTriTemplates?.Add(y.v); x.Value.GiaTris.Remove(y.v); } ">
+                                                                                    @y.v.Ten
+                                                                                </button>
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
