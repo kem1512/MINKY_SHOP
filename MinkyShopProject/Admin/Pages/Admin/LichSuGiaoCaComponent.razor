@@ -109,7 +109,7 @@
                                         <td class="text-secondary text-xs font-weight-bold align-middle">@(Helper.FormatMoney(Ca.TienBanDau))</td>
                                         <td class="text-secondary text-xs font-weight-bold align-middle">@(Helper.FormatMoney(Ca.TienMatTrongCa))</td>
                                         <td class="text-secondary text-xs font-weight-bold align-middle">@(Helper.FormatMoney(Ca.TienMatCuoiCa == null ? 0 : Ca.TienMatCuoiCa))</td>
-                                        <td class="text-secondary text-xs font-weight-bold align-middle">@(Ca.TrangThai == 0 ? "Đang Làm Việc" : Ca.TrangThai == 1 ? "Chờ Bàn Giao" : "Đã Bàn Giao")</td>
+                                        <td class="text-secondary text-xs font-weight-bold align-middle">@(Ca.TrangThai == 0 ? "Đang Làm Việc" : Ca.TrangThai == 1 ? "Chờ Bàn Giao" : Ca.TrangThai == 2 ? "Đã Bàn Giao" : "Đã Chốt Và Kết Thúc Ngày Làm Việc")</td>
                                         <td class="text-secondary text-xs font-weight-bold align-middle">
                                         @if (Ca.TrangThai == 1 || Ca.TrangThai == 0)
                                         {
@@ -323,7 +323,7 @@
 
         if (string.IsNullOrEmpty(confirm.Value)) return;
 
-        ResetModel.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(ResetModel.TongTienMatRut)} - Thời gian rút: {ResetModel.ThoiGianReset.ToShortTimeString()}.";
+        ResetModel.GhiChuRutTien = $"Số tiền rút: {Helper.FormatMoney(ResetModel.TongTienMatRut)} - Thời gian rút: {ResetModel.ThoiGianReset.ToShortTimeString()},";
         var result = await HttpClient.PutAsJsonAsync($"https://localhost:7053/api/GiaoCas/resettienmat?Id={CaDuocChon.Id}", ResetModel);
         var response = await result.Content.ReadFromJsonAsync<Response>();
         if (result.IsSuccessStatusCode)
@@ -347,7 +347,7 @@
         CaDuocChon = Result.Data;
         GhiChuRutTien = CaDuocChon.GhiChuRutTien;
         ShowDetail = false;
-        StrArray = GhiChuRutTien == null ? null : GhiChuRutTien.Split('.');
+        StrArray = GhiChuRutTien == null ? null : GhiChuRutTien.Split(',');
     }
 
     private async Task CancelDetail()
@@ -378,7 +378,7 @@
         {
             Request.Keyword = e.Value?.ToString();
             Response = await HttpClient.GetFromJsonAsync<Response<PaginationResponse<NhanVien>>>($"https://localhost:7053/api/NhanViens?PerPage={Request.PerPage}&CurrentPage={Request.CurrentPage}&Keyword={Request.Keyword}");
-            lstNhanVien = Response.Data.Data.Where(c => c.Id != CaDuocChon.IdNhanVienTrongCa).ToList();
+            lstNhanVien = Response.Data.Data.Where(c => c.Id != CaDuocChon.IdNhanVienTrongCa && c.VaiTro != 0).ToList();
             InfoNhanVien = string.Empty;
         }
     }
