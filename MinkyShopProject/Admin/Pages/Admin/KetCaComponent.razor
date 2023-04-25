@@ -178,6 +178,8 @@
 
     private bool KetCaVaReset = false;
 
+    private float? tongtienmatrut = 0;
+
     private Regex Regex = new Regex(@"^[-+]?[0-9]*.?[0-9]+$");
 
     protected async override Task OnInitializedAsync()
@@ -209,7 +211,7 @@
         {
             await GetHoaDonTrongCa();
             Model.TongTienTrongCa = Ca.TongTienMat + DoanhThu;
-            Model.TongTienMat = Ca.TongTienMat;
+            Model.TongTienMat = Ca.TienBanDau + DoanhThuTienMat - (tongtienmatrut = Ca.TongTienMatRut == null ? 0 : Ca.TongTienMatRut);
             Model.TongTienKhac = DoanhThuChuyenKhoan;
             IdCa = Ca.Id;
         }

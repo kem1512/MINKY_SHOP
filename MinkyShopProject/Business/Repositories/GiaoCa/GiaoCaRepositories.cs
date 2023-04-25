@@ -111,13 +111,34 @@ namespace MinkyShopProject.Business.Repositories.GiaoCa
 
         public async Task<Response> GetHoaDonCa(Guid IdNhanVien,DateTime ThoiGian)
         {
-            var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa == IdNhanVien && c.ThoiGianNhanCa.Day == ThoiGian.Day && c.ThoiGianNhanCa.Month == ThoiGian.Month && c.ThoiGianNhanCa.Year == ThoiGian.Year && c.ThoiGianNhanCa.Hour <= ThoiGian.Hour && c.TrangThai == 0);
+            var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa
+                                                                == IdNhanVien && c.ThoiGianNhanCa.Day
+                                                                == ThoiGian.Day && c.ThoiGianNhanCa.Month
+                                                                == ThoiGian.Month && c.ThoiGianNhanCa.Year
+                                                                == ThoiGian.Year && c.ThoiGianNhanCa.Hour
+                                                                <= ThoiGian.Hour && c.TrangThai == 0);
+
             var hoadons = await _context.HoaDon.Where(c => c.NgayTao.Day == Ca.ThoiGianNhanCa.Day 
                                                         && c.NgayTao.Month == Ca.ThoiGianNhanCa.Month 
                                                         && c.NgayTao.Year == Ca.ThoiGianNhanCa.Year 
-                                                        && c.TrangThai == 0
-                                                        && c.NgayTao.Hour >= Ca.ThoiGianNhanCa.Hour
-                                                        && c.NgayTao.Minute >= Ca.ThoiGianNhanCa.Minute).ToListAsync();
+                                                        && c.TrangThai == 0 || c.TrangThaiGiaoHang == 3
+                                                        && c.NgayTao.Hour >= Ca.ThoiGianNhanCa.Hour).ToListAsync();
+            return new Response<List<Entities.HoaDon>>(Code.OK, hoadons);
+        }
+
+        public async Task<Response> GetHoaDonCaDaKetThuc(Guid IdNhanVien, DateTime ThoiGian)
+        {
+            var Ca = await _context.giaoCas.FirstOrDefaultAsync(c => c.IdNhanVienTrongCa
+                                                                == IdNhanVien && c.ThoiGianNhanCa.Day
+                                                                == ThoiGian.Day && c.ThoiGianNhanCa.Month
+                                                                == ThoiGian.Month && c.ThoiGianNhanCa.Year
+                                                                == ThoiGian.Year && c.TrangThai == 0 || c.TrangThai == 1 || c.TrangThai == 2 || c.TrangThai == 3);
+
+            var hoadons = await _context.HoaDon.Where(c => c.NgayTao.Day == Ca.ThoiGianNhanCa.Day
+                                                        && c.NgayTao.Month == Ca.ThoiGianNhanCa.Month
+                                                        && c.NgayTao.Year == Ca.ThoiGianNhanCa.Year
+                                                        && c.TrangThai == 0 || c.TrangThaiGiaoHang == 3
+                                                        && c.NgayTao.Hour >= Ca.ThoiGianNhanCa.Hour).ToListAsync();
             return new Response<List<Entities.HoaDon>>(Code.OK, hoadons);
         }
 
