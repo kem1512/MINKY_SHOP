@@ -1,30 +1,30 @@
-﻿<footer style="margin-top: 10px">
+﻿@inject HttpClient HttpClient
+
+<footer style="margin-top: 10px">
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-3 col-md-6">
 				<h3 data-target="#collapse_1">Quick Links</h3>
 				<div class="collapse dont-collapse-sm links" id="collapse_1">
 					<ul>
-						<li><a href="about.html">Trang Chủ</a></li>
-						<li><a href="help.html">Sản Phẩm</a></li>
-						<li><a href="help.html">Blog</a></li>
-						<li><a href="account.html">About</a></li>
-						<li><a href="blog.html">Blog</a></li>
-						<li><a href="contacts.html">Liên Hệ</a></li>
-					</ul>
+						<li><NavLink href="/">Trang Chủ</NavLink></li>
+						<li><NavLink href="/product">Sản Phẩm</NavLink></li>
+                        <li><NavLink href="/about">About</NavLink></li>
+                    </ul>
 				</div>
 			</div>
 			<div class="col-lg-3 col-md-6">
 				<h3 data-target="#collapse_2">Nhóm Sản Phẩm</h3>
 				<div class="collapse dont-collapse-sm links" id="collapse_2">
 					<ul>
-						<li><a href="listing-grid-1-full.html">Clothes</a></li>
-						<li><a href="listing-grid-2-full.html">Electronics</a></li>
-						<li><a href="listing-grid-1-full.html">Furniture</a></li>
-						<li><a href="listing-grid-3.html">Glasses</a></li>
-						<li><a href="listing-grid-1-full.html">Shoes</a></li>
-						<li><a href="listing-grid-1-full.html">Watches</a></li>
-					</ul>
+				        @if (NhomSanPhams != null)
+				        {
+				            @foreach (var x in NhomSanPhams)
+				            {
+				                <li><NavLink href="/">@x.Ten</NavLink></li>
+				            }
+				        }		
+                    </ul>
 				</div>
 			</div>
 			<div class="col-lg-3 col-md-6">
@@ -41,3 +41,18 @@
     </div>
 </footer>
 <!--/footer-->
+
+						@code{
+
+						    List<MinkyShopProject.Data.Models.NhomSanPhamModel>? NhomSanPhams;
+
+						    protected async override Task OnInitializedAsync()
+						    {
+						        var result = await HttpClient.GetFromJsonAsync<ResponsePagination<Data.Models.NhomSanPhamModel>>("https://localhost:7053/api/NhomSanPham/Get2");
+						        if(result != null)
+						        {
+						            NhomSanPhams = result.Data.Content;
+						        }
+						    }
+
+						}

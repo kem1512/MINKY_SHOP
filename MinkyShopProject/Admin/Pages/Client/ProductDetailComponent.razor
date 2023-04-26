@@ -49,7 +49,7 @@
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <button class="btn mb-0 btn-xs" @onclick='async() => { if(x.SoLuongTam > 0){ x.SoLuongTam -= 1; await ThemSanPham(x, x.SoLuongTam);} }'><i class="fa fa-minus"></i></button>
-                                        <input class="form-control mx-1" value="@x.SoLuongTam" type="number" min="0" max="50">
+                                        <input class="form-control mx-1" @bind="@x.SoLuongTam" type="number" min="0" max="50">
                                         <button class="btn mb-0 btn-xs" @onclick='async() => { if(x.SoLuongTam < x.SoLuong){ x.SoLuongTam += 1; await ThemSanPham(x, x.SoLuongTam); } }'><i class="fa fa-plus"></i></button>
                                     </div>
                                 </div>
@@ -99,7 +99,6 @@
             }
             else
             {
-
                 bienThe.SoLuongTam = soLuong;
             }
         }

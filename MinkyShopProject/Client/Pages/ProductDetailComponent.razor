@@ -1,6 +1,7 @@
 ﻿@page "/product/{id:guid}"
 @inject IJSRuntime JSRuntime
 @using MinkyShopProject.Data.Models
+@using Newtonsoft.Json
 @inject HttpClient HttpClient
 @inject SweetAlertService Swal
 @inject Blazored.SessionStorage.ISessionStorageService Session
@@ -262,7 +263,7 @@
         if(result != null)
         {
             BienThe = result;
-            //BienThe.SanPham = BienTheChiTiet.Data.SanPham;
+            BienThe.SanPham = BienTheChiTiet.Data.SanPham;
         }
     }
 
@@ -288,7 +289,7 @@
             {
                 HoaDonCreateModel cart = new HoaDonCreateModel();
                 cart.HoaDonChiTiets.Add(new HoaDonChiTietModel() { IdBienThe = BienThe.Id, SoLuong = BienThe.SoLuongTam, DonGia = BienThe.GiaBan, SoLuongGoc = BienThe.SoLuong, BienThe = BienThe });
-                await Session.SetItemAsync<HoaDonCreateModel>("cart", cart);
+                await Session.SetItemAsStringAsync("cart", JsonConvert.SerializeObject(cart, Formatting.None, new JsonSerializerSettings(){ ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
                 await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
             }
             else
@@ -315,7 +316,7 @@
                 //        Formatting = Newtonsoft.Json.Formatting.Indented,
                 //        ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 //    }));
-                await Session.SetItemAsync<HoaDonCreateModel>("cart", cart);
+                await Session.SetItemAsStringAsync("cart", JsonConvert.SerializeObject(cart, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
                 await Swal.FireAsync("", "Thêm thành công", SweetAlertIcon.Success);
             }
         }

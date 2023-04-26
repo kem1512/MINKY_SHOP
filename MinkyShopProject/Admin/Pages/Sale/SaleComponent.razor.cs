@@ -155,22 +155,22 @@ namespace MinkyShopProject.Admin.Pages.Sale
             {
                 foreach (var x in obj)
                 {
+                    Console.WriteLine($"{x.SoLuongTam} {x.SoLuong}");
                     if (x.SoLuongTam > x.SoLuong)
                     {
                         await Swal.FireAsync("", $"{x.SanPham?.Ten} Không Đủ Sản Phẩm Trong Kho", SweetAlertIcon.Error);
                         return;
                     }
+
+                    var hdct = HoaDons[index].HoaDonChiTiets.FirstOrDefault(c => c.IdBienThe == x.Id);
+                    if (hdct != null && hdct.BienThe != null)
+                    {
+                        hdct.SoLuong += x.SoLuongTam;
+                        hdct.SoLuongGoc = x.SoLuong;
+                    }
                     else
                     {
-                        var hdct = HoaDons[index].HoaDonChiTiets.FirstOrDefault(c => c.IdBienThe == x.Id);
-                        if (hdct != null && hdct.BienThe != null)
-                        {
-                            hdct.SoLuong += x.SoLuongTam;
-                        }
-                        else
-                        {
-                            HoaDons[index].HoaDonChiTiets.Add(new HoaDonChiTietModel() { IdBienThe = x.Id, SoLuong = x.SoLuongTam, DonGia = x.GiaBan, BienThe = x });
-                        }
+                        HoaDons[index].HoaDonChiTiets.Add(new HoaDonChiTietModel() { IdBienThe = x.Id, SoLuong = x.SoLuongTam, SoLuongGoc = x.SoLuong, DonGia = x.GiaBan, BienThe = x });
                     }
                 }
                 HoaDons[index].TongTien = HoaDons[index].HoaDonChiTiets.Sum(c => c.DonGia * c.SoLuong);

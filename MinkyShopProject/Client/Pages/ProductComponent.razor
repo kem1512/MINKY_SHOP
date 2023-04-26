@@ -177,21 +177,6 @@
                                         SanPhamsSauKhiLoc.Add(x); 
                                     }
                                 }
-                                else
-                                {
-                                    if (!SanPhamsSauKhiLoc.Any(c => c.Id == x.Id) && x.Ten != null && x.Ten.ToLower().Trim().Contains(Ten.ToLower().Trim()))
-                                    {
-                                        SanPhamsSauKhiLoc.Add(x);
-                                    }
-                                    else
-                                    {
-                                        if(!SanPhamsSauKhiLoc.Any())
-                                        {
-                                            await Swal.FireAsync("", "Không tìm thấy sản phẩm phù hợp", SweetAlertIcon.Error);
-                                            return;
-                                        }
-                                    }
-                                }
                             }
                         }
                     }

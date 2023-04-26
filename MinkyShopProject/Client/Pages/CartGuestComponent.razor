@@ -51,9 +51,11 @@
                                 <strong>@Helper.FormatMoney(x.v.DonGia)</strong>
                             </td>
                             <td>
+                                <p>Kho : @x.v.SoLuongGoc</p>
                                 <div class="numbers-row">
                                     <input type="text" @bind="@x.v.SoLuong" id="quantity_1" class="qty2" name="quantity_1">
-                                    <div class="inc button_inc" @onclick="() => x.v.SoLuong += 1">+</div><div class="dec button_inc" @onclick="() => { if(x.v.SoLuong > 1){ x.v.SoLuong -= 1; } }">-</div>
+                                    <div class="inc button_inc" @onclick="() => x.v.SoLuong += 1">+</div>
+                                    <div class="dec button_inc" @onclick="() => { if (x.v.SoLuong > 1){ x.v.SoLuong -= 1; } }">-</div>
                                 </div>
                             </td>
                             <td>
@@ -90,6 +92,7 @@
                         {
                             <button style="margin-left: 3px" class="btn_1" @onclick="() => HoaDon.VoucherLogs = null">Xóa</button>
                         }
+                        <NavLink class="btn_1 outline" href="/sanpham">Quay về mua hàng</NavLink>
                     </div>
                 </div>
             </div>
