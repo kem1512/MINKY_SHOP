@@ -42,6 +42,12 @@ namespace MinkyShopProject.Api.Controllers
             return Helper.TransformData(await _Repositories.GetHoaDonCa(Id,ThoiGian));
         }
 
+        [HttpGet("HoaDonCaDaKetThuc")]
+        public async Task<IActionResult> HoaDonCaDaKetThuc([FromQuery] Guid Id, DateTime ThoiGian)
+        {
+            return Helper.TransformData(await _Repositories.GetHoaDonCaDaKetThuc(Id, ThoiGian));
+        }
+
         [HttpGet("TienMatHoaDonTrongCa")]
         public async Task<IActionResult> TienMatHoaDon([FromQuery] Guid IdHoaDon)
         {

@@ -6,6 +6,7 @@
 @inject ILocalStorageService Session;
 @using Blazored.LocalStorage;
 @using System.IdentityModel.Tokens.Jwt;
+@using MinkyShopProject.Business.Entities;
 @using MinkyShopProject.Data.Enums
 <PageTitle>Hóa Đơn Chi Tiết</PageTitle>
 @using Net.ConnectCode.BarcodeFontsStandard2D
@@ -45,17 +46,17 @@
                                 @if (HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon.TrangThaiGiaoHang != 3 && HoaDon.NgayXacNhan != null && HoaDon?.LoaiDonHang != 2 && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.TraHang)
                                 {
                                     <button class="btn btn-success me-2" @onclick='async() => {
-                                if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.DaHuy && string.IsNullOrEmpty(GhiChuCapNhat)){
-                                    await Swal.FireAsync("", "Vui Lòng Nhập Ghi Chú Cập Nhật", SweetAlertIcon.Error);
-                                    return;
-                                }
-                                if(HoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) > (HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].TienSauKhiGiam : HoaDon.TongTien + HoaDon.TienShip) && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.ChoXacNhan){
-                                if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.HoanThanh;
-                                    if(HoaDon?.NgayHoanThanh == null){ HoaDon.NgayHoanThanh = DateTime.Now; } await CapNhatHoaDon(); }
-                                }else{ await Swal.FireAsync("", "Hóa Đơn Phải Xác Nhận Và Thanh Toán Đủ Trước Khi Hoàn Thành", SweetAlertIcon.Error); }; }'>
-                                        Hoàn thành
+                                        if(HoaDon.TrangThai == Data.Enums.TrangThaiHoaDon.DaHuy && string.IsNullOrEmpty(GhiChuCapNhat)){
+                                            await Swal.FireAsync("", "Vui Lòng Nhập Ghi Chú Cập Nhật", SweetAlertIcon.Error);
+                                            return;
+                                        }
+                                        if(HoaDon.HinhThucThanhToans.Sum(c => c.TongTienThanhToan) > (HoaDon.VoucherLogs != null && HoaDon.VoucherLogs.Any() ? HoaDon.VoucherLogs[0].TienSauKhiGiam : HoaDon.TongTien + HoaDon.TienShip) && HoaDon.TrangThai != Data.Enums.TrangThaiHoaDon.ChoXacNhan){
+                                        if(await Confirm()){ HoaDon.TrangThai = Data.Enums.TrangThaiHoaDon.HoanThanh;
+                                            if(HoaDon?.NgayHoanThanh == null){ HoaDon.NgayHoanThanh = DateTime.Now; } await CapNhatHoaDon(); }
+                                        }else{ await Swal.FireAsync("", "Hóa Đơn Phải Xác Nhận Và Thanh Toán Đủ Trước Khi Hoàn Thành", SweetAlertIcon.Error); }; }'>
+                                                Hoàn thành
                                     </button>
-                                }
+                                        }
                                 <NavLink class="btn btn-success me-2" href="@($"print/{HoaDon?.Id}")">In</NavLink>
                                 @if (HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.DaHuy && HoaDon?.TrangThaiGiaoHang != 4 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 3 && HoaDon?.TrangThai != Data.Enums.TrangThaiHoaDon.HoanThanh && HoaDon?.TrangThaiGiaoHang != 5 && HoaDon.TrangThaiGiaoHang != 2)
                                 {
@@ -663,10 +664,19 @@
 
     public string Message { get; set; }
 
+    private GiaoCa Ca = new();
+
+    private string Time = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
     List<HinhThucThanhToanModel> HinhThucThanhToans = new List<HinhThucThanhToanModel>();
 
     protected async override Task OnParametersSetAsync()
     {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await Session.GetItemAsStringAsync("Token"));
+        var IdNhanVien = jwt.Claims.FirstOrDefault(c => c.Type.Equals("Id"))?.Value;
+        var result = await HttpClient.GetFromJsonAsync<Response<GiaoCa>>($"https://localhost:7053/api/GiaoCas?Id={Guid.Parse(IdNhanVien)}&ThoiGian={Time}");
+        Ca = result.Data;
+
         if(HoaDon != null)
         {
             QR qrCode = new QR(HoaDon.Ma, "M", 8);
@@ -724,8 +734,10 @@
                 }
             }
         }
+
         HoaDon.TongTien = (HoaDon.HoaDonChiTiets.GroupBy(c => c.IdBienThe).Sum(c => c.First().DonGia * (c.Count() > 1 ? c.ToList()[0].SoLuong - c.ToList()[1].SoLuong : c.First().SoLuong)) + HoaDon.TienShip);
         HoaDon.NgayCapNhat = DateTime.Now;
+
         var status = await HttpClient.PutAsJsonAsync<HoaDonModel>(Url.AddQuery("id", HoaDon.Id.ToString()), HoaDon);
         if (status.IsSuccessStatusCode)
         {
@@ -811,6 +823,7 @@
                             await Swal.FireAsync("", "Phải Thanh Toán Đủ Trước Khi Nhận Hàng", SweetAlertIcon.Error);
                             return;
                         }
+
                         HoaDon.NgayNhan = DateTime.Now; HoaDon.TrangThaiGiaoHang = (int)MinkyShopProject.Data.Enums.TrangThaiGiaoHang.DaGiaoNhungKhachChiNhanMotPhanHang;
                         if (HoaDon.NgayHoanThanh == null) { HoaDon.NgayHoanThanh = DateTime.Now; }
                         await CapNhatHoaDon();

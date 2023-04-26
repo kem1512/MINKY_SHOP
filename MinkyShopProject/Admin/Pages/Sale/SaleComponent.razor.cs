@@ -246,7 +246,7 @@ namespace MinkyShopProject.Admin.Pages.Sale
             //}
             //else
             //{
-            //    HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
+            //   
             //}
             HoaDons = new List<HoaDonCreateModel>() { new HoaDonCreateModel() };
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
@@ -351,13 +351,6 @@ namespace MinkyShopProject.Admin.Pages.Sale
                             var status = await HttpClient.PostAsJsonAsync(Url + "hoadon", HoaDons[index]);
                             if (status.IsSuccessStatusCode)
                             {
-                                foreach (var item in HoaDons[index].HinhThucThanhToans)
-                                {
-                                    if (item.KieuThanhToan == 0)
-                                    {
-                                        await HttpClient.GetFromJsonAsync<Response>($"https://localhost:7053/api/GiaoCas/UpdateTienMat?IdCa={Ca.Id}&TongTien={item.TongTienThanhToan}");
-                                    }
-                                }
                                 HoaDons.Remove(HoaDons[index]);
                                 await Swal.FireAsync("", "Thêm Thành Công", SweetAlertIcon.Success);
                                 if (await InHoaDon())

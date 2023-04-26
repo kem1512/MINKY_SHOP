@@ -238,6 +238,16 @@
 
     private Response<PaginationResponse<GiaoCa>> ResGiaoCa = new();
 
+    private List<HoaDon> hoadons = new();
+
+    private float DoanhThuTienMat = 0;
+
+    private string Time = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
+    private float? tongtienmatrut = 0;
+
+    private float? tienmathoadon = 0;
+
     protected override async Task OnParametersSetAsync()
     {
         var jwt = new JwtSecurityTokenHandler().ReadJwtToken(await local.GetItemAsStringAsync("Token"));
@@ -263,6 +273,21 @@
         Cas = ResGiaoCa.Data.Data;
         foreach (var Ca in Cas)
         {
+            float TienMatHoaDon = 0;
+            var result = await HttpClient.GetFromJsonAsync<Response<List<HoaDon>>>($"https://localhost:7053/api/GiaoCas/HoaDonCaDaKetThuc?Id={Ca.IdNhanVienTrongCa}&ThoiGian={Time}");
+            hoadons = result.Data;
+            foreach (var HoaDon in result.Data)
+            {
+                var result2 = await HttpClient.GetFromJsonAsync<Response<List<HinhThucThanhToan>>>($"https://localhost:7053/api/GiaoCas/TienMatHoaDonTrongCa?IdHoaDon={HoaDon.Id}");
+                foreach (var hinhthucthanhtoan in result2.Data)
+                {
+                    TienMatHoaDon += hinhthucthanhtoan.TongTienThanhToan;
+                }
+
+            }
+            tienmathoadon = TienMatHoaDon;
+
+            tongtienmatrut = Ca.TongTienMatRut == null ? 0 : Ca.TongTienMatRut;
             var TenNhanVienTrongCa = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"https://localhost:7053/api/NhanViens/{Ca.IdNhanVienTrongCa}");
             var TenNhanVienCaTiepTheo = await HttpClient.GetFromJsonAsync<Response<NhanVien>>($"https://localhost:7053/api/NhanViens/{Ca.IdNhanVienCaTiepTheo}");
             model = new GiaoCaModels.GiaoCaViewModel()
@@ -271,7 +296,7 @@
                     IdNhanVienTrongCa = Ca.IdNhanVienTrongCa,
                     TenNhanVienCaTiepTheo = TenNhanVienCaTiepTheo.Data.Ten,
                     TenNhanVienTrongCa = TenNhanVienTrongCa.Data.Ten,
-                    TienMatTrongCa = Ca.TongTienMat,
+                    TienMatTrongCa = Ca.TienBanDau + TienMatHoaDon - tongtienmatrut,
                     TienMatCuoiCa = Ca.TongTienMatCuoiCa,
                     TienBanDau = Ca.TienBanDau,
                     TrangThai = Ca.TrangThai,
@@ -303,7 +328,8 @@
     private async Task ChangTienRut(ChangeEventArgs e)
     {
         var Tien = float.Parse(e.Value.ToString());
-        if (Tien > CaDuocChon.TongTienMat)
+        var tienhientai = CaDuocChon.TienBanDau + tienmathoadon - tongtienmatrut;
+        if (Tien >= tienhientai)
         {
             await Swal.FireAsync("Cảnh Báo", "Không Thể Rút Tiền Lớn Hơn Tổng Tiền Mặt", SweetAlertIcon.Warning);
             ResetModel.TongTienMatRut = 0;
